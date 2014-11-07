@@ -33,7 +33,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
     end
 =end
 
-    # Grammar 2: A very simple language
+    # Grammar 1: A very simple language
     # S ::= A.
     # A ::= "a" A "c".
     # A ::= "b".
