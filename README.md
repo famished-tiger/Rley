@@ -2,7 +2,7 @@ Rley
 ===========
 
 ### What is Rley? ###
-__Rley__ should be a Ruby implementation of a Earley parser.
+__Rley__ should be a Ruby implementation of a Earley parser.  
 This project is in "early" stage.
 
 Copyright
