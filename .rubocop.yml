@@ -1,0 +1,71 @@
+AllCops:
+  Exclude:
+    - 'examples/**/*'
+    - 'features/**/*'
+    - 'gems/**/*'
+
+# This is disabled because some demos use UTF-8
+AsciiComments:
+  Enabled: false
+
+CaseIndentation:
+  IndentWhenRelativeTo: end
+  IndentOneStep: true
+
+# Rubocop enforces the use of is_a? instead of kind_of?
+# Which is contrary to modelling practice.
+ClassCheck:
+  Enabled: false
+  
+ClassLength:
+  Max: 250
+  CountComments: false  
+
+ConstantName:  
+  Enabled: false
+  
+CyclomaticComplexity:
+  Enabled: false
+  
+DefWithParentheses:  
+  Enabled: false
+  
+Documentation:
+  Enabled: false
+  
+EmptyLines:
+  Enabled: false
+  
+EmptyLinesAroundBody:
+  Enabled: false  
+
+Encoding:
+  Enabled: false
+  
+IndentationWidth :
+  Enabled: false
+  
+  
+# Avoid methods longer than 50 lines of code
+MethodLength:
+  Max: 50
+  CountComments: false 
+ 
+NonNilCheck:
+  Enabled: false
+
+NumericLiterals:
+  Enabled: false
+  
+RaiseArgs:
+  Enabled: false
+  
+RedundantReturn:
+  Enabled: false
+
+SpaceInsideBrackets:
+  Enabled: false
+
+TrailingWhitespace:
+  Enabled: false
+  
