@@ -3,6 +3,7 @@ require_relative '../../spec_helper'
 require_relative '../../../lib/rley/syntax/verbatim_symbol'
 require_relative '../../../lib/rley/syntax/non_terminal'
 require_relative '../../../lib/rley/syntax/production'
+require_relative '../../../lib/rley/parser/token'
 # Load the class under test
 require_relative '../../../lib/rley/parser/earley_parser'
 
@@ -47,6 +48,34 @@ module Rley # Open this namespace to avoid module qualifier prefixes
     let(:prod_A2) { Syntax::Production.new(nt_A, [b_]) }
     let(:grammar_abc) { Syntax::Grammar.new([prod_S, prod_A1, prod_A2]) }
     
+    # Helper method that mimicks the output of a tokenizer
+    # for the language specified by gramma_abc
+    def grm1_tokens()
+      tokens = [
+        Token.new('a', a_),
+        Token.new('a', a_),
+        Token.new('b', b_),
+        Token.new('c', c_),
+        Token.new('c', c_)
+      ]
+      
+      return tokens
+    end
+    
+    
+    # Grammar 2: categorical syllogisms
+    # Every <A> is a <B>
+    # Some <A> is a <B>
+    # No <A> is a <B>
+    # Some <A> is not a <B>
+    # A, B : English common nouns such as 'cat' and 'animal'
+    # Every A is not a B
+    # No A is not a B
+    # P is a B
+    # P is not a B
+    # P can be any English proper name such as Socrates.
+    
+    
     # Default instantiation rule
     subject { EarleyParser.new(grammar_abc) }
     
@@ -61,6 +90,12 @@ module Rley # Open this namespace to avoid module qualifier prefixes
       
       it 'should know its dotted items' do
         expect(subject.dotted_items.size).to eq(8)
+      end
+    end # context
+    
+    context 'Parsing: ' do
+      it 'should parse simple input' do
+        expect { subject.parse(grm1_tokens) }.not_to raise_error
       end
     end # context
     

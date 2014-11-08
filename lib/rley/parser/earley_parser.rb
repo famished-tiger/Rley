@@ -18,6 +18,9 @@ module Rley # This module is used as a namespace
         @dotted_items = build_dotted_items(aGrammar)
       end
       
+      def parse(aTokenSequence)
+      end
+      
       private
       
       def build_dotted_items(aGrammar)
