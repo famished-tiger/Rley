@@ -25,13 +25,24 @@ class DottedItem
     @production = aProduction
     @position = valid_position(aPosition)
   end
+  
+  # Return the symbol after the dot.
+  # nil is returned if the dot is at the end
+  def next_symbol()
+    return production.rhs[position]
+  end
 
+  # An item with the dot in front of a non-terminal is called 
+  # predicted item
   def predicted_item?()
   end
-
+  
+  # A dotted item is called a reduce item if the dot is at the end.
   def reduce_item?()
+    return position < 0
   end
 
+  # An item with the dot in front of a terminal is called a shift item
   def shift_item?()
   end
 

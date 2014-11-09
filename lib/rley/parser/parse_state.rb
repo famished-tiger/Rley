@@ -25,6 +25,17 @@ module Rley # This module is used as a namespace
 
         return result
       end
+      
+      # Returns true if the dot is at the end of the rhs of the production.
+      # In other words, the complete rhs matches the input.
+      def complete?()
+        return dotted_rule.reduce_item?
+      end
+      
+      # Next expected symbol in the production
+      def next_symbol()
+        return dotted_rule.next_symbol
+      end
 
     end # class
 

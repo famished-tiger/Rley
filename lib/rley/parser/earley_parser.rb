@@ -21,8 +21,18 @@ module Rley # This module is used as a namespace
       
       def parse(aTokenSequence)
         result = Parsing.new(start_dotted_item, aTokenSequence)
+        
         (0..aTokenSequence.size).each do |i|
           result.chart[i].each do |state|
+            if state.complete?  # parse reached end of production
+              completer(state, i)
+            else
+              if state.next_symbol.kind_of?(Syntax::NonTerminal)
+                predictor(state, i)
+              else
+                scanner(state, i)
+              end
+            end
           end
         end
         
@@ -48,6 +58,20 @@ module Rley # This module is used as a namespace
       def start_dotted_item()
         return dotted_items[0]
       end
+      
+      # procedure PREDICTOR((A → α•bβ, i), j, grammar)
+      # for each (b → γ) in GRAMMAR-RULES-FOR(b, grammar) do
+          # ADD-TO-SET((b → •γ, j), chart[j])
+      # end
+      def predictor(aState, aPosition)
+      end
+      
+      # procedure ADD-TO-SET(state, chart-entry)
+      # if state is not already in chart-entry then
+        # PUSH(state, chart-entry)
+      # end
+      # TODO
+
     end # class
   
   end # module

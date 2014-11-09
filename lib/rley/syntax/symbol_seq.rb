@@ -1,23 +1,18 @@
+require 'forwardable'
+
 module Rley # This module is used as a namespace
   module Syntax # This module is used as a namespace
   
     # A symbol sequence is a suite of grammar symbols
     class SymbolSeq
+      extend Forwardable
+      def_delegators :@members, :empty?, :size, :[]
+      
       # The sequence of symbols
       attr_reader(:members)
       
       def initialize(theSymbols)
         @members = theSymbols.dup
-      end
-      
-      # Tell whether the sequence is empty.
-      # @return [true / false] true only if the sequence has no symbol in it.
-      def empty?()
-        return members.empty?
-      end
-      
-      def size()
-        return members.size
       end
       
       # Equality operator.

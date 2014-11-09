@@ -23,6 +23,10 @@ module Rley # Open this namespace to avoid module qualifier prefixes
     let(:other_prod) do
       Syntax::Production.new(nt_sentence, [t_a])
     end
+    
+    let(:empty_prod) do
+      Syntax::Production.new(nt_sentence,[])
+    end
 
 
     subject { DottedItem.new(sample_prod, 1) }
@@ -62,6 +66,22 @@ module Rley # Open this namespace to avoid module qualifier prefixes
       end
 
     end # context
+
+    context 'Provided service:' do
+      it 'should whether it is a reduce item' do
+        expect(subject).not_to be_reduce_item
+
+        first_instance = DottedItem.new(sample_prod, 3)
+        expect(first_instance).to be_reduce_item
+
+        second_instance = DottedItem.new(empty_prod, 0)
+        expect(second_instance).to be_reduce_item        
+      end
+      
+      it 'should know the symbol after the dot' do
+        expect(subject.next_symbol).to eq(t_b)
+      end
+    end
 
   end # describe
 
