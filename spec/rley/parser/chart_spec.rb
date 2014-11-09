@@ -24,13 +24,15 @@ module Rley # Open this namespace to avoid module qualifier prefixes
       it 'should have a seed state in first state_set' do
         seed_state = ParseState.new(dotted_rule, 0)
         expect(subject.state_sets[0].first).to eq(seed_state)
+        
+        # Shorthand syntax
+        expect(subject[0].first).to eq(seed_state)    
       end
 
       it 'should have the correct state_set count' do
-        expect(subject.state_sets.size).to eq(count_token)
+        expect(subject.state_sets.size).to eq(count_token + 1)
       end
       
-
     end # context
     
   end # describe

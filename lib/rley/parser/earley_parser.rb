@@ -1,5 +1,6 @@
 require_relative '../syntax/grammar'
 require_relative 'dotted_item'
+require_relative 'parsing'
 
 module Rley # This module is used as a namespace
   module Parser # This module is used as a namespace
@@ -19,6 +20,13 @@ module Rley # This module is used as a namespace
       end
       
       def parse(aTokenSequence)
+        result = Parsing.new(start_dotted_item, aTokenSequence)
+        (0..aTokenSequence.size).each do |i|
+          result.chart[i].each do |state|
+          end
+        end
+        
+        return result
       end
       
       private
@@ -35,6 +43,10 @@ module Rley # This module is used as a namespace
         end
         
         return items
+      end
+      
+      def start_dotted_item()
+        return dotted_items[0]
       end
     end # class
   

@@ -5,7 +5,7 @@ module Rley # This module is used as a namespace
   
     class StateSet
       extend Forwardable
-      def_delegators :states, :empty?, :size, :first
+      def_delegators :states, :empty?, :size, :first, :each
       
       # The set of parse states
       attr_reader(:states)
