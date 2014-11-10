@@ -30,6 +30,19 @@ module Rley # Open this namespace to avoid module qualifier prefixes
         subject.add_state(state2)
         expect(subject.states).to eq([state1, state2])
       end
+      
+      it 'should list the states expecting a given terminal' do
+        # Case of no state
+        expect(subject.states_expecting(:a)).to be_empty
+
+        # Adding states
+        subject.add_state(state1)
+        subject.add_state(state2)        
+        allow(dotted_rule1).to receive(:next_symbol).and_return(:b)
+        allow(dotted_rule2).to receive(:next_symbol).and_return(:a)        
+        expect(subject.states_expecting(:a)).to eq([state2])
+        expect(subject.states_expecting(:b)).to eq([state1])
+      end
 
     end # context
     

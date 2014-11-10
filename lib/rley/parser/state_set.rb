@@ -15,8 +15,21 @@ module Rley # This module is used as a namespace
         @states = []
       end
       
+      # Add the given state (if it isn't yet in the set)
       def add_state(aState)
-        @states << aState
+        @states << aState unless include?(aState)
+      end
+      
+      # The list of ParseState that expect the given terminal
+      def states_expecting(aTerminal)
+        return states.select { |s| s.dotted_rule.next_symbol == aTerminal }
+      end
+      
+      private
+      
+      def include?(aState)
+        # TODO: make it better than linear search
+        return states.include?(aState)
       end
 
     end # class

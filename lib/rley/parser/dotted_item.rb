@@ -18,6 +18,7 @@ class DottedItem
   # Index of the next symbol (from the rhs) after the 'dot'.
   # If the dot is at the end of the rhs (i.e.) there is no next
   # symbol, then the position takes the value -1.
+  # It the rhs is empty, then the postion is -2
   attr_reader(:position)
 
   # @param aProduction
@@ -26,20 +27,29 @@ class DottedItem
     @position = valid_position(aPosition)
   end
   
+  # Return true if the dot position is at the start of the rhs.
+  def at_start?()
+    return position == 0 || position == -2
+  end
+
+  # An item with the dot at the beginning is called 
+  # predicted item  
+  alias :predicted_item? :at_start?
+
+  # A dotted item is called a reduce item if the dot is at the end.
+  def reduce_item?()
+    return position < 0 # Either -1 or -2
+  end
+  
+  # The non-terminal symbol that is on the left-side of the production
+  def lhs()
+    return production.lhs
+  end
+  
   # Return the symbol after the dot.
   # nil is returned if the dot is at the end
   def next_symbol()
     return production.rhs[position]
-  end
-
-  # An item with the dot in front of a non-terminal is called 
-  # predicted item
-  def predicted_item?()
-  end
-  
-  # A dotted item is called a reduce item if the dot is at the end.
-  def reduce_item?()
-    return position < 0
   end
 
   # An item with the dot in front of a terminal is called a shift item

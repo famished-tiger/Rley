@@ -23,7 +23,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
     let(:other_prod) do
       Syntax::Production.new(nt_sentence, [t_a])
     end
-    
+
     let(:empty_prod) do
       Syntax::Production.new(nt_sentence,[])
     end
@@ -45,6 +45,10 @@ module Rley # Open this namespace to avoid module qualifier prefixes
 
       it 'should know its production' do
         expect(subject.production).to eq(sample_prod)
+      end
+      
+      it 'should know the lhs of the production' do
+        expect(subject.lhs).to eq(sample_prod.lhs)
       end
 
       it 'should know its position' do
@@ -68,6 +72,18 @@ module Rley # Open this namespace to avoid module qualifier prefixes
     end # context
 
     context 'Provided service:' do
+      it 'should whether its dot is at start position' do
+        expect(subject).not_to be_at_start
+        
+        # At start position
+        instance1 = DottedItem.new(sample_prod, 0)
+        expect(instance1).to be_at_start
+        
+        # At start/end at the same time (production is empty)
+        instance2 = DottedItem.new(Syntax::Production.new(nt_sentence, []), 0)
+        expect(instance2).to be_at_start
+      end
+
       it 'should whether it is a reduce item' do
         expect(subject).not_to be_reduce_item
 
@@ -75,9 +91,9 @@ module Rley # Open this namespace to avoid module qualifier prefixes
         expect(first_instance).to be_reduce_item
 
         second_instance = DottedItem.new(empty_prod, 0)
-        expect(second_instance).to be_reduce_item        
+        expect(second_instance).to be_reduce_item
       end
-      
+
       it 'should know the symbol after the dot' do
         expect(subject.next_symbol).to eq(t_b)
       end

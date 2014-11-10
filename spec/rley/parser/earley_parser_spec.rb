@@ -15,20 +15,20 @@ module Rley # Open this namespace to avoid module qualifier prefixes
     let(:kw_true) { Syntax::VerbatimSymbol('true') }
     let(:kw_false) { Syntax::VerbatimSymbol('false') }
     let(:kw_null) { Syntax::VerbatimSymbol('null') }
-    let(:number) do 
+    let(:number) do
       number_pattern = /[-+]?[0-9]+(\.[0-9]+)?([eE][-+]?[0-9]+)?/
-      Syntax::Literal('number', number_pattern) 
+      Syntax::Literal('number', number_pattern)
     end
     let(:string) do
       string_pattern = /"([^\\"]|\\.)*"/
-      Syntax::Literal('string', string_pattern) 
+      Syntax::Literal('string', string_pattern)
     end
     let(:lbracket) { Syntax::VerbatimSymbol('[') }
     let(:rbracket) { Syntax::VerbatimSymbol(']') }
     let(:comma) { Syntax::VerbatimSymbol(',') }
     let(:array) { Syntax::NonTerminal('Array') }
     let(:object) { Syntax::NonTerminal('Object') }
-    
+
     let(:array_prod) do
       Production.new(array, )
     end
@@ -47,7 +47,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
     let(:prod_A1) { Syntax::Production.new(nt_A, [a_, nt_A, c_]) }
     let(:prod_A2) { Syntax::Production.new(nt_A, [b_]) }
     let(:grammar_abc) { Syntax::Grammar.new([prod_S, prod_A1, prod_A2]) }
-    
+
     # Helper method that mimicks the output of a tokenizer
     # for the language specified by gramma_abc
     def grm1_tokens()
@@ -58,11 +58,11 @@ module Rley # Open this namespace to avoid module qualifier prefixes
         Token.new('c', c_),
         Token.new('c', c_)
       ]
-      
+
       return tokens
     end
-    
-    
+
+
     # Grammar 2: categorical syllogisms
     # Every <A> is a <B>
     # Some <A> is a <B>
@@ -74,31 +74,51 @@ module Rley # Open this namespace to avoid module qualifier prefixes
     # P is a B
     # P is not a B
     # P can be any English proper name such as Socrates.
-    
-    
+
+
     # Default instantiation rule
     subject { EarleyParser.new(grammar_abc) }
-    
-    context 'Initialization:' do 
+
+    context 'Initialization:' do
       it 'should be created with a grammar' do
         expect { EarleyParser.new(grammar_abc) }.not_to raise_error
       end
-      
+
       it 'should know its grammar' do
         expect(subject.grammar).to eq(grammar_abc)
       end
-      
+
       it 'should know its dotted items' do
         expect(subject.dotted_items.size).to eq(8)
       end
+
+      it 'should have its start mapping initialized' do
+        expect(subject.start_mapping.size).to eq(2)
+        
+        start_items_S = subject.start_mapping[nt_S]
+        expect(start_items_S.size).to eq(1)
+        expect(start_items_S[0].production).to eq(prod_S)
+        
+        start_items_A = subject.start_mapping[nt_A]
+        expect(start_items_A.size).to eq(2)
+        
+        # Assuming that dotted_items are created in same order 
+        # than production in grammar.
+        expect(start_items_A[0].production).to eq(prod_A1)
+        expect(start_items_A[1].production).to eq(prod_A2)
+      end
+      
+      it 'should have its next mapping initialized' do
+        expect(subject.next_mapping.size).to eq(5)
+      end
     end # context
-    
+
     context 'Parsing: ' do
       it 'should parse simple input' do
         expect { subject.parse(grm1_tokens) }.not_to raise_error
       end
     end # context
-    
+
   end # describe
 
   end # module
@@ -106,4 +126,3 @@ end # module
 
 # End of file
 
-  
