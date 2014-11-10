@@ -9,7 +9,7 @@ module Rley # This module is used as a namespace
       attr_reader(:origin)
 
       def initialize(aDottedRule, theOrigin)
-        @dotted_rule = aDottedRule
+        @dotted_rule = valid_dotted_rule(aDottedRule)
         @origin = theOrigin
       end
 
@@ -35,6 +35,15 @@ module Rley # This module is used as a namespace
       # Next expected symbol in the production
       def next_symbol()
         return dotted_rule.next_symbol
+      end
+      
+      private
+      
+      # Return the validated dotted item(rule)
+      def valid_dotted_rule(aDottedRule)
+        fail StandardError, 'Dotted item cannot be nil' if aDottedRule.nil?
+        
+        return aDottedRule
       end
 
     end # class

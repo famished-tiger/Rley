@@ -30,17 +30,23 @@ module Rley # Open this namespace to avoid module qualifier prefixes
       Syntax::Production.new(nt_sentence,[])
     end
   
-    let(:origin_value) { 3 }
+    let(:origin_val) { 3 }
     let(:dotted_rule) { DottedItem.new(sample_prod, 2) }
     let(:other_dotted_rule) { double('mock-dotted-item') }
 
     # Default instantiation rule
-    subject { ParseState.new(dotted_rule, origin_value) }
+    subject { ParseState.new(dotted_rule, origin_val) }
 
     context 'Initialization:' do
 
-      it 'should be created with a lexeme and a terminal argument' do
-        expect { ParseState.new(dotted_rule, origin_value) }.not_to raise_error
+      it 'should be created with a dotted item and a origin position' do
+        expect { ParseState.new(dotted_rule, origin_val) }.not_to raise_error
+      end
+      
+      it 'should complain when the dotted rule is nil' do
+        err = StandardError
+        msg = 'Dotted item cannot be nil'
+        expect { ParseState.new(nil, 2) }.to raise_error(err, msg)
       end
 
       it 'should know the related dotted rule' do
@@ -48,7 +54,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
       end
 
       it 'should know the origin value' do
-        expect(subject.origin).to eq(origin_value)
+        expect(subject.origin).to eq(origin_val)
       end
 
 
@@ -60,7 +66,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
       end
 
       it 'should compare with another' do
-        equal = ParseState.new(dotted_rule, origin_value)
+        equal = ParseState.new(dotted_rule, origin_val)
         expect(subject == equal).to eq(true)
 
         # Same dotted_rule, different origin

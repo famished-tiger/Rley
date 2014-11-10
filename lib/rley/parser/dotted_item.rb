@@ -49,7 +49,7 @@ class DottedItem
   # Return the symbol after the dot.
   # nil is returned if the dot is at the end
   def next_symbol()
-    return production.rhs[position]
+    result = (position < 0) ? nil : production.rhs[position]
   end
 
   # An item with the dot in front of a terminal is called a shift item

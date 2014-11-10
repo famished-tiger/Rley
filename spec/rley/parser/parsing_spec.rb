@@ -72,6 +72,13 @@ module Rley # Open this namespace to avoid module qualifier prefixes
         expect(subject.chart[1].size).to eq(1)
       end
       
+      it 'should complain when trying to push a nil dotted item' do
+        err = StandardError
+        msg = 'Dotted item may not be nil'
+        expect { subject.push_state(nil, 1, 1) }.to raise_error(err, msg)
+      end
+      
+      
       it 'should retrieve the parse states that expect a given terminal' do
         item1 = DottedItem.new(prod_A1, 2)
         item2 = DottedItem.new(prod_A1, 1)

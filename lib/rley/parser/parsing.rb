@@ -16,6 +16,7 @@ module Rley # This module is used as a namespace
       # Push a parse state (dotted item + origin) to the
       # chart entry with given index if it isn't yet in the chart entry.
       def push_state(aDottedItem, anOrigin, aChartIndex)
+        fail StandardError, 'Dotted item may not be nil' if aDottedItem.nil?
         chart.add_state(aDottedItem, anOrigin, aChartIndex)
       end
 
