@@ -4,8 +4,8 @@ module Rley # This module is used as a namespace
     class ParseState
       attr_reader(:dotted_rule)
 
-      # the position in the input at which the matching
-      # of the production began
+      # the position in the input that matches the beginning of the rhs
+      # of the production.
       attr_reader(:origin)
 
       def initialize(aDottedRule, theOrigin)

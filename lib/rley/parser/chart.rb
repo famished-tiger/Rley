@@ -10,7 +10,7 @@ module Rley # This module is used as a namespace
 
       def initialize(startDottedItem, tokenCount)
         @state_sets = Array.new(tokenCount + 1) {|_| StateSet.new }
-        add_state(startDottedItem, 0, 0)
+        push_state(startDottedItem, 0, 0)
       end
 
       # The dotted item/rule used to seed the parse chart.
@@ -25,10 +25,10 @@ module Rley # This module is used as a namespace
         return state_sets[index]
       end
 
-      # Add a parse state for the chart entry with given index
-      def add_state(aDottedItem, anOrigin, anIndex)
+      # Push a parse state for the chart entry with given index
+      def push_state(aDottedItem, anOrigin, anIndex)
         new_state = ParseState.new(aDottedItem, anOrigin)
-        self[anIndex].add_state(new_state)
+        self[anIndex].push_state(new_state)
       end
 
     end # class

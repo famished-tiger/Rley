@@ -9,12 +9,12 @@ module Rley # Open this namespace to avoid module qualifier prefixes
   describe Literal do
     let(:sample_name) { 'ordinal' }
     subject { Literal.new(sample_name, /\d+/) }
-    
+
     context 'Initialization:' do
       it 'should be created with a name and regexp' do
         expect { Literal.new(sample_name, /\d+/) }.not_to raise_error
       end
-      
+
       it 'should know its name' do
         expect(subject.name).to eq(sample_name)
       end
@@ -23,7 +23,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
         expect(subject.pattern).to eq(/\d+/)
       end
     end # context
-    
+
   end # describe
 
   end # module

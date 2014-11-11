@@ -63,19 +63,6 @@ module Rley # Open this namespace to avoid module qualifier prefixes
     end
 
 
-    # Grammar 2: categorical syllogisms
-    # Every <A> is a <B>
-    # Some <A> is a <B>
-    # No <A> is a <B>
-    # Some <A> is not a <B>
-    # A, B : English common nouns such as 'cat' and 'animal'
-    # Every A is not a B
-    # No A is not a B
-    # P is a B
-    # P is not a B
-    # P can be any English proper name such as Socrates.
-
-
     # Default instantiation rule
     subject { EarleyParser.new(grammar_abc) }
 
@@ -94,29 +81,155 @@ module Rley # Open this namespace to avoid module qualifier prefixes
 
       it 'should have its start mapping initialized' do
         expect(subject.start_mapping.size).to eq(2)
-        
+
         start_items_S = subject.start_mapping[nt_S]
         expect(start_items_S.size).to eq(1)
         expect(start_items_S[0].production).to eq(prod_S)
-        
+
         start_items_A = subject.start_mapping[nt_A]
         expect(start_items_A.size).to eq(2)
-        
-        # Assuming that dotted_items are created in same order 
+
+        # Assuming that dotted_items are created in same order
         # than production in grammar.
         expect(start_items_A[0].production).to eq(prod_A1)
         expect(start_items_A[1].production).to eq(prod_A2)
       end
-      
+
       it 'should have its next mapping initialized' do
         expect(subject.next_mapping.size).to eq(5)
       end
     end # context
 
     context 'Parsing: ' do
-      it 'should parse simple input' do
+      it 'should parse a valid simple input' do
         parse_result = subject.parse(grm1_tokens)
         expect(parse_result.success?).to eq(true)
+        
+        ######################
+        state_set_0 = parse_result.chart[0]
+        # Expectation chart[0]:
+        # S -> . A, 0
+        # A -> . "a" A "c", 0
+        # A -> . "b", 0
+        expect(state_set_0.states.size).to eq(3)
+        expect(state_set_0.states[0].origin).to eq(0)
+        dotted_rule = state_set_0.states[0].dotted_rule
+        expect(dotted_rule.production).to eq(prod_S)
+        expect(dotted_rule.position).to eq(0)
+        
+        expect(state_set_0.states[1].origin).to eq(0)
+        dotted_rule = state_set_0.states[1].dotted_rule
+        expect(dotted_rule.production).to eq(prod_A1)
+        expect(dotted_rule.position).to eq(0)
+        
+        expect(state_set_0.states[2].origin).to eq(0)
+        dotted_rule = state_set_0.states[2].dotted_rule
+        expect(dotted_rule.production).to eq(prod_A2)
+        expect(dotted_rule.position).to eq(0)
+        
+        ######################
+        state_set_1 = parse_result.chart[1] 
+        expect(state_set_1.states.size).to eq(3)
+        # Expectation chart[1]:
+        # 0: A -> "a" . A "c", 0   # start rule
+        # 1: A -> . "a" A "c", 1   # predict from 0
+        # 2: A -> . "b", 1         # predict from 0
+        expect(state_set_1.states[0].origin).to eq(0)
+        dotted_rule = state_set_1.states[0].dotted_rule
+        expect(dotted_rule.production).to eq(prod_A1)
+        expect(dotted_rule.position).to eq(1)
+        
+        expect(state_set_1.states[1].origin).to eq(1)
+        dotted_rule = state_set_1.states[1].dotted_rule
+        expect(dotted_rule.production).to eq(prod_A1)
+        expect(dotted_rule.position).to eq(0)
+        
+        expect(state_set_1.states[2].origin).to eq(1)
+        dotted_rule = state_set_1.states[2].dotted_rule
+        expect(dotted_rule.production).to eq(prod_A2)
+        expect(dotted_rule.position).to eq(0)
+        
+        ######################
+        state_set_2 = parse_result.chart[2] 
+        expect(state_set_2.states.size).to eq(3)
+        # Expectation chart[2]:
+        # 0: A -> "a" . A "c", 1  # scan from S(0) 1
+        # 1: A -> . "a" A "c", 2  # predict from 0
+        # 2: A -> . "b", 2        # predict from 0
+        expect(state_set_2.states[0].origin).to eq(1)
+        dotted_rule = state_set_2.states[0].dotted_rule
+        expect(dotted_rule.production).to eq(prod_A1)
+        expect(dotted_rule.position).to eq(1)
+        
+        expect(state_set_2.states[1].origin).to eq(2)
+        dotted_rule = state_set_2.states[1].dotted_rule
+        expect(dotted_rule.production).to eq(prod_A1)
+        expect(dotted_rule.position).to eq(0)
+        
+        expect(state_set_2.states[2].origin).to eq(2)
+        dotted_rule = state_set_2.states[2].dotted_rule
+        expect(dotted_rule.production).to eq(prod_A2)
+        expect(dotted_rule.position).to eq(0)
+        
+        ######################
+        state_set_3 = parse_result.chart[3] 
+        expect(state_set_3.states.size).to eq(2)
+        # Expectation chart[3]:
+        # 0: A -> "b" ., 2      # scan from S(2) 2
+        # 1: A -> "a" A . "c", 1 # complete from 0 and S(2) 0
+        expect(state_set_3.states[0].origin).to eq(2)
+        dotted_rule = state_set_3.states[0].dotted_rule
+        expect(dotted_rule.production).to eq(prod_A2)
+        expect(dotted_rule.position).to eq(-1)
+        
+        expect(state_set_3.states[1].origin).to eq(1)
+        dotted_rule = state_set_3.states[1].dotted_rule
+        expect(dotted_rule.production).to eq(prod_A1)
+        expect(dotted_rule.position).to eq(2)
+        
+        ######################
+        state_set_4 = parse_result.chart[4] 
+        expect(state_set_4.states.size).to eq(2)
+        # Expectation chart[4]:
+        # 0: A -> "a" A "c" ., 1  # scan from S(3) 1
+        # 1: A -> "a" A . "c", 0  # complete from 0 and S(1) 0
+        expect(state_set_4.states[0].origin).to eq(1)
+        dotted_rule = state_set_4.states[0].dotted_rule
+        expect(dotted_rule.production).to eq(prod_A1)
+        expect(dotted_rule.position).to eq(-1)
+        
+        expect(state_set_4.states[1].origin).to eq(0)
+        dotted_rule = state_set_4.states[1].dotted_rule
+        expect(dotted_rule.production).to eq(prod_A1)
+        expect(dotted_rule.position).to eq(2)
+        
+        ######################
+        state_set_5 = parse_result.chart[5] 
+        expect(state_set_5.states.size).to eq(2)
+        # Expectation chart[5]:
+        # 0: A -> "a" A "c" ., 0  # scan from S(4) 1
+        # 1: S -> A ., 0  # complete from 0 and S(0) 0
+        expect(state_set_5.states[0].origin).to eq(0)
+        dotted_rule = state_set_5.states[0].dotted_rule
+        expect(dotted_rule.production).to eq(prod_A1)
+        expect(dotted_rule.position).to eq(-1)
+        
+        expect(state_set_5.states[1].origin).to eq(0)
+        dotted_rule = state_set_5.states[1].dotted_rule
+        expect(dotted_rule.production).to eq(prod_S)
+        expect(dotted_rule.position).to eq(-1)
+      end
+
+      it 'should parse an invalid simple input' do
+        # Parse an erroneous input (b is missing)
+        wrong = [
+          Token.new('a', a_),
+          Token.new('a', a_),
+          Token.new('c', c_),
+          Token.new('c', c_)
+        ]
+        parse_result = subject.parse(wrong)
+        expect(parse_result.success?).to eq(false)
       end
     end # context
 

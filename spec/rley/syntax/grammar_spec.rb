@@ -28,7 +28,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
       symbols.each { |symb| result[symb] = VerbatimSymbol.new(symb) }
       result
     end
-    
+
     # Grammar 1: arithmetical expressions with integers
     let(:grm1_ops) do
       operators = %w[+ - * / ( ) ]
@@ -65,7 +65,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
       alternatives = [ [term], [expression, add_op, term]]
       alternate_prods(expression, alternatives)
     end
-    
+
     # Grammar 2: A very simple language
     # S ::= A.
     # A ::= "a" A "c".
@@ -135,7 +135,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
       it 'should know its start symbol' do
         expect(subject.start_symbol).to eq(nt_S)
       end
-      
+
       it 'should know all its symbols' do
         expect(subject.symbols).to eq([nt_S, nt_A, a_, c_, b_])
       end

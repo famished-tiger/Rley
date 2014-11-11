@@ -33,9 +33,9 @@ module Rley # Open this namespace to avoid module qualifier prefixes
         expect(subject.rhs).to eq(sequence)
         expect(subject.body).to eq(sequence)
       end
-      
+
       it 'should know whether its rhs is empty' do
-        expect(subject).not_to be_empty  
+        expect(subject).not_to be_empty
 
         instance = Production.new(sentence, [])
         expect(instance).to be_empty

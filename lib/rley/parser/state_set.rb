@@ -15,8 +15,10 @@ module Rley # This module is used as a namespace
         @states = []
       end
       
-      # Add the given state (if it isn't yet in the set)
-      def add_state(aState)
+      # Append the given state (if it isn't yet in the set) 
+      # to the list of states
+      # @param aState [ParseState] the state to push.
+      def push_state(aState)
         @states << aState unless include?(aState)
       end
       

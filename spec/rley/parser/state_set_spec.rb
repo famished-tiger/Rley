@@ -23,11 +23,11 @@ module Rley # Open this namespace to avoid module qualifier prefixes
 
     context 'Provided services:' do
 
-      it 'should add state' do
+      it 'should push a state' do
         expect(subject.states).to be_empty
-        expect { subject.add_state(state1) }.not_to raise_error
+        expect { subject.push_state(state1) }.not_to raise_error
         expect(subject).not_to be_empty
-        subject.add_state(state2)
+        subject.push_state(state2)
         expect(subject.states).to eq([state1, state2])
       end
 
@@ -36,8 +36,8 @@ module Rley # Open this namespace to avoid module qualifier prefixes
         expect(subject.states_expecting(:a)).to be_empty
 
         # Adding states
-        subject.add_state(state1)
-        subject.add_state(state2)
+        subject.push_state(state1)
+        subject.push_state(state2)
         allow(dotted_rule1).to receive(:next_symbol).and_return(:b)
         allow(dotted_rule2).to receive(:next_symbol).and_return(:a)
         expect(subject.states_expecting(:a)).to eq([state2])
@@ -51,8 +51,8 @@ module Rley # Open this namespace to avoid module qualifier prefixes
         expect(subject.states_for(a_prod)).to be_empty
 
         # Adding states
-        subject.add_state(state1)
-        subject.add_state(state2)
+        subject.push_state(state1)
+        subject.push_state(state2)
         allow(dotted_rule1).to receive(:production).and_return(:dummy)
         allow(dotted_rule2).to receive(:production).and_return(a_prod)
         expect(subject.states_for(a_prod)).to eq([state2])

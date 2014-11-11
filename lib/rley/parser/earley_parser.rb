@@ -84,7 +84,10 @@ module Rley # This module is used as a namespace
         return mapping
       end
 
-
+      # Create a Hash with pairs of the kind:
+      # dotted item => next dotted item
+      # next dotted item uses same production and the dot
+      # position is advanced by one symbol
       def build_next_mapping(theDottedItems)
         mapping = {}
         theDottedItems.each_cons(2) do |(item1, item2)|
@@ -95,16 +98,31 @@ module Rley # This module is used as a namespace
         return mapping
       end
 
-
+      # The dotted item for the start production and
+      # with the dot at the beginning of the rhs
       def start_dotted_item()
-        # TODO: remove assumption that first dotted_item is for start production
+        # TODO: remove assumption that first dotted_item is 
+        # for start production
         return dotted_items[0]
       end
 
-      # procedure PREDICTOR((A → α•bβ, i), j, grammar)
-      # for each (b → γ) in GRAMMAR-RULES-FOR(b, grammar) do
-          # ADD-TO-SET((b → •γ, j), chart[j])
-      # end
+      
+      # This method is called when a parse state for chart entry at position 
+      # 'pos' expects as next symbol a non-terminal.
+      # Given a predicted non-terminal 'nt' and a current token position
+      # 'pos':
+      # For each production with 'nt' as lhs, retrieve their corresponding
+      # initial dotted rules nt -> . xxxx
+      # For retrieved dotted rule, add a parse state to the chart entry at 'pos':
+      #   <initial dotted rule, pos, pos>
+      # In short, one adds states to chart[pos], one per production that
+      # specifies how to reduce some input into the predicted nt (non-terminal)
+      # @param aParsing [Parsing] the object that encapsulates the results
+      #   result of the parsing process
+      # @param aNonTerminal [NonTerminal] a non-terminal symbol that 
+      #   immediately follows a dot 
+      #   (= is expected/predicted by the production rule)
+      # @param aPosition [Fixnum] position in the input token sequence.
       def prediction(aParsing, aNonTerminal, aPosition)
         # Retrieve all start dotted items for productions
         # with aNonTerminal as its lhs
@@ -114,28 +132,35 @@ module Rley # This module is used as a namespace
         end
       end
 
-      # procedure SCANNER((A → α•B, i), j)
-          # if B ⊂ PARTS-OF-SPEECH(word[j]) then
-              # ADD-TO-SET((B → word[j], j), chart[j + 1])
-          # end
-      # Given k is current input position
-      # If a is the next symbol in the input stream,
-      # for every state in S(k) of the form (X → α • a β, j),
-      # add (X → α a • β, j) to S(k+1).
+      # This method is called when a parse state for chart entry at position 
+      # 'pos' expects a terminal as next symbol.
+      # If the input token matches the terminal symbol then:
+      # Retrieve all parse states for chart entry at 'aPosition'
+      # that have the given terminal as next symbol.
+      # For each s of the above states, push to chart entry aPosition + 1 
+      # a new state like: <next dotted rule, s.origin, aPosition + 1>
+      # In other words, we place the dotted rules in the next state set 
+      # such that the dot appears after terminal.
+      # @param aParsing [Parsing] the object that encapsulates the results
+      #   result of the parsing process
+      # @param Terminal [Terminal] a terminal symbol that 
+      #   immediately follows a dot 
+      # @param aPosition [Fixnum] position in the input token sequence.
       def scanning(aParsing, aTerminal, aPosition)
         aParsing.scanning(aTerminal, aPosition) { |item|
           next_mapping[item]
         }
       end
       
-      # procedure COMPLETER((B → γ•, j), k)
-      # for each (A → α•Bβ, i) in chart[j] do
-          # ADD-TO-SET((A → αB•β, i), chart[k])
-      # end
-      # Parse position reached end of production
-      # For every state in S(k) of the form (X → γ •, j), 
-      # find states in S(j) of the form (Y → α • X β, i) 
-      # and add (Y → α X • β, i) to S(k).
+
+      # This method is called when a parse state at chart entry reaches the end
+      # of a production.
+      # For every state in chart[aPosition] that is complete (i.e. of the form:
+      #   { dotted_rule: X -> γ •, origin: j}),
+      # Find states s in chart[j] of the form {dotted_rule: Y -> α • X β, origin: i}
+      #   In other words, rules that predicted the non-terminal X.
+      # For each s, add to chart[aPosition] a state of the form
+      #   { dotted_rule: Y → α X • β, origin: i})
       def completion(aParsing, aState, aPosition)
         aParsing.completion(aState, aPosition) { |item|
           next_mapping[item]
