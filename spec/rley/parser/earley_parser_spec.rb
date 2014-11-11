@@ -101,123 +101,101 @@ module Rley # Open this namespace to avoid module qualifier prefixes
     end # context
 
     context 'Parsing: ' do
+      # Helper method. Compare the data from the parse state
+      # with values from expectation hash.
+      def compare_state(aState, expectations)
+        expect(aState.origin).to eq(expectations[:origin])
+        dotted_item = aState.dotted_rule
+        expect(dotted_item.production).to eq(expectations[:production])
+        expect(dotted_item.position).to eq(expectations[:dot])
+      end
+
       it 'should parse a valid simple input' do
         parse_result = subject.parse(grm1_tokens)
         expect(parse_result.success?).to eq(true)
-        
+
         ######################
         state_set_0 = parse_result.chart[0]
         # Expectation chart[0]:
         # S -> . A, 0
         # A -> . "a" A "c", 0
         # A -> . "b", 0
-        expect(state_set_0.states.size).to eq(3)
-        expect(state_set_0.states[0].origin).to eq(0)
-        dotted_rule = state_set_0.states[0].dotted_rule
-        expect(dotted_rule.production).to eq(prod_S)
-        expect(dotted_rule.position).to eq(0)
+        expectations = { origin: 0, production: prod_S, dot: 0 }
+        compare_state(state_set_0.states[0], expectations)
+
+        expectations = { origin: 0, production: prod_A1, dot: 0 }
+        compare_state(state_set_0.states[1], expectations)
         
-        expect(state_set_0.states[1].origin).to eq(0)
-        dotted_rule = state_set_0.states[1].dotted_rule
-        expect(dotted_rule.production).to eq(prod_A1)
-        expect(dotted_rule.position).to eq(0)
-        
-        expect(state_set_0.states[2].origin).to eq(0)
-        dotted_rule = state_set_0.states[2].dotted_rule
-        expect(dotted_rule.production).to eq(prod_A2)
-        expect(dotted_rule.position).to eq(0)
-        
+        expectations = { origin: 0, production: prod_A2, dot: 0 }
+        compare_state(state_set_0.states[2], expectations)
+
         ######################
-        state_set_1 = parse_result.chart[1] 
+        state_set_1 = parse_result.chart[1]
         expect(state_set_1.states.size).to eq(3)
         # Expectation chart[1]:
         # 0: A -> "a" . A "c", 0   # start rule
         # 1: A -> . "a" A "c", 1   # predict from 0
         # 2: A -> . "b", 1         # predict from 0
-        expect(state_set_1.states[0].origin).to eq(0)
-        dotted_rule = state_set_1.states[0].dotted_rule
-        expect(dotted_rule.production).to eq(prod_A1)
-        expect(dotted_rule.position).to eq(1)
-        
-        expect(state_set_1.states[1].origin).to eq(1)
-        dotted_rule = state_set_1.states[1].dotted_rule
-        expect(dotted_rule.production).to eq(prod_A1)
-        expect(dotted_rule.position).to eq(0)
-        
-        expect(state_set_1.states[2].origin).to eq(1)
-        dotted_rule = state_set_1.states[2].dotted_rule
-        expect(dotted_rule.production).to eq(prod_A2)
-        expect(dotted_rule.position).to eq(0)
-        
+        expectations = { origin: 0, production: prod_A1, dot: 1 }
+        compare_state(state_set_1.states[0], expectations)
+
+        expectations = { origin: 1, production: prod_A1, dot: 0 }
+        compare_state(state_set_1.states[1], expectations)
+
+        expectations = { origin: 1, production: prod_A2, dot: 0 }
+        compare_state(state_set_1.states[2], expectations)
+
         ######################
-        state_set_2 = parse_result.chart[2] 
+        state_set_2 = parse_result.chart[2]
         expect(state_set_2.states.size).to eq(3)
         # Expectation chart[2]:
         # 0: A -> "a" . A "c", 1  # scan from S(0) 1
         # 1: A -> . "a" A "c", 2  # predict from 0
         # 2: A -> . "b", 2        # predict from 0
-        expect(state_set_2.states[0].origin).to eq(1)
-        dotted_rule = state_set_2.states[0].dotted_rule
-        expect(dotted_rule.production).to eq(prod_A1)
-        expect(dotted_rule.position).to eq(1)
-        
-        expect(state_set_2.states[1].origin).to eq(2)
-        dotted_rule = state_set_2.states[1].dotted_rule
-        expect(dotted_rule.production).to eq(prod_A1)
-        expect(dotted_rule.position).to eq(0)
-        
-        expect(state_set_2.states[2].origin).to eq(2)
-        dotted_rule = state_set_2.states[2].dotted_rule
-        expect(dotted_rule.production).to eq(prod_A2)
-        expect(dotted_rule.position).to eq(0)
-        
+        expectations = { origin: 1, production: prod_A1, dot: 1 }
+        compare_state(state_set_2.states[0], expectations)
+
+        expectations = { origin: 2, production: prod_A1, dot: 0 }
+        compare_state(state_set_2.states[1], expectations)
+
+        expectations = { origin: 2, production: prod_A2, dot: 0 }
+        compare_state(state_set_2.states[2], expectations)
+
         ######################
-        state_set_3 = parse_result.chart[3] 
+        state_set_3 = parse_result.chart[3]
         expect(state_set_3.states.size).to eq(2)
         # Expectation chart[3]:
         # 0: A -> "b" ., 2      # scan from S(2) 2
         # 1: A -> "a" A . "c", 1 # complete from 0 and S(2) 0
-        expect(state_set_3.states[0].origin).to eq(2)
-        dotted_rule = state_set_3.states[0].dotted_rule
-        expect(dotted_rule.production).to eq(prod_A2)
-        expect(dotted_rule.position).to eq(-1)
-        
-        expect(state_set_3.states[1].origin).to eq(1)
-        dotted_rule = state_set_3.states[1].dotted_rule
-        expect(dotted_rule.production).to eq(prod_A1)
-        expect(dotted_rule.position).to eq(2)
-        
+        expectations = { origin: 2, production: prod_A2, dot: -1 }
+        compare_state(state_set_3.states[0], expectations)
+
+        expectations = { origin: 1, production: prod_A1, dot: 2 }
+        compare_state(state_set_3.states[1], expectations)
+
         ######################
-        state_set_4 = parse_result.chart[4] 
+        state_set_4 = parse_result.chart[4]
         expect(state_set_4.states.size).to eq(2)
         # Expectation chart[4]:
         # 0: A -> "a" A "c" ., 1  # scan from S(3) 1
         # 1: A -> "a" A . "c", 0  # complete from 0 and S(1) 0
-        expect(state_set_4.states[0].origin).to eq(1)
-        dotted_rule = state_set_4.states[0].dotted_rule
-        expect(dotted_rule.production).to eq(prod_A1)
-        expect(dotted_rule.position).to eq(-1)
-        
-        expect(state_set_4.states[1].origin).to eq(0)
-        dotted_rule = state_set_4.states[1].dotted_rule
-        expect(dotted_rule.production).to eq(prod_A1)
-        expect(dotted_rule.position).to eq(2)
-        
+        expectations = { origin: 1, production: prod_A1, dot: -1 }
+        compare_state(state_set_4.states[0], expectations)
+
+        expectations = { origin: 0, production: prod_A1, dot: 2 }
+        compare_state(state_set_4.states[1], expectations)
+
         ######################
-        state_set_5 = parse_result.chart[5] 
+        state_set_5 = parse_result.chart[5]
         expect(state_set_5.states.size).to eq(2)
         # Expectation chart[5]:
         # 0: A -> "a" A "c" ., 0  # scan from S(4) 1
         # 1: S -> A ., 0  # complete from 0 and S(0) 0
-        expect(state_set_5.states[0].origin).to eq(0)
-        dotted_rule = state_set_5.states[0].dotted_rule
-        expect(dotted_rule.production).to eq(prod_A1)
-        expect(dotted_rule.position).to eq(-1)
-        
-        expect(state_set_5.states[1].origin).to eq(0)
-        dotted_rule = state_set_5.states[1].dotted_rule
-        expect(dotted_rule.production).to eq(prod_S)
-        expect(dotted_rule.position).to eq(-1)
+        expectations = { origin: 0, production: prod_A1, dot: -1 }
+        compare_state(state_set_5.states[0], expectations)
+
+        expectations = { origin: 0, production: prod_S, dot: -1 }
+        compare_state(state_set_5.states[1], expectations)
       end
 
       it 'should parse an invalid simple input' do
