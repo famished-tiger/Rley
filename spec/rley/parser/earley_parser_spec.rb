@@ -115,7 +115,8 @@ module Rley # Open this namespace to avoid module qualifier prefixes
 
     context 'Parsing: ' do
       it 'should parse simple input' do
-        expect { subject.parse(grm1_tokens) }.not_to raise_error
+        parse_result = subject.parse(grm1_tokens)
+        expect(parse_result.success?).to eq(true)
       end
     end # context
 

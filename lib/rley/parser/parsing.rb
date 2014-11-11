@@ -5,11 +5,30 @@ module Rley # This module is used as a namespace
 
     class Parsing
       attr_reader(:chart)
+      
+      # The sequence of input token to parse
       attr_reader(:tokens)
 
       def initialize(startDottedRule, theTokens)
         @tokens = theTokens.dup
         @chart = Chart.new(startDottedRule, tokens.size)
+      end
+      
+      # Return true if the parse was successful (= input tokens
+      # followed the syntax specified by the grammar)
+      def success?()
+        # Success can be detected as follows:
+        # The last chart entry has a parse state
+        # that involves the start production and
+        # has a dot positioned at the end of its rhs.
+        
+        start_dotted_rule = chart.start_dotted_rule
+        start_production = start_dotted_rule.production
+        last_chart_entry = chart.state_sets.last
+        candidate_states = last_chart_entry.states_for(start_production)
+        found = candidate_states.find(&:complete?)
+        
+        return ! found.nil?
       end
 
 

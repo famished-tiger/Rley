@@ -25,6 +25,11 @@ module Rley # This module is used as a namespace
         return states.select { |s| s.dotted_rule.next_symbol == aTerminal }
       end
       
+      # The list of ParseState that involve the given production
+      def states_for(aProduction)
+        return states.select { |s| s.dotted_rule.production == aProduction }
+      end
+      
       private
       
       def include?(aState)
