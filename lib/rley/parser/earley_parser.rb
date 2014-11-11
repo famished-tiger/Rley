@@ -117,6 +117,8 @@ module Rley # This module is used as a namespace
       #   <initial dotted rule, pos, pos>
       # In short, one adds states to chart[pos], one per production that
       # specifies how to reduce some input into the predicted nt (non-terminal)
+      # A prediction corresponds to a potential expansion of a nonterminal 
+      # in a left-most derivation. 
       # @param aParsing [Parsing] the object that encapsulates the results
       #   result of the parsing process
       # @param aNonTerminal [NonTerminal] a non-terminal symbol that 

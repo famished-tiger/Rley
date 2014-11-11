@@ -117,15 +117,15 @@ module Rley # Open this namespace to avoid module qualifier prefixes
         ######################
         state_set_0 = parse_result.chart[0]
         # Expectation chart[0]:
-        # S -> . A, 0
-        # A -> . "a" A "c", 0
-        # A -> . "b", 0
+        # S -> . A, 0           # start rule
+        # A -> . "a" A "c", 0   # predict from 0
+        # A -> . "b", 0         # predict from 0
         expectations = { origin: 0, production: prod_S, dot: 0 }
         compare_state(state_set_0.states[0], expectations)
 
         expectations = { origin: 0, production: prod_A1, dot: 0 }
         compare_state(state_set_0.states[1], expectations)
-        
+
         expectations = { origin: 0, production: prod_A2, dot: 0 }
         compare_state(state_set_0.states[2], expectations)
 
@@ -133,7 +133,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
         state_set_1 = parse_result.chart[1]
         expect(state_set_1.states.size).to eq(3)
         # Expectation chart[1]:
-        # 0: A -> "a" . A "c", 0   # start rule
+        # 0: A -> "a" . A "c", 0   # scan from S(0) 1
         # 1: A -> . "a" A "c", 1   # predict from 0
         # 2: A -> . "b", 1         # predict from 0
         expectations = { origin: 0, production: prod_A1, dot: 1 }
@@ -208,6 +208,57 @@ module Rley # Open this namespace to avoid module qualifier prefixes
         ]
         parse_result = subject.parse(wrong)
         expect(parse_result.success?).to eq(false)
+
+        ###################### S(0) == . a a c c
+        state_set_0 = parse_result.chart[0]
+        # Expectation chart[0]:
+        # S -> . A, 0 # start rule
+        # A -> . "a" A "c", 0
+        # A -> . "b", 0
+        expectations = { origin: 0, production: prod_S, dot: 0 }
+        compare_state(state_set_0.states[0], expectations)
+
+        expectations = { origin: 0, production: prod_A1, dot: 0 }
+        compare_state(state_set_0.states[1], expectations)
+
+        expectations = { origin: 0, production: prod_A2, dot: 0 }
+        compare_state(state_set_0.states[2], expectations)
+
+        ###################### S(1) == a . a c c
+        state_set_1 = parse_result.chart[1]
+        expect(state_set_1.states.size).to eq(3)
+        # Expectation chart[1]:
+        # 0: A -> "a" . A "c", 0   # scan from S(0) 1
+        # 1: A -> . "a" A "c", 1   # predict from 0
+        # 2: A -> . "b", 1         # predict from 0
+        expectations = { origin: 0, production: prod_A1, dot: 1 }
+        compare_state(state_set_1.states[0], expectations)
+
+        expectations = { origin: 1, production: prod_A1, dot: 0 }
+        compare_state(state_set_1.states[1], expectations)
+
+        expectations = { origin: 1, production: prod_A2, dot: 0 }
+        compare_state(state_set_1.states[2], expectations)
+
+        ###################### S(2) == a a . c c
+        state_set_2 = parse_result.chart[2]
+        expect(state_set_2.states.size).to eq(3)
+        # Expectation chart[2]:
+        # 0: A -> "a" . A "c", 1  # scan from S(0) 1
+        # 1: A -> . "a" A "c", 2  # predict from 0
+        # 2: A -> . "b", 2        # predict from 0
+        expectations = { origin: 1, production: prod_A1, dot: 1 }
+        compare_state(state_set_2.states[0], expectations)
+
+        expectations = { origin: 2, production: prod_A1, dot: 0 }
+        compare_state(state_set_2.states[1], expectations)
+
+        expectations = { origin: 2, production: prod_A2, dot: 0 }
+        compare_state(state_set_2.states[2], expectations)
+
+        ###################### S(3) == a a c? c
+        state_set_3 = parse_result.chart[3]
+        expect(state_set_3.states).to be_empty  # This is an error symptom       
       end
     end # context
 
