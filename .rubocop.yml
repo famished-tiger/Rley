@@ -41,6 +41,9 @@ EmptyLinesAroundBody:
 
 Encoding:
   Enabled: false
+
+FileName:
+  Enabled: false
   
 IndentationWidth :
   Enabled: false

@@ -1,0 +1,21 @@
+language: ruby
+rvm:
+  - 2.1.0
+  - 2.0.0
+  - 1.9.3
+  - 1.9.2
+  - jruby-19mode
+  - jruby-head
+
+# Workaround issue of jruby-head configuration on Travis CI 
+matrix:
+  allow_failures:
+    - rvm: jruby-head
+
+gemfile:
+  - Gemfile
+  
+# whitelist
+branches:  
+  only:
+    - master

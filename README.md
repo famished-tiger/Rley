@@ -1,9 +1,14 @@
 Rley
 ===========
+[Homepage](https://github.com/famished-tiger/Rley) 
 
 ### What is Rley? ###
-__Rley__ should be a Ruby implementation of a Earley parser.  
-This project is in "early" stage.
+__Rley__ is a Ruby implementation of a Earley parser. 
+The objective is to build a parser convenient for lightweight NLP (Natural Language Processing) purposes.  
+
+This project is in "early" stage.  
+Consult Wikipedia to learn more about Earley's parsing algorithm.  
+
 
 Copyright
 ---------
