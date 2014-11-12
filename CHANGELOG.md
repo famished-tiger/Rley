@@ -1,3 +1,6 @@
+### 0.0.04 / 2014-11-12
+* [CHANGE] Class `DottedItem` moved to `Rley` module.
+
 ### 0.0.03 / 2014-11-12
 * [CHANGE] File `README.md`: Added gem version badge.
 
