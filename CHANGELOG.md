@@ -1,3 +1,7 @@
+### 0.0.03 / 2014-11-12
+* [CHANGE] File `README.md`: Added gem version badge.
+
+
 ### 0.0.02 / 2014-11-12
 * [CHANGE] File `README.md`: Added Travis CI badge.
 
