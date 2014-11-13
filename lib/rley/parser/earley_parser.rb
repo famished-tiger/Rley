@@ -4,7 +4,6 @@ require_relative 'parsing'
 
 module Rley # This module is used as a namespace
   module Parser # This module is used as a namespace
-
     # Implementation of a parser that uses the Earley parsing algorithm.
     class EarleyParser
       # The grammar of the language.
@@ -113,8 +112,8 @@ module Rley # This module is used as a namespace
       # 'pos':
       # For each production with 'nt' as lhs, retrieve their corresponding
       # initial dotted rules nt -> . xxxx
-      # For retrieved dotted rule, add a parse state to the chart entry at 'pos':
-      #   <initial dotted rule, pos, pos>
+      # For retrieved dotted rule, add a parse state to the chart entry 
+      # at 'pos': <initial dotted rule, pos, pos>
       # In short, one adds states to chart[pos], one per production that
       # specifies how to reduce some input into the predicted nt (non-terminal)
       # A prediction corresponds to a potential expansion of a nonterminal 
@@ -149,28 +148,26 @@ module Rley # This module is used as a namespace
       #   immediately follows a dot 
       # @param aPosition [Fixnum] position in the input token sequence.
       def scanning(aParsing, aTerminal, aPosition)
-        aParsing.scanning(aTerminal, aPosition) { |item|
+        aParsing.scanning(aTerminal, aPosition) do |item|
           next_mapping[item]
-        }
+        end
       end
-      
 
-      # This method is called when a parse state at chart entry reaches the end
-      # of a production.
-      # For every state in chart[aPosition] that is complete (i.e. of the form:
-      #   { dotted_rule: X -> γ •, origin: j}),
-      # Find states s in chart[j] of the form {dotted_rule: Y -> α • X β, origin: i}
+      # This method is called when a parse state at chart entry reaches 
+      # the end of a production.
+      # For every state in chart[aPosition] that is 
+      # complete (i.e. of the form: { dotted_rule: X -> γ •, origin: j}),
+      # Find states s in chart[j] of the 
+      #  form {dotted_rule: Y -> α • X β, origin: i}
       #   In other words, rules that predicted the non-terminal X.
       # For each s, add to chart[aPosition] a state of the form
       #   { dotted_rule: Y → α X • β, origin: i})
       def completion(aParsing, aState, aPosition)
-        aParsing.completion(aState, aPosition) { |item|
+        aParsing.completion(aState, aPosition) do |item|
           next_mapping[item]
-        }
+        end
       end
-
     end # class
-
   end # module
 end # module
 

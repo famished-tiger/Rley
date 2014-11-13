@@ -9,7 +9,7 @@ module Rley # This module is used as a namespace
       attr_reader(:state_sets)
 
       def initialize(startDottedItem, tokenCount)
-        @state_sets = Array.new(tokenCount + 1) {|_| StateSet.new }
+        @state_sets = Array.new(tokenCount + 1) { |_| StateSet.new }
         push_state(startDottedItem, 0, 0)
       end
 
@@ -30,9 +30,7 @@ module Rley # This module is used as a namespace
         new_state = ParseState.new(aDottedItem, anOrigin)
         self[anIndex].push_state(new_state)
       end
-
     end # class
-
   end # module
 end # module
 

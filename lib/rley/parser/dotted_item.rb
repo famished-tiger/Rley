@@ -1,5 +1,4 @@
 module Rley # This module is used as a namespace
-
   # A dotted item is a parse state for a given production/grammar rule
   # It partitions the rhs of the rule in two parts.
   # The left part consists of the symbols in the rules that are matched
@@ -37,7 +36,7 @@ module Rley # This module is used as a namespace
 
     # An item with the dot at the beginning is called 
     # predicted item  
-    alias :predicted_item? :at_start?
+    alias_method :predicted_item?, :at_start?
 
     # A dotted item is called a reduce item if the dot is at the end.
     def reduce_item?()
@@ -52,7 +51,7 @@ module Rley # This module is used as a namespace
     # Return the symbol after the dot.
     # nil is returned if the dot is at the end
     def next_symbol()
-      result = (position < 0) ? nil : production.rhs[position]
+      return (position < 0) ? nil : production.rhs[position]
     end
 
     # An item with the dot in front of a terminal is called a shift item
@@ -79,7 +78,6 @@ module Rley # This module is used as a namespace
       return index
     end
   end # class
-
 end # module
 
 # End of file

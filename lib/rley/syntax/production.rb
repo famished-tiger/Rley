@@ -2,7 +2,6 @@ require_relative 'symbol_seq'
 
 module Rley # This module is used as a namespace
   module Syntax # This module is used as a namespace
-
     # In a context-free grammar, a production is a rule in which
     # its left-hand side (LHS) consists solely of a non-terminal symbol
     # and the right-hand side (RHS) consists of a sequence of symbols.
@@ -10,7 +9,6 @@ module Rley # This module is used as a namespace
     # The rule stipulates that the LHS is equivalent to the RHS,
     # in other words every occurrence of the LHS can be substituted to
     # corresponding RHS.
-    # Implementation note: the object id of the production is taken as its LHS.
     class Production
       # The right-hand side (rhs) consists of a sequence of grammar symbols
       attr_reader(:rhs)
@@ -20,8 +18,8 @@ module Rley # This module is used as a namespace
 
       # Provide common alternate names to lhs and rhs accessors
 
-      alias :body :rhs
-      alias :head :lhs
+      alias_method :body, :rhs
+      alias_method :head, :lhs
 
       def initialize(aNonTerminal, theSymbols)
         @lhs = aNonTerminal
@@ -33,9 +31,7 @@ module Rley # This module is used as a namespace
       def empty?()
         return rhs.empty?
       end
-
     end # class
-
   end # module
 end # module
 

@@ -1,6 +1,5 @@
 module Rley # This module is used as a namespace
   module Parser # This module is used as a namespace
-
     class ParseState
       attr_reader(:dotted_rule)
 
@@ -15,7 +14,7 @@ module Rley # This module is used as a namespace
 
       # Equality comparison. A parse state behaves as a value object.
       def ==(other)
-        return true if self.object_id == other.object_id
+        return true if object_id == other.object_id
 
         if (dotted_rule == other.dotted_rule) && (origin == other.origin)
           result = true
@@ -45,9 +44,7 @@ module Rley # This module is used as a namespace
         
         return aDottedRule
       end
-
     end # class
-
   end # module
 end # module
 

@@ -2,7 +2,6 @@ require 'forwardable' # Delegation
 
 module Rley # This module is used as a namespace
   module Parser # This module is used as a namespace
-  
     class StateSet
       extend Forwardable
       def_delegators :states, :empty?, :size, :first, :each
@@ -38,10 +37,7 @@ module Rley # This module is used as a namespace
         # TODO: make it better than linear search
         return states.include?(aState)
       end
-
     end # class
-  
   end # module
 end # module
-
 # End of file

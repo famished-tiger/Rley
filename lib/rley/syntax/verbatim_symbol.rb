@@ -2,7 +2,6 @@ require_relative 'terminal' # Load superclass
 
 module Rley # This module is used as a namespace
   module Syntax # This module is used as a namespace
-
     # A verbatim word is terminal symbol that represents one unique word
     # in the language defined the grammar.
     class VerbatimSymbol < Terminal
@@ -14,7 +13,6 @@ module Rley # This module is used as a namespace
         @text = aText.dup
       end
     end # class
-
   end # module
 end # module
 

@@ -1,6 +1,5 @@
 module Rley # This module is used as a namespace
   module Syntax # This module is used as a namespace
-
     # Abstract class for grammar symbols.
     # A grammar symbol is an element that appears in grammar rules.
     class GrmSymbol
@@ -11,7 +10,6 @@ module Rley # This module is used as a namespace
         @name = aName.dup
       end
     end # class
-
   end # module
 end # module
 

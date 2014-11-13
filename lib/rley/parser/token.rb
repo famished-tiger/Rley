@@ -3,7 +3,6 @@ require_relative 'dotted_item'
 
 module Rley # This module is used as a namespace
   module Parser # This module is used as a namespace
-
     class Token
       attr_reader(:lexeme)
       attr_reader(:terminal)
@@ -12,10 +11,7 @@ module Rley # This module is used as a namespace
         @lexeme = theLexeme
         @terminal = aTerminal
       end
-
     end # class
-
   end # module
 end # module
-
 # End of file

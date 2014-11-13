@@ -1,6 +1,5 @@
 module Rley # This module is used as a namespace
   module Syntax # This module is used as a namespace
-
     # A grammar specifies the syntax of a language.
     #   Formally, a grammar has:
     #   One start symbol,
@@ -50,9 +49,7 @@ module Rley # This module is used as a namespace
           @symbols << symb
         end
       end
-
     end # class
-
   end # module
 end # module
 
