@@ -33,7 +33,8 @@ module Rley # Open this namespace to avoid module qualifier prefixes
       end
 =end
 
-      # Grammar 1: A very simple language
+      # Grammar 1: A very simple language 
+      # (based on example in N. Wirth "Compiler Construction" book, p. 6)
       # S ::= A.
       # A ::= "a" A "c".
       # A ::= "b".
@@ -64,14 +65,15 @@ module Rley # Open this namespace to avoid module qualifier prefixes
 
 
       # Grammar 2: A simple arithmetic expression language
-      # E ::= S.
+      # (based on example in article on Earley's algorithm in Wikipedia)
+      # P ::= S.
       # S ::= S "+" M.
       # S ::= M.
       # M ::= M "*" M.
       # M ::= T.
       # T ::= an integer number token.
       # Let's create the grammar piece by piece
-      let(:nt_E) { Syntax::NonTerminal.new('E') }
+      let(:nt_P) { Syntax::NonTerminal.new('P') }
       let(:nt_M) { Syntax::NonTerminal.new('M') }
       let(:nt_T) { Syntax::NonTerminal.new('T') }
       let(:plus) { Syntax::VerbatimSymbol.new('+') }
@@ -80,14 +82,14 @@ module Rley # Open this namespace to avoid module qualifier prefixes
         integer_pattern = /[-+]?[0-9]+/	# Decimal notation
         Syntax::Literal.new('integer', integer_pattern)
       end
-      let(:prod_E) { Syntax::Production.new(nt_E, [nt_S]) }
+      let(:prod_P) { Syntax::Production.new(nt_P, [nt_S]) }
       let(:prod_S1) { Syntax::Production.new(nt_S, [nt_S, plus, nt_M]) }
       let(:prod_S2) { Syntax::Production.new(nt_S, [nt_M]) }
       let(:prod_M1) { Syntax::Production.new(nt_M, [nt_M, star, nt_M]) }
       let(:prod_M2) { Syntax::Production.new(nt_M, [nt_T]) }
       let(:prod_T) { Syntax::Production.new(nt_T, [integer]) }
       let(:grammar_expr) do
-        all_prods = [prod_E, prod_S1, prod_S2, prod_M1, prod_M2, prod_T]
+        all_prods = [prod_P, prod_S1, prod_S2, prod_M1, prod_M2, prod_T]
         Syntax::Grammar.new(all_prods)
       end
 
@@ -242,6 +244,32 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           ]
           compare_state_set(state_set_5, expectations)
         end
+        
+        it 'should parse a valid simple expression' do
+          instance = EarleyParser.new(grammar_expr)
+          parse_result = instance.parse(grm2_tokens)
+          expect(parse_result.success?).to eq(true)
+          
+          ######################
+          # Expectation chart[0]:
+          # (1) P -> . S, 0         # start rule
+          # (2) S -> . S "+" M, 0   # predict from (1)
+          # (3) S -> . M, 0         # predict from (1)
+          # (4) M -> . M "*" T, 0   # predict from (3)
+          # (5) M -> . T, 0         # predict from (3)
+          # (6) T -> . integer, 0   # predict from (3)
+          expectations = [
+            { origin: 0, production: prod_P, dot: 0 },
+            { origin: 0, production: prod_S1, dot: 0 },
+            { origin: 0, production: prod_S2, dot: 0 },
+            { origin: 0, production: prod_M1, dot: 0 },
+            { origin: 0, production: prod_M2, dot: 0 },
+            { origin: 0, production: prod_T, dot: 0 }
+          ]
+          compare_state_set(parse_result.chart[0], expectations)
+
+        end
+        
 
         it 'should parse an invalid simple input' do
           # Parse an erroneous input (b is missing)

@@ -1,4 +1,8 @@
-### 0.0.05 / 2014-11-12
+### 0.0.06 / 2014-11-13
+* [CHANGE] File `README.md`: Added roadmap section.
+* [FIX] `EarleyParser#parse`: prevent call to `scanning` method after last token encountered.
+
+### 0.0.05 / 2014-11-13
 * [CHANGE] Code re-styling to please Rubocop 0.27.0 (less than 10 offenses).
 
 ### 0.0.04 / 2014-11-12
