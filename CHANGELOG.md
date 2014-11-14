@@ -1,3 +1,7 @@
+### 0.0.08 / 2014-11-14
+* [CHANGE]  `EarleyParser#parse` method: Initial API documentation.
+* [INFO] This version was committed to force Travis CI to execute a complete build (failed because Travis couldn't connect to GitHub)
+
 ### 0.0.07 / 2014-11-14
 * [CHANGE]  spec file of `EarleyParser` class: Test added. Parser works with simple expression grammar.
 
