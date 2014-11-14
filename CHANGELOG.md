@@ -1,3 +1,6 @@
+### 0.0.07 / 2014-11-14
+* [CHANGE]  spec file of `EarleyParser` class: Test added. Parser works with simple expression grammar.
+
 ### 0.0.06 / 2014-11-13
 * [CHANGE] File `README.md`: Added roadmap section.
 * [FIX] `EarleyParser#parse`: prevent call to `scanning` method after last token encountered.

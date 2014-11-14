@@ -33,7 +33,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
       end
 =end
 
-      # Grammar 1: A very simple language 
+      # Grammar 1: A very simple language
       # (based on example in N. Wirth "Compiler Construction" book, p. 6)
       # S ::= A.
       # A ::= "a" A "c".
@@ -85,7 +85,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
       let(:prod_P) { Syntax::Production.new(nt_P, [nt_S]) }
       let(:prod_S1) { Syntax::Production.new(nt_S, [nt_S, plus, nt_M]) }
       let(:prod_S2) { Syntax::Production.new(nt_S, [nt_M]) }
-      let(:prod_M1) { Syntax::Production.new(nt_M, [nt_M, star, nt_M]) }
+      let(:prod_M1) { Syntax::Production.new(nt_M, [nt_M, star, nt_T]) }
       let(:prod_M2) { Syntax::Production.new(nt_M, [nt_T]) }
       let(:prod_T) { Syntax::Production.new(nt_T, [integer]) }
       let(:grammar_expr) do
@@ -244,13 +244,13 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           ]
           compare_state_set(state_set_5, expectations)
         end
-        
+
         it 'should parse a valid simple expression' do
           instance = EarleyParser.new(grammar_expr)
           parse_result = instance.parse(grm2_tokens)
           expect(parse_result.success?).to eq(true)
-          
-          ######################
+
+          ###################### S(0): . 2 + 3 * 4
           # Expectation chart[0]:
           # (1) P -> . S, 0         # start rule
           # (2) S -> . S "+" M, 0   # predict from (1)
@@ -268,8 +268,83 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           ]
           compare_state_set(parse_result.chart[0], expectations)
 
+          ###################### S(1): 2 . + 3 * 4
+          # Expectation chart[1]:
+          # (1) T -> integer ., 0   # scan from S(0) 6
+          # (2) M -> T ., 0         # complete from (1) and S(0) 5
+          # (3) S -> M ., 0         # complete from (2) and S(0) 3
+          # (4) M -> M . "*" T, 0   # complete from (2) and S(0) 4
+          # (5) P -> S ., 0         # complete from (4) and S(0) 1
+          # (6) S -> S . "+" M, 0   # complete from (4) and S(0) 2
+          expectations = [
+            { origin: 0, production: prod_T, dot: -1 },
+            { origin: 0, production: prod_M2, dot: -1 },
+            { origin: 0, production: prod_S2, dot: -1 },
+            { origin: 0, production: prod_M1, dot: 1 },
+            { origin: 0, production: prod_P, dot: -1 },
+            { origin: 0, production: prod_S1, dot: 1 },
+          ]
+          compare_state_set(parse_result.chart[1], expectations)
+
+
+          ###################### S(2): 2 + . 3 * 4
+          # Expectation chart[2]:
+          # (1) S -> S "+" . M, 0   # scan from S(1) 6
+          # (2) M -> . M "*" T, 2   # predict from (1)
+          # (3) M -> . T, 2         # predict from (1)
+          # (4) T -> . integer,     2 # predict from (3)
+          expectations = [
+            { origin: 0, production: prod_S1, dot: 2 },
+            { origin: 2, production: prod_M1, dot: 0 },
+            { origin: 2, production: prod_M2, dot: 0 },
+            { origin: 2, production: prod_T, dot: 0 },
+          ]
+          compare_state_set(parse_result.chart[2], expectations)
+
+          ###################### S(3): 2 + 3 . * 4
+          # Expectation chart[3]:
+          # (1) T -> integer ., 2   # scan from S(2) 4
+          # (2) M -> T ., 2         # complete from (1) and S(2) 3
+          # (3) S -> S "+" M ., 0   # complete from (1) and S(2) 1
+          # (4) M -> M . "*" T, 2   # complete from (2) and S(2) 2
+          # (5) P -> S ., 0         # complete from (4) and S(0) 1
+          expectations = [
+            { origin: 2, production: prod_T, dot: -1 },
+            { origin: 2, production: prod_M2, dot: -1 },
+            { origin: 0, production: prod_S1, dot: -1 },
+            { origin: 2, production: prod_M1, dot: 1 },
+            { origin: 0, production: prod_P, dot: -1 }
+          ]
+          compare_state_set(parse_result.chart[3], expectations)
+
+          ###################### S(4): 2 + 3 * . 4
+          # Expectation chart[4]:
+          # (1) M -> M "*" . T, 2   # scan from S(3) 4
+          # (2) T -> . number, 4    # predict from (1)
+
+          expectations = [
+            { origin: 2, production: prod_M1, dot: 2 },
+            { origin: 4, production: prod_T, dot: 0 },
+          ]
+          compare_state_set(parse_result.chart[4], expectations)
+
+          ###################### S(5): 2 + 3 * 4 .
+          # Expectation chart[5]:
+          # (1) T -> number ., 4    # scan from S(4) 2
+          # (2) M -> M "*" T ., 2   # complete from (1) and S(4) 1
+          # (3) S -> S "+" M ., 0   # complete from (2) and S(2) 1
+          # (4) M -> M . "*" T, 2   # complete from (2) and S(2) 2
+          # (5) P -> S ., 0         # complete from (3) and S(2) 2
+          expectations = [
+            { origin: 4, production: prod_T, dot: -1 },
+            { origin: 2, production: prod_M1, dot: -1 },
+            { origin: 0, production: prod_S1, dot: -1 },
+            { origin: 2, production: prod_M1, dot: 1 },
+            { origin: 0, production: prod_P, dot: -1 }
+          ]
+          compare_state_set(parse_result.chart[5], expectations)
         end
-        
+
 
         it 'should parse an invalid simple input' do
           # Parse an erroneous input (b is missing)
