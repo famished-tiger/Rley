@@ -22,7 +22,7 @@ module Rley # This module is used as a namespace
       alias_method :head, :lhs
 
       def initialize(aNonTerminal, theSymbols)
-        @lhs = aNonTerminal
+        @lhs = valid_lhs(aNonTerminal)
         @rhs = SymbolSeq.new(theSymbols)
       end
 
@@ -30,6 +30,20 @@ module Rley # This module is used as a namespace
       # @ return true if the rhs has no members.
       def empty?()
         return rhs.empty?
+      end
+
+      private
+
+      # Validation method. Return the validated input argument or
+      # raise an exception.
+      def valid_lhs(aNonTerminal)
+        unless aNonTerminal.kind_of?(NonTerminal)
+          msg_prefix = 'Left side of production must be a non-terminal symbol'
+          msg_suffix = ", found a #{aNonTerminal.class} instead."
+          fail StandardError, msg_prefix + msg_suffix
+        end
+
+        return aNonTerminal
       end
     end # class
   end # module

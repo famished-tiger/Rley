@@ -282,7 +282,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
             { origin: 0, production: prod_S2, dot: -1 },
             { origin: 0, production: prod_M1, dot: 1 },
             { origin: 0, production: prod_P, dot: -1 },
-            { origin: 0, production: prod_S1, dot: 1 },
+            { origin: 0, production: prod_S1, dot: 1 }
           ]
           compare_state_set(parse_result.chart[1], expectations)
 
@@ -297,7 +297,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
             { origin: 0, production: prod_S1, dot: 2 },
             { origin: 2, production: prod_M1, dot: 0 },
             { origin: 2, production: prod_M2, dot: 0 },
-            { origin: 2, production: prod_T, dot: 0 },
+            { origin: 2, production: prod_T, dot: 0 }
           ]
           compare_state_set(parse_result.chart[2], expectations)
 
@@ -324,7 +324,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
 
           expectations = [
             { origin: 2, production: prod_M1, dot: 2 },
-            { origin: 4, production: prod_T, dot: 0 },
+            { origin: 4, production: prod_T, dot: 0 }
           ]
           compare_state_set(parse_result.chart[4], expectations)
 

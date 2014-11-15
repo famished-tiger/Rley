@@ -41,7 +41,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
 
       context 'Provided services:' do
         it 'should compare compare with itself' do
-          me = subject
+          me = subject  # Use another name to please Rubocop
           expect(subject == me).to eq(true)
         end
 
@@ -54,6 +54,12 @@ module Rley # Open this namespace to avoid module qualifier prefixes
 
           unequal_one = SymbolSeq.new([verb, pp, np])
           expect(subject == unequal_one).not_to eq(true)
+        end
+        
+        it 'should complain when unable to compare' do
+          err = StandardError
+          msg = 'Cannot compare a SymbolSeq with a Fixnum'
+          expect { subject == 1 }.to raise_error(err, msg)
         end
       end # context
 
