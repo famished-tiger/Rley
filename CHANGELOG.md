@@ -1,6 +1,14 @@
+### 0.0.10 / 2014-11-15
+* [NEW]  New folder `examples` added with two examples of grammar creation 
+
+### 0.0.09 / 2014-11-15
+* [NEW]  New class `GrammarBuilder` added and tested, its purpose is 
+to simplify the construction of grammars.
+
 ### 0.0.08 / 2014-11-14
 * [CHANGE]  `EarleyParser#parse` method: Initial API documentation.
-* [INFO] This version was committed to force Travis CI to execute a complete build (failed because Travis couldn't connect to GitHub)
+* [INFO] This version was committed to force Travis CI to execute a complete build 
+failed because Travis couldn't connect to GitHub)
 
 ### 0.0.07 / 2014-11-14
 * [CHANGE]  spec file of `EarleyParser` class: Test added. Parser works with simple expression grammar.
