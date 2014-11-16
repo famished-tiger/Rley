@@ -4,7 +4,7 @@ require_relative 'parsing'
 
 module Rley # This module is used as a namespace
   module Parser # This module is used as a namespace
-    # Implementation of a parser that uses the Earley parsing algorithm.
+    # Implementation of a parser that uses the Earley parsing algorithm.  
     class EarleyParser
       # The grammar of the language.
       attr_reader(:grammar)
@@ -29,6 +29,7 @@ module Rley # This module is used as a namespace
         @next_mapping = build_next_mapping(dotted_items)
       end
 
+      # Parse a sequence of input tokens.
       # @param aTokenSequence [Array] Array of Tokens objects returned by a 
       # tokenizer/scanner/lexer.
       # @return a Parsing object that embeds the parse result.

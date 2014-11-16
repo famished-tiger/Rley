@@ -1,3 +1,7 @@
+### 0.0.11 / 2014-11-16
+* [CHANGE]  Usage of `GrammarBuilder`simplified: the call to method `GrammarBuilder#add_non_terminal` isn't necessary. Method is removed 
+* [CHANGE] Updated the `examples` folder accordingly.
+
 ### 0.0.10 / 2014-11-15
 * [NEW]  New folder `examples` added with two examples of grammar creation 
 

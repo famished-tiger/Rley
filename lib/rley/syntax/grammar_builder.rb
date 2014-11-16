@@ -22,7 +22,7 @@ module Rley # This module is used as a namespace
         @symbols = {}
         @productions = []
       end
-
+      
       # Retrieve a grammar symbol from its name.
       # Raise an exception if not found.
       # @param [aSymbolName] the name of a symbol grammar.
@@ -39,23 +39,15 @@ module Rley # This module is used as a namespace
         symbols.merge!(new_symbs)
       end
 
-      # Add the non-terminal symbols of the language
-      # nonTerminalSymbols [String or NonTerminal] one or more non-terminal
-      # symbols to add to the grammar.
-      def add_non_terminals(*nonTerminalSymbols)
-        new_symbs = build_symbols(NonTerminal, nonTerminalSymbols)
-        symbols.merge!(new_symbs)
-      end
-
       # builder.add_production('A' => ['a', 'A', 'c'])
       def add_production(aProductionRepr)
         aProductionRepr.each_pair do |(lhs_name, rhs_repr)|
-          lhs = self[lhs_name]
+          lhs = get_nonterminal(lhs_name)
           case rhs_repr
             when Array
-              rhs_constituents = rhs_repr.map { |name| self[name] }
+              rhs_constituents = rhs_repr.map { |name| get_nonterminal(name) }
             when String
-              rhs_constituents = [ self[rhs_repr] ]
+              rhs_constituents = [ get_nonterminal(rhs_repr) ]
           end
           new_prod = Production.new(lhs, rhs_constituents)
           productions << new_prod
@@ -68,6 +60,13 @@ module Rley # This module is used as a namespace
         fail StandardError, 'No symbol found for grammar' if symbols.empty?
         if productions.empty?
           fail StandardError, 'No production found for grammar'
+        end
+        
+        # Check that each non-terminal appears at least once in lhs.
+        all_non_terminals = symbols.values.select { |s| s.is_a?(NonTerminal) }
+        all_non_terminals.each do |n_term|
+          next if productions.any? { |prod| n_term == prod.lhs }
+          fail StandardError, "Nonterminal #{n_term.name} not rewritten"
         end
 
         return Grammar.new(productions.dup)
@@ -107,6 +106,18 @@ module Rley # This module is used as a namespace
 
         return a_symbol
       end
+      
+      # Retrieve the non-terminal symbol with given name.
+      # If it doesn't exist yet, then it is created on the fly.
+      # @param aSymbolName [String] the name of the grammar symbol to retrieve
+      # @return [NonTerminal]
+      def get_nonterminal(aSymbolName)
+        unless symbols.include? aSymbolName
+          symbols[aSymbolName] = NonTerminal.new(aSymbolName)
+        end
+        return symbols[aSymbolName]
+      end
+      
     end # class
   end # module
 end # module

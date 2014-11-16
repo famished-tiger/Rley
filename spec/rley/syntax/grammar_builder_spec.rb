@@ -45,17 +45,6 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           expect(subject.symbols['b']).to eq(b)
           expect(subject.symbols['c']).to eq(c)
         end
-        
-        it 'should build non-terminals from their names' do
-          subject.add_non_terminals('PP', 'VP', 'DT')
-          expect(subject.symbols.size).to eq(3)
-          expect(subject.symbols['PP']).to be_kind_of(NonTerminal)
-          expect(subject.symbols['PP'].name).to eq('PP')
-          expect(subject.symbols['VP']).to be_kind_of(NonTerminal)
-          expect(subject.symbols['VP'].name).to eq('VP')
-          expect(subject.symbols['DT']).to be_kind_of(NonTerminal)
-          expect(subject.symbols['DT'].name).to eq('DT')
-        end
 
         it 'should accept already built terminals' do
           a = Terminal.new('a')
@@ -74,7 +63,6 @@ module Rley # Open this namespace to avoid module qualifier prefixes
         subject do
           instance = GrammarBuilder.new
           instance.add_terminals('a', 'b', 'c')
-          instance.add_non_terminals('S', 'A')
           instance
         end
         
@@ -105,7 +93,6 @@ module Rley # Open this namespace to avoid module qualifier prefixes
         subject do
           instance = GrammarBuilder.new
           instance.add_terminals('a', 'b', 'c')
-          instance.add_non_terminals('S', 'A')
           instance.add_production('S' => ['A'])
           instance.add_production('A' => %w(a A c))
           instance.add_production('A' => ['b'])
@@ -128,9 +115,17 @@ module Rley # Open this namespace to avoid module qualifier prefixes
         it 'should complain in absence of productions' do
           instance = GrammarBuilder.new
           instance.add_terminals('a', 'b', 'c')
-          instance.add_non_terminals('S', 'A')
           err = StandardError
           msg = 'No production found for grammar'
+          expect { instance.grammar }.to raise_error(err, msg)
+        end
+        
+        it 'should complain when non-terminal has no production' do
+          instance = GrammarBuilder.new
+          instance.add_terminals('a', 'b', 'c')
+          instance.add_production('S' => ['A'])
+          err = StandardError
+          msg = 'Nonterminal A not rewritten'
           expect { instance.grammar }.to raise_error(err, msg)
         end
       end
