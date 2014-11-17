@@ -19,6 +19,17 @@ module Rley # Open this namespace to avoid module qualifier prefixes
         end
       end # context
 
+        
+      context 'Provided services:' do    
+        it 'should know whether it is nullable' do
+          expect(subject.nullable?).to be_nil
+          subject.nullable = true
+          expect(subject).to be_nullable
+          subject.nullable = false
+          expect(subject).not_to be_nullable          
+        end
+      end # context
+
     end # describe
   end # module
 end # module

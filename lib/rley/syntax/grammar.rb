@@ -19,7 +19,8 @@ module Rley # This module is used as a namespace
       # The list of grammar symbols in the language.
       attr_reader(:symbols)
 
-      # @param theProduction [Array of Production]
+      # @param theProduction [Array of Production] the list of productions
+      # of the grammar.
       def initialize(theProductions)
         @rules = []
         @symbols = []
@@ -27,6 +28,12 @@ module Rley # This module is used as a namespace
         # TODO: use topological sorting
         @start_symbol = valid_productions[0].lhs
         valid_productions.each { |prod| add_production(prod) }
+        compute_nullable
+      end
+
+      # @return [Array] The list of non-terminals in the grammar.
+      def non_terminals()
+        return symbols.select { |s| s.kind_of?(NonTerminal) }
       end
 
       private
@@ -49,6 +56,25 @@ module Rley # This module is used as a namespace
           @symbols << symb
         end
       end
+
+      # For each non-terminal determine whether it is nullable or not.
+      def compute_nullable()
+        # Do the obvious cases
+        rules.each do |prod|
+          next unless prod.rhs.empty?
+          prod.lhs.nullable = true
+        end
+      end
+=begin
+        prods4nonterm = productions.group_by { |prod| prod.lhs }
+          prods4nonterm.each_pair do |(lhs, prods)|        
+        
+        
+        to_process = non_terminals.select { |nt| nt.nullable?.nil? }
+        
+        until to_process.empty? do
+
+=end
     end # class
   end # module
 end # module

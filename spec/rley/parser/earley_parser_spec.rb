@@ -3,6 +3,7 @@ require_relative '../../spec_helper'
 require_relative '../../../lib/rley/syntax/verbatim_symbol'
 require_relative '../../../lib/rley/syntax/non_terminal'
 require_relative '../../../lib/rley/syntax/production'
+require_relative '../../../lib/rley/syntax/grammar_builder'
 require_relative '../../../lib/rley/parser/token'
 # Load the class under test
 require_relative '../../../lib/rley/parser/earley_parser'
@@ -343,6 +344,36 @@ module Rley # Open this namespace to avoid module qualifier prefixes
             { origin: 0, production: prod_P, dot: -1 }
           ]
           compare_state_set(parse_result.chart[5], expectations)
+        end
+        
+        
+        it 'should parse an ambiguous grammar' do
+          # Grammar 3: A ambiguous arithmetic expression language
+          # (based on example in article on Earley's algorithm in Wikipedia)
+          # P ::= S.
+          # S ::= S "+" S.
+          # S ::= S "*" S.
+          # S ::= T.
+          # T ::= an integer number token.
+          t_int = Syntax::Literal.new('integer', /[-+]?\d+/)
+          t_plus = Syntax::VerbatimSymbol.new('+')
+          t_star = Syntax::VerbatimSymbol.new('*')
+          
+          builder = Syntax::GrammarBuilder.new
+          builder.add_terminals(t_int, t_plus, t_star)
+          builder.add_production('P' => 'S')
+          builder.add_production('S' => %w(S + S))
+          builder.add_production('S' => %w(S * S))
+          builder.add_production('S' => 'L')
+          builder.add_production('L' => 'integer')
+          tokens = [
+            Token.new('2', t_int),
+            Token.new('+', t_plus),
+            Token.new('3', t_int),
+            Token.new('*', t_star),
+            Token.new('4', t_int)
+          ]
+          parse_result = subject.parse(tokens)
         end
 
 

@@ -17,6 +17,10 @@ module Rley # Open this namespace to avoid module qualifier prefixes
         it 'should know its name' do
           expect(subject.name).to eq(sample_name)
         end
+        
+        it "should know that isn't nullable" do
+          expect(subject).not_to be_nullable
+        end
       end # context
 
     end # describe

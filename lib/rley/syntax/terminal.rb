@@ -7,9 +7,16 @@ module Rley # This module is used as a namespace
     # defined the grammar.
     class Terminal < GrmSymbol
       
+      # Constructor.
+      # aName [String] The name of the grammar symbol.
       def initialize(aName)
         super(aName)
       end
+      
+      # @return [false] Return true if the symbol derives
+      # the empty string. As terminal symbol corresponds to a input token
+      # it is by definition non-nullable.
+      def nullable?() false; end
     end # class
   
   end # module

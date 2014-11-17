@@ -138,6 +138,10 @@ module Rley # Open this namespace to avoid module qualifier prefixes
         it 'should know all its symbols' do
           expect(subject.symbols).to eq([nt_S, nt_A, a_, c_, b_])
         end
+        
+        it 'should know all its non-terminal symbols' do
+          expect(subject.non_terminals).to eq([nt_S, nt_A]) 
+        end
       end # context
 
     end # describe

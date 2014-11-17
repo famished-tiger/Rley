@@ -1,3 +1,8 @@
+### 0.0.12 / 2014-11-17
+* [CHANGE]  Classes `Terminal` and `NonTerminal` added new method nullable?
+* [CHANGE] File `earley_parser_spec.rb`: Added spec with ambiguous grammar.
+
+
 ### 0.0.11 / 2014-11-16
 * [CHANGE]  Usage of `GrammarBuilder`simplified: the call to method `GrammarBuilder#add_non_terminal` isn't necessary. Method is removed 
 * [CHANGE] Updated the `examples` folder accordingly.
