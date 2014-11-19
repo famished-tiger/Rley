@@ -1,3 +1,5 @@
+require 'set'
+
 module Rley # This module is used as a namespace
   module Syntax # This module is used as a namespace
     # A grammar specifies the syntax of a language.
@@ -57,24 +59,51 @@ module Rley # This module is used as a namespace
         end
       end
 
+      
       # For each non-terminal determine whether it is nullable or not.
+      # A nullable nonterminal is a nonterminal that can match an empty string.
       def compute_nullable()
-        # Do the obvious cases
-        rules.each do |prod|
-          next unless prod.rhs.empty?
-          prod.lhs.nullable = true
+        non_terminals.each { |nterm| nterm.nullable = false }
+        nullable_sets = [ direct_nullable ]
+        
+        # Drop productions with one terminal in rhs or with a nullable lhs
+        filtered_rules = rules.reject do |prod|
+          prod.lhs.nullable? || prod.rhs.members.find do |symb| 
+            symb.kind_of?(Terminal) 
+          end
+        end
+
+        (1...non_terminals.size).each do |i|
+          new_nullables = Set.new
+          filtered_rules.each do |a_prod|
+            rhs_nullable = a_prod.rhs.members.all? do |symb|
+              nullable_sets[i-1].include? symb
+            end
+            if rhs_nullable
+              a_prod.lhs.nullable = true
+              new_nullables << a_prod.lhs
+            end
+          end
+          break if new_nullables.empty?
+          filtered_rules.reject! { |prod| prod.lhs.nullable? }
+          nullable_sets[i] = nullable_sets[i-1].merge(new_nullables)
         end
       end
-=begin
-        prods4nonterm = productions.group_by { |prod| prod.lhs }
-          prods4nonterm.each_pair do |(lhs, prods)|        
         
         
-        to_process = non_terminals.select { |nt| nt.nullable?.nil? }
+      # Return the set of nonterminals which have one of their
+      # production rules empty
+      def direct_nullable()
+        nullable = Set.new
+        # Direct nullable nonterminals correspond to empty productions
+        rules.each do |prod|
+          next unless prod.empty?
+          prod.lhs.nullable = true
+          nullable << prod.lhs
+        end
         
-        until to_process.empty? do
-
-=end
+        return nullable
+      end
     end # class
   end # module
 end # module

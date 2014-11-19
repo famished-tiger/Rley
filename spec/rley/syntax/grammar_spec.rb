@@ -143,6 +143,37 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           expect(subject.non_terminals).to eq([nt_S, nt_A]) 
         end
       end # context
+      
+      context 'Non-nullable grammar:' do
+        subject do
+          productions = [prod_S, prod_A1, prod_A2]
+          Grammar.new(productions)
+        end
+        
+        it 'should mark all its nonterminals as non-nullable' do
+          nonterms = subject.non_terminals
+          nonterms.each do |nterm|
+            expect(nterm).not_to be_nullable
+          end
+        end
+      end # context
+      
+      context 'Nullable grammars:' do
+        subject do
+          prod_A3 = Production.new(nt_A, [])
+          productions = [prod_S, prod_A1, prod_A2, prod_A3]
+          Grammar.new(productions)
+        end
+        
+        it 'should mark its nullable nonterminals' do
+          # In the default grammar, all nonterminals are nullable
+          nonterms = subject.non_terminals
+          nonterms.each do |nterm|
+            expect(nterm).to be_nullable
+          end
+        end
+        
+      end # context
 
     end # describe
   end # module

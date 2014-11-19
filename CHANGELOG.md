@@ -1,3 +1,8 @@
+### 0.0.13 / 2014-11-19
+* [NEW]  (private) method `Grammar#compute_nullable` added.
+* [CHANGE] `Grammar#initialize` constructor calls the method `Grammar#compute_nullable`
+
+
 ### 0.0.12 / 2014-11-17
 * [CHANGE]  Classes `Terminal` and `NonTerminal` added new method nullable?
 * [CHANGE] File `earley_parser_spec.rb`: Added spec with ambiguous grammar.
