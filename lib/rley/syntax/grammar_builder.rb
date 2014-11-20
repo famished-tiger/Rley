@@ -48,6 +48,8 @@ module Rley # This module is used as a namespace
               rhs_constituents = rhs_repr.map { |name| get_nonterminal(name) }
             when String
               rhs_constituents = [ get_nonterminal(rhs_repr) ]
+            when Terminal
+              rhs_constituents = [ rhs_repr ]
           end
           new_prod = Production.new(lhs, rhs_constituents)
           productions << new_prod

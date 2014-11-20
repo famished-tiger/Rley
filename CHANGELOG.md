@@ -1,3 +1,8 @@
+### 0.0.14 / 2014-11-20
+* [NEW]  `EarleyParser` now supports grammar with empty productions (i.e. nullable nonterminals).
+* [CHANGE]  (private) method `EarleyParser#prediction` updated with Ayock-Horspool improvement.
+* [CHANGE]  Moved class `DottedItem` under the `Parser` module.
+
 ### 0.0.13 / 2014-11-19
 * [NEW]  (private) method `Grammar#compute_nullable` added.
 * [CHANGE] `Grammar#initialize` constructor calls the method `Grammar#compute_nullable`

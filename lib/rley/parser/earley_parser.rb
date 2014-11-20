@@ -44,7 +44,7 @@ module Rley # This module is used as a namespace
             else
               next_symbol = state.next_symbol
               if next_symbol.kind_of?(Syntax::NonTerminal)
-                prediction(result, next_symbol, i)
+                prediction(result, state, next_symbol, i)
               elsif i < last_token_index
                 # Expecting a terminal symbol
                 scanning(result, next_symbol, i)
@@ -125,16 +125,22 @@ module Rley # This module is used as a namespace
       # in a left-most derivation. 
       # @param aParsing [Parsing] the object that encapsulates the results
       #   result of the parsing process
+      # @param aState [ParseState] current parse state being processed
       # @param aNonTerminal [NonTerminal] a non-terminal symbol that 
       #   immediately follows a dot 
       #   (= is expected/predicted by the production rule)
       # @param aPosition [Fixnum] position in the input token sequence.
-      def prediction(aParsing, aNonTerminal, aPosition)
+      def prediction(aParsing, aState, aNonTerminal, aPosition)
         # Retrieve all start dotted items for productions
         # with aNonTerminal as its lhs
         items = start_mapping[aNonTerminal]
         items.each do |an_item|
           aParsing.push_state(an_item, aPosition, aPosition)
+        end
+
+        if aTerminal.nullable? # Ayock-Horspool trick for nullable rules
+          next_item = next_mapping[aState.dotted_rule]
+          aParsing.push_state(next_item, aState.origin, aPosition)
         end
       end
 
