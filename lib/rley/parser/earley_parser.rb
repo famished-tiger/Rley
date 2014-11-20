@@ -63,7 +63,7 @@ module Rley # This module is used as a namespace
         aGrammar.rules.each do |prod|
           rhs_size = prod.rhs.size
           if rhs_size == 0
-            items << DottemItem.new(prod, 0)
+            items << DottedItem.new(prod, 0)
           else
             items += (0..rhs_size).map { |i| DottedItem.new(prod, i) }
           end
@@ -138,7 +138,7 @@ module Rley # This module is used as a namespace
           aParsing.push_state(an_item, aPosition, aPosition)
         end
 
-        if aTerminal.nullable? # Ayock-Horspool trick for nullable rules
+        if aNonTerminal.nullable? # Ayock-Horspool trick for nullable rules
           next_item = next_mapping[aState.dotted_rule]
           aParsing.push_state(next_item, aState.origin, aPosition)
         end

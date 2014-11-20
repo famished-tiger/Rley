@@ -1,3 +1,6 @@
+### 0.0.15 / 2014-11-20
+* [FIX]  `EarleyParser` class source code was out-of-sync.
+
 ### 0.0.14 / 2014-11-20
 * [NEW]  `EarleyParser` now supports grammar with empty productions (i.e. nullable nonterminals).
 * [CHANGE]  (private) method `EarleyParser#prediction` updated with Ayock-Horspool improvement.
