@@ -30,6 +30,21 @@ module Rley # This module is used as a namespace
         @position = valid_position(aPosition)
       end
       
+      # Return a String representation of the dotted item.
+      # @return [String]
+      def to_s()
+        prefix = "#{production.lhs} => "
+        text_values = production.rhs.map(&:to_s)
+        if position < 0
+          text_values << '.'
+        else
+          text_values.insert(position, '.')
+        end
+        suffix = text_values.join(' ')
+        
+        return prefix + suffix
+      end
+      
       # Return true if the dot position is at the start of the rhs.
       def at_start?()
         return position == 0 || position == -2

@@ -36,6 +36,14 @@ module Rley # This module is used as a namespace
         return dotted_rule.next_symbol
       end
       
+      # Give a String representation of itself.
+      # The format of the text representation is
+      # "format of dotted rule" + " | " + origin
+      # @return [String]
+      def to_s()
+        return  dotted_rule.to_s + " | #{origin}"
+      end
+      
       private
       
       # Return the validated dotted item(rule)

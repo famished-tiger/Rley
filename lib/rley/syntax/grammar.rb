@@ -53,7 +53,7 @@ module Rley # This module is used as a namespace
         @symbols << the_lhs unless @symbols.include? the_lhs
 
         # TODO: remove quadratic execution time
-        aProduction.rhs.members.each do |symb|
+        aProduction.rhs.each do |symb|
           next if symbols.include? symb
           @symbols << symb
         end
@@ -68,7 +68,7 @@ module Rley # This module is used as a namespace
         
         # Drop productions with one terminal in rhs or with a nullable lhs
         filtered_rules = rules.reject do |prod|
-          prod.lhs.nullable? || prod.rhs.members.find do |symb| 
+          prod.lhs.nullable? || prod.rhs.find do |symb| 
             symb.kind_of?(Terminal) 
           end
         end

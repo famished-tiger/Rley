@@ -1,3 +1,11 @@
+### 0.0.16 / 2014-11-23
+* [NEW]  Method `DottedItem#to_s` Returns a text representation of an instance.
+* [NEW]  Method `ParseState#to_s`
+* [NEW]  Method `GrmSymbol#to_s`
+* [NEW]  Method `VerbatimSymbol#to_s`
+* [CHANGE] File `earley_parser_spec.rb`: Parse tests refactored.
+
+
 ### 0.0.15 / 2014-11-20
 * [FIX]  `EarleyParser` class source code was out-of-sync.
 

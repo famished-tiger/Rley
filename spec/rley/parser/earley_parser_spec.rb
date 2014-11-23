@@ -149,20 +149,11 @@ module Rley # Open this namespace to avoid module qualifier prefixes
       end # context
 
       context 'Parsing: ' do
-        # Helper method. Compare the data from the parse state
-        # with values from expectation hash.
-        def compare_state(aState, expectations)
-          expect(aState.origin).to eq(expectations[:origin])
-          dotted_item = aState.dotted_rule
-          expect(dotted_item.production).to eq(expectations[:production])
-          expect(dotted_item.position).to eq(expectations[:dot])
-        end
-
         # Helper method. Compare the data from all the parse states
-        # of a given StateSet with an array of expectation hashes.
-        def compare_state_set(aStateSet, expectations)
+        # of a given StateSet with an array of expectation string.
+        def compare_state_texts(aStateSet, expectations)
           (0...expectations.size).each do |i|
-            compare_state(aStateSet.states[i], expectations[i])
+            expect(aStateSet.states[i].to_s).to eq(expectations[i])
           end
         end
 
@@ -172,79 +163,65 @@ module Rley # Open this namespace to avoid module qualifier prefixes
 
           ######################
           # Expectation chart[0]:
-          # S -> . A, 0           # start rule
-          # A -> . "a" A "c", 0   # predict from 0
-          # A -> . "b", 0         # predict from 0
-          expectations = [
-            { origin: 0, production: prod_S, dot: 0 },
-            { origin: 0, production: prod_A1, dot: 0 },
-            { origin: 0, production: prod_A2, dot: 0 }
+          expected = [
+            "S => . A | 0",          # start rule
+            "A => . 'a' A 'c' | 0",  # predict from 0
+            "A => . 'b' | 0"         # predict from 0
           ]
-          compare_state_set(parse_result.chart[0], expectations)
+          compare_state_texts(parse_result.chart[0], expected)
 
           ######################
+          # Expectation chart[1]:
+          expected = [
+            "A => 'a' . A 'c' | 0",   # scan from S(0) 1
+            "A => . 'a' A 'c' | 1",   # predict from 0
+            "A => . 'b' | 1"          # predict from 0
+          ]
           state_set_1 = parse_result.chart[1]
           expect(state_set_1.states.size).to eq(3)
-          # Expectation chart[1]:
-          # 0: A -> "a" . A "c", 0   # scan from S(0) 1
-          # 1: A -> . "a" A "c", 1   # predict from 0
-          # 2: A -> . "b", 1         # predict from 0
-          expectations = [
-            { origin: 0, production: prod_A1, dot: 1 },
-            { origin: 1, production: prod_A1, dot: 0 },
-            { origin: 1, production: prod_A2, dot: 0 }
-          ]
-          compare_state_set(state_set_1, expectations)
+          compare_state_texts(state_set_1, expected)
 
           ######################
+          # Expectation chart[2]:
+          expected = [
+            "A => 'a' . A 'c' | 1",  # scan from S(0) 1
+            "A => . 'a' A 'c' | 2",  # predict from 0
+            "A => . 'b' | 2"         # predict from 0
+          ]
           state_set_2 = parse_result.chart[2]
           expect(state_set_2.states.size).to eq(3)
-          # Expectation chart[2]:
-          # 0: A -> "a" . A "c", 1  # scan from S(0) 1
-          # 1: A -> . "a" A "c", 2  # predict from 0
-          # 2: A -> . "b", 2        # predict from 0
-          expectations = [
-            { origin: 1, production: prod_A1, dot: 1 },
-            { origin: 2, production: prod_A1, dot: 0 },
-            { origin: 2, production: prod_A2, dot: 0 }
-          ]
-          compare_state_set(state_set_2, expectations)
+          compare_state_texts(state_set_2, expected)
 
           ######################
+          # Expectation chart[3]:
+          expected = [
+            "A => 'b' . | 2",      # scan from S(2) 2
+            "A => 'a' A . 'c' | 1" # complete from 0 and S(2) 0
+          ]
           state_set_3 = parse_result.chart[3]
           expect(state_set_3.states.size).to eq(2)
-          # Expectation chart[3]:
-          # 0: A -> "b" ., 2      # scan from S(2) 2
-          # 1: A -> "a" A . "c", 1 # complete from 0 and S(2) 0
-          expectations = [
-            { origin: 2, production: prod_A2, dot: -1 },
-            { origin: 1, production: prod_A1, dot: 2 }
-          ]
-          compare_state_set(state_set_3, expectations)
+          compare_state_texts(state_set_3, expected)
+
 
           ######################
+          # Expectation chart[4]:
+          expected = [
+            "A => 'a' A 'c' . | 1",  # scan from S(3) 1
+            "A => 'a' A . 'c' | 0"   # complete from 0 and S(1) 0
+          ]
           state_set_4 = parse_result.chart[4]
           expect(state_set_4.states.size).to eq(2)
-          # Expectation chart[4]:
-          # 0: A -> "a" A "c" ., 1  # scan from S(3) 1
-          # 1: A -> "a" A . "c", 0  # complete from 0 and S(1) 0
-          expectations = [
-            { origin: 1, production: prod_A1, dot: -1 },
-            { origin: 0, production: prod_A1, dot: 2 }
-          ]
-          compare_state_set(state_set_4, expectations)
+          compare_state_texts(state_set_4, expected)
 
           ######################
+          # Expectation chart[5]:
+          expected = [
+            "A => 'a' A 'c' . | 0",  # scan from S(4) 1
+            "S => A . | 0"  # complete from 0 and S(0) 0
+          ]
           state_set_5 = parse_result.chart[5]
           expect(state_set_5.states.size).to eq(2)
-          # Expectation chart[5]:
-          # 0: A -> "a" A "c" ., 0  # scan from S(4) 1
-          # 1: S -> A ., 0  # complete from 0 and S(0) 0
-          expectations = [
-            { origin: 0, production: prod_A1, dot: -1 },
-            { origin: 0, production: prod_S, dot: -1 }
-          ]
-          compare_state_set(state_set_5, expectations)
+          compare_state_texts(state_set_5, expected)
         end
 
         it 'should parse a valid simple expression' do
@@ -254,112 +231,85 @@ module Rley # Open this namespace to avoid module qualifier prefixes
 
           ###################### S(0): . 2 + 3 * 4
           # Expectation chart[0]:
-          # (1) P -> . S, 0         # start rule
-          # (2) S -> . S "+" M, 0   # predict from (1)
-          # (3) S -> . M, 0         # predict from (1)
-          # (4) M -> . M "*" T, 0   # predict from (3)
-          # (5) M -> . T, 0         # predict from (3)
-          # (6) T -> . integer, 0   # predict from (3)
-          expectations = [
-            { origin: 0, production: prod_P, dot: 0 },
-            { origin: 0, production: prod_S1, dot: 0 },
-            { origin: 0, production: prod_S2, dot: 0 },
-            { origin: 0, production: prod_M1, dot: 0 },
-            { origin: 0, production: prod_M2, dot: 0 },
-            { origin: 0, production: prod_T, dot: 0 }
+          expected = [
+            "P => . S | 0",         # start rule
+            "S => . S '+' M | 0",   # predict from (1)
+            "S => . M | 0",         # predict from (1)
+            "M => . M '*' T | 0",   # predict from (3)
+            "M => . T | 0",         # predict from (3)
+            "T => . integer | 0"    # predict from (3)
           ]
-          compare_state_set(parse_result.chart[0], expectations)
+          compare_state_texts(parse_result.chart[0], expected)
+
 
           ###################### S(1): 2 . + 3 * 4
           # Expectation chart[1]:
-          # (1) T -> integer ., 0   # scan from S(0) 6
-          # (2) M -> T ., 0         # complete from (1) and S(0) 5
-          # (3) S -> M ., 0         # complete from (2) and S(0) 3
-          # (4) M -> M . "*" T, 0   # complete from (2) and S(0) 4
-          # (5) P -> S ., 0         # complete from (4) and S(0) 1
-          # (6) S -> S . "+" M, 0   # complete from (4) and S(0) 2
-          expectations = [
-            { origin: 0, production: prod_T, dot: -1 },
-            { origin: 0, production: prod_M2, dot: -1 },
-            { origin: 0, production: prod_S2, dot: -1 },
-            { origin: 0, production: prod_M1, dot: 1 },
-            { origin: 0, production: prod_P, dot: -1 },
-            { origin: 0, production: prod_S1, dot: 1 }
+          expected = [
+            "T => integer . | 0",   # scan from S(0) 6
+            "M => T . | 0",         # complete from (1) and S(0) 5
+            "S => M . | 0",         # complete from (2) and S(0) 3
+            "M => M . '*' T | 0",   # complete from (2) and S(0) 4
+            "P => S . | 0",         # complete from (4) and S(0) 1
+            "S => S . '+' M | 0"    # complete from (4) and S(0) 2
           ]
-          compare_state_set(parse_result.chart[1], expectations)
+          compare_state_texts(parse_result.chart[1], expected)
 
 
           ###################### S(2): 2 + . 3 * 4
           # Expectation chart[2]:
-          # (1) S -> S "+" . M, 0   # scan from S(1) 6
-          # (2) M -> . M "*" T, 2   # predict from (1)
-          # (3) M -> . T, 2         # predict from (1)
-          # (4) T -> . integer,     2 # predict from (3)
-          expectations = [
-            { origin: 0, production: prod_S1, dot: 2 },
-            { origin: 2, production: prod_M1, dot: 0 },
-            { origin: 2, production: prod_M2, dot: 0 },
-            { origin: 2, production: prod_T, dot: 0 }
+          expected = [
+            "S => S '+' . M | 0",   # scan from S(1) 6
+            "M => . M '*' T | 2",   # predict from (1)
+            "M => . T | 2",         # predict from (1)
+            "T => . integer | 2"    # predict from (3)
           ]
-          compare_state_set(parse_result.chart[2], expectations)
+          compare_state_texts(parse_result.chart[2], expected)
+
 
           ###################### S(3): 2 + 3 . * 4
           # Expectation chart[3]:
-          # (1) T -> integer ., 2   # scan from S(2) 4
-          # (2) M -> T ., 2         # complete from (1) and S(2) 3
-          # (3) S -> S "+" M ., 0   # complete from (1) and S(2) 1
-          # (4) M -> M . "*" T, 2   # complete from (2) and S(2) 2
-          # (5) P -> S ., 0         # complete from (4) and S(0) 1
-          expectations = [
-            { origin: 2, production: prod_T, dot: -1 },
-            { origin: 2, production: prod_M2, dot: -1 },
-            { origin: 0, production: prod_S1, dot: -1 },
-            { origin: 2, production: prod_M1, dot: 1 },
-            { origin: 0, production: prod_P, dot: -1 }
+          expected = [
+            "T => integer . | 2",   # scan from S(2) 4
+            "M => T . | 2",         # complete from (1) and S(2) 3
+            "S => S '+' M . | 0",   # complete from (1) and S(2) 1
+            "M => M . '*' T | 2",   # complete from (2) and S(2) 2
+            "P => S . | 0"          # complete from (4) and S(0) 1
           ]
-          compare_state_set(parse_result.chart[3], expectations)
+          compare_state_texts(parse_result.chart[3], expected)
 
           ###################### S(4): 2 + 3 * . 4
           # Expectation chart[4]:
-          # (1) M -> M "*" . T, 2   # scan from S(3) 4
-          # (2) T -> . number, 4    # predict from (1)
-
-          expectations = [
-            { origin: 2, production: prod_M1, dot: 2 },
-            { origin: 4, production: prod_T, dot: 0 }
+          expected = [
+          "M => M '*' . T | 2",   # scan from S(3) 4
+          "T => . integer | 4"    # predict from (1)
           ]
-          compare_state_set(parse_result.chart[4], expectations)
+          compare_state_texts(parse_result.chart[4], expected)
 
           ###################### S(5): 2 + 3 * 4 .
           # Expectation chart[5]:
-          # (1) T -> number ., 4    # scan from S(4) 2
-          # (2) M -> M "*" T ., 2   # complete from (1) and S(4) 1
-          # (3) S -> S "+" M ., 0   # complete from (2) and S(2) 1
-          # (4) M -> M . "*" T, 2   # complete from (2) and S(2) 2
-          # (5) P -> S ., 0         # complete from (3) and S(2) 2
-          expectations = [
-            { origin: 4, production: prod_T, dot: -1 },
-            { origin: 2, production: prod_M1, dot: -1 },
-            { origin: 0, production: prod_S1, dot: -1 },
-            { origin: 2, production: prod_M1, dot: 1 },
-            { origin: 0, production: prod_P, dot: -1 }
+          expected = [
+            "T => integer . | 4",    # scan from S(4) 2
+            "M => M '*' T . | 2",   # complete from (1) and S(4) 1
+            "S => S '+' M . | 0",   # complete from (2) and S(2) 1
+            "M => M . '*' T | 2",   # complete from (2) and S(2) 2
+            "P => S . | 0"          # complete from (3) and S(2) 2
           ]
-          compare_state_set(parse_result.chart[5], expectations)
+          compare_state_texts(parse_result.chart[5], expected)
         end
-        
-        
+
+
         it 'should parse an ambiguous grammar' do
           # Grammar 3: A ambiguous arithmetic expression language
           # (based on example in article on Earley's algorithm in Wikipedia)
-          # P ::= S.
-          # S ::= S "+" S.
-          # S ::= S "*" S.
-          # S ::= T.
-          # T ::= an integer number token.
+          # P => S.
+          # S => S "+" S.
+          # S => S "*" S.
+          # S => T.
+          # T => an integer number token.
           t_int = Syntax::Literal.new('integer', /[-+]?\d+/)
           t_plus = Syntax::VerbatimSymbol.new('+')
           t_star = Syntax::VerbatimSymbol.new('*')
-          
+
           builder = Syntax::GrammarBuilder.new
           builder.add_terminals(t_int, t_plus, t_star)
           builder.add_production('P' => 'S')
@@ -394,49 +344,35 @@ module Rley # Open this namespace to avoid module qualifier prefixes
 
           ###################### S(0) == . a a c c
           # Expectation chart[0]:
-          # S -> . A, 0 # start rule
-          # A -> . "a" A "c", 0
-          # A -> . "b", 0
-          expectations = [
-            { origin: 0, production: prod_S, dot: 0 },
-            { origin: 0, production: prod_A1, dot: 0 },
-            { origin: 0, production: prod_A2, dot: 0 }
+          expected = [
+            "S => . A | 0",          # start rule
+            "A => . 'a' A 'c' | 0",  # predict from 0
+            "A => . 'b' | 0"         # predict from 0
           ]
-          compare_state_set(parse_result.chart[0], expectations)
+          compare_state_texts(parse_result.chart[0], expected)
 
           ###################### S(1) == a . a c c
-          state_set_1 = parse_result.chart[1]
-          expect(state_set_1.states.size).to eq(3)
-          # Expectation chart[1]:
-          # 0: A -> "a" . A "c", 0   # scan from S(0) 1
-          # 1: A -> . "a" A "c", 1   # predict from 0
-          # 2: A -> . "b", 1         # predict from 0
-          expectations = [
-            { origin: 0, production: prod_A1, dot: 1 },
-            { origin: 1, production: prod_A1, dot: 0 },
-            { origin: 1, production: prod_A2, dot: 0 }
+          expected = [
+            "A => 'a' . A 'c' | 0",   # scan from S(0) 1
+            "A => . 'a' A 'c' | 1",   # predict from 0
+            "A => . 'b' | 1"          # predict from 0
           ]
-          compare_state_set(state_set_1, expectations)
+          compare_state_texts(parse_result.chart[1], expected)
 
           ###################### S(2) == a a . c c
-          state_set_2 = parse_result.chart[2]
-          expect(state_set_2.states.size).to eq(3)
-          # Expectation chart[2]:
-          # 0: A -> "a" . A "c", 1  # scan from S(0) 1
-          # 1: A -> . "a" A "c", 2  # predict from 0
-          # 2: A -> . "b", 2        # predict from 0
-          expectations = [
-            { origin: 1, production: prod_A1, dot: 1 },
-            { origin: 2, production: prod_A1, dot: 0 },
-            { origin: 2, production: prod_A2, dot: 0 }
+          expected = [
+            "A => 'a' . A 'c' | 1",  # scan from S(0) 1
+            "A => . 'a' A 'c' | 2",  # predict from 0
+            "A => . 'b' | 2"         # predict from 0
           ]
-          compare_state_set(state_set_2, expectations)
+          compare_state_texts(parse_result.chart[2], expected)
+
 
           ###################### S(3) == a a c? c
           state_set_3 = parse_result.chart[3]
           expect(state_set_3.states).to be_empty  # This is an error symptom
         end
-        
+
         it 'should parse a grammar with nullable nonterminals' do
           # Grammar 4: A grammar with nullable nonterminal
           # based on example in "Parsing Techniques" book (D. Grune, C. Jabobs)
@@ -446,11 +382,11 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           # F ::= a.
           # Q ::= *.
           # Q ::= /.
-          # Q ::=. 
+          # Q ::=.
           t_a = Syntax::VerbatimSymbol.new('a')
           t_star = Syntax::VerbatimSymbol.new('*')
           t_slash = Syntax::VerbatimSymbol.new('/')
-          
+
           builder = Syntax::GrammarBuilder.new
           builder.add_terminals(t_a, t_star, t_slash)
           builder.add_production('Z' => 'E')
@@ -458,8 +394,8 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           builder.add_production('E' => 'F')
           builder.add_production('F' => t_a)
           builder.add_production('Q' => t_star)
-          builder.add_production('Q' => t_slash) 
-          builder.add_production('Q' => []) # Empty production    
+          builder.add_production('Q' => t_slash)
+          builder.add_production('Q' => []) # Empty production
           tokens = [
             Token.new('a', t_a),
             Token.new('a', t_a),
@@ -473,111 +409,77 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           prod_Q1 = builder.productions[4]
           prod_Q2 = builder.productions[5]
           prod_Q3 = builder.productions[6]
-          
+
           instance = EarleyParser.new(builder.grammar)
           expect { instance.parse(tokens) }.not_to raise_error
           parse_result = instance.parse(tokens)
           expect(parse_result.success?).to eq(true)
-          
+
           ###################### S(0) == . a a / a
           # Expectation chart[0]:
-          # (1) S -> . E, 0 # start rule
-          # (2) E -> . E Q F, 0 # predict from (1)
-          # (3) E -> . F, 0 # predict from (1)
-          # (4) F -> . a    # predict from (3)
-          expectations = [
-            { origin: 0, production: prod_Z, dot: 0 },
-            { origin: 0, production: prod_E1, dot: 0 },
-            { origin: 0, production: prod_E2, dot: 0 },
-            { origin: 0, production: prod_F, dot: 0 }
+          expected = [
+            "Z => . E | 0",     # start rule
+            "E => . E Q F | 0", # predict from (1)
+            "E => . F | 0",     # predict from (1)
+            "F => . 'a' | 0"    # predict from (3)
           ]
-          compare_state_set(parse_result.chart[0], expectations)
+          compare_state_texts(parse_result.chart[0], expected)
 
           ###################### S(1) == a . a / a
           # Expectation chart[1]:
-          # (1) F -> a ., 0 # scan from S(0) 4
-          # (2) E -> F ., 0 # complete from (1) and S(0) 3 
-          # (3) S -> E ., 0 # complete from (2) and S(0) 1
-          # (4) E -> E . Q F, 0  # complete from (2) and S(0) 2
-          # (5) Q -> . *, 1  # Predict from (4)
-          # (6) Q -> . /, 1  # Predict from (4)
-          # (7) Q -> ., 1  # Predict from (4)
-          # (8) E -> E Q . F, 0  # Modified predict from (4)
-          # (9) F -> . a, 1 # Predict from (8)
-          expectations = [
-            { origin: 0, production: prod_F, dot: -1 },
-            { origin: 0, production: prod_E2, dot: -1 },
-            { origin: 0, production: prod_Z, dot: -1 },
-            { origin: 0, production: prod_E1, dot: 1 },
-            { origin: 1, production: prod_Q1, dot: 0 },
-            { origin: 1, production: prod_Q2, dot: 0 },
-            { origin: 1, production: prod_Q3, dot: -2 },
-            { origin: 0, production: prod_E1, dot: 2 },
-            { origin: 1, production: prod_F, dot: 0 }
+          expected = [
+          "F => 'a' . | 0", # scan from S(0) 4
+          "E => F . | 0",   # complete from (1) and S(0) 3
+          "Z => E . | 0",   # complete from (2) and S(0) 1
+          "E => E . Q F | 0",  # complete from (2) and S(0) 2
+          "Q => . '*' | 1",  # Predict from (4)
+          "Q => . '/' | 1",  # Predict from (4)
+          "Q => . | 1",      # Predict from (4)
+          "E => E Q . F | 0",  # Modified predict from (4)
+          "F => . 'a' | 1"   # Predict from (8)
           ]
-          compare_state_set(parse_result.chart[1], expectations)
+          compare_state_texts(parse_result.chart[1], expected)
 
           ###################### S(2) == a a . / a
           # Expectation chart[2]:
-          # (1) F -> a ., 1 # scan from S(1) 9
-          # (2) E -> E Q F ., 0  # complete from (1) and S(1) 8
-          # (3) S -> E ., 0 # complete from (1) and S(0) 1
-          # (4) E -> E . Q F, 0  # complete from (1) and S(0) 2
-          # (5) Q -> . *, 2  # Predict from (4)
-          # (6) Q -> . /, 2  # Predict from (4)
-          # (7) Q -> ., 2  # Predict from (4)
-          # (8) E -> E Q . F, 0  # Complete from (5) and S(1) 4
-          # (9) F -> . a, 1 # Predict from (8)
-          expectations = [
-            { origin: 1, production: prod_F, dot: -1 },
-            { origin: 0, production: prod_E1, dot: -1 },
-            { origin: 0, production: prod_Z, dot: -1 },
-            { origin: 0, production: prod_E1, dot: 1 },
-            { origin: 2, production: prod_Q1, dot: 0 },
-            { origin: 2, production: prod_Q2, dot: 0 },
-            { origin: 2, production: prod_Q3, dot: -2 },
-            { origin: 0, production: prod_E1, dot: 2 },
-            { origin: 2, production: prod_F, dot: 0 },
+          expected = [
+            "F => 'a' . | 1", # scan from S(1) 9
+            "E => E Q F . | 0",  # complete from (1) and S(1) 8
+            "Z => E . | 0",      # complete from (1) and S(0) 1
+            "E => E . Q F | 0",  # complete from (1) and S(0) 2
+            "Q => . '*' | 2",    # Predict from (4)
+            "Q => . '/' | 2",    # Predict from (4)
+            "Q => . | 2",        # Predict from (4)
+            "E => E Q . F | 0",  # Complete from (5) and S(1) 4
+            "F => . 'a' | 2"     # Predict from (8)
           ]
-          compare_state_set(parse_result.chart[2], expectations)
+          compare_state_texts(parse_result.chart[2], expected)
+
 
           ###################### S(3) == a a / . a
           # Expectation chart[3]:
-          # (1) Q -> / ., 2 # scan from S(2) 6
-          # (2) E -> E Q . F, 0  # complete from (1) and S(1) 4
-          # (3) F -> . a, 3 # Predict from (2)
-          expectations = [
-            { origin: 2, production: prod_Q2, dot: -1 },
-            { origin: 0, production: prod_E1, dot: 2 },
-            { origin: 3, production: prod_F, dot: 0 }
+          expected = [
+          "Q => '/' . | 2",    # scan from S(2) 6
+          "E => E Q . F | 0",  # complete from (1) and S(1) 4
+          "F => . 'a' | 3"     # Predict from (2)
           ]
-          compare_state_set(parse_result.chart[3], expectations)
+          compare_state_texts(parse_result.chart[3], expected)
 
-          
+
           ###################### S(4) == a a / a .
           # Expectation chart[4]:
-          # (1) F -> a ., 3 # scan from S(3) 3
-          # (2) E -> E Q F ., 0  # complete from (1) and S(3) 2
-          # (3) S -> E ., 0 # complete from (2) and S(0) 1
-          # (4) E -> E . Q F, 0  # complete from (2) and S(0) 2
-          # (5) Q -> . *, 3  # Predict from (4)
-          # (6) Q -> . /, 3  # Predict from (4)
-          # (7) Q -> ., 3  # Predict from (4)
-          # (8) E -> E Q . F, 0  # Modified predict from (4)
-          # (9) F -> . a, 4 # Predict from (8)
-          expectations = [
-            { origin: 3, production: prod_F, dot: -1 },
-            { origin: 0, production: prod_E1, dot: -1 },
-            { origin: 0, production: prod_Z, dot: -1 },
-            { origin: 0, production: prod_E1, dot: 1 },
-            { origin: 4, production: prod_Q1, dot: 0 },
-            { origin: 4, production: prod_Q2, dot: 0 },
-            { origin: 4, production: prod_Q3, dot: -2 },
-            { origin: 0, production: prod_E1, dot: 2 },
-            { origin: 4, production: prod_F, dot: 0 },
+          expected = [
+            "F => 'a' . | 3",    # scan from S(3) 3
+            "E => E Q F . | 0",  # complete from (1) and S(3) 2
+            "Z => E . | 0",      # complete from (2) and S(0) 1
+            "E => E . Q F | 0",  # complete from (2) and S(0) 2
+            "Q => . '*' | 4",    # Predict from (4)
+            "Q => . '/' | 4",    # Predict from (4)
+            "Q => . | 4",        # Predict from (4)
+            "E => E Q . F | 0",  # Modified predict from (4)
+            "F => . 'a' | 4"     # Predict from (8)
           ]
-          compare_state_set(parse_result.chart[4], expectations)
-          
+          compare_state_texts(parse_result.chart[4], expected)
         end
       end # context
 

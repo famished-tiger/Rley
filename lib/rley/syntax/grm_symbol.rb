@@ -11,6 +11,12 @@ module Rley # This module is used as a namespace
       def initialize(aName)
         @name = aName.dup
       end
+      
+      # The String representation of the grammar symbol
+      # @return [String]
+      def to_s()
+        return name.to_s
+      end
         
     end # class
   end # module

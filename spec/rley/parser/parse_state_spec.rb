@@ -90,6 +90,11 @@ module Rley # Open this namespace to avoid module qualifier prefixes
         it 'should know the next expected symbol' do
           expect(subject.next_symbol).to eq(t_c)
         end
+        
+        it 'should know its text representation' do
+          expected = 'sentence => A B . C | 3'
+          expect(subject.to_s).to eq(expected)
+        end
       end # context
 
     end # describe
