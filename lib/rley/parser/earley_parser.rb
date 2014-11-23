@@ -37,6 +37,7 @@ module Rley # This module is used as a namespace
         result = Parsing.new(start_dotted_item, aTokenSequence)
         last_token_index = aTokenSequence.size
         (0..last_token_index).each do |i|
+          predicted = Set.new
           result.chart[i].each do |state|
             if state.complete?
               # parse reached end of production
@@ -44,7 +45,10 @@ module Rley # This module is used as a namespace
             else
               next_symbol = state.next_symbol
               if next_symbol.kind_of?(Syntax::NonTerminal)
-                prediction(result, state, next_symbol, i)
+                unless predicted.include? next_symbol
+                  prediction(result, state, next_symbol, i)
+                  predicted << next_symbol  # Avoid repeated predictions
+                end
               elsif i < last_token_index
                 # Expecting a terminal symbol
                 scanning(result, next_symbol, i)

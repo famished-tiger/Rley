@@ -96,7 +96,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
         end
         
         it 'should give its text representation' do
-          expectation = "sentence => A . B C"
+          expectation = 'sentence => A . B C'
           expect(subject.to_s).to eq(expectation)
         end
       end

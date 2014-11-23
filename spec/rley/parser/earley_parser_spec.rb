@@ -164,7 +164,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           ######################
           # Expectation chart[0]:
           expected = [
-            "S => . A | 0",          # start rule
+            'S => . A | 0',          # start rule
             "A => . 'a' A 'c' | 0",  # predict from 0
             "A => . 'b' | 0"         # predict from 0
           ]
@@ -217,7 +217,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           # Expectation chart[5]:
           expected = [
             "A => 'a' A 'c' . | 0",  # scan from S(4) 1
-            "S => A . | 0"  # complete from 0 and S(0) 0
+            'S => A . | 0'  # complete from 0 and S(0) 0
           ]
           state_set_5 = parse_result.chart[5]
           expect(state_set_5.states.size).to eq(2)
@@ -232,12 +232,12 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           ###################### S(0): . 2 + 3 * 4
           # Expectation chart[0]:
           expected = [
-            "P => . S | 0",         # start rule
+            'P => . S | 0',         # start rule
             "S => . S '+' M | 0",   # predict from (1)
-            "S => . M | 0",         # predict from (1)
+            'S => . M | 0',         # predict from (1)
             "M => . M '*' T | 0",   # predict from (3)
-            "M => . T | 0",         # predict from (3)
-            "T => . integer | 0"    # predict from (3)
+            'M => . T | 0',         # predict from (3)
+            'T => . integer | 0'    # predict from (3)
           ]
           compare_state_texts(parse_result.chart[0], expected)
 
@@ -245,11 +245,11 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           ###################### S(1): 2 . + 3 * 4
           # Expectation chart[1]:
           expected = [
-            "T => integer . | 0",   # scan from S(0) 6
-            "M => T . | 0",         # complete from (1) and S(0) 5
-            "S => M . | 0",         # complete from (2) and S(0) 3
+            'T => integer . | 0',   # scan from S(0) 6
+            'M => T . | 0',         # complete from (1) and S(0) 5
+            'S => M . | 0',         # complete from (2) and S(0) 3
             "M => M . '*' T | 0",   # complete from (2) and S(0) 4
-            "P => S . | 0",         # complete from (4) and S(0) 1
+            'P => S . | 0',         # complete from (4) and S(0) 1
             "S => S . '+' M | 0"    # complete from (4) and S(0) 2
           ]
           compare_state_texts(parse_result.chart[1], expected)
@@ -260,8 +260,8 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           expected = [
             "S => S '+' . M | 0",   # scan from S(1) 6
             "M => . M '*' T | 2",   # predict from (1)
-            "M => . T | 2",         # predict from (1)
-            "T => . integer | 2"    # predict from (3)
+            'M => . T | 2',         # predict from (1)
+            'T => . integer | 2'    # predict from (3)
           ]
           compare_state_texts(parse_result.chart[2], expected)
 
@@ -269,34 +269,68 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           ###################### S(3): 2 + 3 . * 4
           # Expectation chart[3]:
           expected = [
-            "T => integer . | 2",   # scan from S(2) 4
-            "M => T . | 2",         # complete from (1) and S(2) 3
+            'T => integer . | 2',   # scan from S(2) 4
+            'M => T . | 2',         # complete from (1) and S(2) 3
             "S => S '+' M . | 0",   # complete from (1) and S(2) 1
             "M => M . '*' T | 2",   # complete from (2) and S(2) 2
-            "P => S . | 0"          # complete from (4) and S(0) 1
+            'P => S . | 0'          # complete from (4) and S(0) 1
           ]
           compare_state_texts(parse_result.chart[3], expected)
 
           ###################### S(4): 2 + 3 * . 4
           # Expectation chart[4]:
           expected = [
-          "M => M '*' . T | 2",   # scan from S(3) 4
-          "T => . integer | 4"    # predict from (1)
+            "M => M '*' . T | 2",   # scan from S(3) 4
+            'T => . integer | 4'    # predict from (1)
           ]
           compare_state_texts(parse_result.chart[4], expected)
 
           ###################### S(5): 2 + 3 * 4 .
           # Expectation chart[5]:
           expected = [
-            "T => integer . | 4",    # scan from S(4) 2
+            'T => integer . | 4',    # scan from S(4) 2
             "M => M '*' T . | 2",   # complete from (1) and S(4) 1
             "S => S '+' M . | 0",   # complete from (2) and S(2) 1
             "M => M . '*' T | 2",   # complete from (2) and S(2) 2
-            "P => S . | 0"          # complete from (3) and S(2) 2
+            'P => S . | 0'          # complete from (3) and S(2) 2
           ]
           compare_state_texts(parse_result.chart[5], expected)
         end
 
+        it 'should parse a nullable grammar' do
+          # Simple but problematic grammar for the original Earley parser
+          # (based on example in D. Grune, C. Jacobs "Parsing Techniques" book)
+          # Ss =>  A A 'x';
+          # A => ;
+          t_x = Syntax::VerbatimSymbol.new('x')
+
+          builder = Syntax::GrammarBuilder.new
+          builder.add_terminals(t_x)
+          builder.add_production('Ss' => %w(A A x))
+          builder.add_production('A' => [])
+          tokens = [ Token.new('x', t_x) ]
+
+          instance = EarleyParser.new(builder.grammar)
+          expect { instance.parse(tokens) }.not_to raise_error
+          parse_result = instance.parse(tokens)
+          expect(parse_result.success?).to eq(true)
+          ###################### S(0): . x
+          # Expectation chart[0]:
+          expected = [
+            "Ss => . A A 'x' | 0",  # Start rule
+            'A => . | 0',           # predict from (1)
+            "Ss => A . A 'x' | 0",  # modified predict from (1)
+            "Ss => A A . 'x' | 0",  # modified predict from (1)
+          ]
+          compare_state_texts(parse_result.chart[0], expected)
+
+          ###################### S(1): x .
+          # Expectation chart[1]:
+          expected = [
+            "Ss => A A 'x' . | 0",  # scan from S(0) 4
+          ]
+          compare_state_texts(parse_result.chart[1], expected)
+        end
 
         it 'should parse an ambiguous grammar' do
           # Grammar 3: A ambiguous arithmetic expression language
@@ -332,22 +366,22 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           ###################### S(0): . 2 + 3 * 4
           # Expectation chart[0]:
           expected = [
-            "P => . S | 0",       # Start rule
+            'P => . S | 0',       # Start rule
             "S => . S '+' S | 0", # predict from (1)
             "S => . S '*' S | 0", # predict from (1)
-            "S => . L | 0",       # predict from (1)
-            "L => . integer | 0"  # predict from (4)
+            'S => . L | 0',       # predict from (1)
+            'L => . integer | 0'  # predict from (4)
           ]
           compare_state_texts(parse_result.chart[0], expected)
 
           ###################### S(1): 2 . + 3 * 4
           # Expectation chart[1]:
           expected = [
-            "L => integer . | 0",  # scan from S(0) 4
-            "S => L . | 0",       # complete from (1) and S(0) 4
-            "P => S . | 0",       # complete from (2) and S(0) 1
-            "S => S . '+' S | 0", #complete from (2) and S(0) 2
-            "S => S . '*' S | 0", #complete from (2) and S(0) 3
+            'L => integer . | 0',  # scan from S(0) 4
+            'S => L . | 0',       # complete from (1) and S(0) 4
+            'P => S . | 0',       # complete from (2) and S(0) 1
+            "S => S . '+' S | 0", # complete from (2) and S(0) 2
+            "S => S . '*' S | 0", # complete from (2) and S(0) 3
           ]
           compare_state_texts(parse_result.chart[1], expected)
 
@@ -357,25 +391,25 @@ module Rley # Open this namespace to avoid module qualifier prefixes
             "S => S '+' . S | 0", # scan from S(1) 4
             "S => . S '+' S | 2", # predict from (1)
             "S => . S '*' S | 2", # predict from (1)
-            "S => . L | 2",       # predict from (1)
-            "L => . integer | 2"  # predict from (4)
+            'S => . L | 2',       # predict from (1)
+            'L => . integer | 2'  # predict from (4)
           ]
           compare_state_texts(parse_result.chart[2], expected)
-          
+
           ###################### S(3): 2 + 3 . * 4
           # Expectation chart[3]:
           expected = [
-            "L => integer . | 2", # scan from S(2) 5
-            "S => L . | 2",       # complete from (1) and S(2) 4
+            'L => integer . | 2', # scan from S(2) 5
+            'S => L . | 2',       # complete from (1) and S(2) 4
             "S => S '+' S . | 0",  # complete from (2) and S(2) 1
             "S => S . '+' S | 2", # complete from (2) and S(2) 2
             "S => S . '*' S | 2", # complete from (2) and S(2) 3
-            "P => S . | 0",       # complete from (2) and S(0) 1
-            "S => S . '+' S | 0", #complete from (2) and S(0) 2
-            "S => S . '*' S | 0", #complete from (2) and S(0) 3
+            'P => S . | 0',       # complete from (2) and S(0) 1
+            "S => S . '+' S | 0", # complete from (2) and S(0) 2
+            "S => S . '*' S | 0", # complete from (2) and S(0) 3
           ]
           compare_state_texts(parse_result.chart[3], expected)
-          
+
           ###################### S(4): 2 + 3 * . 4
           # Expectation chart[4]:
           expected = [
@@ -383,16 +417,16 @@ module Rley # Open this namespace to avoid module qualifier prefixes
             "S => S '*' . S | 0", # scan from S(3) 8
             "S => . S '+' S | 4", # predict from (1)
             "S => . S '*' S | 4", # predict from (1)
-            "S => . L | 4",       # predict from (1)
-            "L => . integer | 4"  # predict from (4)
+            'S => . L | 4',       # predict from (1)
+            'L => . integer | 4'  # predict from (4)
           ]
           compare_state_texts(parse_result.chart[4], expected)
-          
+
           ###################### S(5): 2 + 3 * 4 .
           # Expectation chart[5]:
           expected = [
-            "L => integer . | 4",   # scan from S(4) 6
-            "S => L . | 4",         # complete from (1) and S(4) 5
+            'L => integer . | 4',   # scan from S(4) 6
+            'S => L . | 4',         # complete from (1) and S(4) 5
             "S => S '*' S . | 2",   # complete from (2) and S(4) 1
             "S => S '*' S . | 0",   # complete from (2) and S(4) 2
             "S => S . '+' S | 4",   # complete from (2) and S(4) 3
@@ -400,9 +434,9 @@ module Rley # Open this namespace to avoid module qualifier prefixes
             "S => S '+' S . | 0",   # complete from (2) and S(2) 1
             "S => S . '+' S | 2",   # complete from (2) and S(2) 2
             "S => S . '*' S | 2",   # complete from (2) and S(2) 3
-            "P => S . | 0",         # Start rule
-            "S => S . '+' S | 0",   # predict from (1)
-            "S => S . '*' S | 0"    # predict from (1)
+            'P => S . | 0',         # complete from (2) and S(0) 1
+            "S => S . '+' S | 0",   # complete from (2) and S(0) 2
+            "S => S . '*' S | 0"    # complete from (2) and S(0) 3
           ]
           compare_state_texts(parse_result.chart[5], expected)
         end
@@ -422,7 +456,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           ###################### S(0) == . a a c c
           # Expectation chart[0]:
           expected = [
-            "S => . A | 0",          # start rule
+            'S => . A | 0',          # start rule
             "A => . 'a' A 'c' | 0",  # predict from 0
             "A => . 'b' | 0"         # predict from 0
           ]
@@ -479,13 +513,6 @@ module Rley # Open this namespace to avoid module qualifier prefixes
             Token.new('/', t_slash),
             Token.new('a', t_a)
           ]
-          prod_Z = builder.productions[0]
-          prod_E1 = builder.productions[1]
-          prod_E2 = builder.productions[2]
-          prod_F = builder.productions[3]
-          prod_Q1 = builder.productions[4]
-          prod_Q2 = builder.productions[5]
-          prod_Q3 = builder.productions[6]
 
           instance = EarleyParser.new(builder.grammar)
           expect { instance.parse(tokens) }.not_to raise_error
@@ -495,9 +522,9 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           ###################### S(0) == . a a / a
           # Expectation chart[0]:
           expected = [
-            "Z => . E | 0",     # start rule
-            "E => . E Q F | 0", # predict from (1)
-            "E => . F | 0",     # predict from (1)
+            'Z => . E | 0',     # start rule
+            'E => . E Q F | 0', # predict from (1)
+            'E => . F | 0',     # predict from (1)
             "F => . 'a' | 0"    # predict from (3)
           ]
           compare_state_texts(parse_result.chart[0], expected)
@@ -505,15 +532,15 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           ###################### S(1) == a . a / a
           # Expectation chart[1]:
           expected = [
-          "F => 'a' . | 0", # scan from S(0) 4
-          "E => F . | 0",   # complete from (1) and S(0) 3
-          "Z => E . | 0",   # complete from (2) and S(0) 1
-          "E => E . Q F | 0",  # complete from (2) and S(0) 2
-          "Q => . '*' | 1",  # Predict from (4)
-          "Q => . '/' | 1",  # Predict from (4)
-          "Q => . | 1",      # Predict from (4)
-          "E => E Q . F | 0",  # Modified predict from (4)
-          "F => . 'a' | 1"   # Predict from (8)
+            "F => 'a' . | 0", # scan from S(0) 4
+            'E => F . | 0',   # complete from (1) and S(0) 3
+            'Z => E . | 0',   # complete from (2) and S(0) 1
+            'E => E . Q F | 0',  # complete from (2) and S(0) 2
+            "Q => . '*' | 1",  # Predict from (4)
+            "Q => . '/' | 1",  # Predict from (4)
+            'Q => . | 1',      # Predict from (4)
+            'E => E Q . F | 0',  # Modified predict from (4)
+            "F => . 'a' | 1"   # Predict from (8)
           ]
           compare_state_texts(parse_result.chart[1], expected)
 
@@ -521,13 +548,13 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           # Expectation chart[2]:
           expected = [
             "F => 'a' . | 1", # scan from S(1) 9
-            "E => E Q F . | 0",  # complete from (1) and S(1) 8
-            "Z => E . | 0",      # complete from (1) and S(0) 1
-            "E => E . Q F | 0",  # complete from (1) and S(0) 2
+            'E => E Q F . | 0',  # complete from (1) and S(1) 8
+            'Z => E . | 0',      # complete from (1) and S(0) 1
+            'E => E . Q F | 0',  # complete from (1) and S(0) 2
             "Q => . '*' | 2",    # Predict from (4)
             "Q => . '/' | 2",    # Predict from (4)
-            "Q => . | 2",        # Predict from (4)
-            "E => E Q . F | 0",  # Complete from (5) and S(1) 4
+            'Q => . | 2',        # Predict from (4)
+            'E => E Q . F | 0',  # Complete from (5) and S(1) 4
             "F => . 'a' | 2"     # Predict from (8)
           ]
           compare_state_texts(parse_result.chart[2], expected)
@@ -536,9 +563,9 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           ###################### S(3) == a a / . a
           # Expectation chart[3]:
           expected = [
-          "Q => '/' . | 2",    # scan from S(2) 6
-          "E => E Q . F | 0",  # complete from (1) and S(1) 4
-          "F => . 'a' | 3"     # Predict from (2)
+            "Q => '/' . | 2",    # scan from S(2) 6
+            'E => E Q . F | 0',  # complete from (1) and S(1) 4
+            "F => . 'a' | 3"     # Predict from (2)
           ]
           compare_state_texts(parse_result.chart[3], expected)
 
@@ -547,13 +574,13 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           # Expectation chart[4]:
           expected = [
             "F => 'a' . | 3",    # scan from S(3) 3
-            "E => E Q F . | 0",  # complete from (1) and S(3) 2
-            "Z => E . | 0",      # complete from (2) and S(0) 1
-            "E => E . Q F | 0",  # complete from (2) and S(0) 2
+            'E => E Q F . | 0',  # complete from (1) and S(3) 2
+            'Z => E . | 0',      # complete from (2) and S(0) 1
+            'E => E . Q F | 0',  # complete from (2) and S(0) 2
             "Q => . '*' | 4",    # Predict from (4)
             "Q => . '/' | 4",    # Predict from (4)
-            "Q => . | 4",        # Predict from (4)
-            "E => E Q . F | 0",  # Modified predict from (4)
+            'Q => . | 4',        # Predict from (4)
+            'E => E Q . F | 0',  # Modified predict from (4)
             "F => . 'a' | 4"     # Predict from (8)
           ]
           compare_state_texts(parse_result.chart[4], expected)

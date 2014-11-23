@@ -5,6 +5,7 @@ module Rley # This module is used as a namespace
     # A non-terminal symbol (sometimes called a syntactic variable) represents
     # a composition of terminal or non-terminal symbols
     class NonTerminal < GrmSymbol
+      attr_writer(:nullable)
     
       # Constructor.
       # @param aName [String] The name of the grammar symbol.
@@ -22,14 +23,6 @@ module Rley # This module is used as a namespace
       def nullable?()
         return @nullable
       end
-      
-      # Set the nullable flag.
-      # @param aBoolean [true/false]
-      def nullable=(aBoolean)
-        @nullable = aBoolean
-      end
-      
-
     end # class
   end # module
 end # module

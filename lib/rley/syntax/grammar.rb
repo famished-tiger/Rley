@@ -77,7 +77,7 @@ module Rley # This module is used as a namespace
           new_nullables = Set.new
           filtered_rules.each do |a_prod|
             rhs_nullable = a_prod.rhs.members.all? do |symb|
-              nullable_sets[i-1].include? symb
+              nullable_sets[i - 1].include? symb
             end
             if rhs_nullable
               a_prod.lhs.nullable = true
@@ -86,7 +86,7 @@ module Rley # This module is used as a namespace
           end
           break if new_nullables.empty?
           filtered_rules.reject! { |prod| prod.lhs.nullable? }
-          nullable_sets[i] = nullable_sets[i-1].merge(new_nullables)
+          nullable_sets[i] = nullable_sets[i - 1].merge(new_nullables)
         end
       end
         
