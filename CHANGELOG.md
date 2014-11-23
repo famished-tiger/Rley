@@ -1,3 +1,8 @@
+### 0.0.18 / 2014-11-23
+* [CHANGE] `EarleyParser#parse`: Optimization prevent repeated prediction of same non-terminal for same state set.
+* [CHANGE] File `earley_parser_spec.rb`: Added new test for nullable grammar.
+* [CHANGE] Style refactoring in classes `EarleyParser`, `StateSet`, `Grammar`, `NonTerminal`
+
 ### 0.0.17 / 2014-11-23
 * [CHANGE] File `earley_parser_spec.rb`: Added step-by-step test of ambiguous grammar parsing.
 
