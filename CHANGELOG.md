@@ -1,3 +1,6 @@
+### 0.0.17 / 2014-11-23
+* [CHANGE] File `earley_parser_spec.rb`: Added step-by-step test of ambiguous grammar parsing.
+
 ### 0.0.16 / 2014-11-23
 * [NEW]  Method `DottedItem#to_s` Returns a text representation of an instance.
 * [NEW]  Method `ParseState#to_s`

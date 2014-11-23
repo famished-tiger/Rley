@@ -304,8 +304,8 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           # P => S.
           # S => S "+" S.
           # S => S "*" S.
-          # S => T.
-          # T => an integer number token.
+          # S => L.
+          # L => an integer number token.
           t_int = Syntax::Literal.new('integer', /[-+]?\d+/)
           t_plus = Syntax::VerbatimSymbol.new('+')
           t_star = Syntax::VerbatimSymbol.new('*')
@@ -328,6 +328,83 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           expect { instance.parse(tokens) }.not_to raise_error
           parse_result = instance.parse(tokens)
           expect(parse_result.success?).to eq(true)
+
+          ###################### S(0): . 2 + 3 * 4
+          # Expectation chart[0]:
+          expected = [
+            "P => . S | 0",       # Start rule
+            "S => . S '+' S | 0", # predict from (1)
+            "S => . S '*' S | 0", # predict from (1)
+            "S => . L | 0",       # predict from (1)
+            "L => . integer | 0"  # predict from (4)
+          ]
+          compare_state_texts(parse_result.chart[0], expected)
+
+          ###################### S(1): 2 . + 3 * 4
+          # Expectation chart[1]:
+          expected = [
+            "L => integer . | 0",  # scan from S(0) 4
+            "S => L . | 0",       # complete from (1) and S(0) 4
+            "P => S . | 0",       # complete from (2) and S(0) 1
+            "S => S . '+' S | 0", #complete from (2) and S(0) 2
+            "S => S . '*' S | 0", #complete from (2) and S(0) 3
+          ]
+          compare_state_texts(parse_result.chart[1], expected)
+
+          ###################### S(2): 2 + . 3 * 4
+          # Expectation chart[2]:
+          expected = [
+            "S => S '+' . S | 0", # scan from S(1) 4
+            "S => . S '+' S | 2", # predict from (1)
+            "S => . S '*' S | 2", # predict from (1)
+            "S => . L | 2",       # predict from (1)
+            "L => . integer | 2"  # predict from (4)
+          ]
+          compare_state_texts(parse_result.chart[2], expected)
+          
+          ###################### S(3): 2 + 3 . * 4
+          # Expectation chart[3]:
+          expected = [
+            "L => integer . | 2", # scan from S(2) 5
+            "S => L . | 2",       # complete from (1) and S(2) 4
+            "S => S '+' S . | 0",  # complete from (2) and S(2) 1
+            "S => S . '+' S | 2", # complete from (2) and S(2) 2
+            "S => S . '*' S | 2", # complete from (2) and S(2) 3
+            "P => S . | 0",       # complete from (2) and S(0) 1
+            "S => S . '+' S | 0", #complete from (2) and S(0) 2
+            "S => S . '*' S | 0", #complete from (2) and S(0) 3
+          ]
+          compare_state_texts(parse_result.chart[3], expected)
+          
+          ###################### S(4): 2 + 3 * . 4
+          # Expectation chart[4]:
+          expected = [
+            "S => S '*' . S | 2", # scan from S(3) 5
+            "S => S '*' . S | 0", # scan from S(3) 8
+            "S => . S '+' S | 4", # predict from (1)
+            "S => . S '*' S | 4", # predict from (1)
+            "S => . L | 4",       # predict from (1)
+            "L => . integer | 4"  # predict from (4)
+          ]
+          compare_state_texts(parse_result.chart[4], expected)
+          
+          ###################### S(5): 2 + 3 * 4 .
+          # Expectation chart[5]:
+          expected = [
+            "L => integer . | 4",   # scan from S(4) 6
+            "S => L . | 4",         # complete from (1) and S(4) 5
+            "S => S '*' S . | 2",   # complete from (2) and S(4) 1
+            "S => S '*' S . | 0",   # complete from (2) and S(4) 2
+            "S => S . '+' S | 4",   # complete from (2) and S(4) 3
+            "S => S . '*' S | 4",   # complete from (2) and S(4) 4
+            "S => S '+' S . | 0",   # complete from (2) and S(2) 1
+            "S => S . '+' S | 2",   # complete from (2) and S(2) 2
+            "S => S . '*' S | 2",   # complete from (2) and S(2) 3
+            "P => S . | 0",         # Start rule
+            "S => S . '+' S | 0",   # predict from (1)
+            "S => S . '*' S | 0"    # predict from (1)
+          ]
+          compare_state_texts(parse_result.chart[5], expected)
         end
 
 
