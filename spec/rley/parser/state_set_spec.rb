@@ -56,6 +56,22 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           allow(dotted_rule2).to receive(:production).and_return(a_prod)
           expect(subject.states_for(a_prod)).to eq([state2])
         end
+        
+        it 'should list the states that rewrite a given non-terminal' do
+          non_term = double('fake-non-terminal')
+          prod1 = double('fake-production1')
+          prod2 = double('fake-production2')
+        
+          # Adding states
+          subject.push_state(state1)
+          subject.push_state(state2)
+          allow(dotted_rule1).to receive(:production).and_return(prod1)
+          allow(prod1).to receive(:lhs).and_return(:dummy)          
+          allow(dotted_rule2).to receive(:production).and_return(prod2)
+          allow(dotted_rule2).to receive(:reduce_item?).and_return(true)
+          allow(prod2).to receive(:lhs).and_return(non_term) 
+          expect(subject.states_rewriting(non_term)).to eq([state2])
+        end
 
       end # context
 

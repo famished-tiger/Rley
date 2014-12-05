@@ -26,10 +26,31 @@ module Rley # This module is used as a namespace
         return states.select { |s| s.dotted_rule.next_symbol == aTerminal }
       end
 
+      # The list of complete ParseState that have the symbol as the lhs of their
+      # production
+      def states_rewriting(aNonTerm)
+        return states.select do |s| 
+          (s.dotted_rule.production.lhs == aNonTerm) && s.complete?
+        end
+      end
+      
       # The list of ParseState that involve the given production
       def states_for(aProduction)
         return states.select { |s| s.dotted_rule.production == aProduction }
       end
+      
+      # Retrieve the parse state that is the predecessor of the given one.
+      def predecessor_state(aParseState)
+        if aParseState.dotted_rule.prev_position.nil?
+          raise StandardError, "#{aParseState}"
+        else
+          prod = aParseState.dotted_rule.production
+          candidate = states.find { |s| s.precedes?(aParseState) }
+        end
+        
+        return candidate
+      end
+      
 
       private
 

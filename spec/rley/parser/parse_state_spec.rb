@@ -91,6 +91,15 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           expect(subject.next_symbol).to eq(t_c)
         end
         
+        it 'should know whether another instance follows this one' do
+          expect(subject.precedes?(subject)).to eq(false)
+          state1 = ParseState.new(DottedItem.new(sample_prod, 1), origin_val)
+          expect(state1.precedes?(subject)).to eq(true)
+          state0 = ParseState.new(DottedItem.new(sample_prod, 0), origin_val)
+          expect(state0.precedes?(state1)).to eq(true)
+          expect(state0.precedes?(subject)).to eq(false)
+        end
+        
         it 'should know its text representation' do
           expected = 'sentence => A B . C | 3'
           expect(subject.to_s).to eq(expected)

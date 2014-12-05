@@ -21,7 +21,7 @@ module Rley # This module is used as a namespace
       # Index of the next symbol (from the rhs) after the 'dot'.
       # If the dot is at the end of the rhs (i.e.) there is no next
       # symbol, then the position takes the value -1.
-      # It the rhs is empty, then the postion is -2
+      # It the rhs is empty, then the position is -2
       attr_reader(:position)
 
       # @param aProduction
@@ -64,10 +64,36 @@ module Rley # This module is used as a namespace
         return production.lhs
       end
       
+      # Return the symbol before the dot.
+      # nil is returned if the dot is at the start of the rhs
+      def prev_symbol()
+        before_position = prev_position
+        if before_position.nil?
+          result = nil
+        else
+          result =  production.rhs[before_position]
+        end
+        
+        return result
+      end
+      
       # Return the symbol after the dot.
       # nil is returned if the dot is at the end
       def next_symbol()
         return (position < 0) ? nil : production.rhs[position]
+      end
+      
+      # Calculate the position of the dot if were moved by 
+      # one step on the left.
+      def prev_position()
+        case position
+          when -2, 0
+            result = nil
+          when -1
+            result = (production.rhs.size == 1) ? 0 : (production.rhs.size - 1)
+          else
+            result = position-1
+        end
       end
 
       # An item with the dot in front of a terminal is called a shift item

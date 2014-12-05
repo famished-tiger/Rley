@@ -24,18 +24,36 @@ module Rley # This module is used as a namespace
 
         return result
       end
-      
+
       # Returns true if the dot is at the end of the rhs of the production.
       # In other words, the complete rhs matches the input.
       def complete?()
         return dotted_rule.reduce_item?
       end
-      
+
       # Next expected symbol in the production
       def next_symbol()
         return dotted_rule.next_symbol
       end
-      
+
+      # Does this parse state have the 'other' as successor?
+      def precedes?(other)
+        return false if self == other
+
+        return false unless origin == other.origin
+        other_production = other.dotted_rule.production
+        return false unless dotted_rule.production == other_production
+
+        prev_position = other.dotted_rule.prev_position
+        if prev_position.nil?
+          result = false
+        else
+          result = dotted_rule.position == prev_position
+        end
+
+        return result
+      end
+
       # Give a String representation of itself.
       # The format of the text representation is
       # "format of dotted rule" + " | " + origin
@@ -43,13 +61,14 @@ module Rley # This module is used as a namespace
       def to_s()
         return  dotted_rule.to_s + " | #{origin}"
       end
-      
+
+
       private
-      
+
       # Return the validated dotted item(rule)
       def valid_dotted_rule(aDottedRule)
         fail StandardError, 'Dotted item cannot be nil' if aDottedRule.nil?
-        
+
         return aDottedRule
       end
     end # class

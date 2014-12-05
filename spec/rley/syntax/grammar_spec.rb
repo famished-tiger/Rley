@@ -117,11 +117,12 @@ module Rley # Open this namespace to avoid module qualifier prefixes
       let(:nominal_prods) { Production}
 =end
 
+      subject do
+        productions = [prod_S, prod_A1, prod_A2]
+        Grammar.new(productions)
+      end
+
       context 'Initialization:' do
-        subject do
-          productions = [prod_S, prod_A1, prod_A2]
-          Grammar.new(productions)
-        end
 
         it 'should be created with a list of productions' do
           expect { Grammar.new([prod_S, prod_A1, prod_A2]) }.not_to raise_error
@@ -144,11 +145,23 @@ module Rley # Open this namespace to avoid module qualifier prefixes
         end
       end # context
       
-      context 'Non-nullable grammar:' do
-        subject do
-          productions = [prod_S, prod_A1, prod_A2]
-          Grammar.new(productions)
+      # let(:nt_S) { NonTerminal.new('S') }
+      # let(:nt_A) { NonTerminal.new('A') }
+      # let(:a_) { VerbatimSymbol.new('a') }
+      # let(:b_)  { VerbatimSymbol.new('b') }
+      # let(:c_)  { VerbatimSymbol.new('c') }
+      
+      context 'Provided services:' do
+        it 'should retrieve its symbols from their name' do
+          expect(subject.name2symbol['S']).to eq(nt_S)
+          expect(subject.name2symbol['A']).to eq(nt_A)
+          expect(subject.name2symbol['a']).to eq(a_)
+          expect(subject.name2symbol['b']).to eq(b_)
+          expect(subject.name2symbol['c']).to eq(c_)
         end
+      end # context
+      
+      context 'Non-nullable grammar:' do
         
         it 'should mark all its nonterminals as non-nullable' do
           nonterms = subject.non_terminals

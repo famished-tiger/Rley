@@ -3,8 +3,10 @@ require_relative '../../spec_helper'
 require_relative '../../../lib/rley/syntax/non_terminal'
 require_relative '../../../lib/rley/syntax/verbatim_symbol'
 require_relative '../../../lib/rley/syntax/production'
+require_relative '../../../lib/rley/syntax/grammar_builder'
 require_relative '../../../lib/rley/parser/dotted_item'
 require_relative '../../../lib/rley/parser/token'
+require_relative '../../../lib/rley/parser/earley_parser'
 # Load the class under test
 require_relative '../../../lib/rley/parser/parsing'
 
@@ -48,7 +50,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           tokens = grm1_tokens
           expect { Parsing.new(start_rule, tokens) }.not_to raise_error
         end
-        
+
         it 'should know the input tokens' do
           expect(subject.tokens).to eq(grm1_tokens)
         end
@@ -58,28 +60,28 @@ module Rley # Open this namespace to avoid module qualifier prefixes
         end
 
       end # context
-      
+
       context 'Parsing:' do
         it 'should push a state to a given chart entry' do
           expect(subject.chart[1]).to be_empty
           item = DottedItem.new(prod_A1, 1)
-          
+
           subject.push_state(item, 1, 1)
           expect(subject.chart[1]).not_to be_empty
           expect(subject.chart[1].first.dotted_rule).to eq(item)
-          
+
           # Pushing twice the same state must be no-op
           subject.push_state(item, 1, 1)
           expect(subject.chart[1].size).to eq(1)
         end
-        
+
         it 'should complain when trying to push a nil dotted item' do
           err = StandardError
           msg = 'Dotted item may not be nil'
           expect { subject.push_state(nil, 1, 1) }.to raise_error(err, msg)
         end
-        
-        
+
+
         it 'should retrieve the parse states that expect a given terminal' do
           item1 = DottedItem.new(prod_A1, 2)
           item2 = DottedItem.new(prod_A1, 1)
@@ -89,27 +91,51 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           expect(states.size).to eq(1)
           expect(states[0].dotted_rule).to eq(item1)
         end
-        
+
         it 'should update the states upon token match' do
           # When a input token matches an expected terminal symbol
           # then new parse states must be pushed to the following chart slot
           expect(subject.chart[1]).to be_empty
-          
+
           item1 = DottedItem.new(prod_A1, 0)
           item2 = DottedItem.new(prod_A2, 0)
           subject.push_state(item1, 0, 0)
           subject.push_state(item2, 0, 0)
           subject.scanning(a_, 0) { |i| i } # Code block is mock
-          
+
           # Expected side effect: a new state at chart[1]
           expect(subject.chart[1].size).to eq(1)
           new_state = subject.chart[1].states[0]
           expect(new_state.dotted_rule).to eq(item1)
           expect(new_state.origin).to eq(0)
         end
-
-      end
-
+        
+      end # context
+      
+      context 'Parse tree building:' do
+        let(:sample_grammar1) do
+          builder = Syntax::GrammarBuilder.new
+          builder.add_terminals('a', 'b', 'c')
+          builder.add_production('S' => ['A'])
+          builder.add_production('A' => %w(a A c))
+          builder.add_production('A' => ['b'])
+          builder.grammar
+        end
+        
+        let(:token_seq1) do
+          %w(a a b c c).map do |letter|
+            Token.new(letter, sample_grammar1.name2symbol[letter])
+          end
+        end
+        
+        
+        it 'should build the parse tree for a non-ambiguous grammar' do
+          parser = EarleyParser.new(sample_grammar1)
+          instance = parser.parse(token_seq1)
+          ptree = instance.parse_tree
+          expect(ptree).to be_kind_of(PTree::ParseTree)
+        end
+      end # context
     end # describe
   end # module
 end # module

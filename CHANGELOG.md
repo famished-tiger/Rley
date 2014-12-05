@@ -1,3 +1,11 @@
+### 0.1.00 / 2014-12-05
+* [CHANGE] Bumped version number: it is the first version able to generate a parse tree.
+* [NEW] `Grammar#name2symbol` attribute and accessor. Retrieve a grammar symbol from its name.
+* [NEW] Methods `DottedItem#prev_symbol`, `DottedItem#prev_position` to find symbol on left of dot.
+* [NEW] Method `ParseState#precedes?`, predicate to check whether self is a predecessor of given parse state.
+* [NEW] Method `Parsing#parse_tree` returns a ParseTree object that represents the result of a parse.
+
+
 ### 0.0.18 / 2014-11-23
 * [CHANGE] `EarleyParser#parse`: Optimization prevent repeated prediction of same non-terminal for same state set.
 * [CHANGE] File `earley_parser_spec.rb`: Added new test for nullable grammar.

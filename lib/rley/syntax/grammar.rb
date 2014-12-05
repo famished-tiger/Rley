@@ -20,12 +20,16 @@ module Rley # This module is used as a namespace
 
       # The list of grammar symbols in the language.
       attr_reader(:symbols)
+      
+      # A Hash with pairs of the kind: symbol name => grammar symbol
+      attr_reader(:name2symbol)
 
       # @param theProduction [Array of Production] the list of productions
       # of the grammar.
       def initialize(theProductions)
         @rules = []
         @symbols = []
+        @name2symbol = {}
         valid_productions = validate_productions(theProductions)
         # TODO: use topological sorting
         @start_symbol = valid_productions[0].lhs
@@ -50,13 +54,10 @@ module Rley # This module is used as a namespace
       def add_production(aProduction)
         @rules << aProduction
         the_lhs = aProduction.lhs
-        @symbols << the_lhs unless @symbols.include? the_lhs
+        add_symbol(the_lhs)
 
         # TODO: remove quadratic execution time
-        aProduction.rhs.each do |symb|
-          next if symbols.include? symb
-          @symbols << symb
-        end
+        aProduction.rhs.each { |symb| add_symbol(symb) }
       end
 
       
@@ -103,6 +104,16 @@ module Rley # This module is used as a namespace
         end
         
         return nullable
+      end
+      
+      private
+      
+      def add_symbol(aSymbol)
+        its_name = aSymbol.name
+        unless name2symbol.include? its_name
+          @symbols << aSymbol
+          @name2symbol[its_name] = aSymbol
+        end
       end
     end # class
   end # module

@@ -1,4 +1,5 @@
 require_relative 'chart'
+require_relative '../ptree/parse_tree'
 
 module Rley # This module is used as a namespace
   module Parser # This module is used as a namespace
@@ -17,17 +18,60 @@ module Rley # This module is used as a namespace
       # followed the syntax specified by the grammar)
       def success?()
         # Success can be detected as follows:
-        # The last chart entry has a parse state
-        # that involves the start production and
-        # has a dot positioned at the end of its rhs.
-
-        start_dotted_rule = chart.start_dotted_rule
-        start_production = start_dotted_rule.production
-        last_chart_entry = chart.state_sets.last
-        candidate_states = last_chart_entry.states_for(start_production)
-        found = candidate_states.find(&:complete?)
-
+        # The last chart entry has a complete parse state
+        # with the start symbol as lhs
+        found = end_parse_state
         return !found.nil?
+      end
+      
+      # Factory method. Builds a ParseTree from the parse result.
+      # @return [ParseTree]
+      # Algorithm:
+      # set state_set_index = index of last state set in chart
+      # Search the completed parse state that corresponds to the full parse
+      def parse_tree()
+        state_set_index = chart.state_sets.size - 1
+        parse_state = end_parse_state
+        curr_dotted_item = parse_state.dotted_rule
+        full_range = { low: 0, high: state_set_index }
+        ptree = PTree::ParseTree.new(curr_dotted_item.production, full_range)
+        loop do
+          # Look at the symbol on left of the dot
+          curr_symbol = curr_dotted_item.prev_symbol
+          case curr_symbol
+            when Syntax::Terminal
+              state_set_index -= 1
+              ptree.step_back(state_set_index)
+              parse_state = chart[state_set_index].predecessor_state(parse_state)
+              curr_dotted_item = parse_state.dotted_rule
+              
+            when Syntax::NonTerminal
+              # Retrieve complete states
+              new_states = chart[state_set_index].states_rewriting(curr_symbol)
+              # TODO: make this more robust
+              parse_state = new_states[0]
+              curr_dotted_item = parse_state.dotted_rule
+              ptree.current_node.range = { low: parse_state.origin }
+              node_range =  ptree.current_node.range
+              ptree.add_children(curr_dotted_item.production, node_range)
+              
+            when NilClass
+              lhs = curr_dotted_item.production.lhs
+              new_states = chart[state_set_index].states_expecting(lhs)
+              break if new_states.empty?
+              # TODO: make this more robust
+              parse_state = new_states[0]
+              curr_dotted_item = parse_state.dotted_rule
+              ptree.step_up(state_set_index)
+              ptree.current_node.range = { low: parse_state.origin }
+              break if ptree.root == ptree.current_node
+            else
+              msg = "Unexpected grammar symbol type #{curr_symbol.class}"
+              raise StandardError, msg
+          end
+        end
+        
+        return ptree
       end
 
 
@@ -90,6 +134,20 @@ module Rley # This module is used as a namespace
       # that expect the given terminal
       def states_expecting(aTerminal, aPosition)
         return chart[aPosition].states_expecting(aTerminal)
+      end
+      
+      private
+      
+      # Retrieve full parse state.
+      # After a successful parse, the last chart entry 
+      # has a parse state that involves the start production and
+      # has a dot positioned at the end of its rhs.
+      def end_parse_state()
+        start_dotted_rule = chart.start_dotted_rule
+        start_production = start_dotted_rule.production
+        last_chart_entry = chart.state_sets[-1]
+        candidate_states = last_chart_entry.states_for(start_production)
+        return candidate_states.find(&:complete?)
       end
     end # class
   end # module

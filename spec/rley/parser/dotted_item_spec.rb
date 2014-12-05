@@ -16,7 +16,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
       def build_prod(theLHS, *theRHSSymbols)
         return Syntax::Production.new(theLHS, theRHSSymbols)
       end
-    
+
       let(:t_a) { Syntax::Terminal.new('A') }
       let(:t_b) { Syntax::Terminal.new('B') }
       let(:t_c) { Syntax::Terminal.new('C') }
@@ -43,7 +43,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
         it 'should know its production' do
           expect(subject.production).to eq(sample_prod)
         end
-        
+
         it 'should know the lhs of the production' do
           expect(subject.lhs).to eq(sample_prod.lhs)
         end
@@ -71,11 +71,11 @@ module Rley # Open this namespace to avoid module qualifier prefixes
       context 'Provided service:' do
         it 'should whether its dot is at start position' do
           expect(subject).not_to be_at_start
-          
+
           # At start position
           instance1 = DottedItem.new(sample_prod, 0)
           expect(instance1).to be_at_start
-          
+
           # At start/end at the same time (production is empty)
           instance2 = DottedItem.new(build_prod(nt_sentence), 0)
           expect(instance2).to be_at_start
@@ -91,10 +91,38 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           expect(second_instance).to be_reduce_item
         end
 
+        it 'should know the symbol before the dot' do
+          expect(subject.prev_symbol).to eq(t_a)
+          
+          # Case of an empty production
+          instance = DottedItem.new(empty_prod, 0)
+          expect(instance.prev_symbol).to be_nil
+          
+          # Case of a dot at start position
+          instance = DottedItem.new(sample_prod, 0)
+          expect(instance.prev_symbol).to be_nil          
+        end
+
         it 'should know the symbol after the dot' do
           expect(subject.next_symbol).to eq(t_b)
         end
         
+        it 'should calculate the previous position of the dot' do
+          expect(subject.prev_position).to eq(0)
+          
+          # Case of an empty production
+          instance = DottedItem.new(empty_prod, 0)
+          expect(instance.prev_position).to be_nil
+          
+          # Case of a dot at start position
+          instance = DottedItem.new(sample_prod, 0)
+          expect(instance.prev_position).to be_nil 
+
+          # Case of single symbol production
+          instance = DottedItem.new(other_prod, 1)
+          expect(instance.prev_position).to eq(0)           
+        end
+
         it 'should give its text representation' do
           expectation = 'sentence => A . B C'
           expect(subject.to_s).to eq(expectation)
