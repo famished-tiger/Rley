@@ -1,3 +1,7 @@
+### 0.1.02 / 2014-12-06
+* [CHANGE] Upgraded code & spec files to reach 100% code coverage again.
+
+
 ### 0.1.01 / 2014-12-06
 * [CHANGE] Restaured test coverage to above 99%
 

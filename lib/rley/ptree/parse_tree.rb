@@ -29,8 +29,6 @@ module Rley # This module is used as a namespace
               new_node = TerminalNode.new(symb,{})
             when Syntax::NonTerminal
               new_node = NonTerminalNode.new(symb,{})
-            else
-              fail Standard, "Unknown grammar symbol type #{symb.class}"
           end
 
           current_node.add_child(new_node)

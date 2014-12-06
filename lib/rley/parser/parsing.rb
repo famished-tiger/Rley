@@ -65,9 +65,6 @@ module Rley # This module is used as a namespace
               ptree.step_up(state_set_index)
               ptree.current_node.range = { low: parse_state.origin }
               break if ptree.root == ptree.current_node
-            else
-              msg = "Unexpected grammar symbol type #{curr_symbol.class}"
-              raise StandardError, msg
           end
         end
         
