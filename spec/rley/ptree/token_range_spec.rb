@@ -13,7 +13,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
       subject { TokenRange.new(sample_range) }
 
       context 'Initialization:' do
-        it 'should be created with a range Hash' do
+        it 'could be created with a range Hash' do
           # No bounds provided
           expect { TokenRange.new({}) }.not_to raise_error
 
@@ -26,6 +26,20 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           # Both bounds provided
           expect { TokenRange.new({low: 0, high: 5}) }.not_to raise_error
         end
+        
+        it 'could be created with another TokenRange' do
+          # Low bound provided
+          instance = TokenRange.new({low: 0})
+          expect { TokenRange.new(instance) }.not_to raise_error
+
+          # High bound provided
+          instance = TokenRange.new({high: 5})
+          expect { TokenRange.new(instance) }.not_to raise_error
+
+          # Both bounds provided
+          instance = TokenRange.new({low: 0, high: 5})
+          expect { TokenRange.new(instance) }.not_to raise_error
+        end
 
         it 'should know its low bound' do
           expect(subject.low).to eq(0)
@@ -37,6 +51,13 @@ module Rley # Open this namespace to avoid module qualifier prefixes
       end # context
 
       context 'Provided services:' do
+        it 'should compare to another range' do
+          expect(subject == subject).to eq(true)
+          equal = TokenRange.new({low: 0, high: 5})
+          expect(subject == equal).to eq(true)
+        end
+
+      
         it 'should know whether it is bounded or not' do
           expect(subject).to be_bounded
 
@@ -53,7 +74,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           expect(instance).not_to be_bounded
         end
 
-        it 'should assign it open bounds' do
+        it 'should assign its open bounds' do
           some_range = {low: 1, high: 4}
 
           ###########

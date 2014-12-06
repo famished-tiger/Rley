@@ -72,6 +72,14 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           allow(prod2).to receive(:lhs).and_return(non_term) 
           expect(subject.states_rewriting(non_term)).to eq([state2])
         end
+        
+        it 'should complain when impossible predecessor of parse state' do
+          subject.push_state(state1)
+          subject.push_state(state2)
+          allow(dotted_rule1).to receive(:prev_position).and_return(nil) 
+          err = StandardError
+          expect { subject.predecessor_state(state1) }.to raise_error(err)
+        end
 
       end # context
 

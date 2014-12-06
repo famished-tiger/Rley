@@ -98,6 +98,8 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           state0 = ParseState.new(DottedItem.new(sample_prod, 0), origin_val)
           expect(state0.precedes?(state1)).to eq(true)
           expect(state0.precedes?(subject)).to eq(false)
+          state3 = ParseState.new(DottedItem.new(sample_prod, 3), origin_val)
+          expect(state3.precedes?(state0)).to eq(false)
         end
         
         it 'should know its text representation' do

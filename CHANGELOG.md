@@ -1,3 +1,6 @@
+### 0.1.01 / 2014-12-06
+* [CHANGE] Restaured test coverage to above 99%
+
 ### 0.1.00 / 2014-12-05
 * [CHANGE] Bumped version number: it is the first version able to generate a parse tree.
 * [NEW] `Grammar#name2symbol` attribute and accessor. Retrieve a grammar symbol from its name.
