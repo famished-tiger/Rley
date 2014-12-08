@@ -1,3 +1,7 @@
+### 0.1.04 / 2014-12-08
+* [CHANGE] File `parse_tree_visitor_spec.rb`. Added step-by-step test of a parse tree visit.
+
+
 ### 0.1.03 / 2014-12-08
 * [NEW] `ParseTreeVisitor` class. A class that walks through a parse tree.
 * [NEW] Method `accept` added to `ParseTree`, `TerminalNode`, `NonTerminalNode` classes.

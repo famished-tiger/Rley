@@ -111,23 +111,23 @@ module Rley # Open this namespace to avoid module qualifier prefixes
       # Use doubles/mocks to simulate formatters
       let(:listener1) { double('fake-subscriber1') }
       let(:listener2) { double('fake-subscriber2') }
-      
+
       # Sample non-terminal node
-      let(:nterm_node) do 
+      let(:nterm_node) do
         first_big_a = grm_abc_ptree1.root.children[0]
         second_big_a = first_big_a.children[1]
         second_big_a.children[1]
       end
-      
+
       # Sample terminal node
-      let(:term_node) { nterm_node.children[0] }     
+      let(:term_node) { nterm_node.children[0] }
 
       it 'should react to the start_visit_ptree message' do
         # Notify subscribers when start the visit of the ptree
         expect(listener1).to receive(:before_ptree).with(grm_abc_ptree1)
         subject.start_visit_ptree(grm_abc_ptree1)
       end
-      
+
       it 'should react to the start_visit_nonterminal message' do
         # Notify subscribers when start the visit of a non-terminal node
         expect(listener1).to receive(:before_non_terminal).with(nterm_node)
@@ -143,27 +143,76 @@ module Rley # Open this namespace to avoid module qualifier prefixes
         expect(listener1).to receive(:after_children).with(nterm_node, children)
         subject.visit_children(nterm_node)
       end
-      
+
       it 'should react to the end_visit_nonterminal message' do
         # Notify subscribers when ending the visit of a non-terminal node
         expect(listener1).to receive(:after_non_terminal).with(nterm_node)
         subject.end_visit_nonterminal(nterm_node)
       end
-      
+
       it 'should react to the visit_terminal message' do
         # Notify subscribers when start & ending the visit of a terminal node
         expect(listener1).to receive(:before_terminal).with(term_node)
         expect(listener1).to receive(:after_terminal).with(term_node)
         subject.visit_terminal(term_node)
       end
-      
+
       it 'should react to the end_visit_ptree message' do
         # Notify subscribers when ending the visit of the ptree
         expect(listener1).to receive(:after_ptree).with(grm_abc_ptree1)
         subject.end_visit_ptree(grm_abc_ptree1)
       end
-      
+
       it 'should begin the visit when requested' do
+        # Reminder: parse tree structure is
+        # S[0,5]
+        # +- A[0,5]
+        #    +- a[0,0]
+        #    +- A[1,4]
+        #    |  +- a[1,1]
+        #    |  +- A[2,3]
+        #    |  |  +- b[2,3]
+        #    |  +- c[3,4]
+        #    +- c[4,5]
+        root = grm_abc_ptree1.root
+        children = root.children
+        big_a_1 = children[0]
+        big_a_1_children = big_a_1.children
+        big_a_2 = big_a_1_children[1]
+        big_a_2_children = big_a_2.children
+        big_a_3 = big_a_2_children[1]
+        big_a_3_children = big_a_3.children
+        expectations = [
+          [:before_ptree, [grm_abc_ptree1]],
+          [:before_non_terminal, [root]],
+          [:before_children, [root, children]],
+          [:before_non_terminal , [big_a_1]],
+          [:before_children, [big_a_1, big_a_1_children]],
+          [:before_terminal, [big_a_1_children[0]]],
+          [:after_terminal, [big_a_1_children[0]]],
+          [:before_non_terminal, [big_a_2]],
+          [:before_children, [big_a_2, big_a_2_children]],
+          [:before_terminal, [big_a_2_children[0]]],
+          [:after_terminal, [big_a_2_children[0]]],
+          [:before_non_terminal, [big_a_3]],
+          [:before_children, [big_a_3, big_a_3_children]],
+          [:before_terminal, [big_a_3_children[0]]],
+          [:after_terminal, [big_a_3_children[0]]],
+          [:after_children, [big_a_3, big_a_3_children]],
+          [:before_terminal, [big_a_2_children[2]]],
+          [:after_terminal, [big_a_2_children[2]]],
+          [:after_children, [big_a_2, big_a_2_children]],
+          [:before_terminal, [big_a_1_children[2]]],
+          [:after_terminal, [big_a_1_children[2]]],
+          [:after_children, [big_a_1, big_a_1_children]],
+          [:after_children , [root, children]],
+          [:after_ptree , [grm_abc_ptree1]]
+        ]
+        expectations.each do |(msg, args)|
+          allow(listener1).to receive(msg).with(*args).ordered
+        end
+        
+        # Here we go...
         subject.start
       end
 
