@@ -9,6 +9,12 @@ module Rley # This module is used as a namespace
       def initialize(aTerminalSymbol, aRange)
         super(aTerminalSymbol, aRange)
       end
+      
+      # Part of the 'visitee' role in Visitor design pattern.
+      # @param aVisitor[ParseTreeVisitor] the visitor
+      def accept(aVisitor)
+        aVisitor.visit_terminal(self)
+      end
 
     end # class
   end # module

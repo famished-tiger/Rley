@@ -15,6 +15,14 @@ module Rley # This module is used as a namespace
       def add_child(aChildNode)
         children << aChildNode
       end
+      
+      # Part of the 'visitee' role in Visitor design pattern.
+      # @param aVisitor[ParseTreeVisitor] the visitor
+      def accept(aVisitor)
+        aVisitor.start_visit_nonterminal(self)
+        aVisitor.visit_children(self)
+        aVisitor.end_visit_nonterminal(self)
+      end
     end # class
   end # module
 end # module

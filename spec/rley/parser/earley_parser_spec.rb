@@ -35,6 +35,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
       end
 =end
 
+
       # Grammar 1: A very simple language
       # (based on example in N. Wirth "Compiler Construction" book, p. 6)
       # S ::= A.

@@ -26,7 +26,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
       let(:prod_S) { Syntax::Production.new(nt_S, [nt_A]) }
       let(:prod_A1) { Syntax::Production.new(nt_A, [a_, nt_A, c_]) }
       let(:prod_A2) { Syntax::Production.new(nt_A, [b_]) }
-      let(:start_dotted_rule) { DottedItem.new(prod_S, 0) }
+
 
       # Helper method that mimicks the output of a tokenizer
       # for the language specified by gramma_abc
@@ -40,6 +40,9 @@ module Rley # Open this namespace to avoid module qualifier prefixes
         ]
       end
 
+
+      let(:start_dotted_rule) { DottedItem.new(prod_S, 0) }
+      
       # Default instantiation rule
       subject { Parsing.new(start_dotted_rule, grm1_tokens) }
 
@@ -128,7 +131,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           end
         end
         
-        
+
         it 'should build the parse tree for a non-ambiguous grammar' do
           parser = EarleyParser.new(sample_grammar1)
           instance = parser.parse(token_seq1)

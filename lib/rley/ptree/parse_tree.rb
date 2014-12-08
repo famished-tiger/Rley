@@ -21,6 +21,18 @@ module Rley # This module is used as a namespace
         return current_path.last
       end
 
+      # Part of the 'visitee' role in the Visitor design pattern.
+      #   A visitee is expected to accept the visit from a visitor object
+      # @param aVisitor [ParseTreeVisitor] the visitor object
+      def accept(aVisitor)
+        aVisitor.start_visit_ptree(self)
+
+        # Let's proceed with the visit of nodes
+        root.accept(aVisitor) if root
+
+        aVisitor.end_visit_ptree(self)
+      end
+
 
       def add_children(aProduction, aRange)
         aProduction.rhs.each do |symb|
@@ -47,7 +59,6 @@ module Rley # This module is used as a namespace
       # @param tokenPos [Fixnum] position of the matching input token
       def step_up(tokenPos)
         (pos, last_node) = current_path.pop(2)
-        #last_node.range = low_bound({low: tokenPos})
       end
       
 
@@ -69,6 +80,7 @@ module Rley # This module is used as a namespace
       end
 
       private
+
         def low_bound(aRange)
           result = case aRange
             when Hash then aRange[:low]

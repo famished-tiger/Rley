@@ -42,6 +42,7 @@ module Rley # This module is used as a namespace
             when Syntax::Terminal
               state_set_index -= 1
               ptree.step_back(state_set_index)
+              #ptree.current_node.token = tokens[state_set_index]
               parse_state = chart[state_set_index].predecessor_state(parse_state)
               curr_dotted_item = parse_state.dotted_rule
               

@@ -1,3 +1,7 @@
+### 0.1.03 / 2014-12-08
+* [NEW] `ParseTreeVisitor` class. A class that walks through a parse tree.
+* [NEW] Method `accept` added to `ParseTree`, `TerminalNode`, `NonTerminalNode` classes.
+
 ### 0.1.02 / 2014-12-06
 * [CHANGE] Upgraded code & spec files to reach 100% code coverage again.
 
