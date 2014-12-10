@@ -1,3 +1,7 @@
+### 0.1.05 / 2014-12-10
+* [NEW] New parse tree formatting classes `BaseFormatter` and `Debug`
+* [CHANGE] Method `Parsing#parse_tree` now add links to Token objects in TerminalNodes.
+
 ### 0.1.04 / 2014-12-08
 * [CHANGE] File `parse_tree_visitor_spec.rb`. Added step-by-step test of a parse tree visit.
 
