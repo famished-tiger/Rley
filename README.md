@@ -4,6 +4,7 @@ Rley
 
 
 [![Build Status](https://travis-ci.org/famished-tiger/Rley.svg?branch=master)](https://travis-ci.org/famished-tiger/Rley)
+[![Coverage Status](https://img.shields.io/coveralls/famished-tiger/Rley.svg)](https://coveralls.io/r/famished-tiger/Rley?branch=master)
 [![Gem Version](https://badge.fury.io/rb/rley.svg)](http://badge.fury.io/rb/rley)
 
 ### What is Rley? ###

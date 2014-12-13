@@ -1,3 +1,6 @@
+### 0.1.08 / 2014-12-13
+* [CHANGE] File `README.md` added coveralls badge (for the test coverage)
+
 ### 0.1.07 / 2014-12-13
 * [NEW] Added development dependency on 'coveralls' gem (for test coverage measurement)
 
