@@ -1,3 +1,6 @@
+### 0.1.07 / 2014-12-13
+* [NEW] Added development dependency on 'coveralls' gem (for test coverage measurement)
+
 ### 0.1.06 / 2014-12-13
 * [NEW] New parse tree formatting class `JSON` for parse tree rendition in JSON.
 * [FIX] Method `Parsing#parse_tree` now add link to Token object for last TerminalNode in tree.

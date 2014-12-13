@@ -24,11 +24,21 @@ Thank you for installing Rley...
 EOSTRING
   pkg.rdoc_options << '--charset=UTF-8 --exclude="examples|features|spec"'
   file_list = Dir[
-    '.rubocop.yml', '.rspec', '.ruby-gemset', '.ruby-version', '.simplecov',
-    '.travis.yml',  '.yardopts', 'Gemfile', 'Rakefile',
+    '.rubocop.yml', 
+    '.rspec', 
+    '.ruby-gemset', 
+    '.ruby-version', 
+    '.simplecov',
+    '.travis.yml',  
+    '.yardopts', 
+    'Gemfile', 
+    'Rakefile',
     'CHANGELOG.md',
-    'LICENSE.txt', 'README.md',
-    'lib/*.*', 'lib/**/*.rb',
+    'LICENSE.txt', 
+    'README.md',
+    'examples/**/*.rb',
+    'lib/*.*', 
+    'lib/**/*.rb',
     'spec/**/*.rb'
   ]
   pkg.files = file_list
@@ -40,7 +50,8 @@ EOSTRING
 
   pkg.add_development_dependency('rake', ['>= 0.8.0'])
   pkg.add_development_dependency('rspec', ['>= 3.0.0'])
-  pkg.add_development_dependency('simplecov', ['>= 0.5.0'])
+  pkg.add_development_dependency('simplecov', ['>= 0.7.0'])
+  pkg.add_development_dependency('coveralls', ['>= 0.7.0'])
   pkg.add_development_dependency('rubygems', ['>= 2.0.0'])
 
   pkg.license = 'MIT'

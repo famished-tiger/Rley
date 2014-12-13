@@ -2,6 +2,14 @@
 # Purpose: utility file that is loaded by all our RSpec files
 
 require 'simplecov'
+require 'coveralls'
+
+Coveralls.wear!
+
+SimpleCov.formatter = SimpleCov::Formatter::MultiFormatter[
+  SimpleCov::Formatter::HTMLFormatter,
+  Coveralls::SimpleCov::Formatter
+]
 
 
 require 'rspec' # Use the RSpec framework
