@@ -1,3 +1,7 @@
+### 0.1.06 / 2014-12-13
+* [NEW] New parse tree formatting class `JSON` for parse tree rendition in JSON.
+* [FIX] Method `Parsing#parse_tree` now add link to Token object for last TerminalNode in tree.
+
 ### 0.1.05 / 2014-12-10
 * [NEW] New parse tree formatting classes `BaseFormatter` and `Debug`
 * [CHANGE] Method `Parsing#parse_tree` now add links to Token objects in TerminalNodes.

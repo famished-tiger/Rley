@@ -4,7 +4,7 @@ module Rley # This module is used as a namespace
   module PTree # This module is used as a namespace
     class TerminalNode < ParseTreeNode
       # Link to the input token
-      attr_writer(:token)
+      attr(:token, true)
 
       def initialize(aTerminalSymbol, aRange)
         super(aTerminalSymbol, aRange)

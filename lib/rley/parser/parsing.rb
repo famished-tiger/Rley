@@ -57,6 +57,10 @@ module Rley # This module is used as a namespace
               ptree.current_node.range = { low: parse_state.origin }
               node_range =  ptree.current_node.range
               ptree.add_children(curr_dotted_item.production, node_range)
+              if ptree.current_node.is_a?(PTree::TerminalNode)
+                curr_node = ptree.current_node
+                curr_node.token = tokens[state_set_index-1] unless curr_node.token
+              end
               
             when NilClass
               lhs = curr_dotted_item.production.lhs
@@ -70,7 +74,6 @@ module Rley # This module is used as a namespace
               break if ptree.root == ptree.current_node
           end
         end
-        
         return ptree
       end
 
@@ -148,11 +151,6 @@ module Rley # This module is used as a namespace
         last_chart_entry = chart.state_sets[-1]
         candidate_states = last_chart_entry.states_for(start_production)
         return candidate_states.find(&:complete?)
-      end
-      
-      # Complete the generated parse tree.
-      # Link each terminal node to its corresponding token object.
-      def complete_ptree()
       end
     end # class
   end # module

@@ -1,18 +1,19 @@
 require_relative '../../spec_helper'
 require 'stringio'
 
+# require_relative '../../../lib/rley/dynamic_grammar'
 require_relative '../support/grammar_abc_helper'
 require_relative '../../../lib/rley/parser/token'
 require_relative '../../../lib/rley/parser/earley_parser'
 require_relative '../../../lib/rley/ptree/parse_tree'
 require_relative '../../../lib/rley/parse_tree_visitor'
 # Load the class under test
-require_relative '../../../lib/rley/formatter/debug'
+require_relative '../../../lib/rley/formatter/json'
 
 module Rley # Re-open the module to get rid of qualified names
 module Formatter
 
-describe Debug do
+describe Json do
   include GrammarABCHelper  # Mix-in module with builder for grammar abc
 
   # Factory method. Build a production with the given sequence
@@ -62,11 +63,11 @@ describe Debug do
   context 'Standard creation & initialization:' do
 
     it 'should be initialized with an IO argument' do
-      expect { Debug.new(StringIO.new('', 'w')) }.not_to raise_error
+      expect { Json.new(StringIO.new('', 'w')) }.not_to raise_error
     end
     
     it 'should know its output destination' do
-      instance = Debug.new(destination)
+      instance = Json.new(destination)
       expect(instance.output).to eq(destination)
     end
   end # context
@@ -74,41 +75,33 @@ describe Debug do
 
  
   context 'Formatting events:' do   
-    it 'should support visit events of a parse tree' do
-      instance = Debug.new(destination)
+    it 'should render a parse tree in JSON' do
+      instance = Json.new(destination)
       visitor = Rley::ParseTreeVisitor.new(grm_abc_ptree1)
       instance.render(visitor)
       expectations = <<-SNIPPET
-before_ptree
-  before_non_terminal
-    before_children
-      before_non_terminal
-        before_children
-          before_terminal
-          after_terminal
-          before_non_terminal
-            before_children
-              before_terminal
-              after_terminal
-              before_non_terminal
-                before_children
-                  before_terminal
-                  after_terminal
-                after_children
-              after_non_terminal
-              before_terminal
-              after_terminal
-            after_children
-          after_non_terminal
-          before_terminal
-          after_terminal
-        after_children
-      after_non_terminal
-    after_children
-  after_non_terminal
-after_ptree
+{
+  "root":
+    { "S": [
+      { "A": [
+        {"a": "a"},
+        { "A": [
+          {"a": "a"},
+          { "A": [
+            {"b": "b"}
+            ]
+          },
+          {"c": "c"}
+          ]
+        },
+        {"c": "c"}
+        ]
+      }
+      ]
+    }
+}
 SNIPPET
-      expect(destination.string).to eq(expectations)
+      expect(destination.string).to eq(expectations.chomp)
     end
   end # context
 end # describe

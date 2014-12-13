@@ -1,18 +1,17 @@
 require_relative '../../spec_helper'
 
-require_relative '../../../lib/rley/syntax/grammar_builder'
+require_relative '../support/grammar_abc_helper'
+
 # Load the class under test
 require_relative '../../../lib/rley/ptree/parse_tree'
 
 module Rley # Open this namespace to avoid module qualifier prefixes
   module PTree # Open this namespace to avoid module qualifier prefixes
     describe ParseTree do
+      include GrammarABCHelper  # Mix-in module with builder for grammar abc
+      
       let(:sample_grammar) do
-        builder = Syntax::GrammarBuilder.new
-        builder.add_terminals('a', 'b', 'c')
-        builder.add_production('S' => ['A'])
-        builder.add_production('A' => %w(a A c))
-        builder.add_production('A' => ['b'])
+        builder = grammar_abc_builder
         builder.grammar
       end
 
