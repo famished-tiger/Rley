@@ -11,7 +11,6 @@ require_relative '../../../lib/rley/parser/parse_state'
 module Rley # Open this namespace to avoid module qualifier prefixes
   module Parser # Open this namespace to avoid module qualifier prefixes
     describe ParseState do
-
       let(:t_a) { Syntax::Terminal.new('A') }
       let(:t_b) { Syntax::Terminal.new('B') }
       let(:t_c) { Syntax::Terminal.new('C') }
@@ -37,7 +36,6 @@ module Rley # Open this namespace to avoid module qualifier prefixes
       subject { ParseState.new(dotted_rule, origin_val) }
 
       context 'Initialization:' do
-
         it 'should be created with a dotted item and a origin position' do
           args = [dotted_rule, origin_val]
           expect { ParseState.new(*args) }.not_to raise_error
@@ -56,8 +54,6 @@ module Rley # Open this namespace to avoid module qualifier prefixes
         it 'should know the origin value' do
           expect(subject.origin).to eq(origin_val)
         end
-
-
       end # context
 
       context 'Provided services:' do
@@ -107,7 +103,6 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           expect(subject.to_s).to eq(expected)
         end
       end # context
-
     end # describe
   end # module
 end # module

@@ -3,7 +3,6 @@ require_relative '../../../lib/rley/syntax/grammar_builder'
 
 
 module GrammarABCHelper
-
   # Factory method. Creates a grammar builder for a simple grammar.
   # (based on example in N. Wirth "Compiler Construction" book, p. 6)
   def grammar_abc_builder()
@@ -16,4 +15,3 @@ module GrammarABCHelper
     return builder
   end
 end # module
-

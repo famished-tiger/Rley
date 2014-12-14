@@ -6,7 +6,6 @@ require_relative '../../../lib/rley/syntax/grammar_builder'
 module Rley # Open this namespace to avoid module qualifier prefixes
   module Syntax # Open this namespace to avoid module qualifier prefixes
     describe GrammarBuilder do
-
       context 'Initialization:' do
         it 'should be created without argument' do
           expect { GrammarBuilder.new }.not_to raise_error
@@ -19,7 +18,6 @@ module Rley # Open this namespace to avoid module qualifier prefixes
         it 'should have no productions at start' do
             expect(subject.productions).to be_empty
         end
-
       end # context
 
       context 'Adding symbols:' do
@@ -156,8 +154,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           expect { builder.grammar }.not_to raise_error
           expect(builder.productions.last).to be_empty
         end
-      end
-
+      end # context
     end # describe
   end # module
 end # module

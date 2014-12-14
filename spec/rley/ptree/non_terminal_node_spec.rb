@@ -28,7 +28,6 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           expect(subject.children).to eq([child1, child2, child3])
         end
       end # context
-
     end # describe
   end # module
 end # module

@@ -587,7 +587,6 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           compare_state_texts(parse_result.chart[4], expected)
         end
       end # context
-
     end # describe
   end # module
 end # module

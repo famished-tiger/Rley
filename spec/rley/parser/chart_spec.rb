@@ -7,12 +7,10 @@ require_relative '../../../lib/rley/parser/chart'
 module Rley # Open this namespace to avoid module qualifier prefixes
   module Parser # Open this namespace to avoid module qualifier prefixes
     describe Chart do
-
       let(:count_token) { 20 }
       let(:dotted_rule) { double('fake-dotted-item') }
 
       context 'Initialization:' do
-
         # Default instantiation rule
         subject { Chart.new(dotted_rule, count_token) }
 
@@ -35,9 +33,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
         it 'should the start dotted rule' do
           expect(subject.start_dotted_rule).to eq(dotted_rule)
         end
-
       end # context
-
     end # describe
   end # module
 end # module

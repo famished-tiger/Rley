@@ -142,10 +142,10 @@ module Rley # This module is used as a namespace
           aParsing.push_state(an_item, aPosition, aPosition)
         end
 
-        if aNonTerminal.nullable? # Ayock-Horspool trick for nullable rules
-          next_item = next_mapping[aState.dotted_rule]
-          aParsing.push_state(next_item, aState.origin, aPosition)
-        end
+        return unless aNonTerminal.nullable?
+        # Ayock-Horspool trick for nullable rules
+        next_item = next_mapping[aState.dotted_rule]
+        aParsing.push_state(next_item, aState.origin, aPosition)
       end
 
       # This method is called when a parse state for chart entry at position 

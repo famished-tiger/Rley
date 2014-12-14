@@ -4,15 +4,14 @@ require_relative 'base_formatter'
 module Rley # This module is used as a namespace
   # Namespace dedicated to parse tree formatters.
   module Formatter
-
     # A formatter class that renders a parse tree in JSON format
     class Json < BaseFormatter
       # Current indentation level
-      attr(:indentation)
+      attr_reader(:indentation)
 
       # Array of booleans (one per indentation level).
       # Set to true after first child was visited.
-      attr(:sibling_flags)
+      attr_reader(:sibling_flags)
 
       # Constructor.
       # @param anIO [IO] The output stream to which the rendered grammar
@@ -98,7 +97,6 @@ module Rley # This module is used as a namespace
       # @param _ptree [ParseTree]
       def after_ptree(_ptree)
         dedent
-        #print_text("\n", ']')
         dedent
         print_text("\n", '}')
       end
@@ -117,7 +115,6 @@ module Rley # This module is used as a namespace
         output.print aSeparator
         output.print "#{' ' * 2 * @indentation}#{aText}" unless aText.nil?
       end
-
     end # class
   end # module
 end # module

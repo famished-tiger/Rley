@@ -16,7 +16,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
       end
 
       let(:sample_prod) { sample_grammar.rules[0] }
-      let(:sample_range) { {low:0, high:5} }
+      let(:sample_range) { { low: 0, high: 5 } }
       subject { ParseTree.new(sample_prod, sample_range) }
 
       context 'Initialization:' do
@@ -86,7 +86,6 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           expect(path[4].range.high).to eq(4)
         end
       end
-
     end # describe
   end # module
 end # module

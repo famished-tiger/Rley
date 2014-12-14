@@ -6,8 +6,7 @@ require_relative '../../../lib/rley/ptree/token_range'
 module Rley # Open this namespace to avoid module qualifier prefixes
   module PTree # Open this namespace to avoid module qualifier prefixes
     describe TokenRange do
-
-      let(:sample_range) { {low: 0, high: 5} }
+      let(:sample_range) { { low: 0, high: 5 } }
 
       # Default instantiation rule
       subject { TokenRange.new(sample_range) }
@@ -18,26 +17,26 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           expect { TokenRange.new({}) }.not_to raise_error
 
           # Low bound provided
-          expect { TokenRange.new({low: 0}) }.not_to raise_error
+          expect { TokenRange.new(low: 0) }.not_to raise_error
 
           # High bound provided
-          expect { TokenRange.new({high: 5}) }.not_to raise_error
+          expect { TokenRange.new(high: 5) }.not_to raise_error
 
           # Both bounds provided
-          expect { TokenRange.new({low: 0, high: 5}) }.not_to raise_error
+          expect { TokenRange.new(low: 0, high: 5) }.not_to raise_error
         end
         
         it 'could be created with another TokenRange' do
           # Low bound provided
-          instance = TokenRange.new({low: 0})
+          instance = TokenRange.new(low: 0)
           expect { TokenRange.new(instance) }.not_to raise_error
 
           # High bound provided
-          instance = TokenRange.new({high: 5})
+          instance = TokenRange.new(high: 5)
           expect { TokenRange.new(instance) }.not_to raise_error
 
           # Both bounds provided
-          instance = TokenRange.new({low: 0, high: 5})
+          instance = TokenRange.new(low: 0, high: 5)
           expect { TokenRange.new(instance) }.not_to raise_error
         end
 
@@ -52,8 +51,9 @@ module Rley # Open this namespace to avoid module qualifier prefixes
 
       context 'Provided services:' do
         it 'should compare to another range' do
-          expect(subject == subject).to eq(true)
-          equal = TokenRange.new({low: 0, high: 5})
+          me = subject
+          expect(subject == me).to eq(true)
+          equal = TokenRange.new(low: 0, high: 5)
           expect(subject == equal).to eq(true)
         end
 
@@ -62,11 +62,11 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           expect(subject).to be_bounded
 
           # Case: only low bound is set
-          instance = TokenRange.new({low: 0})
+          instance = TokenRange.new(low: 0)
           expect(instance).not_to be_bounded
 
           # Case: only upper bound is set
-          instance =  TokenRange.new({high: 5})
+          instance =  TokenRange.new(high: 5)
           expect(instance).not_to be_bounded
 
           # No bound is set
@@ -75,7 +75,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
         end
 
         it 'should assign its open bounds' do
-          some_range = {low: 1, high: 4}
+          some_range = { low: 1, high: 4 }
 
           ###########
           # Case of bounded token range...
@@ -87,7 +87,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
 
           ###########
           # Case: only low bound is set
-          instance = TokenRange.new({low: 0})
+          instance = TokenRange.new(low: 0)
           instance.assign(some_range)
 
           # Expectation: high is assigned the new value
@@ -97,7 +97,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
 
           ###########
           # Case: only high bound is set
-          instance = TokenRange.new({high: 5})
+          instance = TokenRange.new(high: 5)
           instance.assign(some_range)
 
           # Expectation: low is assigned the new value
@@ -116,7 +116,6 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           expect(instance.high).to eq(4)
         end
       end
-
     end # describe
   end # module
 end # module

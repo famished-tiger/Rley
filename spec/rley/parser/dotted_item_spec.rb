@@ -10,7 +10,6 @@ require_relative '../../../lib/rley/parser/dotted_item'
 module Rley # Open this namespace to avoid module qualifier prefixes
   module Parser # Open this namespace to avoid module qualifier prefixes
     describe DottedItem do
-
       # Factory method. Builds a production with given left-hand side (LHS)
       # and given RHS (right-hand side)
       def build_prod(theLHS, *theRHSSymbols)
@@ -65,7 +64,6 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           instance4 = DottedItem.new(build_prod(nt_sentence), 0)
           expect(instance4.position).to eq(-2)
         end
-
       end # context
 
       context 'Provided service:' do
@@ -128,7 +126,6 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           expect(subject.to_s).to eq(expectation)
         end
       end
-
     end # describe
   end # module
 end # module

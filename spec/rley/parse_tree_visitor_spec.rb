@@ -57,7 +57,6 @@ module Rley # Open this namespace to avoid module qualifier prefixes
 
 
     context 'Standard creation & initialization:' do
-
       it 'should be initialized with a parse tree argument' do
         expect { ParseTreeVisitor.new(grm_abc_ptree1) }.not_to raise_error
       end
@@ -95,7 +94,6 @@ module Rley # Open this namespace to avoid module qualifier prefixes
         subject.unsubscribe(listener1)
         expect(subject.subscribers).to be_empty
       end
-
     end # context
 
 
@@ -136,7 +134,8 @@ module Rley # Open this namespace to avoid module qualifier prefixes
       it 'should react to the visit_children message' do
         # Notify subscribers when start the visit of children nodes
         children = nterm_node.children
-        expect(listener1).to receive(:before_children).with(nterm_node, children)
+        args = [nterm_node, children]
+        expect(listener1).to receive(:before_children).with(*args)
         expect(listener1).to receive(:before_terminal).with(children[0])
         expect(listener1).to receive(:after_terminal).with(children[0])
         expect(listener1).to receive(:after_children).with(nterm_node, children)
@@ -185,7 +184,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           [:before_ptree, [grm_abc_ptree1]],
           [:before_non_terminal, [root]],
           [:before_children, [root, children]],
-          [:before_non_terminal , [big_a_1]],
+          [:before_non_terminal, [big_a_1]],
           [:before_children, [big_a_1, big_a_1_children]],
           [:before_terminal, [big_a_1_children[0]]],
           [:after_terminal, [big_a_1_children[0]]],
@@ -204,8 +203,8 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           [:before_terminal, [big_a_1_children[2]]],
           [:after_terminal, [big_a_1_children[2]]],
           [:after_children, [big_a_1, big_a_1_children]],
-          [:after_children , [root, children]],
-          [:after_ptree , [grm_abc_ptree1]]
+          [:after_children, [root, children]],
+          [:after_ptree, [grm_abc_ptree1]]
         ]
         expectations.each do |(msg, args)|
           allow(listener1).to receive(msg).with(*args).ordered
@@ -214,7 +213,6 @@ module Rley # Open this namespace to avoid module qualifier prefixes
         # Here we go...
         subject.start
       end
-
     end # context
   end # describe
 end # module

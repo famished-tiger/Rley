@@ -42,15 +42,13 @@ module Rley # This module is used as a namespace
       # Retrieve the parse state that is the predecessor of the given one.
       def predecessor_state(aParseState)
         if aParseState.dotted_rule.prev_position.nil?
-          raise StandardError, "#{aParseState}"
+          fail StandardError, "#{aParseState}"
         else
-          prod = aParseState.dotted_rule.production
           candidate = states.find { |s| s.precedes?(aParseState) }
         end
         
         return candidate
       end
-      
 
       private
 

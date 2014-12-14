@@ -15,7 +15,6 @@ module Rley # This module is used as a namespace
       def accept(aVisitor)
         aVisitor.visit_terminal(self)
       end
-
     end # class
   end # module
 end # module

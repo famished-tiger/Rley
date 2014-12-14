@@ -9,7 +9,6 @@ module Rley # This module is used as a namespace
       # A range of indices for tokens corresponding to the node.
       attr_reader(:range)
 
-
       def initialize(aSymbol, aRange)
         @symbol = aSymbol
         @range = TokenRange.new(aRange)
@@ -18,7 +17,6 @@ module Rley # This module is used as a namespace
       def range=(aRange)
         range.assign(aRange)
       end
-
     end # class
   end # module
 end # module

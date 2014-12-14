@@ -22,7 +22,6 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           expect(subject.pattern).to eq(/\d+/)
         end
       end # context
-
     end # describe
   end # module
 end # module

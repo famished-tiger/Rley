@@ -94,8 +94,6 @@ module Rley # This module is used as a namespace
         a_subscriber.send(msg, *args)
       end
     end
-
-
   end # class
 end # module
 

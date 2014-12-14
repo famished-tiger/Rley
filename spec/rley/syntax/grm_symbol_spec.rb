@@ -24,7 +24,6 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           expect(subject.to_s).to eq(sample_name)
         end
       end # context
-
     end # describe
   end # module
 end # module

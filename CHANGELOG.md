@@ -1,3 +1,7 @@
+### 0.1.09 / 2014-12-14
+* [CHANGE] Source code refactored to please Rubocop (0.28.0)
+* [CHANGE] File `.rubucop.yml`  Disabled VariableNam style cop.
+
 ### 0.1.08 / 2014-12-13
 * [CHANGE] File `README.md` added coveralls badge (for the test coverage)
 

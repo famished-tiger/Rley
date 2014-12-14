@@ -13,7 +13,6 @@ require_relative '../../../lib/rley/parser/parsing'
 module Rley # Open this namespace to avoid module qualifier prefixes
   module Parser # Open this namespace to avoid module qualifier prefixes
     describe Parsing do
-
       # Grammar 1: A very simple language
       # S ::= A.
       # A ::= "a" A "c".
@@ -47,7 +46,6 @@ module Rley # Open this namespace to avoid module qualifier prefixes
       subject { Parsing.new(start_dotted_rule, grm1_tokens) }
 
       context 'Initialization:' do
-
         it 'should be created with list of tokens and start dotted rule' do
           start_rule = start_dotted_rule
           tokens = grm1_tokens
@@ -61,7 +59,6 @@ module Rley # Open this namespace to avoid module qualifier prefixes
         it 'should know its chart object' do
           expect(subject.chart).to be_kind_of(Chart)
         end
-
       end # context
 
       context 'Parsing:' do

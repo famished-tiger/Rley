@@ -22,7 +22,6 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           expect(subject).not_to be_nullable
         end
       end # context
-
     end # describe
   end # module
 end # module

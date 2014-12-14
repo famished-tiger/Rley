@@ -4,12 +4,11 @@ require_relative 'base_formatter'
 module Rley # This module is used as a namespace
   # Namespace dedicated to parse tree formatters.
   module Formatter
-
     # A formatter class that renders the visit notification events
     # from a parse tree visitor
     class Debug < BaseFormatter
       # Current indentation level
-      attr(:indentation)
+      attr_reader(:indentation)
 
       # Constructor.
       # @param anIO [IO] The output stream to which the rendered grammar
@@ -107,7 +106,6 @@ module Rley # This module is used as a namespace
       def output_event(anEvent, indentationLevel)
         output.puts "#{' ' * 2 * indentationLevel}#{anEvent}"
       end
-
     end # class
   end # module
 end # module

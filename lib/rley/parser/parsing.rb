@@ -45,7 +45,8 @@ module Rley # This module is used as a namespace
               if ptree.current_node.is_a?(PTree::TerminalNode)
                 ptree.current_node.token = tokens[state_set_index]
               end
-              parse_state = chart[state_set_index].predecessor_state(parse_state)
+              state_set = chart[state_set_index]
+              parse_state = state_set.predecessor_state(parse_state)
               curr_dotted_item = parse_state.dotted_rule
               
             when Syntax::NonTerminal
@@ -58,8 +59,8 @@ module Rley # This module is used as a namespace
               node_range =  ptree.current_node.range
               ptree.add_children(curr_dotted_item.production, node_range)
               if ptree.current_node.is_a?(PTree::TerminalNode)
-                curr_node = ptree.current_node
-                curr_node.token = tokens[state_set_index-1] unless curr_node.token
+                a_node = ptree.current_node
+                a_node.token = tokens[state_set_index - 1] unless a_node.token
               end
               
             when NilClass
@@ -102,12 +103,12 @@ module Rley # This module is used as a namespace
       #   determine the "next" dotted rule for a given one.
       def scanning(aTerminal, aPosition, &nextMapping)
         curr_token = tokens[aPosition]
-        if curr_token.terminal == aTerminal
-          states = states_expecting(aTerminal, aPosition)
-          states.each do |s|
-            next_item = nextMapping.call(s.dotted_rule)
-            push_state(next_item, s.origin, aPosition + 1)
-          end
+        return unless curr_token.terminal == aTerminal
+        
+        states = states_expecting(aTerminal, aPosition)
+        states.each do |s|
+          next_item = nextMapping.call(s.dotted_rule)
+          push_state(next_item, s.origin, aPosition + 1)
         end
       end
 

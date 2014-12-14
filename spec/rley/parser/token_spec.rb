@@ -8,13 +8,10 @@ require_relative '../../../lib/rley/parser/token'
 module Rley # Open this namespace to avoid module qualifier prefixes
   module Parser # Open this namespace to avoid module qualifier prefixes
     describe Token do
-
       let(:lexeme) { '"some text"' }
       let(:sample_terminal) { Syntax::Terminal.new('if') }
 
       context 'Initialization:' do
-
-
         # Default instantiation rule
         subject { Token.new(lexeme, sample_terminal) }
 
@@ -30,7 +27,6 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           expect(subject.terminal).to eq(sample_terminal)
         end
       end # context
-
     end # describe
   end # module
 end # module

@@ -92,8 +92,10 @@ module Rley # This module is used as a namespace
           when -1
             result = (production.rhs.size == 1) ? 0 : (production.rhs.size - 1)
           else
-            result = position-1
+            result = position - 1
         end
+        
+        return result
       end
 
       # An item with the dot in front of a terminal is called a shift item

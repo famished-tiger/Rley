@@ -62,7 +62,6 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           expect { subject == 1 }.to raise_error(err, msg)
         end
       end # context
-
     end # describe
   end # module
 end # module

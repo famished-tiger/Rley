@@ -14,14 +14,12 @@ module Rley # Open this namespace to avoid module qualifier prefixes
       let(:state2) { ParseState.new(dotted_rule2, 5) }
 
       context 'Initialization:' do
-
         it 'should be created without argument' do
           expect { StateSet.new }.not_to raise_error
         end
       end # context
 
       context 'Provided services:' do
-
         it 'should push a state' do
           expect(subject.states).to be_empty
           expect { subject.push_state(state1) }.not_to raise_error
@@ -80,9 +78,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           err = StandardError
           expect { subject.predecessor_state(state1) }.to raise_error(err)
         end
-
       end # context
-
     end # describe
   end # module
 end # module

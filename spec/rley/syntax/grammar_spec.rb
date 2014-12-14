@@ -10,7 +10,6 @@ require_relative '../../../lib/rley/syntax/grammar'
 module Rley # Open this namespace to avoid module qualifier prefixes
   module Syntax # Open this namespace to avoid module qualifier prefixes
     describe Grammar do
-
       # Factory method. Builds a list of productions
       # having same lhs and the symbols sequence
       # in their rhs.
@@ -123,7 +122,6 @@ module Rley # Open this namespace to avoid module qualifier prefixes
       end
 
       context 'Initialization:' do
-
         it 'should be created with a list of productions' do
           expect { Grammar.new([prod_S, prod_A1, prod_A2]) }.not_to raise_error
         end
@@ -144,12 +142,6 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           expect(subject.non_terminals).to eq([nt_S, nt_A]) 
         end
       end # context
-      
-      # let(:nt_S) { NonTerminal.new('S') }
-      # let(:nt_A) { NonTerminal.new('A') }
-      # let(:a_) { VerbatimSymbol.new('a') }
-      # let(:b_)  { VerbatimSymbol.new('b') }
-      # let(:c_)  { VerbatimSymbol.new('c') }
       
       context 'Provided services:' do
         it 'should retrieve its symbols from their name' do
@@ -187,7 +179,6 @@ module Rley # Open this namespace to avoid module qualifier prefixes
         end
         
       end # context
-
     end # describe
   end # module
 end # module

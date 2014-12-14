@@ -3,9 +3,13 @@ AllCops:
     - 'examples/**/*'
     - 'features/**/*'
     - 'gems/**/*'
+    - 'refs/**/*'
 
 # This is disabled because some demos use UTF-8
 AsciiComments:
+  Enabled: false
+  
+BlockComments:
   Enabled: false
 
 CaseIndentation:
@@ -70,5 +74,8 @@ SpaceInsideBrackets:
   Enabled: false
 
 TrailingWhitespace:
+  Enabled: false
+  
+VariableName:
   Enabled: false
   

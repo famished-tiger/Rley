@@ -46,10 +46,8 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           msg_suffix = ", found a #{String} instead."  
           msg = msg_prefix + msg_suffix
           expect { Production.new('wrong', sequence) }.to raise_error(err, msg)
-
         end
       end # context
-
     end # describe
   end # module
 end # module
