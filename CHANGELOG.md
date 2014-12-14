@@ -1,3 +1,7 @@
+### 0.1.10 / 2014-12-14
+* [CHANGE] Added more examples in `examples` folder (e.g. parsing then parse tree ).
+* [CHANGE] File `rley.rb`: added more requires of the library to ease integration.
+
 ### 0.1.09 / 2014-12-14
 * [CHANGE] Source code refactored to please Rubocop (0.28.0)
 * [CHANGE] File `.rubucop.yml`  Disabled VariableNam style cop.

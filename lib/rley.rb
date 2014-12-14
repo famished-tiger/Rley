@@ -4,6 +4,10 @@
 
 require_relative './rley/constants'
 require_relative './rley/syntax/grammar_builder'
+require_relative './rley/parser/token'
 require_relative './rley/parser/earley_parser'
+require_relative './rley/parse_tree_visitor'
+require_relative './rley/formatter/debug'
+require_relative './rley/formatter/json'
 
 # End of file
