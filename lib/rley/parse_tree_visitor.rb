@@ -43,7 +43,7 @@ module Rley # This module is used as a namespace
 
 
     # Visit event. The visitor is about to visit the given non terminal node.
-    # @param aNonTerminal [NonTerminalNode] the node to visit.
+    # @param aNonTerminalNode [NonTerminalNode] the node to visit.
     def start_visit_nonterminal(aNonTerminalNode)
       broadcast(:before_non_terminal, aNonTerminalNode)
     end
@@ -63,7 +63,7 @@ module Rley # This module is used as a namespace
 
     # Visit event. The visitor is visiting the
     # given terminal node.
-    # @param aTerminal [TerminalNode] the terminal to visit.
+    # @param aTerminalNode [TerminalNode] the terminal to visit.
     def visit_terminal(aTerminalNode)
       broadcast(:before_terminal, aTerminalNode)
       broadcast(:after_terminal, aTerminalNode)
@@ -72,7 +72,7 @@ module Rley # This module is used as a namespace
 
     # Visit event. The visitor has completed its visit of the given 
     # non-terminal node.
-    # @param aNonTerminal [NonTerminalNode] the node to visit.
+    # @param aNonTerminalNode [NonTerminalNode] the node to visit.
     def end_visit_nonterminal(aNonTerminalNode)
       broadcast(:after_non_terminal, aNonTerminalNode)
     end

@@ -20,8 +20,8 @@ module Rley # This module is used as a namespace
       # after "advancing" the dot
       attr_reader(:next_mapping)
 
-      # @param aGrammar [Grammar] A context-free grammar that defines the 
-      # language of the input to be parsed.
+      # @param aGrammar [Grammar] The grammar of the language 
+      # (to use by the parser).
       def initialize(aGrammar)
         @grammar = aGrammar
         @dotted_items = build_dotted_items(grammar)
@@ -32,7 +32,7 @@ module Rley # This module is used as a namespace
       # Parse a sequence of input tokens.
       # @param aTokenSequence [Array] Array of Tokens objects returned by a 
       # tokenizer/scanner/lexer.
-      # @return a Parsing object that embeds the parse result.
+      # @return [Parsing] an object that embeds the parse results.
       def parse(aTokenSequence)
         result = Parsing.new(start_dotted_item, aTokenSequence)
         last_token_index = aTokenSequence.size
@@ -159,7 +159,7 @@ module Rley # This module is used as a namespace
       # such that the dot appears after terminal.
       # @param aParsing [Parsing] the object that encapsulates the results
       #   result of the parsing process
-      # @param Terminal [Terminal] a terminal symbol that 
+      # @param aTerminal [Terminal] a terminal symbol that 
       #   immediately follows a dot 
       # @param aPosition [Fixnum] position in the input token sequence.
       def scanning(aParsing, aTerminal, aPosition)

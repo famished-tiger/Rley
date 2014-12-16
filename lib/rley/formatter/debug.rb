@@ -68,7 +68,7 @@ module Rley # This module is used as a namespace
       # Notification of a visit event: the visitor completed the visit of
       # a non-terminal node
       # @param _nonterm [NonTerminalNode]
-      def after_non_terminal(_)
+      def after_non_terminal(_nonterm)
         dedent
         output_event(__method__, indentation)
       end

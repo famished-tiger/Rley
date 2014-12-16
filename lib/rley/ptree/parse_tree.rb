@@ -56,7 +56,7 @@ module Rley # This module is used as a namespace
       end
 
       # Move the current node to the parent node.
-      # @param tokenPos [Fixnum] position of the matching input token
+      # @param _tokenPos [Fixnum] position of the matching input token
       def step_up(_tokenPos)
         current_path.pop(2)
       end

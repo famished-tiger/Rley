@@ -24,7 +24,7 @@ module Rley # This module is used as a namespace
       # A Hash with pairs of the kind: symbol name => grammar symbol
       attr_reader(:name2symbol)
 
-      # @param theProduction [Array of Production] the list of productions
+      # @param theProductions [Array of Production] the list of productions
       # of the grammar.
       def initialize(theProductions)
         @rules = []

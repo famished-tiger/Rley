@@ -38,7 +38,7 @@ module Rley # This module is used as a namespace
       # Method called by a ParseTreeVisitor to which the formatter subscribed.
       # Notification of a visit event: the visitor is about to visit
       # a non-terminal node
-      # @param _nonterm [NonTerminalNode]
+      # @param nonterm_node [NonTerminalNode]
       def before_non_terminal(nonterm_node)
         separator = sibling_flags[-1] ? ",\n" : "\n"
         name = nonterm_node.symbol.name
@@ -60,7 +60,7 @@ module Rley # This module is used as a namespace
       # Method called by a ParseTreeVisitor to which the formatter subscribed.
       # Notification of a visit event: the visitor is about to visit
       # a terminal node
-      # @param _term [TerminalNode]
+      # @param term_node [TerminalNode]
       def before_terminal(term_node)
         separator = sibling_flags[-1] ? ",\n" : "\n"
         name = term_node.symbol.name
@@ -81,15 +81,6 @@ module Rley # This module is used as a namespace
         dedent
         print_text("\n", '}')
       end
-
-
-      # Method called by a ParseTreeVisitor to which the formatter subscribed.
-      # Notification of a visit event: the visitor completed the visit of
-      # a non-terminal node
-      # @param _nonterm [NonTerminalNode]
-      def after_non_terminal(_)
-      end
-
 
       # Method called by a ParseTreeVisitor to which the formatter subscribed.
       # Notification of a visit event: the visitor completed the visit

@@ -1,3 +1,8 @@
+### 0.1.11 / 2014-12-16
+* [FIX] Fixed all but one YARD (documentation) warnings. Most of them were due to mismatch
+in method argument names between source code and documentation.  
+* [CHANGE] File `README.md` added Gemnasium badge (for the gem dependency checks)
+
 ### 0.1.10 / 2014-12-14
 * [CHANGE] Added more examples in `examples` folder (e.g. parsing then parse tree ).
 * [CHANGE] File `rley.rb`: added more requires of the library to ease integration.

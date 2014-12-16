@@ -32,22 +32,19 @@ module Rley # This module is used as a namespace
       def parse_tree()
         state_set_index = chart.state_sets.size - 1
         parse_state = end_parse_state
-        curr_dotted_item = parse_state.dotted_rule
         full_range = { low: 0, high: state_set_index }
-        ptree = PTree::ParseTree.new(curr_dotted_item.production, full_range)
+        start_production = chart.start_dotted_rule.production
+        ptree = PTree::ParseTree.new(start_production, full_range)
+        return ptree if parse_state.nil?
         loop do
+          curr_dotted_item = parse_state.dotted_rule
           # Look at the symbol on left of the dot
           curr_symbol = curr_dotted_item.prev_symbol
           case curr_symbol
             when Syntax::Terminal
               state_set_index -= 1
-              ptree.step_back(state_set_index)
-              if ptree.current_node.is_a?(PTree::TerminalNode)
-                ptree.current_node.token = tokens[state_set_index]
-              end
-              state_set = chart[state_set_index]
-              parse_state = state_set.predecessor_state(parse_state)
-              curr_dotted_item = parse_state.dotted_rule
+              parse_state = predecessor_state_terminal(ptree, state_set_index, 
+                parse_state)
               
             when Syntax::NonTerminal
               # Retrieve complete states
@@ -58,10 +55,7 @@ module Rley # This module is used as a namespace
               ptree.current_node.range = { low: parse_state.origin }
               node_range =  ptree.current_node.range
               ptree.add_children(curr_dotted_item.production, node_range)
-              if ptree.current_node.is_a?(PTree::TerminalNode)
-                a_node = ptree.current_node
-                a_node.token = tokens[state_set_index - 1] unless a_node.token
-              end
+              link_node_to_token(ptree, state_set_index - 1)
               
             when NilClass
               lhs = curr_dotted_item.production.lhs
@@ -69,7 +63,6 @@ module Rley # This module is used as a namespace
               break if new_states.empty?
               # TODO: make this more robust
               parse_state = new_states[0]
-              curr_dotted_item = parse_state.dotted_rule
               ptree.step_up(state_set_index)
               ptree.current_node.range = { low: parse_state.origin }
               break if ptree.root == ptree.current_node
@@ -96,7 +89,7 @@ module Rley # This module is used as a namespace
       # a new state like: <next dotted rule, s.origin, aPosition + 1>
       # In other words, we place the dotted rules in the next state set
       # such that the dot appears after terminal.
-      # @param Terminal [Terminal] a terminal symbol that
+      # @param aTerminal [Terminal] a terminal symbol that
       #   immediately follows a dot
       # @param aPosition [Fixnum] position in the input token sequence.
       # @param nextMapping [Proc or Lambda] code to evaluate in order to
@@ -153,6 +146,25 @@ module Rley # This module is used as a namespace
         candidate_states = last_chart_entry.states_for(start_production)
         return candidate_states.find(&:complete?)
       end
+      
+      # Go to the predecessor state for the given terminal
+      def predecessor_state_terminal(aParseTree, aStateSetIndex, current_state)
+        aParseTree.step_back(aStateSetIndex)
+        link_node_to_token(aParseTree, aStateSetIndex)
+        state_set = chart[aStateSetIndex]
+        state_set.predecessor_state(current_state)
+      end
+
+      
+      # If the current node is a terminal node
+      # then link the token to that node
+      def link_node_to_token(aParseTree, aStateSetIndex)
+        if aParseTree.current_node.is_a?(PTree::TerminalNode)
+          a_node = aParseTree.current_node
+          a_node.token = tokens[aStateSetIndex] unless a_node.token
+        end
+      end
+      
     end # class
   end # module
 end # module
