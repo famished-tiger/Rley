@@ -7,12 +7,19 @@ require_relative '../../../lib/rley/syntax/grammar_builder'
 require_relative '../../../lib/rley/parser/dotted_item'
 require_relative '../../../lib/rley/parser/token'
 require_relative '../../../lib/rley/parser/earley_parser'
+require_relative '../support/grammar_abc_helper'
+require_relative '../support/grammar_b_expr_helper'
+
+
 # Load the class under test
 require_relative '../../../lib/rley/parser/parsing'
 
 module Rley # Open this namespace to avoid module qualifier prefixes
   module Parser # Open this namespace to avoid module qualifier prefixes
     describe Parsing do
+      include GrammarABCHelper  # Mix-in module with builder for grammar abc
+      include GrammarBExprHelper # Mix-in with builder for simple expressions
+    
       # Grammar 1: A very simple language
       # S ::= A.
       # A ::= "a" A "c".
@@ -87,7 +94,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           item2 = DottedItem.new(prod_A1, 1)
           subject.push_state(item1, 2, 2)
           subject.push_state(item2, 2, 2)
-          states = subject.states_expecting(c_, 2)
+          states = subject.states_expecting(c_, 2, false)
           expect(states.size).to eq(1)
           expect(states[0].dotted_rule).to eq(item1)
         end
@@ -114,11 +121,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
       
       context 'Parse tree building:' do
         let(:sample_grammar1) do
-          builder = Syntax::GrammarBuilder.new
-          builder.add_terminals('a', 'b', 'c')
-          builder.add_production('S' => ['A'])
-          builder.add_production('A' => %w(a A c))
-          builder.add_production('A' => ['b'])
+          builder = grammar_abc_builder
           builder.grammar
         end
         
@@ -128,13 +131,28 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           end
         end
         
+        let(:b_expr_grammar) do
+          builder = grammar_expr_builder
+          builder.grammar
+        end
 
-        it 'should build the parse tree for a non-ambiguous grammar' do
+
+        it 'should build the parse tree for a simple non-ambiguous grammar' do
           parser = EarleyParser.new(sample_grammar1)
           instance = parser.parse(token_seq1)
           ptree = instance.parse_tree
           expect(ptree).to be_kind_of(PTree::ParseTree)
         end
+        
+        it 'should build the parse tree for a simple expression grammar' do
+          parser = EarleyParser.new(b_expr_grammar)
+          tokens = expr_tokenizer('2 + 3 * 4', b_expr_grammar)
+          instance = parser.parse(tokens)
+          ptree = instance.parse_tree
+          expect(ptree).to be_kind_of(PTree::ParseTree)
+        end
+        
+        
       end # context
     end # describe
   end # module

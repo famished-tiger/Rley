@@ -1,3 +1,8 @@
+### 0.1.12 / 2014-12-22
+* [FIX] Fixed `Parsing#parse_tree`: code couldn't cope with parse state set containing more 
+  than one parse state that expected the same symbol.
+* [NEW] Added one more parser example (for very basic arithmetic expression)
+
 ### 0.1.11 / 2014-12-16
 * [FIX] Fixed all but one YARD (documentation) warnings. Most of them were due to mismatch
 in method argument names between source code and documentation.  

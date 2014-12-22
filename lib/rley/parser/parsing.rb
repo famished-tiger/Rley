@@ -1,6 +1,7 @@
 require_relative 'chart'
 require_relative '../ptree/parse_tree'
 
+
 module Rley # This module is used as a namespace
   module Parser # This module is used as a namespace
     class Parsing
@@ -47,19 +48,23 @@ module Rley # This module is used as a namespace
                 parse_state)
               
             when Syntax::NonTerminal
-              # Retrieve complete states
+              # Retrieve complete states with curr_symbol as lhs
               new_states = chart[state_set_index].states_rewriting(curr_symbol)
               # TODO: make this more robust
               parse_state = new_states[0]
               curr_dotted_item = parse_state.dotted_rule
+              # Additional check
+              if ptree.current_node.symbol != curr_dotted_item.production.lhs
+                ptree.step_back(state_set_index)
+              end
               ptree.current_node.range = { low: parse_state.origin }
               node_range =  ptree.current_node.range
               ptree.add_children(curr_dotted_item.production, node_range)
               link_node_to_token(ptree, state_set_index - 1)
               
-            when NilClass
+            when NilClass # No symbol on the left of dot
               lhs = curr_dotted_item.production.lhs
-              new_states = chart[state_set_index].states_expecting(lhs)
+              new_states = states_expecting(lhs, state_set_index, true)
               break if new_states.empty?
               # TODO: make this more robust
               parse_state = new_states[0]
@@ -98,7 +103,7 @@ module Rley # This module is used as a namespace
         curr_token = tokens[aPosition]
         return unless curr_token.terminal == aTerminal
         
-        states = states_expecting(aTerminal, aPosition)
+        states = states_expecting(aTerminal, aPosition, false)
         states.each do |s|
           next_item = nextMapping.call(s.dotted_rule)
           push_state(next_item, s.origin, aPosition + 1)
@@ -119,7 +124,7 @@ module Rley # This module is used as a namespace
       def completion(aState, aPosition, &nextMapping)
         curr_origin = aState.origin
         curr_lhs = aState.dotted_rule.lhs
-        states = states_expecting(curr_lhs, curr_origin)
+        states = states_expecting(curr_lhs, curr_origin, false)
         states.each do |s|
           next_item = nextMapping.call(s.dotted_rule)
           push_state(next_item, s.origin, aPosition)
@@ -129,8 +134,19 @@ module Rley # This module is used as a namespace
 
       # The list of ParseState from the chart entry at given position
       # that expect the given terminal
-      def states_expecting(aTerminal, aPosition)
-        return chart[aPosition].states_expecting(aTerminal)
+      def states_expecting(aTerminal, aPosition, toSort)
+        expecting = chart[aPosition].states_expecting(aTerminal)
+        return expecting if !toSort || expecting.size < 2
+        
+        # Put predicted states ahead
+        (predicted, others) = expecting.partition { |state| state.predicted? }
+        
+        # Sort state in reverse order of their origin value
+        [predicted, others].each do |set|
+          set.sort! { |a,b| b.origin <=> a.origin }
+        end
+        
+        return predicted + others
       end
       
       private

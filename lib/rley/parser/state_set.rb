@@ -21,13 +21,15 @@ module Rley # This module is used as a namespace
         @states << aState unless include?(aState)
       end
 
-      # The list of ParseState that expect the given terminal
-      def states_expecting(aTerminal)
-        return states.select { |s| s.dotted_rule.next_symbol == aTerminal }
+      # The list of ParseState that expect the given symbol.
+      # @param aSymbol [GrmSymbol] the expected symbol 
+      #   (=on the right of the dot)
+      def states_expecting(aSymbol)
+        return states.select { |s| s.dotted_rule.next_symbol == aSymbol }
       end
 
-      # The list of complete ParseState that have the symbol as the lhs of their
-      # production
+      # The list of complete ParseState that have the given non-terminal 
+      # symbol as the lhs of their production.
       def states_rewriting(aNonTerm)
         return states.select do |s| 
           (s.dotted_rule.production.lhs == aNonTerm) && s.complete?

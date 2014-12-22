@@ -33,8 +33,19 @@ module Rley # This module is used as a namespace
         aVisitor.end_visit_ptree(self)
       end
 
-
+      # Add children to the current node.
+      # The children nodes correspond to the rhs of the production.
+      # Update the range in the children given the passed range object.
+      # Pre-condition: the current node refers to the same (non-terminal)
+      # symbol of the lhs of the given produiction.
+      # @param aProduction [Production] A production rule
+      # @param aRange [TokenRange]
       def add_children(aProduction, aRange)
+        if aProduction.lhs != current_node.symbol
+          msg = "Internal error. Expected symbol was #{aProduction.lhs} but current node is #{current_node.symbol}"
+          fail StandardError, msg
+        end
+        
         aProduction.rhs.each do |symb|
           case symb
             when Syntax::Terminal

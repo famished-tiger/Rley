@@ -31,6 +31,11 @@ module Rley # This module is used as a namespace
         return dotted_rule.reduce_item?
       end
 
+      # Returns true if the dot is at the start of the rhs of the production.
+      def predicted?()
+        return dotted_rule.predicted_item?
+      end
+
       # Next expected symbol in the production
       def next_symbol()
         return dotted_rule.next_symbol
