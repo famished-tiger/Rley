@@ -1,3 +1,7 @@
+### 0.2.01 / 2015-01-03
+* [CHANGE] File `.rubocop.yml`: AbcMetric setting relaxed.
+* [CHANGE] Fixed most style offenses reported by Rubocop.
+
 ### 0.2.00 / 2015-01-03  
 Version number bump: major re-design of the parse tree generation.
 * [NEW] Class `ParseTreeBuilder`: builder for creating parse tree.

@@ -5,7 +5,11 @@ AllCops:
     - 'gems/**/*'
     - 'refs/**/*'
 
-# This is disabled because some demos use UTF-8
+AbcSize:
+  Max: 45
+  Enabled: true
+    
+    # This is disabled because some demos use UTF-8
 AsciiComments:
   Enabled: false
   

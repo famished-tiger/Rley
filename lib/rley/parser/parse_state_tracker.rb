@@ -26,12 +26,12 @@ module Rley # This module is used as a namespace
       # Write accessor. Set the given parse state as the current one.
       def parse_state=(aParseState)
         @parse_state = aParseState
-        self.processed_states[parse_state] = true
+        processed_states[parse_state] = true
       end
       
       # Take the first provided state that wasn't processed yet.
       def select_state(theStates)
-        a_state = theStates.find { |st| ! processed_states.include?(st) }
+        a_state = theStates.find { |st| !processed_states.include?(st) }
         self.parse_state = a_state
       end
       
@@ -46,7 +46,7 @@ module Rley # This module is used as a namespace
       
       # Notification that one begins with the previous state set
       def to_prev_state_set()
-        self.state_set_index = self.state_set_index - 1
+        self.state_set_index = state_set_index - 1
       end
     end # class
   end # module

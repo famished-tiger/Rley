@@ -32,10 +32,10 @@ module Rley # Open this namespace to avoid module qualifier prefixes
 
       let(:sample_parsing) do
         parser = EarleyParser.new(grammar_abc)
-        result = parser.parse(tokens_abc)
+        parser.parse(tokens_abc)
       end
       
-      subject { ParseTreeBuilder.new(start_prod, {low: 0, high: 5}) }
+      subject { ParseTreeBuilder.new(start_prod, { low: 0, high: 5 }) }
 
       context 'Initialization:' do
         it 'should be created with a proposition and a range' do
@@ -46,11 +46,11 @@ module Rley # Open this namespace to avoid module qualifier prefixes
             expect(subject.root.symbol).to eq(capital_s)
         end
 
-        it "should have current path at start" do
+        it 'should have current path at start' do
             expect(subject.current_path).not_to be_empty
         end
 
-        it "should have current node at start" do
+        it 'should have current node at start' do
             expect(subject.current_node.symbol).to eq(capital_a)
         end
       end # context
@@ -87,7 +87,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           expect(child1.children[-1].range.high).to eq(5)
           
           subject.move_down # ... to c
-          subject.range = {low: 4}
+          subject.range = { low: 4 }
           expect(child1.children[-1].range.low).to eq(4)
           expect(child1.children.last).to eq(subject.current_node)
           subject.move_back # ... to A

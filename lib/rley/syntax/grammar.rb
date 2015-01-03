@@ -20,7 +20,7 @@ module Rley # This module is used as a namespace
 
       # The list of grammar symbols in the language.
       attr_reader(:symbols)
-      
+
       # A Hash with pairs of the kind: symbol name => grammar symbol
       attr_reader(:name2symbol)
 
@@ -41,7 +41,7 @@ module Rley # This module is used as a namespace
       def non_terminals()
         return symbols.select { |s| s.kind_of?(NonTerminal) }
       end
-      
+
       # @return [Production] The start production of the grammar (i.e.
       #   the rule that specifies the syntax for the start symbol.
       def start_production()
@@ -66,17 +66,17 @@ module Rley # This module is used as a namespace
         aProduction.rhs.each { |symb| add_symbol(symb) }
       end
 
-      
+
       # For each non-terminal determine whether it is nullable or not.
       # A nullable nonterminal is a nonterminal that can match an empty string.
       def compute_nullable()
         non_terminals.each { |nterm| nterm.nullable = false }
         nullable_sets = [ direct_nullable ]
-        
+
         # Drop productions with one terminal in rhs or with a nullable lhs
         filtered_rules = rules.reject do |prod|
-          prod.lhs.nullable? || prod.rhs.find do |symb| 
-            symb.kind_of?(Terminal) 
+          prod.lhs.nullable? || prod.rhs.find do |symb|
+            symb.kind_of?(Terminal)
           end
         end
 
@@ -96,8 +96,8 @@ module Rley # This module is used as a namespace
           nullable_sets[i] = nullable_sets[i - 1].merge(new_nullables)
         end
       end
-        
-        
+
+
       # Return the set of nonterminals which have one of their
       # production rules empty
       def direct_nullable()
@@ -108,18 +108,18 @@ module Rley # This module is used as a namespace
           prod.lhs.nullable = true
           nullable << prod.lhs
         end
-        
+
         return nullable
       end
-      
+
       private
-      
+
       def add_symbol(aSymbol)
         its_name = aSymbol.name
-        unless name2symbol.include? its_name
-          @symbols << aSymbol
-          @name2symbol[its_name] = aSymbol
-        end
+        return if name2symbol.include? its_name
+
+        @symbols << aSymbol
+        @name2symbol[its_name] = aSymbol
       end
     end # class
   end # module

@@ -116,7 +116,6 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           expect(new_state.dotted_rule).to eq(item1)
           expect(new_state.origin).to eq(0)
         end
-
       end # context
 
       context 'Parse tree building:' do
@@ -175,13 +174,13 @@ module Rley # Open this namespace to avoid module qualifier prefixes
 
           (node_s, node_plus, node_m) = node.children
           expect(node_s.symbol).to eq(grm_symbol('S'))
-          expect(node_s.range).to eq({low: 0, high: 1})
+          expect(node_s.range).to eq(low: 0, high: 1)
           expect(node_s.children.size).to eq(1)
           expect(node_plus.symbol).to eq(grm_symbol('+'))
-          expect(node_plus.range).to eq({low: 0, high: 1})  # TODO: fix this
+          expect(node_plus.range).to eq(low: 0, high: 1)  # TODO: fix this
           expect(node_plus.token.lexeme). to eq('+')
           expect(node_m.symbol).to eq(grm_symbol('M'))
-          expect(node_m.range).to eq({low: 2, high: 5})
+          expect(node_m.range).to eq(low: 2, high: 5)
           expect(node_m.children.size).to eq(3)
           
           node = node_s.children[0] # M

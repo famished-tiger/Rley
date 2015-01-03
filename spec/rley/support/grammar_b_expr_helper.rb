@@ -21,19 +21,19 @@ module GrammarBExprHelper
   
   # Basic expression tokenizer
   def expr_tokenizer(aText, aGrammar)
-  tokens = aText.scan(/\S+/).map do |lexeme|
-    case lexeme
-      when '+', '*'
-        terminal = aGrammar.name2symbol[lexeme]
-      when /^[-+]?\d+$/
-        terminal = aGrammar.name2symbol['integer']
-      else
-        msg = "Unknown input text '#{lexeme}'"
-        fail StandardError, msg
+    tokens = aText.scan(/\S+/).map do |lexeme|
+      case lexeme
+        when '+', '*'
+          terminal = aGrammar.name2symbol[lexeme]
+        when /^[-+]?\d+$/
+          terminal = aGrammar.name2symbol['integer']
+        else
+          msg = "Unknown input text '#{lexeme}'"
+          fail StandardError, msg
+      end
+      Rley::Parser::Token.new(lexeme, terminal)
     end
-    Rley::Parser::Token.new(lexeme, terminal)
+    
+    return tokens
   end
-  
-  return tokens
-end
 end # module

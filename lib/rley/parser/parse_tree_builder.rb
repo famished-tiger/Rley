@@ -1,4 +1,3 @@
-require 'ostruct' # TODO delete this
 require_relative '../ptree/terminal_node'
 require_relative '../ptree/non_terminal_node'
 require_relative '../ptree/parse_tree'
@@ -41,7 +40,7 @@ module Rley # This module is used as a namespace
       # (dot is at end of rhs)
       def use_complete_state(aCompleteState)
         prod = aCompleteState.dotted_rule.production
-        use_production(prod, {low: aCompleteState.origin})
+        use_production(prod, { low: aCompleteState.origin })
       end
 
       # Given that the current node is a non-terminal
@@ -66,14 +65,13 @@ module Rley # This module is used as a namespace
             msg = 'Cannot move further back'
             fail StandardError, msg
           end
-          (parent, pos, child_node) = current_path[-3, 3]
+          (parent, pos) = current_path[-3, 2]
           current_path.pop(2)
           if pos > 0
             new_pos = pos - 1
             new_curr_node = parent.children[new_pos]
             current_path << new_pos
             current_path << new_curr_node
-            range = high_bound(child_node.range.low)
           end
         end while pos == 0 && new_curr_node.is_a?(PTree::NonTerminalNode)
       end
@@ -130,10 +128,9 @@ module Rley # This module is used as a namespace
         self.range = aRange
         prod.rhs.each { |symb| add_node(symb, {}) }
 
-        unless curr_node.children.empty?
-          curr_node.children.first.range.assign({ low: curr_node.range.low })
-          curr_node.children.last.range.assign({ high: curr_node.range.high })
-        end
+        return if curr_node.children.empty?
+        curr_node.children.first.range.assign(low: curr_node.range.low)
+        curr_node.children.last.range.assign(high: curr_node.range.high)
       end      
 
       # Add the given node as child node of current node

@@ -24,7 +24,6 @@ module Rley # This module is used as a namespace
 
         aVisitor.end_visit_ptree(self)
       end
-
     end # class
   end # module
 end # module

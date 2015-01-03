@@ -123,11 +123,11 @@ module Rley # This module is used as a namespace
         return expecting if !toSort || expecting.size < 2
 
         # Put predicted states ahead
-        (predicted, others) = expecting.partition { |state| state.predicted? }
+        (predicted, others) = expecting.partition(&:predicted?)
 
         # Sort state in reverse order of their origin value
         [predicted, others].each do |set|
-          set.sort! { |a,b| b.origin <=> a.origin }
+          set.sort! { |a, b| b.origin <=> a.origin }
         end
 
         return predicted + others
@@ -158,13 +158,13 @@ module Rley # This module is used as a namespace
       
       # A terminal symbol is on the left of dot.
       # Go to the predecessor state for the given terminal
-      def predecessor_state_terminal(a_symb, aStateTracker, aTreeBuilder)
+      def predecessor_state_terminal(_a_symb, aStateTracker, aTreeBuilder)
         aTreeBuilder.current_node.range = { low: aStateTracker.state_set_index }
         link_node_to_token(aTreeBuilder, aStateTracker.state_set_index)
         unless aTreeBuilder.current_node.is_a?(PTree::TerminalNode)
           pp aTreeBuilder.root
           pp aTreeBuilder.current_node
-          fail StandardError, "Expected terminal node"
+          fail StandardError, 'Expected terminal node'
         end
         aTreeBuilder.move_back
         state_set = chart[aStateTracker.state_set_index]
@@ -174,12 +174,12 @@ module Rley # This module is used as a namespace
       
       
       # Retrieve a complete state with given symbol as lhs.
-      def completed_state_for(a_symb, aStateTracker, aTreeBuilder)
-        new_states = chart[aStateTracker.state_set_index].states_rewriting(a_symb)
-        aStateTracker.select_state(new_states) 
-        aTreeBuilder.range = { high: aStateTracker.state_set_index }
-        aTreeBuilder.use_complete_state(aStateTracker.parse_state)
-        link_node_to_token(aTreeBuilder, aStateTracker.state_set_index - 1)
+      def completed_state_for(a_symb, aTracker, aTreeBuilder)
+        new_states = chart[aTracker.state_set_index].states_rewriting(a_symb)
+        aTracker.select_state(new_states) 
+        aTreeBuilder.range = { high: aTracker.state_set_index }
+        aTreeBuilder.use_complete_state(aTracker.parse_state)
+        link_node_to_token(aTreeBuilder, aTracker.state_set_index - 1)
         aTreeBuilder.move_down
       end
       
@@ -204,10 +204,10 @@ module Rley # This module is used as a namespace
       # If the current node is a terminal node
       # then link the token to that node
       def link_node_to_token(aTreeBuilder, aStateSetIndex)
-        if aTreeBuilder.current_node.is_a?(PTree::TerminalNode)
-          a_node = aTreeBuilder.current_node
-          a_node.token = tokens[aStateSetIndex] unless a_node.token
-        end
+        return unless aTreeBuilder.current_node.is_a?(PTree::TerminalNode)
+
+        a_node = aTreeBuilder.current_node
+        a_node.token = tokens[aStateSetIndex] unless a_node.token
       end
 
       # Factory method. Initializes a ParseTreeBuilder object
@@ -216,8 +216,6 @@ module Rley # This module is used as a namespace
         start_production = chart.start_dotted_rule.production
         return ParseTreeBuilder.new(start_production, full_range)
       end
-      
-
     end # class
   end # module
 end # module

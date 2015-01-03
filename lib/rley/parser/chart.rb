@@ -27,7 +27,7 @@ module Rley # This module is used as a namespace
       
       # Return the index value of the last non-empty state set.
       def last_index()
-        first_empty =  state_sets.find_index { |set| set.empty? }
+        first_empty =  state_sets.find_index(&:empty?)
         if first_empty.nil?
           index = state_sets.size - 1
         else
