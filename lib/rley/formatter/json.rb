@@ -64,6 +64,10 @@ module Rley # This module is used as a namespace
       def before_terminal(term_node)
         separator = sibling_flags[-1] ? ",\n" : "\n"
         name = term_node.symbol.name
+        if term_node.token.nil?
+          msg = "No token associated with #{name}"
+          fail StandardError, msg
+        end
         lexeme = term_node.token.lexeme
         print_text(separator, "{\"#{name}\": \"#{lexeme}\"}")
         sibling_flags[-1] = true

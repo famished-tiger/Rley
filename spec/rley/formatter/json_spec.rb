@@ -43,9 +43,9 @@ module Rley # Re-open the module to get rid of qualified names
       # Generated tree has the following structure:
       # S[0,5]
       # +- A[0,5]
-      #    +- a[0,0]
+      #    +- a[0,1]
       #    +- A[1,4]
-      #    |  +- a[1,1]
+      #    |  +- a[1,2]
       #    |  +- A[2,3]
       #    |  |  +- b[2,3]
       #    |  +- c[3,4]

@@ -24,6 +24,18 @@ module Rley # This module is used as a namespace
       def [](index)
         return state_sets[index]
       end
+      
+      # Return the index value of the last non-empty state set.
+      def last_index()
+        first_empty =  state_sets.find_index { |set| set.empty? }
+        if first_empty.nil?
+          index = state_sets.size - 1
+        else
+          index = first_empty == 0 ? 0 : first_empty - 1
+        end
+        
+        return index
+      end
 
       # Push a parse state for the chart entry with given index
       def push_state(aDottedItem, anOrigin, anIndex)

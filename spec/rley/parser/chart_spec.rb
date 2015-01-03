@@ -30,8 +30,12 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           expect(subject.state_sets.size).to eq(count_token + 1)
         end
 
-        it 'should the start dotted rule' do
+        it 'should know the start dotted rule' do
           expect(subject.start_dotted_rule).to eq(dotted_rule)
+        end
+        
+        it 'should have at least one non-empty state set' do
+          expect(subject.last_index).to eq(0)
         end
       end # context
     end # describe

@@ -1,3 +1,12 @@
+### 0.2.00 / 2015-01-03  
+Version number bump: major re-design of the parse tree generation.
+* [NEW] Class `ParseTreeBuilder`: builder for creating parse tree.
+* [NEW] Class `ParseStateTracker`: helper class used in parse tree generation.
+* [NEW] Examplar file `parsing_L0.rb`: demo using a (highly simplified) English grammar.
+* [CHANGE]  Class `ParseTree`: construction methods removed.
+* [CHANGE]  Method `Parsing#parse_tree` completely rewritten.
+* [FIX] Method `Parsing#parse_tree` now handles situations where there are multiple complete parse states for a non-terminal.
+
 ### 0.1.12 / 2014-12-22
 * [FIX] Fixed `Parsing#parse_tree`: code couldn't cope with parse state set containing more 
   than one parse state that expected the same symbol.

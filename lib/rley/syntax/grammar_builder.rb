@@ -6,7 +6,7 @@ require_relative 'grammar'
 
 module Rley # This module is used as a namespace
   module Syntax # This module is used as a namespace
-    # Builder pattern. Builder pattern builds a complex object
+    # Builder GoF pattern. Builder pattern builds a complex object
     # (say, a grammar) from simpler objects (terminals and productions)
     # and using a step by step approach.
     class GrammarBuilder

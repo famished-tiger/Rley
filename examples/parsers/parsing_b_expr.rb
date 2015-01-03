@@ -46,7 +46,7 @@ def tokenizer(aText, aGrammar)
     end
     Rley::Parser::Token.new(lexeme, terminal)
   end
-  
+
   return tokens
 end
 
@@ -63,13 +63,13 @@ tokens = tokenizer(valid_input, grammar_s_expr)
 # Step 5. Let the parser process the input
 result = parser.parse(tokens)
 puts "Parse successful? #{result.success?}"
-pp result
 
 
 ########################################
 # Step 6. Generate a parse tree from the parse result
 ptree = result.parse_tree
-=begin
+pp ptree
+
 ########################################
 # Step 7. Render the parse tree (in JSON)
 # Let's create a parse tree visitor
@@ -81,5 +81,5 @@ renderer = Rley::Formatter::Json.new(STDOUT)
 # Now emit the parse tree as JSON on the console output
 puts "JSON rendering of the parse tree for '#{valid_input}' input:"
 renderer.render(visitor)
-=end
+
 # End of file

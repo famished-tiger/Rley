@@ -141,6 +141,10 @@ module Rley # Open this namespace to avoid module qualifier prefixes
         it 'should know all its non-terminal symbols' do
           expect(subject.non_terminals).to eq([nt_S, nt_A]) 
         end
+        
+        it 'should know its start production' do
+          expect(subject.start_production).to eq(prod_S)
+        end
       end # context
       
       context 'Provided services:' do

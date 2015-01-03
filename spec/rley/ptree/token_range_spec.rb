@@ -55,6 +55,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           expect(subject == me).to eq(true)
           equal = TokenRange.new(low: 0, high: 5)
           expect(subject == equal).to eq(true)
+          expect(subject == [0, 5]).to eq(true)
         end
 
       

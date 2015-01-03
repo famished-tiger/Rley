@@ -19,7 +19,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
     describe Parsing do
       include GrammarABCHelper  # Mix-in module with builder for grammar abc
       include GrammarBExprHelper # Mix-in with builder for simple expressions
-    
+
       # Grammar 1: A very simple language
       # S ::= A.
       # A ::= "a" A "c".
@@ -48,7 +48,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
 
 
       let(:start_dotted_rule) { DottedItem.new(prod_S, 0) }
-      
+
       # Default instantiation rule
       subject { Parsing.new(start_dotted_rule, grm1_tokens) }
 
@@ -116,24 +116,28 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           expect(new_state.dotted_rule).to eq(item1)
           expect(new_state.origin).to eq(0)
         end
-        
+
       end # context
-      
+
       context 'Parse tree building:' do
         let(:sample_grammar1) do
           builder = grammar_abc_builder
           builder.grammar
         end
-        
+
         let(:token_seq1) do
           %w(a a b c c).map do |letter|
             Token.new(letter, sample_grammar1.name2symbol[letter])
           end
         end
-        
+
         let(:b_expr_grammar) do
           builder = grammar_expr_builder
           builder.grammar
+        end
+
+        def grm_symbol(aSymbolName)
+          b_expr_grammar.name2symbol[aSymbolName]
         end
 
 
@@ -143,16 +147,86 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           ptree = instance.parse_tree
           expect(ptree).to be_kind_of(PTree::ParseTree)
         end
-        
+
         it 'should build the parse tree for a simple expression grammar' do
           parser = EarleyParser.new(b_expr_grammar)
           tokens = expr_tokenizer('2 + 3 * 4', b_expr_grammar)
           instance = parser.parse(tokens)
           ptree = instance.parse_tree
           expect(ptree).to be_kind_of(PTree::ParseTree)
+
+          # Expect parse tree:
+          # P[0, 5]
+          # +- S[0, 5]
+          #    +- S[0, 1]
+          #       +- M[0, 1]
+          #          +- T[0, 1]
+          #          +- integer(2)[0, 1]
+          #    +- +[?, ?]
+          #    +- M[2, 5]
+          expect(ptree.root.symbol). to eq(grm_symbol('P'))
+          expect(ptree.root.range). to eq([0, 5])
+          expect(ptree.root.children.size). to eq(1)
+
+          node = ptree.root.children[0] # S
+          expect(node.symbol). to eq(grm_symbol('S'))
+          expect(node.range). to eq([0, 5])
+          expect(node.children.size). to eq(3)
+
+          (node_s, node_plus, node_m) = node.children
+          expect(node_s.symbol).to eq(grm_symbol('S'))
+          expect(node_s.range).to eq({low: 0, high: 1})
+          expect(node_s.children.size).to eq(1)
+          expect(node_plus.symbol).to eq(grm_symbol('+'))
+          expect(node_plus.range).to eq({low: 0, high: 1})  # TODO: fix this
+          expect(node_plus.token.lexeme). to eq('+')
+          expect(node_m.symbol).to eq(grm_symbol('M'))
+          expect(node_m.range).to eq({low: 2, high: 5})
+          expect(node_m.children.size).to eq(3)
+          
+          node = node_s.children[0] # M
+          expect(node.symbol).to eq(grm_symbol('M'))
+          expect(node.range).to eq([0, 1])
+          expect(node.children.size).to eq(1)
+          
+          node = node.children[0] # T
+          expect(node.symbol).to eq(grm_symbol('T'))
+          expect(node.range).to eq([0, 1])
+          expect(node.children.size).to eq(1)
+          
+          node = node.children[0] # integer(2)
+          expect(node.symbol).to eq(grm_symbol('integer'))
+          expect(node.range).to eq([0, 1])
+          expect(node.token.lexeme).to eq('2')
+          
+          (node_m2, node_star, node_t3) = node_m.children
+          expect(node_m2.symbol).to eq(grm_symbol('M'))
+          expect(node_m2.range).to eq([2, 3])
+          expect(node_m2.children.size).to eq(1)
+          
+          node_t2 = node_m2.children[0] # T
+          expect(node_t2.symbol).to eq(grm_symbol('T'))
+          expect(node_t2.range).to eq([2, 3])
+          expect(node_t2.children.size).to eq(1)
+          
+          node = node_t2.children[0] # integer(3)
+          expect(node.symbol).to eq(grm_symbol('integer'))
+          expect(node.range).to eq([2, 3])
+          expect(node.token.lexeme).to eq('3')
+          
+          expect(node_star.symbol).to eq(grm_symbol('*'))
+          expect(node_star.range).to eq([2, 3])  # Fix this
+          expect(node_star.token.lexeme). to eq('*')
+          
+          expect(node_t3.symbol).to eq(grm_symbol('T'))
+          expect(node_t3.range).to eq([4, 5])
+          expect(node_t3.children.size).to eq(1)
+          
+          node = node_t3.children[0] # integer(4)
+          expect(node.symbol).to eq(grm_symbol('integer'))
+          expect(node.range).to eq([4, 5])
+          expect(node.token.lexeme).to eq('4')
         end
-        
-        
       end # context
     end # describe
   end # module

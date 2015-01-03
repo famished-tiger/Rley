@@ -41,6 +41,12 @@ module Rley # This module is used as a namespace
       def non_terminals()
         return symbols.select { |s| s.kind_of?(NonTerminal) }
       end
+      
+      # @return [Production] The start production of the grammar (i.e.
+      #   the rule that specifies the syntax for the start symbol.
+      def start_production()
+        return rules[0]
+      end
 
       private
 

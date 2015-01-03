@@ -1,5 +1,6 @@
 require_relative 'chart'
-require_relative '../ptree/parse_tree'
+require_relative 'parse_state_tracker'
+require_relative 'parse_tree_builder'
 
 
 module Rley # This module is used as a namespace
@@ -9,7 +10,7 @@ module Rley # This module is used as a namespace
 
       # The sequence of input token to parse
       attr_reader(:tokens)
-
+      
       def initialize(startDottedRule, theTokens)
         @tokens = theTokens.dup
         @chart = Chart.new(startDottedRule, tokens.size)
@@ -31,49 +32,32 @@ module Rley # This module is used as a namespace
       # set state_set_index = index of last state set in chart
       # Search the completed parse state that corresponds to the full parse
       def parse_tree()
-        state_set_index = chart.state_sets.size - 1
-        parse_state = end_parse_state
-        full_range = { low: 0, high: state_set_index }
-        start_production = chart.start_dotted_rule.production
-        ptree = PTree::ParseTree.new(start_production, full_range)
-        return ptree if parse_state.nil?
+        state_tracker = new_state_tracker
+        builder = tree_builder(state_tracker.state_set_index)
+        
         loop do
-          curr_dotted_item = parse_state.dotted_rule
           # Look at the symbol on left of the dot
-          curr_symbol = curr_dotted_item.prev_symbol
+          curr_symbol = state_tracker.symbol_on_left
+          
           case curr_symbol
             when Syntax::Terminal
-              state_set_index -= 1
-              parse_state = predecessor_state_terminal(ptree, state_set_index, 
-                parse_state)
-              
+              state_tracker.to_prev_state_set
+              predecessor_state_terminal(curr_symbol, state_tracker, builder)
+
             when Syntax::NonTerminal
-              # Retrieve complete states with curr_symbol as lhs
-              new_states = chart[state_set_index].states_rewriting(curr_symbol)
-              # TODO: make this more robust
-              parse_state = new_states[0]
-              curr_dotted_item = parse_state.dotted_rule
-              # Additional check
-              if ptree.current_node.symbol != curr_dotted_item.production.lhs
-                ptree.step_back(state_set_index)
-              end
-              ptree.current_node.range = { low: parse_state.origin }
-              node_range =  ptree.current_node.range
-              ptree.add_children(curr_dotted_item.production, node_range)
-              link_node_to_token(ptree, state_set_index - 1)
-              
+              completed_state_for(curr_symbol, state_tracker, builder)
+
             when NilClass # No symbol on the left of dot
-              lhs = curr_dotted_item.production.lhs
-              new_states = states_expecting(lhs, state_set_index, true)
+              # Retrieve all parse states that expect the lhs
+              new_states = states_expecting_lhs(state_tracker)
               break if new_states.empty?
-              # TODO: make this more robust
-              parse_state = new_states[0]
-              ptree.step_up(state_set_index)
-              ptree.current_node.range = { low: parse_state.origin }
-              break if ptree.root == ptree.current_node
+              
+              select_expecting_state(new_states, state_tracker, builder)
+              break if builder.root == builder.current_node
           end
         end
-        return ptree
+
+        return builder.parse_tree
       end
 
 
@@ -102,7 +86,7 @@ module Rley # This module is used as a namespace
       def scanning(aTerminal, aPosition, &nextMapping)
         curr_token = tokens[aPosition]
         return unless curr_token.terminal == aTerminal
-        
+
         states = states_expecting(aTerminal, aPosition, false)
         states.each do |s|
           next_item = nextMapping.call(s.dotted_rule)
@@ -114,9 +98,9 @@ module Rley # This module is used as a namespace
 
       # This method is called when a parse state at chart entry reaches the end
       # of a production.
-      # For every state in chart[aPosition] that is complete 
+      # For every state in chart[aPosition] that is complete
       #  (i.e. of the form: { dotted_rule: X -> γ •, origin: j}),
-      # Find states s in chart[j] of the form 
+      # Find states s in chart[j] of the form
       #  {dotted_rule: Y -> α • X β, origin: i}
       #  In other words, rules that predicted the non-terminal X.
       # For each s, add to chart[aPosition] a state of the form
@@ -137,22 +121,20 @@ module Rley # This module is used as a namespace
       def states_expecting(aTerminal, aPosition, toSort)
         expecting = chart[aPosition].states_expecting(aTerminal)
         return expecting if !toSort || expecting.size < 2
-        
+
         # Put predicted states ahead
         (predicted, others) = expecting.partition { |state| state.predicted? }
-        
+
         # Sort state in reverse order of their origin value
         [predicted, others].each do |set|
           set.sort! { |a,b| b.origin <=> a.origin }
         end
-        
+
         return predicted + others
       end
-      
-      private
-      
-      # Retrieve full parse state.
-      # After a successful parse, the last chart entry 
+
+      # Retrieve the parse state that represents a complete, successful parse
+      # After a successful parse, the last chart entry
       # has a parse state that involves the start production and
       # has a dot positioned at the end of its rhs.
       def end_parse_state()
@@ -162,25 +144,80 @@ module Rley # This module is used as a namespace
         candidate_states = last_chart_entry.states_for(start_production)
         return candidate_states.find(&:complete?)
       end
+
+      private
       
+      # Factory method. Creates and initializes a ParseStateTracker instance.
+      def new_state_tracker()
+        instance = ParseStateTracker.new(chart.last_index)
+        instance.parse_state = end_parse_state
+
+        return instance
+      end
+      
+      
+      # A terminal symbol is on the left of dot.
       # Go to the predecessor state for the given terminal
-      def predecessor_state_terminal(aParseTree, aStateSetIndex, current_state)
-        aParseTree.step_back(aStateSetIndex)
-        link_node_to_token(aParseTree, aStateSetIndex)
-        state_set = chart[aStateSetIndex]
-        state_set.predecessor_state(current_state)
+      def predecessor_state_terminal(a_symb, aStateTracker, aTreeBuilder)
+        aTreeBuilder.current_node.range = { low: aStateTracker.state_set_index }
+        link_node_to_token(aTreeBuilder, aStateTracker.state_set_index)
+        unless aTreeBuilder.current_node.is_a?(PTree::TerminalNode)
+          pp aTreeBuilder.root
+          pp aTreeBuilder.current_node
+          fail StandardError, "Expected terminal node"
+        end
+        aTreeBuilder.move_back
+        state_set = chart[aStateTracker.state_set_index]
+        previous_state = state_set.predecessor_state(aStateTracker.parse_state)
+        aStateTracker.parse_state = previous_state
+      end
+      
+      
+      # Retrieve a complete state with given symbol as lhs.
+      def completed_state_for(a_symb, aStateTracker, aTreeBuilder)
+        new_states = chart[aStateTracker.state_set_index].states_rewriting(a_symb)
+        aStateTracker.select_state(new_states) 
+        aTreeBuilder.range = { high: aStateTracker.state_set_index }
+        aTreeBuilder.use_complete_state(aStateTracker.parse_state)
+        link_node_to_token(aTreeBuilder, aStateTracker.state_set_index - 1)
+        aTreeBuilder.move_down
+      end
+      
+      
+      def states_expecting_lhs(aStateTracker)
+        lhs = aStateTracker.curr_dotted_item.production.lhs
+        new_states = states_expecting(lhs, aStateTracker.state_set_index, true)
+
+        return new_states
+      end
+      
+      def select_expecting_state(theStates, aStateTracker, aTreeBuilder)
+        # Select an unused parse state
+        aStateTracker.select_state(theStates) 
+        
+        aTreeBuilder.range = { low: aStateTracker.state_set_index }
+        aTreeBuilder.move_back
+        aTreeBuilder.range = { low: aStateTracker.parse_state.origin }
       end
 
-      
+
       # If the current node is a terminal node
       # then link the token to that node
-      def link_node_to_token(aParseTree, aStateSetIndex)
-        if aParseTree.current_node.is_a?(PTree::TerminalNode)
-          a_node = aParseTree.current_node
+      def link_node_to_token(aTreeBuilder, aStateSetIndex)
+        if aTreeBuilder.current_node.is_a?(PTree::TerminalNode)
+          a_node = aTreeBuilder.current_node
           a_node.token = tokens[aStateSetIndex] unless a_node.token
         end
       end
+
+      # Factory method. Initializes a ParseTreeBuilder object
+      def tree_builder(anIndex)
+        full_range = { low: 0, high: anIndex }
+        start_production = chart.start_dotted_rule.production
+        return ParseTreeBuilder.new(start_production, full_range)
+      end
       
+
     end # class
   end # module
 end # module

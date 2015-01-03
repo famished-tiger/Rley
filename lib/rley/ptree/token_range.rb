@@ -22,6 +22,8 @@ module Rley # This module is used as a namespace
             result = low == other[:low] && high == other[:high]
           when TokenRange
             result = low == other.low && high == other.high
+          when Array
+            result = low == other[0] && high == other[1]
         end
 
         return result
