@@ -6,7 +6,7 @@ require_relative '../../../lib/rley/parser/token'
 module GrammarBExprHelper
   # Factory method. Creates a grammar builder for a basic arithmetic
   # expression grammar.
-  # (based on example in article on Earley's algorithm in Wikipedia)
+  # (based on the article about Earley's algorithm in Wikipedia)
   def grammar_expr_builder()
     builder = Rley::Syntax::GrammarBuilder.new
     builder.add_terminals('+', '*', 'integer')

@@ -10,6 +10,13 @@ module Rley # This module is used as a namespace
         super(aTerminalSymbol, aRange)
       end
       
+      # Emit a (formatted) string representation of the node.
+      # Mainly used for diagnosis/debugging purposes.
+      def to_string(indentation)
+        value = token.nil? ? '(nil)' : token.lexeme
+        super(indentation) + ": '#{value}'"
+      end
+      
       # Part of the 'visitee' role in Visitor design pattern.
       # @param aVisitor[ParseTreeVisitor] the visitor
       def accept(aVisitor)

@@ -6,6 +6,7 @@ require_relative '../../../lib/rley/syntax/production'
 require_relative '../../../lib/rley/syntax/grammar_builder'
 require_relative '../../../lib/rley/parser/token'
 require_relative '../../../lib/rley/parser/dotted_item'
+require_relative '../support/ambiguous_grammar_helper'
 # Load the class under test
 require_relative '../../../lib/rley/parser/earley_parser'
 
@@ -38,9 +39,9 @@ module Rley # Open this namespace to avoid module qualifier prefixes
 
       # Grammar 1: A very simple language
       # (based on example in N. Wirth "Compiler Construction" book, p. 6)
-      # S ::= A.
-      # A ::= "a" A "c".
-      # A ::= "b".
+      # S => A.
+      # A => "a" A "c".
+      # A => "b".
       # Let's create the grammar piece by piece
       let(:nt_S) { Syntax::NonTerminal.new('S') }
       let(:nt_A) { Syntax::NonTerminal.new('A') }
@@ -333,7 +334,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           compare_state_texts(parse_result.chart[1], expected)
         end
 
-        it 'should parse an ambiguous grammar' do
+        it 'should parse an ambiguous grammar (I)' do
           # Grammar 3: A ambiguous arithmetic expression language
           # (based on example in article on Earley's algorithm in Wikipedia)
           # P => S.
@@ -441,6 +442,78 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           ]
           compare_state_texts(parse_result.chart[5], expected)
         end
+
+        it 'should parse an ambiguous grammar (II)' do
+          self.extend(AmbiguousGrammarHelper)
+          grammar = grammar_builder.grammar
+          instance = EarleyParser.new(grammar)
+          tokens = tokenize('abc + def + ghi', grammar)
+          expect { instance.parse(tokens) }.not_to raise_error
+          parse_result = instance.parse(tokens)
+          expect(parse_result.success?).to eq(true)
+
+          ###################### S(0): . abc + def + ghi
+          # Expectation chart[0]:
+          expected = [
+            'S => . E | 0',       # Start rule
+            'E => . E + E | 0',   # predict from (1)
+            'E => . id | 0'       # predict from (1)
+          ]
+          compare_state_texts(parse_result.chart[0], expected)
+
+          ###################### S(1): abc . + def + ghi
+          # Expectation chart[1]:
+          expected = [
+            'E => id . | 0',      # scan from S(0) 3
+            'S => E . | 0',       # complete from (1) and S(0) 2
+            'E => E . + E | 0'    # complete from (1) and S(0) 3
+          ]
+          compare_state_texts(parse_result.chart[1], expected)
+
+          ###################### S(2): abc + . def + ghi
+          # Expectation chart[2]:
+          expected = [
+            'E => E + . E | 0',   # Scan from S(1) 3
+            'E => . E + E | 2',   # predict from (1)
+            'E => . id | 2'       # predict from (1)
+          ]
+          compare_state_texts(parse_result.chart[2], expected)
+
+          ###################### S(3): abc + def .  + ghi
+          # Expectation chart[3]:
+          expected = [
+            'E => id . | 2',      # Scan from S(2) 3
+            'E => E + E . | 0',   # complete from (1) and S(2) 1
+            'E => E . + E | 2',   # complete from (1) and S(2) 2
+            'S => E . | 0',       # complete from (1) and S(0) 1
+            'E => E . + E | 0'    # complete from (1) and S(0) 2
+          ]
+          compare_state_texts(parse_result.chart[3], expected)
+
+          ###################### S(4): abc + def + . ghi
+          # Expectation chart[4]:
+          expected = [
+            'E => E + . E | 2',   # Scan from S(3) 3
+            'E => E + . E | 0',   # Scan from S(3) 5
+            'E => . E + E | 4',   # predict from (1)
+            'E => . id | 4'       # predict from (1)
+          ]
+          compare_state_texts(parse_result.chart[4], expected)
+
+          ###################### S(5): abc + def + ghi .
+          # Expectation chart[5]:
+          expected = [
+            'E => id . | 4',      # Scan from S(4) 4
+            'E => E + E . | 2',   # complete from (1) and S(4) 1
+            'E => E + E . | 0',   # complete from (1) and S(4) 2
+            'E => E . + E | 4',   # complete from (1) and S(4) 3
+            'E => E . + E | 2',   # complete from (1) and S(2) 2
+            'S => E . | 0',       # complete from (1) and S(0) 1
+            'E => E . + E | 0',   # complete from (1) and S(0) 2
+          ]
+          compare_state_texts(parse_result.chart[5], expected)
+        end
+
 
 
         it 'should parse an invalid simple input' do

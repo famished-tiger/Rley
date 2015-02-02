@@ -10,7 +10,7 @@ module Rley # This module is used as a namespace
 
       # The sequence of input token to parse
       attr_reader(:tokens)
-      
+
       def initialize(startDottedRule, theTokens)
         @tokens = theTokens.dup
         @chart = Chart.new(startDottedRule, tokens.size)
@@ -25,7 +25,7 @@ module Rley # This module is used as a namespace
         found = end_parse_state
         return !found.nil?
       end
-      
+
       # Factory method. Builds a ParseTree from the parse result.
       # @return [ParseTree]
       # Algorithm:
@@ -34,27 +34,14 @@ module Rley # This module is used as a namespace
       def parse_tree()
         state_tracker = new_state_tracker
         builder = tree_builder(state_tracker.state_set_index)
-        
+
         loop do
-          # Look at the symbol on left of the dot
+          # Retrieve the symbol on left of the dot
           curr_symbol = state_tracker.symbol_on_left
-          
-          case curr_symbol
-            when Syntax::Terminal
-              state_tracker.to_prev_state_set
-              predecessor_state_terminal(curr_symbol, state_tracker, builder)
 
-            when Syntax::NonTerminal
-              completed_state_for(curr_symbol, state_tracker, builder)
-
-            when NilClass # No symbol on the left of dot
-              # Retrieve all parse states that expect the lhs
-              new_states = states_expecting_lhs(state_tracker)
-              break if new_states.empty?
-              
-              select_expecting_state(new_states, state_tracker, builder)
-              break if builder.root == builder.current_node
-          end
+          # Place the symbol in the parse tree
+          done = insert_matched_symbol(state_tracker, builder)
+          break if done
         end
 
         return builder.parse_tree
@@ -145,8 +132,40 @@ module Rley # This module is used as a namespace
         return candidate_states.find(&:complete?)
       end
 
+
+      # Insert in a parse tree the symbol on the left of the
+      # current dotted rule.
+      def insert_matched_symbol(aStateTracker, aBuilder)
+        # Retrieve symbol before the dot in active parse state
+        match_symbol = aStateTracker.symbol_on_left
+
+        # Retrieve tree node being processed
+        tree_node = aBuilder.current_node
+
+        done = false
+        case [match_symbol.class, tree_node.class]
+          when [Syntax::Terminal, PTree::TerminalNode]
+            aStateTracker.to_prev_state_set
+            predecessor_state_terminal(match_symbol, aStateTracker, aBuilder)
+
+          when [NilClass, Rley::PTree::TerminalNode],
+            [NilClass, PTree::NonTerminalNode]
+            # Retrieve all parse states that expect the lhs
+            new_states = states_expecting_lhs(aStateTracker, aBuilder)
+            done = true if new_states.empty?
+            # Select an unused parse state
+            aStateTracker.select_state(new_states)
+
+          when [Syntax::NonTerminal, PTree::NonTerminalNode]
+            completed_state_for(match_symbol, aStateTracker, aBuilder)
+        end
+
+        done ||= aBuilder.root == aBuilder.current_node
+        return done
+      end
+
       private
-      
+
       # Factory method. Creates and initializes a ParseStateTracker instance.
       def new_state_tracker()
         instance = ParseStateTracker.new(chart.last_index)
@@ -154,16 +173,15 @@ module Rley # This module is used as a namespace
 
         return instance
       end
-      
-      
+
+
       # A terminal symbol is on the left of dot.
       # Go to the predecessor state for the given terminal
       def predecessor_state_terminal(_a_symb, aStateTracker, aTreeBuilder)
-        aTreeBuilder.current_node.range = { low: aStateTracker.state_set_index }
+        index = aStateTracker.state_set_index
+        aTreeBuilder.current_node.range = { low: index, high: index + 1 }
         link_node_to_token(aTreeBuilder, aStateTracker.state_set_index)
         unless aTreeBuilder.current_node.is_a?(PTree::TerminalNode)
-          pp aTreeBuilder.root
-          pp aTreeBuilder.current_node
           fail StandardError, 'Expected terminal node'
         end
         aTreeBuilder.move_back
@@ -171,40 +189,39 @@ module Rley # This module is used as a namespace
         previous_state = state_set.predecessor_state(aStateTracker.parse_state)
         aStateTracker.parse_state = previous_state
       end
-      
-      
-      # Retrieve a complete state with given symbol as lhs.
+
+
+      # Retrieve a complete state with given terminal symbol as lhs.
       def completed_state_for(a_symb, aTracker, aTreeBuilder)
         new_states = chart[aTracker.state_set_index].states_rewriting(a_symb)
-        aTracker.select_state(new_states) 
+        aTracker.select_state(new_states)
         aTreeBuilder.range = { high: aTracker.state_set_index }
         aTreeBuilder.use_complete_state(aTracker.parse_state)
         link_node_to_token(aTreeBuilder, aTracker.state_set_index - 1)
         aTreeBuilder.move_down
       end
-      
-      
-      def states_expecting_lhs(aStateTracker)
+
+
+      def states_expecting_lhs(aStateTracker, aTreeBuilder)
         lhs = aStateTracker.curr_dotted_item.production.lhs
         new_states = states_expecting(lhs, aStateTracker.state_set_index, true)
+        new_states.reject! { |st| st == aStateTracker.parse_state }
+        # Filter out parse states with incompatible range
+        if new_states.size > 1
+          previous_node = aTreeBuilder.current_path[-3]
+          new_states.select! do |parse_state|
+            parse_state.dotted_rule.production.lhs == previous_node.symbol
+          end
+        end
 
         return new_states
       end
-      
-      def select_expecting_state(theStates, aStateTracker, aTreeBuilder)
-        # Select an unused parse state
-        aStateTracker.select_state(theStates) 
-        
-        aTreeBuilder.range = { low: aStateTracker.state_set_index }
-        aTreeBuilder.move_back
-        aTreeBuilder.range = { low: aStateTracker.parse_state.origin }
-      end
-
 
       # If the current node is a terminal node
       # then link the token to that node
       def link_node_to_token(aTreeBuilder, aStateSetIndex)
         return unless aTreeBuilder.current_node.is_a?(PTree::TerminalNode)
+        return unless aTreeBuilder.current_node.token.nil?
 
         a_node = aTreeBuilder.current_node
         a_node.token = tokens[aStateSetIndex] unless a_node.token

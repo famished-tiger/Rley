@@ -70,8 +70,7 @@ module Rley # Re-open the module to get rid of qualified names
         end
       end # context
       
-
-     
+ 
       context 'Formatting events:' do   
         it 'should render a parse tree in JSON' do
           instance = Json.new(destination)

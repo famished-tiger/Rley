@@ -8,9 +8,9 @@ Rley
 [![Gem Version](https://badge.fury.io/rb/rley.svg)](http://badge.fury.io/rb/rley)
 [![Dependency Status](https://gemnasium.com/famished-tiger/Rley.svg)](https://gemnasium.com/famished-tiger/Rley)
 
-### What is Rley? ###
-__Rley__ is a Ruby implementation of a Earley parser.  
-The objective is to build a parser convenient for lightweight NLP (Natural Language Processing) purposes.  
+__Rley__ is a Ruby implementation of an [Earley parser](http://en.wikipedia.org/wiki/Earley_parser).  
+The project aims to build a parser convenient for lightweight NLP (Natural Language Processing) purposes.  
+
 
 Yet another parser?  
 Yes and no. Rley doesn't aim to replace other very good programming language parsers for Ruby.
@@ -19,19 +19,22 @@ in the grammar/language they support.
 The Earley's algorithm being more general is able to parse input without imposing restriction on the context-free grammar.  
 Consult Wikipedia to learn more about Earley's parsing algorithm.  
 
-This project is in "early" stage.  
+This project is in "earley" stage.  
 ####Roadmap:
+- Add examples (including small NLP grammar)
+- Document the parser API
 - Add more validation tests and sample grammars
 - Add AST generation (and semantic actions?)
 - Add DSL for grammar specification
 - Add grammar validations
 - Add error reporting
-- Add examples (including small NLP grammar)
+
 - Add a command-line interface
 - Provide documentation and examples
 
 
+
 Copyright
 ---------
-Copyright (c) 2014, Dimitri Geshef. 
+Copyright (c) 2014-2015, Dimitri Geshef. 
 __Rley__ is released under the MIT License see [LICENSE.txt](https://github.com/famished-tiger/Rley/blob/master/LICENSE.txt) for details.

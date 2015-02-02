@@ -21,8 +21,8 @@ module Rley # Open this namespace to avoid module qualifier prefixes
       let(:small_a) { grammar_abc.name2symbol['a'] }
       let(:small_b) { grammar_abc.name2symbol['b'] }
       let(:small_c) { grammar_abc.name2symbol['c'] }
-      
-      let(:start_prod) { grammar_abc.start_production } 
+
+      let(:start_prod) { grammar_abc.start_production }
 
       let(:tokens_abc) do
         %w(a a b c c).map do |letter|
@@ -34,7 +34,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
         parser = EarleyParser.new(grammar_abc)
         parser.parse(tokens_abc)
       end
-      
+
       subject { ParseTreeBuilder.new(start_prod, { low: 0, high: 5 }) }
 
       context 'Initialization:' do
@@ -71,7 +71,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           # Add children to A
           other_state = sample_parsing.chart.state_sets.last.states.first
           subject.use_complete_state(other_state)
-          
+
           # Tree is:
           # S[0,5]
           # +- A[0,5]
@@ -85,7 +85,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           end
           expect(child1.children[0].range.low).to eq(0)
           expect(child1.children[-1].range.high).to eq(5)
-          
+
           subject.move_down # ... to c
           subject.range = { low: 4 }
           expect(child1.children[-1].range.low).to eq(4)
@@ -132,46 +132,47 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           subject.use_complete_state(other_state)
 
           # Tree is:
-          # S[0,?]
-          # +- A[0,?]
-          #    +- a[0, ?]
-          #    +- A[?, ?]
-          #       +- a[?, ?]
-          #       +- A[?, ?]
-          #       +- c [?, ?]
-          #    +- c[?, ?]
+          tree_snapshot = <<-SNIPPET
+S[0, 5]
++- A[0, 5]
+   +- a[0, ?]: '(nil)'
+   +- A[1, ?]
+      +- a[1, ?]: '(nil)'
+      +- A[?, ?]
+      +- c[?, ?]: '(nil)'
+   +- c[?, 5]: '(nil)'
+SNIPPET
+          expect(subject.root.to_string(0)).to eq(tree_snapshot.chomp)
 
           subject.move_down # ...to grand-grand-child c
-          expect(subject.current_node.symbol).to eq(small_c)
+          expect(subject.current_node.to_string(0)).to eq("c[?, ?]: '(nil)'")
 
           subject.move_back # ...to grand-grand-child A
-          expect(subject.current_node.symbol).to eq(capital_a)
+          expect(subject.current_node.to_string(0)).to eq('A[?, ?]')
 
           subject.move_back # ...to grand-grand-child a
-          expect(subject.current_node.symbol).to eq(small_a)
+          expect(subject.current_node.to_string(0)).to eq("a[1, ?]: '(nil)'")
 
-          subject.move_back # ...to grand-child A
-          expect(subject.current_node.symbol).to eq(capital_a)
-          
           subject.move_back # ...to grand-child a
-          expect(subject.current_node.symbol).to eq(small_a)
-
-          subject.move_back # ...to child A
-          expect(subject.current_node.symbol).to eq(capital_a)
+          expect(subject.current_node.to_string(0)).to eq("a[0, ?]: '(nil)'")
 
           subject.move_back # ...to S
-          expect(subject.current_node.symbol).to eq(capital_s)           
+          expect(subject.current_node.symbol).to eq(capital_s)
+        end
+        
+        it 'should move through deeply nested structure' do
+        
         end
       end # context
-      
-      context 'Parse tree building:' do       
+
+      context 'Parse tree building:' do
         it 'should build a parse tree' do
           expect(subject.parse_tree).to be_kind_of(PTree::ParseTree)
           actual = subject.parse_tree
           expect(actual.root).to eq(subject.root)
         end
       end # context
-      
+
     end # describe
   end # module
 end # module

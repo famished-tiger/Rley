@@ -24,7 +24,7 @@ module Rley # This module is used as a namespace
       def current_node()
         return current_path.last
       end
-      
+
       # Factory method.
       def parse_tree()
         return PTree::ParseTree.new(root)
@@ -59,12 +59,9 @@ module Rley # This module is used as a namespace
 
       # Make the predecessor of current node the
       # new current node.
-      def move_back()   
-        begin
-          if current_path.length == 1
-            msg = 'Cannot move further back'
-            fail StandardError, msg
-          end
+      def move_back()
+        loop do
+          break if current_path.length == 1
           (parent, pos) = current_path[-3, 2]
           current_path.pop(2)
           if pos > 0
@@ -73,7 +70,8 @@ module Rley # This module is used as a namespace
             current_path << new_pos
             current_path << new_curr_node
           end
-        end while pos == 0 && new_curr_node.is_a?(PTree::NonTerminalNode)
+          break if pos > 0 || new_curr_node.is_a?(PTree::TerminalNode)
+        end
       end
 
 
@@ -94,10 +92,10 @@ module Rley # This module is used as a namespace
         lower = low_bound(aRange)
         unless lower.nil?
           current_node.range = lower
-          if curr_node.is_a?(PTree::TerminalNode)
+          if curr_node.is_a?(PTree::TerminalNode) && lower[:low]
             current_node.range = high_bound(lower[:low] + 1)
           end
-        end  
+        end
         upper = high_bound(aRange)
         current_node.range = upper unless upper.nil?
       end
@@ -122,8 +120,9 @@ module Rley # This module is used as a namespace
         curr_node = current_node
 
         if curr_node.symbol != prod.lhs
-          msg = "Current node is a #{curr_node.symbol} instead of #{prod.lhs}"
-          fail StandardError, msg
+          snapshot = root.to_string(0)
+          msg = "Current node is a #{curr_node.symbol} instead of #{prod.lhs}."
+          fail StandardError, msg + "\n" + snapshot
         end
         self.range = aRange
         prod.rhs.each { |symb| add_node(symb, {}) }
@@ -131,7 +130,7 @@ module Rley # This module is used as a namespace
         return if curr_node.children.empty?
         curr_node.children.first.range.assign(low: curr_node.range.low)
         curr_node.children.last.range.assign(high: curr_node.range.high)
-      end      
+      end
 
       # Add the given node as child node of current node
       def add_child(aNode)

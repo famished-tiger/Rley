@@ -17,6 +17,13 @@ module Rley # This module is used as a namespace
       def range=(aRange)
         range.assign(aRange)
       end
+      
+      # Emit a (formatted) string representation of the node.
+      # Mainly used for diagnosis/debugging purposes.
+      def to_string(indentation)
+        
+        return "#{symbol.name}#{range.to_string(indentation)}"
+      end
     end # class
   end # module
 end # module

@@ -16,6 +16,19 @@ module Rley # This module is used as a namespace
         children << aChildNode
       end
       
+      # Emit a (formatted) string representation of the node.
+      # Mainly used for diagnosis/debugging purposes.
+      def to_string(indentation)
+        connector = '+- '
+        selfie = super(indentation)
+        prefix = "\n" + (' ' * connector.size * indentation) + connector
+        children_repr = children.reduce('') do |sub_result, child|
+          sub_result << prefix + child.to_string(indentation + 1) 
+        end
+        
+        return selfie + children_repr
+      end
+      
       # Part of the 'visitee' role in Visitor design pattern.
       # @param aVisitor[ParseTreeVisitor] the visitor
       def accept(aVisitor)

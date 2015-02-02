@@ -42,6 +42,24 @@ module Rley # This module is used as a namespace
         assign_high(aRange) if high.nil?
       end
 
+      # Tell whether the given index value lies outside the range
+      def out_of_range?(index)
+        result = false
+        result = true if !low.nil? && index < low
+        result = true if !high.nil? && index > high
+
+        return result
+      end
+
+      # Emit a (formatted) string representation of the range.
+      # Mainly used for diagnosis/debugging purposes.
+      def to_string(_indentation)
+        low_text = low.nil? ? '?' : low.to_s
+        high_text = high.nil? ? '?' : high.to_s
+        
+        return "[#{low_text}, #{high_text}]"
+      end 
+
       private
 
       def assign_low(aRange)

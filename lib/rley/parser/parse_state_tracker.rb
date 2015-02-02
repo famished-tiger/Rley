@@ -45,7 +45,7 @@ module Rley # This module is used as a namespace
       end
       
       # Notification that one begins with the previous state set
-      def to_prev_state_set()
+      def to_prev_state_set()      
         self.state_set_index = state_set_index - 1
       end
     end # class

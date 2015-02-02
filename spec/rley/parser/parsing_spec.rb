@@ -21,9 +21,9 @@ module Rley # Open this namespace to avoid module qualifier prefixes
       include GrammarBExprHelper # Mix-in with builder for simple expressions
 
       # Grammar 1: A very simple language
-      # S ::= A.
-      # A ::= "a" A "c".
-      # A ::= "b".
+      # S => A.
+      # A => "a" A "c".
+      # A => "b".
       let(:nt_S) { Syntax::NonTerminal.new('S') }
       let(:nt_A) { Syntax::NonTerminal.new('A') }
       let(:a_) { Syntax::VerbatimSymbol.new('a') }
@@ -139,6 +139,215 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           b_expr_grammar.name2symbol[aSymbolName]
         end
 
+        subject do
+          parser = EarleyParser.new(b_expr_grammar)
+          tokens = expr_tokenizer('2 + 3 * 4', b_expr_grammar)
+          instance = parser.parse(tokens)
+        end
+
+        # Helper. Build a state tracker and a parse tree builder.
+        def prepare_parse_tree(aParsing)
+          # Accessing private methods by sending message
+          state_tracker = aParsing.send(:new_state_tracker)
+          builder = aParsing.send(:tree_builder, state_tracker.state_set_index)
+          return [state_tracker, builder]
+        end
+
+
+        it 'should create the root of a parse tree' do
+          (state_tracker, builder) = prepare_parse_tree(subject)
+          # The root node should correspond to the start symbol and
+          # its direct children should correspond to rhs of start production
+expected_text = <<-SNIPPET
+P[0, 5]
++- S[0, 5]
+SNIPPET
+          root_text = builder.root.to_string(0)
+          expect(root_text).to eq(expected_text.chomp)
+
+          expect(state_tracker.state_set_index).to eq(subject.tokens.size)
+          expected_state = 'P => S . | 0'
+          expect(state_tracker.parse_state.to_s).to eq(expected_state)
+          expect(builder.current_node.to_string(0)).to eq('S[0, 5]')
+        end
+
+        it 'should use a reduce item for a matched non-terminal' do
+          # Setup
+          (state_tracker, builder) = prepare_parse_tree(subject)
+          # Same state as in previous example
+
+          # Given matched symbol is S[0, 5]
+          # And its reduce item is S => S + M . | 0
+          # Then add child nodes corresponding to the rhs symbols
+          # And make M[?, 5] the current symbol
+          subject.insert_matched_symbol(state_tracker, builder)
+          expected_text = <<-SNIPPET
+P[0, 5]
++- S[0, 5]
+   +- S[0, ?]
+   +- +[?, ?]: '(nil)'
+   +- M[?, 5]
+SNIPPET
+          root_text = builder.root.to_string(0)
+          expect(root_text).to eq(expected_text.chomp)
+          expected_state = 'S => S + M . | 0'
+          expect(state_tracker.parse_state.to_s).to eq(expected_state)
+          expect(state_tracker.state_set_index).to eq(5)
+          expect(builder.current_node.to_string(0)).to eq('M[?, 5]')
+
+          # Second similar test
+
+          # Given matched symbol is M[?, 5]
+          # And its reduce item is M => M * T . | 2
+          # Then add child nodes corresponding to the rhs symbols
+          # And make T[?, 5] the current symbol
+          subject.insert_matched_symbol(state_tracker, builder)
+          expected_text = <<-SNIPPET
+P[0, 5]
++- S[0, 5]
+   +- S[0, ?]
+   +- +[?, ?]: '(nil)'
+   +- M[2, 5]
+      +- M[2, ?]
+      +- *[?, ?]: '(nil)'
+      +- T[?, 5]
+SNIPPET
+          root_text = builder.root.to_string(0)
+          expect(root_text).to eq(expected_text.chomp)
+          expected_state = 'M => M * T . | 2'
+          expect(state_tracker.parse_state.to_s).to eq(expected_state)
+          expect(state_tracker.state_set_index).to eq(5)
+          expect(builder.current_node.to_string(0)).to eq('T[?, 5]')
+        end
+
+
+
+        it 'should use a previous item for a terminal symbol' do
+          # Setup
+          (state_tracker, builder) = prepare_parse_tree(subject)
+          3.times do
+            subject.insert_matched_symbol(state_tracker, builder)
+          end
+
+          # Given matched symbol is T[?, 5]
+          # And its reduce item is T => integer . | 4
+          # Then add child node corresponding to the rhs symbol
+          # And make integer[4, 5]: '(nil)' the current symbol
+          expected_text = <<-SNIPPET
+P[0, 5]
++- S[0, 5]
+   +- S[0, ?]
+   +- +[?, ?]: '(nil)'
+   +- M[2, 5]
+      +- M[2, ?]
+      +- *[?, ?]: '(nil)'
+      +- T[4, 5]
+         +- integer[4, 5]: '(nil)'
+SNIPPET
+          root_text = builder.root.to_string(0)
+          expect(root_text).to eq(expected_text.chomp)
+          expected_state = 'T => integer . | 4'
+          expect(state_tracker.parse_state.to_s).to eq(expected_state)
+          expect(state_tracker.state_set_index).to eq(5)
+          expect(builder.current_node.to_string(0)).to eq("integer[4, 5]: '(nil)'")
+
+          # Given current tree symbol is integer[4, 5]: '(nil)'
+          # And its previous item is T => . integer | 4
+          # Then attach the token to the terminal node
+          # And decrement the state index by one
+          # Make *[?, ?]: '(nil)' the current symbol
+          subject.insert_matched_symbol(state_tracker, builder)
+          expected_text = <<-SNIPPET
+P[0, 5]
++- S[0, 5]
+   +- S[0, ?]
+   +- +[?, ?]: '(nil)'
+   +- M[2, 5]
+      +- M[2, ?]
+      +- *[?, ?]: '(nil)'
+      +- T[4, 5]
+         +- integer[4, 5]: '4'
+SNIPPET
+          root_text = builder.root.to_string(0)
+          expect(root_text).to eq(expected_text.chomp)
+          expected_state = 'T => . integer | 4'
+          expect(state_tracker.parse_state.to_s).to eq(expected_state)
+          expect(state_tracker.state_set_index).to eq(4)
+          next_symbol = "*[?, ?]: '(nil)'"
+          expect(builder.current_node.to_string(0)).to eq(next_symbol)
+        end
+
+        it 'should handle [no symbol before dot, terminal tree node] case' do
+          # Setup
+          (state_tracker, builder) = prepare_parse_tree(subject)
+          4.times do
+            subject.insert_matched_symbol(state_tracker, builder)
+          end
+
+          # Given current tree symbol is *[?, ?]: '(nil)'
+          # And current dotted item is T => . integer | 4
+          # When one retrieves the parse state expecting the T
+          # Then new parse state is changed to: M => M * . T | 2
+          subject.insert_matched_symbol(state_tracker, builder)
+
+          expected_text = <<-SNIPPET
+P[0, 5]
++- S[0, 5]
+   +- S[0, ?]
+   +- +[?, ?]: '(nil)'
+   +- M[2, 5]
+      +- M[2, ?]
+      +- *[?, ?]: '(nil)'
+      +- T[4, 5]
+         +- integer[4, 5]: '4'
+SNIPPET
+          root_text = builder.root.to_string(0)
+          expect(root_text).to eq(expected_text.chomp)
+          expected_state = 'M => M * . T | 2'
+          expect(state_tracker.parse_state.to_s).to eq(expected_state)
+          expect(state_tracker.state_set_index).to eq(4)
+          next_symbol = "*[?, ?]: '(nil)'"
+          expect(builder.current_node.to_string(0)).to eq(next_symbol)
+
+          subject.insert_matched_symbol(state_tracker, builder)
+          next_symbol = 'M[2, ?]'
+          expect(builder.current_node.to_string(0)).to eq(next_symbol)
+        end
+
+        it 'should handle the end of parse tree generation' do
+          # Begin setup
+          is_done = false
+          (state_tracker, builder) = prepare_parse_tree(subject)
+          16.times do
+            is_done = subject.insert_matched_symbol(state_tracker, builder)
+          end
+
+          expected_text = <<-SNIPPET
+P[0, 5]
++- S[0, 5]
+   +- S[0, 1]
+      +- M[0, 1]
+         +- T[0, 1]
+            +- integer[0, 1]: '2'
+   +- +[1, 2]: '+'
+   +- M[2, 5]
+      +- M[2, 3]
+         +- T[2, 3]
+            +- integer[2, 3]: '3'
+      +- *[3, 4]: '*'
+      +- T[4, 5]
+         +- integer[4, 5]: '4'
+SNIPPET
+          root_text = builder.root.to_string(0)
+          expect(root_text).to eq(expected_text.chomp)
+          
+          expected_state = 'T => . integer | 0'
+          expect(state_tracker.parse_state.to_s).to eq(expected_state)
+          expect(state_tracker.state_set_index).to eq(0)
+          expect(is_done).to eq(true)
+        end
+
+
 
         it 'should build the parse tree for a simple non-ambiguous grammar' do
           parser = EarleyParser.new(sample_grammar1)
@@ -155,76 +364,24 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           expect(ptree).to be_kind_of(PTree::ParseTree)
 
           # Expect parse tree:
-          # P[0, 5]
-          # +- S[0, 5]
-          #    +- S[0, 1]
-          #       +- M[0, 1]
-          #          +- T[0, 1]
-          #          +- integer(2)[0, 1]
-          #    +- +[?, ?]
-          #    +- M[2, 5]
-          expect(ptree.root.symbol). to eq(grm_symbol('P'))
-          expect(ptree.root.range). to eq([0, 5])
-          expect(ptree.root.children.size). to eq(1)
-
-          node = ptree.root.children[0] # S
-          expect(node.symbol). to eq(grm_symbol('S'))
-          expect(node.range). to eq([0, 5])
-          expect(node.children.size). to eq(3)
-
-          (node_s, node_plus, node_m) = node.children
-          expect(node_s.symbol).to eq(grm_symbol('S'))
-          expect(node_s.range).to eq(low: 0, high: 1)
-          expect(node_s.children.size).to eq(1)
-          expect(node_plus.symbol).to eq(grm_symbol('+'))
-          expect(node_plus.range).to eq(low: 0, high: 1)  # TODO: fix this
-          expect(node_plus.token.lexeme). to eq('+')
-          expect(node_m.symbol).to eq(grm_symbol('M'))
-          expect(node_m.range).to eq(low: 2, high: 5)
-          expect(node_m.children.size).to eq(3)
-          
-          node = node_s.children[0] # M
-          expect(node.symbol).to eq(grm_symbol('M'))
-          expect(node.range).to eq([0, 1])
-          expect(node.children.size).to eq(1)
-          
-          node = node.children[0] # T
-          expect(node.symbol).to eq(grm_symbol('T'))
-          expect(node.range).to eq([0, 1])
-          expect(node.children.size).to eq(1)
-          
-          node = node.children[0] # integer(2)
-          expect(node.symbol).to eq(grm_symbol('integer'))
-          expect(node.range).to eq([0, 1])
-          expect(node.token.lexeme).to eq('2')
-          
-          (node_m2, node_star, node_t3) = node_m.children
-          expect(node_m2.symbol).to eq(grm_symbol('M'))
-          expect(node_m2.range).to eq([2, 3])
-          expect(node_m2.children.size).to eq(1)
-          
-          node_t2 = node_m2.children[0] # T
-          expect(node_t2.symbol).to eq(grm_symbol('T'))
-          expect(node_t2.range).to eq([2, 3])
-          expect(node_t2.children.size).to eq(1)
-          
-          node = node_t2.children[0] # integer(3)
-          expect(node.symbol).to eq(grm_symbol('integer'))
-          expect(node.range).to eq([2, 3])
-          expect(node.token.lexeme).to eq('3')
-          
-          expect(node_star.symbol).to eq(grm_symbol('*'))
-          expect(node_star.range).to eq([2, 3])  # Fix this
-          expect(node_star.token.lexeme). to eq('*')
-          
-          expect(node_t3.symbol).to eq(grm_symbol('T'))
-          expect(node_t3.range).to eq([4, 5])
-          expect(node_t3.children.size).to eq(1)
-          
-          node = node_t3.children[0] # integer(4)
-          expect(node.symbol).to eq(grm_symbol('integer'))
-          expect(node.range).to eq([4, 5])
-          expect(node.token.lexeme).to eq('4')
+          expected_text = <<-SNIPPET
+P[0, 5]
++- S[0, 5]
+   +- S[0, 1]
+      +- M[0, 1]
+         +- T[0, 1]
+            +- integer[0, 1]: '2'
+   +- +[1, 2]: '+'
+   +- M[2, 5]
+      +- M[2, 3]
+         +- T[2, 3]
+            +- integer[2, 3]: '3'
+      +- *[3, 4]: '*'
+      +- T[4, 5]
+         +- integer[4, 5]: '4'
+SNIPPET
+          actual =  ptree.root.to_string(0)
+          expect(actual).to eq(expected_text.chomp)
         end
       end # context
     end # describe
