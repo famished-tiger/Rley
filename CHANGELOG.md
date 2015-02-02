@@ -1,3 +1,8 @@
+### 0.2.02 / 2015-02-02
+* [NEW] Examplar file `parsing_L1.rb`: demo using a (highly simplified) English grammar.
+* [NEW] Examplar file `parsing_amb.rb`: demo using an ambiguous grammar.
+* [FIX] Method `Parsing#parse_tree` now produces correct parse trees for all the examples.
+
 ### 0.2.01 / 2015-01-03
 * [CHANGE] File `.rubocop.yml`: AbcMetric setting relaxed.
 * [CHANGE] Fixed most style offenses reported by Rubocop.
