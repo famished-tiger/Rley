@@ -40,7 +40,7 @@ module Rley # This module is used as a namespace
       # (dot is at end of rhs)
       def use_complete_state(aCompleteState)
         prod = aCompleteState.dotted_rule.production
-        use_production(prod, { low: aCompleteState.origin })
+        use_production(prod, low: aCompleteState.origin)
       end
 
       # Given that the current node is a non-terminal

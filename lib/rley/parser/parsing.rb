@@ -36,10 +36,7 @@ module Rley # This module is used as a namespace
         builder = tree_builder(state_tracker.state_set_index)
 
         loop do
-          # Retrieve the symbol on left of the dot
-          curr_symbol = state_tracker.symbol_on_left
-
-          # Place the symbol in the parse tree
+          # Place the symbol on left of the dot in the parse tree
           done = insert_matched_symbol(state_tracker, builder)
           break if done
         end

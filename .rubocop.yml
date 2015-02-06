@@ -43,9 +43,7 @@ Documentation:
   
 EmptyLines:
   Enabled: false
-  
-EmptyLinesAroundBody:
-  Enabled: false  
+
 
 Encoding:
   Enabled: false

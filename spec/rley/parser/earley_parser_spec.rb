@@ -444,7 +444,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
         end
 
         it 'should parse an ambiguous grammar (II)' do
-          self.extend(AmbiguousGrammarHelper)
+          extend(AmbiguousGrammarHelper)
           grammar = grammar_builder.grammar
           instance = EarleyParser.new(grammar)
           tokens = tokenize('abc + def + ghi', grammar)

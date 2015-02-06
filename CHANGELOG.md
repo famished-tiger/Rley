@@ -1,3 +1,8 @@
+### 0.2.03 / 2015-02-06
+* [FIX] File `.rubocop.yml`: removal of setting for obsolete EmptyLinesAroundBody cop.
+* [CHANGE] Source code re-formatted to please Rubocop 0.29.
+* [CHANGE] File `README.md` added licensing badge (MIT license)
+
 ### 0.2.02 / 2015-02-02
 * [NEW] Examplar file `parsing_L1.rb`: demo using a (highly simplified) English grammar.
 * [NEW] Examplar file `parsing_amb.rb`: demo using an ambiguous grammar.

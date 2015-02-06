@@ -35,7 +35,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
         parser.parse(tokens_abc)
       end
 
-      subject { ParseTreeBuilder.new(start_prod, { low: 0, high: 5 }) }
+      subject { ParseTreeBuilder.new(start_prod, low: 0, high: 5) }
 
       context 'Initialization:' do
         it 'should be created with a proposition and a range' do
@@ -172,7 +172,6 @@ SNIPPET
           expect(actual.root).to eq(subject.root)
         end
       end # context
-
     end # describe
   end # module
 end # module

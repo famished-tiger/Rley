@@ -142,7 +142,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
         subject do
           parser = EarleyParser.new(b_expr_grammar)
           tokens = expr_tokenizer('2 + 3 * 4', b_expr_grammar)
-          instance = parser.parse(tokens)
+          parser.parse(tokens)
         end
 
         # Helper. Build a state tracker and a parse tree builder.
@@ -158,7 +158,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           (state_tracker, builder) = prepare_parse_tree(subject)
           # The root node should correspond to the start symbol and
           # its direct children should correspond to rhs of start production
-expected_text = <<-SNIPPET
+          expected_text = <<-SNIPPET
 P[0, 5]
 +- S[0, 5]
 SNIPPET
@@ -249,7 +249,8 @@ SNIPPET
           expected_state = 'T => integer . | 4'
           expect(state_tracker.parse_state.to_s).to eq(expected_state)
           expect(state_tracker.state_set_index).to eq(5)
-          expect(builder.current_node.to_string(0)).to eq("integer[4, 5]: '(nil)'")
+          integer_repr = "integer[4, 5]: '(nil)'"
+          expect(builder.current_node.to_string(0)).to eq(integer_repr)
 
           # Given current tree symbol is integer[4, 5]: '(nil)'
           # And its previous item is T => . integer | 4
