@@ -1,4 +1,5 @@
 require_relative '../../spec_helper'
+require 'stringio'
 
 require_relative '../../../lib/rley/syntax/verbatim_symbol'
 require_relative '../../../lib/rley/syntax/non_terminal'
@@ -224,6 +225,38 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           state_set_5 = parse_result.chart[5]
           expect(state_set_5.states.size).to eq(2)
           compare_state_texts(state_set_5, expected)
+        end
+
+        it 'should trace a parse with level 1' do
+          # Substitute temporarily $stdout by a StringIO
+          prev_ostream = $stdout
+          $stdout = StringIO.new('', 'w')
+          
+          trace_level = 1
+          parse_result = subject.parse(grm1_tokens, trace_level)
+          expectations = <<-SNIPPET
+['a', 'a', 'b', 'c', 'c']
+|. a . a . b . c . c .|
+|>   .   .   .   .   .| [0:0] S => . A
+|>   .   .   .   .   .| [0:0] A => . 'a' A 'c'
+|>   .   .   .   .   .| [0:0] A => . 'b'
+|[---]   .   .   .   .| [0:1] A => 'a' . A 'c'
+|.   >   .   .   .   .| [1:1] A => . 'a' A 'c'
+|.   >   .   .   .   .| [1:1] A => . 'b'
+|.   [---]   .   .   .| [1:2] A => 'a' . A 'c'
+|.   .   >   .   .   .| [2:2] A => . 'a' A 'c'
+|.   .   >   .   .   .| [2:2] A => . 'b'
+|.   .   [---]   .   .| [2:3] A => 'b' .
+|.   [------->   .   .| [1:3] A => 'a' A . 'c'
+|.   .   .   [---]   .| [3:4] A => 'a' A 'c' .
+|[--------------->   .| [0:4] A => 'a' A . 'c'
+|.   .   .   .   [---]| [4:5] A => 'a' A 'c' .
+|[===================]| [0:5] S => A .
+SNIPPET
+          expect($stdout.string).to eq(expectations)
+          
+          # Restore standard ouput stream
+          $stdout = prev_ostream
         end
 
         it 'should parse a valid simple expression' do

@@ -1,4 +1,5 @@
 require_relative '../syntax/grammar'
+require_relative 'parse_tracer'
 require_relative 'dotted_item'
 require_relative 'parsing'
 
@@ -19,9 +20,7 @@ module Rley # This module is used as a namespace
       # In other words, the 'next_mapping' allows to find the dotted item
       # after "advancing" the dot
       attr_reader(:next_mapping)
-
-      # @param aGrammar [Grammar] The grammar of the language 
-      # (to use by the parser).
+      
       def initialize(aGrammar)
         @grammar = aGrammar
         @dotted_items = build_dotted_items(grammar)
@@ -29,29 +28,57 @@ module Rley # This module is used as a namespace
         @next_mapping = build_next_mapping(dotted_items)
       end
 
+=begin
+    You can optionally specify a tracing level, for how much output you
+    want to see:
+
+    0: No output.
+    1: Show edges from scanner and completer rules (not predictor).
+    2 (default): Show all edges as they are added to the chart.
+    
+        - For each index I{end} in [0, 1, ..., N]:
+          - For each I{edge} s.t. I{edge}.end = I{end}:
+            - If I{edge} is incomplete, and I{edge}.next is not a part
+              of speech:
+                - Apply PredictorRule to I{edge}
+            - If I{edge} is incomplete, and I{edge}.next is a part of
+              speech:
+                - Apply ScannerRule to I{edge}
+            - If I{edge} is complete:
+                - Apply CompleterRule to I{edge}
+        - Return any complete parses in the chart
+=end
+      
       # Parse a sequence of input tokens.
       # @param aTokenSequence [Array] Array of Tokens objects returned by a 
       # tokenizer/scanner/lexer.
+      # @param aGrammar [Grammar] The grammar of the language 
+      # (to use by the parser).
+      # @param aTraceLevel [Fixnum] The specified trace level.
+      # The possible values are:
+      # 0: No trace output (default case)
+      # 1: Show trace of scanning and completion rules
+      # 2: Same as of 1 with the addition of the prediction rules
       # @return [Parsing] an object that embeds the parse results.
-      def parse(aTokenSequence)
-        result = Parsing.new(start_dotted_item, aTokenSequence)
+      def parse(aTokenSequence, aTraceLevel = 0)
+        tracer = ParseTracer.new(aTraceLevel, $stdout, aTokenSequence)
+        result = Parsing.new(start_dotted_item, aTokenSequence, tracer)
         last_token_index = aTokenSequence.size
         (0..last_token_index).each do |i|
           predicted = Set.new
           result.chart[i].each do |state|
-            if state.complete?
-              # parse reached end of production
-              completion(result, state, i)
+            if state.complete?  # End of production reached?
+              completion(result, state, i, tracer)
             else
               next_symbol = state.next_symbol
               if next_symbol.kind_of?(Syntax::NonTerminal)
                 unless predicted.include? next_symbol
-                  prediction(result, state, next_symbol, i)
+                  prediction(result, state, next_symbol, i, tracer)
                   predicted << next_symbol  # Avoid repeated predictions
                 end
               elsif i < last_token_index
                 # Expecting a terminal symbol
-                scanning(result, next_symbol, i)
+                scanning(result, next_symbol, i, tracer)
               end
             end
           end
@@ -134,18 +161,21 @@ module Rley # This module is used as a namespace
       #   immediately follows a dot 
       #   (= is expected/predicted by the production rule)
       # @param aPosition [Fixnum] position in the input token sequence.
-      def prediction(aParsing, aState, aNonTerminal, aPosition)
+      def prediction(aParsing, aState, aNonTerminal, aPosition, aTracer)
+        if aTracer.level > 1
+          puts "Chart[#{aPosition}] Prediction(s) from #{aState}:"
+        end
         # Retrieve all start dotted items for productions
         # with aNonTerminal as its lhs
         items = start_mapping[aNonTerminal]
         items.each do |an_item|
-          aParsing.push_state(an_item, aPosition, aPosition)
+          aParsing.push_state(an_item, aPosition, aPosition, :prediction)
         end
 
         return unless aNonTerminal.nullable?
         # Ayock-Horspool trick for nullable rules
         next_item = next_mapping[aState.dotted_rule]
-        aParsing.push_state(next_item, aState.origin, aPosition)
+        aParsing.push_state(next_item, aState.origin, aPosition, :prediction)
       end
 
       # This method is called when a parse state for chart entry at position 
@@ -162,7 +192,12 @@ module Rley # This module is used as a namespace
       # @param aTerminal [Terminal] a terminal symbol that 
       #   immediately follows a dot 
       # @param aPosition [Fixnum] position in the input token sequence.
-      def scanning(aParsing, aTerminal, aPosition)
+      def scanning(aParsing, aTerminal, aPosition, aTracer)
+        if aTracer.level > 1
+          prefix = "Chart[#{aPosition}] Scanning of terminal "
+          suffix = "#{aTerminal.name}:"
+          puts prefix + suffix
+        end
         aParsing.scanning(aTerminal, aPosition) do |item|
           next_mapping[item]
         end
@@ -173,11 +208,14 @@ module Rley # This module is used as a namespace
       # For every state in chart[aPosition] that is 
       # complete (i.e. of the form: { dotted_rule: X -> γ •, origin: j}),
       # Find states s in chart[j] of the 
-      #  form {dotted_rule: Y -> α • X β, origin: i}
+      #  form { dotted_rule: Y -> α • X β, origin: i}
       #   In other words, rules that predicted the non-terminal X.
       # For each s, add to chart[aPosition] a state of the form
       #   { dotted_rule: Y → α X • β, origin: i})
-      def completion(aParsing, aState, aPosition)
+      def completion(aParsing, aState, aPosition, aTracer)
+        if aTracer.level > 1
+          puts "Chart[#{aPosition}] Completion of state #{aState}:"
+        end
         aParsing.completion(aState, aPosition) do |item|
           next_mapping[item]
         end

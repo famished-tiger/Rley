@@ -17,8 +17,16 @@ module Rley # This module is used as a namespace
       # Append the given state (if it isn't yet in the set)
       # to the list of states
       # @param aState [ParseState] the state to push.
+      # @return [TrueClass/FalseClass] true when the state is really added
       def push_state(aState)
-        @states << aState unless include?(aState)
+        if include?(aState)
+          result = false
+        else
+          @states << aState 
+          result = true
+        end
+        
+        return result
       end
 
       # The list of ParseState that expect the given symbol.

@@ -11,9 +11,14 @@ module Rley # This module is used as a namespace
       # The sequence of input token to parse
       attr_reader(:tokens)
 
-      def initialize(startDottedRule, theTokens)
+      # @param aTraceLevel [Fixnum] The specified trace level.
+      # The possible values are:
+      # 0: No trace output (default case)
+      # 1: Show trace of scanning and completion rules
+      # 2: Same as of 1 with the addition of the prediction rules
+      def initialize(startDottedRule, theTokens, aTracer)
         @tokens = theTokens.dup
-        @chart = Chart.new(startDottedRule, tokens.size)
+        @chart = Chart.new(startDottedRule, tokens.size, aTracer)
       end
 
       # Return true if the parse was successful (= input tokens
@@ -36,6 +41,13 @@ module Rley # This module is used as a namespace
         builder = tree_builder(state_tracker.state_set_index)
 
         loop do
+          match_symbol = state_tracker.symbol_on_left
+          # puts '--------------------'
+          # puts "Active parse state: #{state_tracker.parse_state}"
+          # puts "Matching symbol: #{match_symbol}"
+          # puts 'Parse tree:'
+          # puts builder.root.to_string(0)
+        
           # Place the symbol on left of the dot in the parse tree
           done = insert_matched_symbol(state_tracker, builder)
           break if done
@@ -47,9 +59,9 @@ module Rley # This module is used as a namespace
 
       # Push a parse state (dotted item + origin) to the
       # chart entry with given index if it isn't yet in the chart entry.
-      def push_state(aDottedItem, anOrigin, aChartIndex)
+      def push_state(aDottedItem, anOrigin, aChartIndex, aReason)
         fail StandardError, 'Dotted item may not be nil' if aDottedItem.nil?
-        chart.push_state(aDottedItem, anOrigin, aChartIndex)
+        chart.push_state(aDottedItem, anOrigin, aChartIndex, aReason)
       end
 
 
@@ -74,7 +86,7 @@ module Rley # This module is used as a namespace
         states = states_expecting(aTerminal, aPosition, false)
         states.each do |s|
           next_item = nextMapping.call(s.dotted_rule)
-          push_state(next_item, s.origin, aPosition + 1)
+          push_state(next_item, s.origin, aPosition + 1, :scanning)
         end
       end
 
@@ -95,7 +107,7 @@ module Rley # This module is used as a namespace
         states = states_expecting(curr_lhs, curr_origin, false)
         states.each do |s|
           next_item = nextMapping.call(s.dotted_rule)
-          push_state(next_item, s.origin, aPosition)
+          push_state(next_item, s.origin, aPosition, :completion)
         end
       end
 

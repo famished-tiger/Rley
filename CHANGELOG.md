@@ -1,3 +1,9 @@
+### 0.2.04 / 2015-03-04
+* [NEW] Class `ParseTracer` that helps to trace the parse steps (similar the trace format in NLTK).
+* [CHANGE] Method `EarleyParser#parse` takes a trace level argument.
+
+
+
 ### 0.2.03 / 2015-02-06
 * [FIX] File `.rubocop.yml`: removal of setting for obsolete EmptyLinesAroundBody cop.
 * [CHANGE] Source code re-formatted to please Rubocop 0.29.
