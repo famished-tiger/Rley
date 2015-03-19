@@ -133,7 +133,7 @@ SNIPPET
           expect(new_state.origin).to eq(0)
         end
       end # context
-=begin
+
       context 'Parse tree building:' do
         let(:sample_grammar1) do
           builder = grammar_abc_builder
@@ -401,7 +401,6 @@ SNIPPET
           expect(actual).to eq(expected_text.chomp)
         end
       end # context
-=end
     end # describe
   end # module
 end # module

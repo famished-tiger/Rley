@@ -69,7 +69,7 @@ pp result
 # Step 6. Generate a parse tree from the parse result
 ptree = result.parse_tree
 pp ptree
-=begin
+#=begin
 ########################################
 # Step 7. Render the parse tree (in JSON)
 # Let's create a parse tree visitor
@@ -81,5 +81,5 @@ renderer = Rley::Formatter::Json.new(STDOUT)
 # Now emit the parse tree as JSON on the console output
 puts "JSON rendering of the parse tree for '#{valid_input}' input:"
 renderer.render(visitor)
-=end
+#=end
 # End of file

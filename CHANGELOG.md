@@ -1,7 +1,10 @@
+### 0.2.05 / 2015-03-19
+* [NEW] Class `EarleyParser` implements a crude error detection mechanism. A syntax error causes an exception to be raised.
+* [CHANGE] Examplar file `parsing_err_expr.rb`: demo error message.
+
 ### 0.2.04 / 2015-03-04
 * [NEW] Class `ParseTracer` that helps to trace the parse steps (similar the trace format in NLTK).
 * [CHANGE] Method `EarleyParser#parse` takes a trace level argument.
-
 
 
 ### 0.2.03 / 2015-02-06

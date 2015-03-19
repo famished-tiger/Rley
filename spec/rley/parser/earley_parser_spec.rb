@@ -557,7 +557,13 @@ SNIPPET
             Token.new('c', c_),
             Token.new('c', c_)
           ]
-          parse_result = subject.parse(wrong)
+          err_msg = <<-MSG
+Syntax error at or near token 3>>>c<<<:
+Expected one of: ['a', 'b'], found a 'c' instead.
+MSG
+          err = StandardError
+          expect { subject.parse(wrong)}.to raise_error(err, err_msg.chomp)
+=begin
           expect(parse_result.success?).to eq(false)
 
           ###################### S(0) == . a a c c
@@ -589,6 +595,7 @@ SNIPPET
           ###################### S(3) == a a c? c
           state_set_3 = parse_result.chart[3]
           expect(state_set_3.states).to be_empty  # This is an error symptom
+=end
         end
 
         it 'should parse a grammar with nullable nonterminals' do

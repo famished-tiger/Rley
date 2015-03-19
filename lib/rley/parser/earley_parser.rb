@@ -27,27 +27,6 @@ module Rley # This module is used as a namespace
         @start_mapping = build_start_mapping(dotted_items)
         @next_mapping = build_next_mapping(dotted_items)
       end
-
-=begin
-    You can optionally specify a tracing level, for how much output you
-    want to see:
-
-    0: No output.
-    1: Show edges from scanner and completer rules (not predictor).
-    2 (default): Show all edges as they are added to the chart.
-    
-        - For each index I{end} in [0, 1, ..., N]:
-          - For each I{edge} s.t. I{edge}.end = I{end}:
-            - If I{edge} is incomplete, and I{edge}.next is not a part
-              of speech:
-                - Apply PredictorRule to I{edge}
-            - If I{edge} is incomplete, and I{edge}.next is a part of
-              speech:
-                - Apply ScannerRule to I{edge}
-            - If I{edge} is complete:
-                - Apply CompleterRule to I{edge}
-        - Return any complete parses in the chart
-=end
       
       # Parse a sequence of input tokens.
       # @param aTokenSequence [Array] Array of Tokens objects returned by a 
@@ -65,6 +44,7 @@ module Rley # This module is used as a namespace
         result = Parsing.new(start_dotted_item, aTokenSequence, tracer)
         last_token_index = aTokenSequence.size
         (0..last_token_index).each do |i|
+          handle_error(result) if result.chart[i].empty?
           predicted = Set.new
           result.chart[i].each do |state|
             if state.complete?  # End of production reached?
@@ -219,6 +199,24 @@ module Rley # This module is used as a namespace
         aParsing.completion(aState, aPosition) do |item|
           next_mapping[item]
         end
+      end
+      
+      # Raise an exception to indicate a syntax error.
+      def handle_error(aParsing)
+        # Retrieve the first empty state set
+        pos = aParsing.chart.state_sets.find_index(&:empty?)
+        lexeme_at_pos = aParsing.tokens[pos - 1].lexeme
+        
+        terminals = aParsing.chart.state_sets[pos - 1].expected_terminals
+        err_msg = "Syntax error at or near token #{pos}"
+        err_msg << ">>>#{lexeme_at_pos}<<<:\nExpected "
+        if terminals.size > 1
+          err_msg << "one of: #{terminals},"
+        else
+           err_msg << ": #{terminals[0]},"
+        end
+        err_msg << " found a #{aParsing.tokens[pos-1].terminal} instead."
+        fail StandardError, err_msg
       end
     end # class
   end # module

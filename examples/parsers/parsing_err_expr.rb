@@ -1,5 +1,5 @@
-# Purpose: to demonstrate how to handle parsing errors
-# and render a parse tree
+# Purpose: to demonstrate how to catch parsing errors
+
 require 'pp' # TODO remove this dependency
 require 'rley'  # Load the gem
 
@@ -8,9 +8,8 @@ require 'rley'  # Load the gem
 # 2. Create a tokenizer for the language
 # 3. Create a parser for that grammar
 # 4. Tokenize the input
-# 5. Let the parser process the input
-# 6. Generate a parse tree from the parse result
-# 7. Render the parse tree (in JSON)
+# 5. Let the parser process the invalid input
+
 
 ########################################
 # Step 1. Define a grammar for a very simple arithmetic expression language
@@ -55,31 +54,21 @@ end
 parser = Rley::Parser::EarleyParser.new(grammar_s_expr)
 
 ########################################
-# Step 3. Tokenize the invalid input
-invalid_input = '2 + 3 * * 4'
+# Step 4. Tokenize the invalid input
+invalid_input = '2 + 3 * * 4' # Notice the repeated stars (*)
+puts "Invalid expression to parse: #{invalid_input}"
+puts ''
 tokens = tokenizer(invalid_input, grammar_s_expr)
 
 ########################################
-# Step 5. Let the parser process the input
-result = parser.parse(tokens)
-puts "Parse successful? #{result.success?}"
-pp result
+# Step 5. Let catch the exception caused by a syntax error...
+# ... and display the error message
+begin
+  parser.parse(tokens)
+  rescue StandardError => exc
+    puts exc.message
+end
 
-########################################
-# Step 6. Generate a parse tree from the parse result
-ptree = result.parse_tree
-pp ptree
 
-########################################
-# Step 7. Render the parse tree (in JSON)
-# Let's create a parse tree visitor
-visitor = Rley::ParseTreeVisitor.new(ptree)
-
-#Here we create a renderer object...
-renderer = Rley::Formatter::Json.new(STDOUT)
-
-# Now emit the parse tree as JSON on the console output
-puts "JSON rendering of the parse tree for '#{invalid_input}' input:"
-renderer.render(visitor)
 
 # End of file

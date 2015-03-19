@@ -59,6 +59,17 @@ module Rley # This module is used as a namespace
         
         return candidate
       end
+      
+      # The list of distinct expected terminal symbols. An expected symbol is on the
+      # left of a dot in a parse state of the parse set.
+      def expected_terminals()
+        expecting_terminals = states.select do |s| 
+          s.dotted_rule.next_symbol.kind_of?(Rley::Syntax::Terminal) 
+        end
+        
+        terminals = expecting_terminals.map { |s| s.dotted_rule.next_symbol }
+        return terminals.uniq
+      end
 
       private
 
