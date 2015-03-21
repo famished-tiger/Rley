@@ -1,3 +1,7 @@
+### 0.2.06 / 2015-03-21
+* [FIX] Method `EarleyParser#handle_error` portability issue between Ruby versions.
+
+
 ### 0.2.05 / 2015-03-19
 * [NEW] Class `EarleyParser` implements a crude error detection mechanism. A syntax error causes an exception to be raised.
 * [CHANGE] Examplar file `parsing_err_expr.rb`: demo error message.
