@@ -1,3 +1,6 @@
+### 0.2.07 / 2015-04-22
+* [NEW] Rake file added in `examples` folder. It allows to run all the examples at once.
+
 ### 0.2.06 / 2015-03-21
 * [FIX] Method `EarleyParser#handle_error` portability issue between Ruby versions.
 
