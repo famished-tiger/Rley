@@ -40,6 +40,22 @@ This project is in "earley" stage.
 - Provide documentation and examples
 
 
+### Other similar Ruby projects ###
+__Rley__ isn't the sole Ruby implementation of the Earley parser algorithm.  
+Here are a few other ones:  
+- [Kanocc gem](https://rubygems.org/gems/kanocc) -- Advertised as a Ruby based parsing and translation framework.  
+  Although the gem dates from 2009, the author still maintains its in a public repository in [Github](https://github.com/surlykke/Kanocc)  
+  The grammar symbols (tokens and non-terminals) must be represented as (sub)classes.
+  Grammar rules are methods of the non-terminal classes. A rule can have a block code argument
+  that specifies the semantic action when that rule is applied.  
+- [lc1 project](https://github.com/kp0v/lc1) -- Advertised as a combination of Earley and Viterbi algorithms for [Probabilistic] Context Free Grammars   
+  Aimed in parsing brazilian portuguese.  
+  [earley project](https://github.com/joshingly/earley) -- An Earley parser (grammar rules are specified in JSON format).  
+  The code doesn't seem to be maintained: latest commit dates from Nov. 2011.  
+- [linguist project](https://github.com/davidkellis/linguist) -- Advertised as library for parsing context-free languages.  
+  It is a recognizer not a parser. In other words it can only tell whether a given input 
+  conforms to the grammar rules or not. As such it cannot build parse trees.  
+  The code doesn't seem to be maintained: latest commit dates from Oct. 2011.
 
 Copyright
 ---------

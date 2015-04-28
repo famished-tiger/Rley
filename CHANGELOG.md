@@ -1,3 +1,6 @@
+### 0.2.08 / 2015-04-28
+* [NEW] Added folder with JSON demo parser under `examples\parsers\demo-JSON`.
+
 ### 0.2.07 / 2015-04-22
 * [NEW] Rake file added in `examples` folder. It allows to run all the examples at once.
 

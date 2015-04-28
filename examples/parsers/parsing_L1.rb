@@ -103,15 +103,15 @@ def tokenizer(aText, aGrammar)
 end
 
 ########################################
-# Step 3. Create a parser for that grammar
-parser = Rley::Parser::EarleyParser.new(grammar_l1)
-
-########################################
 # Step 3. Tokenize the input
 valid_input = 'I want the flight from Alaska through Chicago to Houston'
 
 # Another sentence: it is a flight from Chicago
 tokens = tokenizer(valid_input, grammar_l1)
+
+########################################
+# Step 4. Create a parser for that grammar
+parser = Rley::Parser::EarleyParser.new(grammar_l1)
 
 ########################################
 # Step 5. Let the parser process the input
