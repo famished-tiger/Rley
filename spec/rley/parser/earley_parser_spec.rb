@@ -233,7 +233,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           $stdout = StringIO.new('', 'w')
           
           trace_level = 1
-          parse_result = subject.parse(grm1_tokens, trace_level)
+          subject.parse(grm1_tokens, trace_level)
           expectations = <<-SNIPPET
 ['a', 'a', 'b', 'c', 'c']
 |. a . a . b . c . c .|
@@ -562,7 +562,8 @@ Syntax error at or near token 3>>>c<<<:
 Expected one of: ['a', 'b'], found a 'c' instead.
 MSG
           err = StandardError
-          expect { subject.parse(wrong)}.to raise_error(err, err_msg.chomp)
+          expect { subject.parse(wrong) }
+            .to raise_error(err, err_msg.chomp)
 =begin
           expect(parse_result.success?).to eq(false)
 

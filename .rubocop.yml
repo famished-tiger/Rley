@@ -3,19 +3,21 @@ AllCops:
     - 'examples/**/*'
     - 'features/**/*'
     - 'gems/**/*'
-    - 'refs/**/*'
+    - 'lab/**/*'
 
 AbcSize:
-  Max: 45
-  Enabled: true
+  Max: 35
     
-    # This is disabled because some demos use UTF-8
+# This is disabled because some demos use UTF-8
 AsciiComments:
+  Enabled: false
+  
+Attr:
   Enabled: false
   
 BlockComments:
   Enabled: false
-
+  
 CaseIndentation:
   IndentWhenRelativeTo: end
   IndentOneStep: true
@@ -42,13 +44,9 @@ Documentation:
   Enabled: false
   
 EmptyLines:
-  Enabled: false
-
+  Enabled: false 
 
 Encoding:
-  Enabled: false
-
-FileName:
   Enabled: false
   
 IndentationWidth :
@@ -60,11 +58,18 @@ MethodLength:
   Max: 50
   CountComments: false 
  
+# Avoid modules longer than 500 lines of code 
+ModuleLength:
+  Max: 500
+ 
 NonNilCheck:
   Enabled: false
 
 NumericLiterals:
   Enabled: false
+  
+PerceivedComplexity:
+  Max: 10
   
 RaiseArgs:
   Enabled: false
@@ -79,5 +84,4 @@ TrailingWhitespace:
   Enabled: false
   
 VariableName:
-  Enabled: false
-  
+  Enabled: false  

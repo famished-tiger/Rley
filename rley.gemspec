@@ -16,7 +16,7 @@ RLEY_GEMSPEC = Gem::Specification.new do |pkg|
   pkg.homepage = 'https://github.com/famished-tiger/Rley'
   pkg.platform = Gem::Platform::RUBY
   pkg.summary = Rley::Description
-  pkg.description = "A Ruby implementation of the Earley's parsing algorithm"
+  pkg.description = 'A general parser using the Earley algorithm.'
   pkg.post_install_message = <<EOSTRING
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Thank you for installing Rley...

@@ -216,8 +216,8 @@ module Rley # This module is used as a namespace
         else
            err_msg << ": #{term_names[0]},"
         end
-        err_msg << " found a '#{aParsing.tokens[pos-1].terminal.name}' instead."
-        fail StandardError, err_msg
+        err_msg << " found a '#{aParsing.tokens[pos - 1].terminal.name}'"
+        fail StandardError, err_msg + ' instead.'
       end
     end # class
   end # module

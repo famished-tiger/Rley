@@ -21,8 +21,8 @@ module Rley # Open this namespace to avoid module qualifier prefixes
       let(:output) { StringIO.new('', 'w') }
 
       let(:token_seq) do
-        literals = ['I', 'saw', 'John', 'with', 'a', 'dog']
-        literals.map {|lexeme| Token.new(lexeme, nil)}
+        literals = %w(I saw John with a dog)
+        literals.map { |lexeme| Token.new(lexeme, nil) }
       end
 
       let(:sample_tracer) { ParseTracer.new(0, output, token_seq) }
@@ -32,7 +32,8 @@ module Rley # Open this namespace to avoid module qualifier prefixes
         subject { Chart.new(dotted_rule, count_token, sample_tracer) }
 
         it 'should be created with start dotted rule, token count, tracer' do
-          expect { Chart.new(dotted_rule, count_token, sample_tracer) }.not_to raise_error
+          expect { Chart.new(dotted_rule, count_token, sample_tracer) }
+            .not_to raise_error
         end
 
         it 'should have a seed state in first state_set' do
@@ -91,7 +92,6 @@ module Rley # Open this namespace to avoid module qualifier prefixes
 |>      .      .      .      .      .      .| [0:0] sentence => A B . C
 SNIPPET
           expect(output.string).to eq(expectation)
-
         end
 
         it 'should trace parse state pushing' do

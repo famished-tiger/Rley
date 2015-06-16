@@ -1,3 +1,7 @@
+### 0.2.10 / 2015-06-16
+* [CHANGE] Code re-formatted to please Rubocop 0.32.0
+* [FIX] File `.rubocop.yml`: disable some cop settings that were too loud.
+
 ### 0.2.08 / 2015-04-28
 * [NEW] Added folder with JSON demo parser under `examples\parsers\demo-JSON`.
 

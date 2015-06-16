@@ -74,7 +74,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
         
         it 'should emit trace level 1 info' do
           tracer = ParseTracer.new(1, output, grm1_tokens)
-          instance = Parsing.new(start_dotted_rule, grm1_tokens, tracer)
+          Parsing.new(start_dotted_rule, grm1_tokens, tracer)
           expectations = <<-SNIPPET
 ['a', 'a', 'b', 'c', 'c']
 |. a . a . b . c . c .|
@@ -101,7 +101,8 @@ SNIPPET
         it 'should complain when trying to push a nil dotted item' do
           err = StandardError
           msg = 'Dotted item may not be nil'
-          expect{ subject.push_state(nil, 1, 1, :prediction) }.to raise_error(err, msg)
+          expect { subject.push_state(nil, 1, 1, :prediction) }
+            .to raise_error(err, msg)
         end
 
 

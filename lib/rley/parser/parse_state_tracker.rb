@@ -25,7 +25,7 @@ module Rley # This module is used as a namespace
 
       # Write accessor. Set the given parse state as the current one.
       def parse_state=(aParseState)
-        fail StandardError, "Nil parse state" if aParseState.nil?
+        fail StandardError, 'Nil parse state' if aParseState.nil?
         @parse_state = aParseState
         processed_states[parse_state] = true
       end

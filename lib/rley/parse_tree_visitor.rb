@@ -1,17 +1,22 @@
 module Rley # This module is used as a namespace
-  # A visitor class dedicated in the visit of ParseTree objects.
+  # A visitor class dedicated in the visit of a parse tree.
+  # It combines the Visitor and Observer patterns.
   class ParseTreeVisitor
     # Link to the parse tree to visit
     attr_reader(:ptree)
 
     # List of objects that subscribed to the visit event notification.
     attr_reader(:subscribers)
+    
+    # Indicates the kind of tree traversal to perform: :post_order, :pre-order
+    attr_reader(:traversal)
 
     # Build a visitor for the given ptree.
     # @param aParseTree [ParseTree] the parse tree to visit.
-    def initialize(aParseTree)
+    def initialize(aParseTree, aTraversalStrategy = :post_order)
       @ptree = aParseTree
       @subscribers = []
+      @traversal = aTraversalStrategy
     end
 
     public
@@ -44,21 +49,15 @@ module Rley # This module is used as a namespace
 
     # Visit event. The visitor is about to visit the given non terminal node.
     # @param aNonTerminalNode [NonTerminalNode] the node to visit.
-    def start_visit_nonterminal(aNonTerminalNode)
-      broadcast(:before_non_terminal, aNonTerminalNode)
-    end
-
-    # Visit event. The visitor is about to visit the children of a non 
-    # terminal node.
-    # @param aParentNode [NonTeminalNode] the (non-terminal) parent node.
-    def visit_children(aParentNode)
-      children = aParentNode.children
-      broadcast(:before_children, aParentNode, children)
-      
-      # Let's proceed with the visit of children
-      children.each { |a_node| a_node.accept(self) }
-      
-      broadcast(:after_children, aParentNode, children)
+    def visit_nonterminal(aNonTerminalNode)
+      if @traversal == :post_order
+        broadcast(:before_non_terminal, aNonTerminalNode)
+        traverse_children(aNonTerminalNode)
+      else
+        traverse_children(aNonTerminalNode)  
+        broadcast(:before_non_terminal, aNonTerminalNode)
+      end
+      broadcast(:after_non_terminal, aNonTerminalNode)
     end
 
     # Visit event. The visitor is visiting the
@@ -84,6 +83,19 @@ module Rley # This module is used as a namespace
     end
 
     private
+    
+    # Visit event. The visitor is about to visit the children of a non 
+    # terminal node.
+    # @param aParentNode [NonTeminalNode] the (non-terminal) parent node.
+    def traverse_children(aParentNode)
+      children = aParentNode.children
+      broadcast(:before_children, aParentNode, children)
+      
+      # Let's proceed with the visit of children
+      children.each { |a_node| a_node.accept(self) }
+      
+      broadcast(:after_children, aParentNode, children)
+    end
 
     # Send a notification to all subscribers.
     # @param msg [Symbol] event to notify

@@ -41,7 +41,8 @@ module Rley # This module is used as a namespace
         builder = tree_builder(state_tracker.state_set_index)
 
         loop do
-          match_symbol = state_tracker.symbol_on_left
+          state_tracker.symbol_on_left
+          # match_symbol = state_tracker.symbol_on_left
           # puts '--------------------'
           # puts "Active parse state: #{state_tracker.parse_state}"
           # puts "Matching symbol: #{match_symbol}"

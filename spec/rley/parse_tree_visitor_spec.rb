@@ -128,7 +128,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
       it 'should react to the start_visit_nonterminal message' do
         # Notify subscribers when start the visit of a non-terminal node
         expect(listener1).to receive(:before_non_terminal).with(nterm_node)
-        subject.start_visit_nonterminal(nterm_node)
+        subject.visit_nonterminal(nterm_node)
       end
 
       it 'should react to the visit_children message' do
@@ -139,7 +139,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
         expect(listener1).to receive(:before_terminal).with(children[0])
         expect(listener1).to receive(:after_terminal).with(children[0])
         expect(listener1).to receive(:after_children).with(nterm_node, children)
-        subject.visit_children(nterm_node)
+        subject.send(:traverse_children, nterm_node)
       end
 
       it 'should react to the end_visit_nonterminal message' do

@@ -34,9 +34,9 @@ module Rley # This module is used as a namespace
       def trace_scanning(aStatesetIndex, aParseState)
         return unless level
 
-        scan_picture = '[' + '-' * (col_width-1) + ']'
+        scan_picture = '[' + '-' * (col_width - 1) + ']'
         org = OpenStruct.new(origin: aStatesetIndex - 1, 
-          dotted_rule: aParseState.dotted_rule)
+                             dotted_rule: aParseState.dotted_rule)
         trace_diagram(aStatesetIndex, org, scan_picture)
       end
 
@@ -49,7 +49,8 @@ module Rley # This module is used as a namespace
       def trace_completion(aStatesetIndex, aParseState)
         return unless level
 
-        if aStatesetIndex == lexemes.size && aParseState.origin == 0 &&  aParseState.complete?
+        if aStatesetIndex == lexemes.size && aParseState.origin == 0 && 
+           aParseState.complete?
           picture = '=' * (col_width * lexemes.size - 1)
         else
           count = col_width * (aStatesetIndex - aParseState.origin) - 1
@@ -69,14 +70,14 @@ module Rley # This module is used as a namespace
       def emit_heading()
         longest = lexemes.map(&:length).max
         @col_width = longest + 3
-        headers = lexemes.map { |l| "#{l.center(col_width-1, ' ')}" }
+        headers = lexemes.map { |l| "#{l.center(col_width - 1, ' ')}" }
         print_if 1, '|.' + headers.join('.') + ".|\n"
       end
 
       def padding(aStatesetIndex, aParseState, aPicture)
-        l_pad_pattern = '.' + ' ' * (col_width-1)
+        l_pad_pattern = '.' + ' ' * (col_width - 1)
         left_padding =  l_pad_pattern * ([0, aParseState.origin].max)
-        r_pad_pattern = ' ' * (col_width-1) + '.'
+        r_pad_pattern = ' ' * (col_width - 1) + '.'
         right_padding = r_pad_pattern * (lexemes.size - aStatesetIndex)
         return left_padding + aPicture + right_padding
       end

@@ -61,7 +61,7 @@ module Rley # This module is used as a namespace
             when :completion
                tracer.trace_completion(anIndex, new_state)
             else
-              raise NotImplementedError, "Unknown push_state mode #{aReason}"
+              fail NotImplementedError, "Unknown push_state mode #{aReason}"
           end
         end
       end
