@@ -67,11 +67,11 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           expect(instance).not_to be_bounded
 
           # Case: only upper bound is set
-          instance =  TokenRange.new(high: 5)
+          instance = TokenRange.new(high: 5)
           expect(instance).not_to be_bounded
 
           # No bound is set
-          instance =  TokenRange.new({})
+          instance = TokenRange.new({})
           expect(instance).not_to be_bounded
         end
 
@@ -146,7 +146,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
         
         it 'should provide a text representation of itself' do
           # Case 1: not bound is set
-          instance =  TokenRange.new({})
+          instance = TokenRange.new({})
           expect(instance.to_string(0)).to eq('[?, ?]') 
           
           # Case: only low bound is set
@@ -154,11 +154,11 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           expect(instance.to_string(0)).to eq('[0, ?]') 
 
           # Case: only upper bound is set
-          instance =  TokenRange.new(high: 5) 
+          instance = TokenRange.new(high: 5) 
           expect(instance.to_string(0)).to eq('[?, 5]') 
 
           # Case: both bounds are set
-          instance =  TokenRange.new(low: 0, high: 5) 
+          instance = TokenRange.new(low: 0, high: 5) 
           expect(instance.to_string(0)).to eq('[0, 5]')            
         end
       end

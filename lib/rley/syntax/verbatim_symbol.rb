@@ -9,7 +9,7 @@ module Rley # This module is used as a namespace
       attr_reader(:text)
 
       def initialize(aText)
-        super(aText)  # Do we need to separate the text from the name?
+        super(aText) # Do we need to separate the text from the name?
         @text = aText.dup
       end
       

@@ -9,7 +9,7 @@ require_relative '../../../lib/rley/ptree/parse_tree'
 module Rley # Open this namespace to avoid module qualifier prefixes
   module PTree # Open this namespace to avoid module qualifier prefixes
     describe ParseTree do
-      include GrammarABCHelper  # Mix-in module with builder for grammar abc
+      include GrammarABCHelper # Mix-in module with builder for grammar abc
 
       let(:sample_grammar) do
         builder = grammar_abc_builder

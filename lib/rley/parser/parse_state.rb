@@ -64,7 +64,7 @@ module Rley # This module is used as a namespace
       # "format of dotted rule" + " | " + origin
       # @return [String]
       def to_s()
-        return  dotted_rule.to_s + " | #{origin}"
+        return dotted_rule.to_s + " | #{origin}"
       end
 
 

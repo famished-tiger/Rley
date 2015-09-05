@@ -1,6 +1,5 @@
 require_relative '../spec_helper'
 
-
 require_relative './support/grammar_abc_helper'
 require_relative '../../lib/rley/parser/token'
 require_relative '../../lib/rley/parser/earley_parser'
@@ -9,7 +8,7 @@ require_relative '../../lib/rley/parse_tree_visitor'
 
 module Rley # Open this namespace to avoid module qualifier prefixes
   describe ParseTreeVisitor do
-    include GrammarABCHelper  # Mix-in module with builder for grammar abc
+    include GrammarABCHelper # Mix-in module with builder for grammar abc
     
     let(:grammar_abc) do
       builder = grammar_abc_builder

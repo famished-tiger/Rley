@@ -12,7 +12,7 @@ require_relative '../../../lib/rley/formatter/debug'
 module Rley # Re-open the module to get rid of qualified names
   module Formatter
     describe Debug do
-      include GrammarABCHelper  # Mix-in module for grammar abc
+      include GrammarABCHelper # Mix-in module for grammar abc
 
       # Factory method. Build a production with the given sequence
       # of symbols as its rhs.

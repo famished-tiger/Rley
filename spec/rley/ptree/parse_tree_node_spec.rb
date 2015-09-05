@@ -7,8 +7,8 @@ module Rley # Open this namespace to avoid module qualifier prefixes
   module PTree # Open this namespace to avoid module qualifier prefixes
     describe ParseTreeNode do
       let(:sample_symbol) { double('fake-symbol') }
-      let(:sample_range) { { low: 0, high: 5 }  }
-      
+      let(:sample_range) { { low: 0, high: 5 } }
+
       subject { ParseTreeNode.new(sample_symbol, sample_range) }
 
       context 'Initialization:' do
@@ -20,7 +20,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
         it 'should know its symbol' do
           expect(subject.symbol).to eq(sample_symbol)
         end
-        
+
         it 'should know its range' do
           expect(subject.range).to eq(sample_range)
         end

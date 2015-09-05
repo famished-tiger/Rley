@@ -13,7 +13,7 @@ module Rley # This module is used as a namespace
   # An item with the dot at the end (i.e. after all rhs symbols)
   #  is called a reduce item.
   # An item with a dot in front of a terminal is called a shift item.
-  module Parser   # This module is used as a namespace
+  module Parser # This module is used as a namespace
     class DottedItem
       # Production rule
       attr_reader(:production)
@@ -71,7 +71,7 @@ module Rley # This module is used as a namespace
         if before_position.nil?
           result = nil
         else
-          result =  production.rhs[before_position]
+          result = production.rhs[before_position]
         end
         
         return result
@@ -114,7 +114,7 @@ module Rley # This module is used as a namespace
         if rhs_size == 0
           index = -2 # Minus 2 at start/end of empty production
         elsif aPosition == rhs_size
-          index = -1  # Minus 1 at end of non-empty production
+          index = -1 # Minus 1 at end of non-empty production
         else
           index = aPosition
         end

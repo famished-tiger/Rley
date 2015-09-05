@@ -19,7 +19,7 @@ require_relative '../../../lib/rley/parser/parsing'
 module Rley # Open this namespace to avoid module qualifier prefixes
   module Parser # Open this namespace to avoid module qualifier prefixes
     describe Parsing do
-      include GrammarABCHelper  # Mix-in module with builder for grammar abc
+      include GrammarABCHelper # Mix-in module with builder for grammar abc
       include GrammarBExprHelper # Mix-in with builder for simple expressions
 
       # Grammar 1: A very simple language
@@ -71,7 +71,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
         it 'should know its chart object' do
           expect(subject.chart).to be_kind_of(Chart)
         end
-        
+
         it 'should emit trace level 1 info' do
           tracer = ParseTracer.new(1, output, grm1_tokens)
           Parsing.new(start_dotted_rule, grm1_tokens, tracer)
@@ -358,7 +358,7 @@ P[0, 5]
 SNIPPET
           root_text = builder.root.to_string(0)
           expect(root_text).to eq(expected_text.chomp)
-          
+
           expected_state = 'T => . integer | 0'
           expect(state_tracker.parse_state.to_s).to eq(expected_state)
           expect(state_tracker.state_set_index).to eq(0)
@@ -398,7 +398,7 @@ P[0, 5]
       +- T[4, 5]
          +- integer[4, 5]: '4'
 SNIPPET
-          actual =  ptree.root.to_string(0)
+          actual = ptree.root.to_string(0)
           expect(actual).to eq(expected_text.chomp)
         end
       end # context

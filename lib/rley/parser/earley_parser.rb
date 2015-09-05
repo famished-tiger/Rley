@@ -47,14 +47,14 @@ module Rley # This module is used as a namespace
           handle_error(result) if result.chart[i].empty?
           predicted = Set.new
           result.chart[i].each do |state|
-            if state.complete?  # End of production reached?
+            if state.complete? # End of production reached?
               completion(result, state, i, tracer)
             else
               next_symbol = state.next_symbol
               if next_symbol.kind_of?(Syntax::NonTerminal)
                 unless predicted.include? next_symbol
                   prediction(result, state, next_symbol, i, tracer)
-                  predicted << next_symbol  # Avoid repeated predictions
+                  predicted << next_symbol # Avoid repeated predictions
                 end
               elsif i < last_token_index
                 # Expecting a terminal symbol

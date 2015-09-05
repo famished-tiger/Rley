@@ -9,7 +9,7 @@ require_relative '../support/grammar_abc_helper'
 module Rley # Open this namespace to avoid module qualifier prefixes
   module Parser # Open this namespace to avoid module qualifier prefixes
     describe ParseTreeBuilder do
-      include GrammarABCHelper  # Mix-in module with builder for grammar abc
+      include GrammarABCHelper # Mix-in module with builder for grammar abc
 
       let(:grammar_abc) do
         builder = grammar_abc_builder
@@ -159,9 +159,8 @@ SNIPPET
           subject.move_back # ...to S
           expect(subject.current_node.symbol).to eq(capital_s)
         end
-        
+
         it 'should move through deeply nested structure' do
-        
         end
       end # context
 

@@ -14,7 +14,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
       # having same lhs and the symbols sequence
       # in their rhs.
       def alternate_prods(aNonTerminal, sequences)
-        prods =  sequences.map do |symbs|
+        prods = sequences.map do |symbs|
           Production.new(aNonTerminal, symbs)
         end
 
@@ -34,7 +34,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
       end
 
       # Grammar symbols for integer arithmetic expressions
-      let(:number) { Literal.new('number', /\d+/) }   # Positive integers only
+      let(:number) { Literal.new('number', /\d+/) } # Positive integers only
       let(:add_op) { NonTerminal.new('add_op') }
       let(:add_operators) { [grm1_ops['+'], grm1_ops['-']] }
       let(:mult_op) { NonTerminal.new('mult_op') }

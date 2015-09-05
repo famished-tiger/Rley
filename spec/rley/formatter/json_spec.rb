@@ -13,7 +13,7 @@ require_relative '../../../lib/rley/formatter/json'
 module Rley # Re-open the module to get rid of qualified names
   module Formatter
     describe Json do
-      include GrammarABCHelper  # Mix-in module with builder for grammar abc
+      include GrammarABCHelper # Mix-in module with builder for grammar abc
 
       # Factory method. Build a production with the given sequence
       # of symbols as its rhs.
@@ -21,12 +21,12 @@ module Rley # Re-open the module to get rid of qualified names
         builder = grammar_abc_builder
         builder.grammar
       end
-        
+
       # Variables for the terminal symbols
       let(:a_) { grammar_abc.name2symbol['a'] }
       let(:b_) { grammar_abc.name2symbol['b'] }
       let(:c_) { grammar_abc.name2symbol['c'] }
-        
+
       # Helper method that mimicks the output of a tokenizer
       # for the language specified by gramma_abc
       let(:grm_abc_tokens1) do
@@ -56,22 +56,22 @@ module Rley # Re-open the module to get rid of qualified names
         parse_result = parser.parse(grm_abc_tokens1)
         parse_result.parse_tree
       end
-      
+
       let(:destination) { StringIO.new('', 'w') }
 
       context 'Standard creation & initialization:' do
         it 'should be initialized with an IO argument' do
           expect { Json.new(StringIO.new('', 'w')) }.not_to raise_error
         end
-        
+
         it 'should know its output destination' do
           instance = Json.new(destination)
           expect(instance.output).to eq(destination)
         end
       end # context
-      
- 
-      context 'Formatting events:' do   
+
+
+      context 'Formatting events:' do
         it 'should render a parse tree in JSON' do
           instance = Json.new(destination)
           visitor = Rley::ParseTreeVisitor.new(grm_abc_ptree1)

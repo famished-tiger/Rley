@@ -82,7 +82,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
       let(:nt_M) { Syntax::NonTerminal.new('M') }
       let(:nt_T) { Syntax::NonTerminal.new('T') }
       let(:plus) { Syntax::VerbatimSymbol.new('+') }
-      let(:star)  { Syntax::VerbatimSymbol.new('*') }
+      let(:star) { Syntax::VerbatimSymbol.new('*') }
       let(:integer) do
         integer_pattern = /[-+]?[0-9]+/	# Decimal notation
         Syntax::Literal.new('integer', integer_pattern)

@@ -41,7 +41,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
 
       context 'Provided services:' do
         it 'should compare compare with itself' do
-          me = subject  # Use another name to please Rubocop
+          me = subject # Use another name to please Rubocop
           expect(subject == me).to eq(true)
         end
 
