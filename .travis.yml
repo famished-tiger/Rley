@@ -1,10 +1,10 @@
 language: ruby
 rvm:
-  - 2.1.0
-  - 2.0.0
   - 1.9.3
-  - 1.9.2
-  - jruby-19mode
+  - 2.0.0
+  - 2.1.0
+  - 2.2.0
+  - jruby-9.0.1.0
   - jruby-head
 
 # Workaround issue of jruby-head configuration on Travis CI 

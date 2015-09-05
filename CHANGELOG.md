@@ -1,3 +1,9 @@
+### 0.2.11 / 2015-09-05
+* [CHANGE] Code re-formatted to please Rubocop 0.34.0
+* [CHANGE] File `.travis.yml`: added new Rubies: MRI 2.2.0 and JRuby 9.0.
+* [CHANGE] File `rley.gemspec`: Upgraded gem versions in development dependencies
+* [CHANGE] File `Gemfile`: Upgraded gem versions in development dependencies
+
 ### 0.2.10 / 2015-06-16
 * [CHANGE] Code re-formatted to please Rubocop 0.32.0
 * [FIX] File `.rubocop.yml`: disable some cop settings that were too loud.

@@ -48,9 +48,9 @@ EOSTRING
 
   pkg.extra_rdoc_files = ['README.md']
 
-  pkg.add_development_dependency('rake', ['>= 0.8.0'])
+  pkg.add_development_dependency('rake', ['>= 10.0.0'])
   pkg.add_development_dependency('rspec', ['>= 3.0.0'])
-  pkg.add_development_dependency('simplecov', ['>= 0.7.0'])
+  pkg.add_development_dependency('simplecov', ['>= 0.8.0'])
   pkg.add_development_dependency('coveralls', ['>= 0.7.0'])
   pkg.add_development_dependency('rubygems', ['>= 2.0.0'])
 
