@@ -54,14 +54,14 @@ module Rley # Open this namespace to avoid module qualifier prefixes
       let(:sample_tracer) { ParseTracer.new(0, output, grm1_tokens) }
 
       # Default instantiation rule
-      subject { Parsing.new(start_dotted_rule, grm1_tokens, sample_tracer) }
+      subject { Parsing.new([ start_dotted_rule ], grm1_tokens, sample_tracer) }
 
       context 'Initialization:' do
-        it 'should be created with list of tokens, start dotted rule, trace' do
-          start_rule = start_dotted_rule
+        it 'should be created with list of tokens, start dotted rules, trace' do
+          start_rules = [ start_dotted_rule ]
           tokens = grm1_tokens
           tracer = sample_tracer
-          expect { Parsing.new(start_rule, tokens, tracer) }.not_to raise_error
+          expect { Parsing.new(start_rules, tokens, tracer) }.not_to raise_error
         end
 
         it 'should know the input tokens' do
@@ -74,7 +74,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
 
         it 'should emit trace level 1 info' do
           tracer = ParseTracer.new(1, output, grm1_tokens)
-          Parsing.new(start_dotted_rule, grm1_tokens, tracer)
+          Parsing.new([ start_dotted_rule ], grm1_tokens, tracer)
           expectations = <<-SNIPPET
 ['a', 'a', 'b', 'c', 'c']
 |. a . a . b . c . c .|

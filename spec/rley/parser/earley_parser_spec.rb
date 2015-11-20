@@ -270,9 +270,9 @@ SNIPPET
             'P => . S | 0',         # start rule
             "S => . S '+' M | 0",   # predict from (1)
             'S => . M | 0',         # predict from (1)
-            "M => . M '*' T | 0",   # predict from (3)
-            'M => . T | 0',         # predict from (3)
-            'T => . integer | 0'    # predict from (3)
+            "M => . M '*' T | 0",   # predict from (4)
+            'M => . T | 0',         # predict from (4)
+            'T => . integer | 0'    # predict from (4)
           ]
           compare_state_texts(parse_result.chart[0], expected)
 
@@ -637,7 +637,7 @@ MSG
           ###################### S(0) == . a a / a
           # Expectation chart[0]:
           expected = [
-            'Z => . E | 0',     # start rule
+            'Z => . E | 0',     # start rule           
             'E => . E Q F | 0', # predict from (1)
             'E => . F | 0',     # predict from (1)
             "F => . 'a' | 0"    # predict from (3)

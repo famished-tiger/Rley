@@ -26,13 +26,13 @@ module Rley # Open this namespace to avoid module qualifier prefixes
       end
 
       let(:sample_tracer) { ParseTracer.new(0, output, token_seq) }
+      
+      # Default instantiation rule
+      subject { Chart.new([ dotted_rule ], count_token, sample_tracer) }
 
       context 'Initialization:' do
-        # Default instantiation rule
-        subject { Chart.new(dotted_rule, count_token, sample_tracer) }
-
         it 'should be created with start dotted rule, token count, tracer' do
-          expect { Chart.new(dotted_rule, count_token, sample_tracer) }
+          expect { Chart.new([ dotted_rule ], count_token, sample_tracer) }
             .not_to raise_error
         end
 
@@ -82,7 +82,6 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           ParseState.new(aDottedRule, origin)
         end
 
-        subject { Chart.new(dotted_rule, count_token, sample_tracer) }
 
         it 'should trace its initialization' do
           subject[0]  # Force constructor call here

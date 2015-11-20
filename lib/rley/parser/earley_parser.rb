@@ -41,7 +41,7 @@ module Rley # This module is used as a namespace
       # @return [Parsing] an object that embeds the parse results.
       def parse(aTokenSequence, aTraceLevel = 0)
         tracer = ParseTracer.new(aTraceLevel, $stdout, aTokenSequence)
-        result = Parsing.new(start_dotted_item, aTokenSequence, tracer)
+        result = Parsing.new(start_dotted_items, aTokenSequence, tracer)
         last_token_index = aTokenSequence.size
         (0..last_token_index).each do |i|
           handle_error(result) if result.chart[i].empty?
@@ -115,10 +115,13 @@ module Rley # This module is used as a namespace
 
       # The dotted item for the start production and
       # with the dot at the beginning of the rhs
-      def start_dotted_item()
-        # TODO: remove assumption that first dotted_item is 
-        # for start production
-        return dotted_items[0]
+      def start_dotted_items()
+        start_symbol = grammar.start_symbol
+        start_items = dotted_items.select do |anItem|
+          (anItem.lhs == start_symbol) && anItem.at_start?
+        end
+        
+        return start_items
       end
 
       

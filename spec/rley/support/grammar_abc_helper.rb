@@ -8,9 +8,9 @@ module GrammarABCHelper
   def grammar_abc_builder()
     builder = Rley::Syntax::GrammarBuilder.new
     builder.add_terminals('a', 'b', 'c')
-    builder.add_production('S' => ['A'])
+    builder.add_production('S' => 'A')
     builder.add_production('A' => %w(a A c))
-    builder.add_production('A' => ['b'])
+    builder.add_production('A' => 'b')
 
     return builder
   end

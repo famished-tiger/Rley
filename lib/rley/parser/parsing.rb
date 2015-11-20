@@ -16,9 +16,9 @@ module Rley # This module is used as a namespace
       # 0: No trace output (default case)
       # 1: Show trace of scanning and completion rules
       # 2: Same as of 1 with the addition of the prediction rules
-      def initialize(startDottedRule, theTokens, aTracer)
+      def initialize(startDottedRules, theTokens, aTracer)
         @tokens = theTokens.dup
-        @chart = Chart.new(startDottedRule, tokens.size, aTracer)
+        @chart = Chart.new(startDottedRules, tokens.size, aTracer)
       end
 
       # Return true if the parse was successful (= input tokens

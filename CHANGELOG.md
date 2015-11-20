@@ -1,3 +1,7 @@
+### 0.2.12 / 2015-11-20
+* [FIX] In special cases the parsing didn't work correctly when there more than one 
+    production rule for the start symbol of a grammar.
+
 ### 0.2.11 / 2015-09-05
 * [CHANGE] Code re-formatted to please Rubocop 0.34.0
 * [CHANGE] File `.travis.yml`: added new Rubies: MRI 2.2.0 and JRuby 9.0.

@@ -15,11 +15,16 @@ module Rley # This module is used as a namespace
       # 2: Same as of 1 with the addition of the prediction rules
       attr_reader(:tracer)
 
-      # @param aTracerLevel [ParseTracer] A tracer object. 
-      def initialize(startDottedItem, tokenCount, aTracer)
+      # @param startItems [Array] A non-empty Array of dotted items for 
+      #   the start symbol.
+      # @param tokenCount [Fixnum] The number of lexemes in the input to parse.
+      # @param aTracer [ParseTracer] A tracer object. 
+      def initialize(startItems, tokenCount, aTracer)
         @tracer = aTracer
         @state_sets = Array.new(tokenCount + 1) { |_| StateSet.new }
-        push_state(startDottedItem, 0, 0, :start_rule)
+        startItems.each do |startDottedItem|
+          push_state(startDottedItem, 0, 0, :start_rule)
+        end
       end
 
       # The dotted item/rule used to seed the parse chart.
