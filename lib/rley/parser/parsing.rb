@@ -25,10 +25,23 @@ module Rley # This module is used as a namespace
       # followed the syntax specified by the grammar)
       def success?()
         # Success can be detected as follows:
-        # The last chart entry has a complete parse state
-        # with the start symbol as lhs
-        found = end_parse_state
-        return !found.nil?
+        # The last chart entry has at least one complete parse state
+        # for the start symbol with an origin == 0
+        last_chart_entry = chart.state_sets[-1]
+        start_symbol = chart.start_symbol
+
+        # Retrieve all the complete states with start symbol in lhs 
+        end_states = last_chart_entry.states_rewriting(start_symbol)
+        success_states = end_states.select { |st| st.origin == 0 }
+        
+        return !success_states.empty?
+      end
+
+      # Return true if there are more than one complete state
+      # for the same lhs and same origin in any state set.
+      def ambiguous?()
+        found = chart.state_sets.find { |set| !set.ambiguities.empty? }
+        return ! found.nil?
       end
 
       # Factory method. Builds a ParseTree from the parse result.
@@ -48,7 +61,7 @@ module Rley # This module is used as a namespace
           # puts "Matching symbol: #{match_symbol}"
           # puts 'Parse tree:'
           # puts builder.root.to_string(0)
-        
+
           # Place the symbol on left of the dot in the parse tree
           done = insert_matched_symbol(state_tracker, builder)
           break if done
@@ -130,16 +143,18 @@ module Rley # This module is used as a namespace
         return predicted + others
       end
 
-      # Retrieve the parse state that represents a complete, successful parse
+      # Retrieve the parse state(s) that represents a complete, successful parse
       # After a successful parse, the last chart entry
-      # has a parse state that involves the start production and
+      # has a parse state that involves the start symbol and
       # has a dot positioned at the end of its rhs.
-      def end_parse_state()
-        start_dotted_rule = chart.start_dotted_rule
-        start_production = start_dotted_rule.production
+      def end_parse_states()
         last_chart_entry = chart.state_sets[-1]
-        candidate_states = last_chart_entry.states_for(start_production)
-        return candidate_states.find(&:complete?)
+        start_symbol = chart.start_symbol
+
+        # Retrieve all the complete states with origin at 0
+        end_states = last_chart_entry.states_rewriting(start_symbol)
+
+        return end_states
       end
 
 
@@ -179,7 +194,7 @@ module Rley # This module is used as a namespace
       # Factory method. Creates and initializes a ParseStateTracker instance.
       def new_state_tracker()
         instance = ParseStateTracker.new(chart.last_index)
-        instance.parse_state = end_parse_state
+        instance.parse_state = end_parse_states.first
 
         return instance
       end

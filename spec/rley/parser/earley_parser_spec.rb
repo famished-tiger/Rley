@@ -163,6 +163,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
         it 'should parse a valid simple input' do
           parse_result = subject.parse(grm1_tokens)
           expect(parse_result.success?).to eq(true)
+          expect(parse_result.ambiguous?).to eq(false)
 
           ######################
           # Expectation chart[0]:
@@ -263,6 +264,7 @@ SNIPPET
           instance = EarleyParser.new(grammar_expr)
           parse_result = instance.parse(grm2_tokens)
           expect(parse_result.success?).to eq(true)
+          expect(parse_result.ambiguous?).to eq(false)
 
           ###################### S(0): . 2 + 3 * 4
           # Expectation chart[0]:
@@ -397,6 +399,7 @@ SNIPPET
           expect { instance.parse(tokens) }.not_to raise_error
           parse_result = instance.parse(tokens)
           expect(parse_result.success?).to eq(true)
+          expect(parse_result.ambiguous?).to eq(true)
 
           ###################### S(0): . 2 + 3 * 4
           # Expectation chart[0]:
@@ -484,6 +487,7 @@ SNIPPET
           expect { instance.parse(tokens) }.not_to raise_error
           parse_result = instance.parse(tokens)
           expect(parse_result.success?).to eq(true)
+          expect(parse_result.ambiguous?).to eq(true)          
 
           ###################### S(0): . abc + def + ghi
           # Expectation chart[0]:
@@ -564,7 +568,7 @@ MSG
           err = StandardError
           expect { subject.parse(wrong) }
             .to raise_error(err, err_msg.chomp)
-=begin
+
           expect(parse_result.success?).to eq(false)
 
           ###################### S(0) == . a a c c
@@ -592,11 +596,9 @@ MSG
           ]
           compare_state_texts(parse_result.chart[2], expected)
 
-
           ###################### S(3) == a a c? c
           state_set_3 = parse_result.chart[3]
           expect(state_set_3.states).to be_empty  # This is an error symptom
-=end
         end
 
         it 'should parse a grammar with nullable nonterminals' do

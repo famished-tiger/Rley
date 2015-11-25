@@ -71,6 +71,31 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           expect(subject.states_rewriting(non_term)).to eq([state2])
         end
         
+        it 'should list of ambiguous states' do
+          prod1 = double('fake-production1')
+          prod2 = double('fake-production2')
+          expect(subject.ambiguities.size).to eq(0)
+          
+          # Adding states
+          subject.push_state(state1)
+          allow(dotted_rule1).to receive(:production).and_return(prod1)
+          allow(dotted_rule1).to receive(:"reduce_item?").and_return(true)
+          allow(dotted_rule1).to receive(:lhs).and_return(:something)     
+          expect(subject.ambiguities.size).to eq(0)
+          allow(dotted_rule2).to receive(:production).and_return(prod2)
+          allow(dotted_rule2).to receive(:"reduce_item?").and_return(true)
+          allow(dotted_rule2).to receive(:lhs).and_return(:something_else)  
+          subject.push_state(state2)
+          expect(subject.ambiguities.size).to eq(0)
+          dotted_rule3 = double('fake_dotted_rule3')
+          allow(dotted_rule3).to receive(:production).and_return(prod2)
+          allow(dotted_rule3).to receive(:"reduce_item?").and_return(true)
+          allow(dotted_rule3).to receive(:lhs).and_return(:something_else)  
+          state3 = ParseState.new(dotted_rule3, 5)
+          subject.push_state(state3) 
+          expect(subject.ambiguities[0]).to eq([state2, state3])          
+        end
+        
         it 'should complain when impossible predecessor of parse state' do
           subject.push_state(state1)
           subject.push_state(state2)

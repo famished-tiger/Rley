@@ -35,6 +35,7 @@ module Rley # This module is used as a namespace
       def states_expecting(aSymbol)
         return states.select { |s| s.dotted_rule.next_symbol == aSymbol }
       end
+     
 
       # The list of complete ParseState that have the given non-terminal 
       # symbol as the lhs of their production.
@@ -69,6 +70,25 @@ module Rley # This module is used as a namespace
         
         terminals = expecting_terminals.map { |s| s.dotted_rule.next_symbol }
         return terminals.uniq
+      end
+      
+      # Return an Array of Arrays of ambiguous parse states.
+      def ambiguities()
+        complete_states = states.select { |st|  st.complete? }
+        return [] if complete_states.size <= 1
+        
+        # Group parse state by lhs symbol and origin
+        groupings = complete_states.group_by do |st|
+          "#{st.dotted_rule.lhs.object_id}_#{st.origin}"
+        end
+        
+        # Retain the groups having more than one element.
+        ambiguous_groups = []
+        groupings.each_value do |a_group|
+          ambiguous_groups << a_group if a_group.size > 1
+        end
+        
+        return ambiguous_groups
       end
 
       private

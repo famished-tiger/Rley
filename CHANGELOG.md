@@ -1,3 +1,11 @@
+### 0.2.13 / 2015-11-25
+* [NEW] method `Parsing#ambiguous?` returns true if more than one successful parse tree can be retried from parse results.
+* [CHANGED] method `Parsing#success?`. New implementation that relies on start symbol derivation.
+* [NEW] New method `Chart#start_symbol` added. Returns the start symbol of the grammar.
+* [NEW] New method `StateSet#ambiguities` added. Returns the parse sets that are ambiguous (= distinct derivation for same input tokens).
+* [FIX] In special cases the parsing didn't work correctly when there more than one 
+    production rule for the start symbol of a grammar.
+
 ### 0.2.12 / 2015-11-20
 * [FIX] In special cases the parsing didn't work correctly when there more than one 
     production rule for the start symbol of a grammar.

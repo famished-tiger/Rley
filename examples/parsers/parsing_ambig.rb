@@ -62,14 +62,21 @@ tokens = tokenizer(valid_input, grammar_amb)
 # Step 5. Let the parser process the input
 result = parser.parse(tokens)
 puts "Parsing success? #{result.success?}"
-pp result
+puts "Ambiguous parse? #{result.ambiguous?}"
+# pp result
 
+result.chart.state_sets.each_with_index do |aStateSet, index|
+  puts "State[#{index}]"
+  puts "========"
+  aStateSet.states.each { |aState| puts aState.to_s }
+end
 
+=begin
 ########################################
 # Step 6. Generate a parse tree from the parse result
 ptree = result.parse_tree
 pp ptree
-#=begin
+
 ########################################
 # Step 7. Render the parse tree (in JSON)
 # Let's create a parse tree visitor
@@ -81,5 +88,5 @@ renderer = Rley::Formatter::Json.new(STDOUT)
 # Now emit the parse tree as JSON on the console output
 puts "JSON rendering of the parse tree for '#{valid_input}' input:"
 renderer.render(visitor)
-#=end
+=end
 # End of file

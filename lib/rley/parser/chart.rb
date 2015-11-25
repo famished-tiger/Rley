@@ -6,8 +6,9 @@ module Rley # This module is used as a namespace
     # Also called a parse table
     # A one-dimensional array with n + 1 entries (n = number of input tokens).
     class Chart
+      # An array of state sets (one per input token + 1)
       attr_reader(:state_sets)
-      
+            
       # The level of trace details reported on stdout during the parse.
       # The possible values are:
       # 0: No trace output (default case)
@@ -32,6 +33,11 @@ module Rley # This module is used as a namespace
       # at the beginning of the rhs
       def start_dotted_rule()
         return self[0].states.first.dotted_rule
+      end
+      
+      # Return the start (non-terminal) symbol of the grammar.
+      def start_symbol()
+        return state_sets.first.states[0].dotted_rule.lhs
       end
 
       # Access the state set at given position

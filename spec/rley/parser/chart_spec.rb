@@ -16,6 +16,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
   module Parser # Open this namespace to avoid module qualifier prefixes
     describe Chart do
       let(:count_token) { 20 }
+      let(:sample_start_symbol) { double('fake_non-terminal') }
       let(:dotted_rule) { double('fake-dotted-item') }
 
       let(:output) { StringIO.new('', 'w') }
@@ -28,10 +29,14 @@ module Rley # Open this namespace to avoid module qualifier prefixes
       let(:sample_tracer) { ParseTracer.new(0, output, token_seq) }
       
       # Default instantiation rule
-      subject { Chart.new([ dotted_rule ], count_token, sample_tracer) }
+      subject do 
+        allow(dotted_rule).to receive(:lhs).and_return(sample_start_symbol)
+        Chart.new([ dotted_rule ], count_token, sample_tracer) 
+      end
 
       context 'Initialization:' do
         it 'should be created with start dotted rule, token count, tracer' do
+          allow(dotted_rule).to receive(:lhs).and_return(sample_start_symbol)
           expect { Chart.new([ dotted_rule ], count_token, sample_tracer) }
             .not_to raise_error
         end
@@ -50,6 +55,10 @@ module Rley # Open this namespace to avoid module qualifier prefixes
 
         it 'should know the start dotted rule' do
           expect(subject.start_dotted_rule).to eq(dotted_rule)
+        end
+        
+        it 'should know the start symbol' do
+          expect(subject.start_symbol).to eq(sample_start_symbol)
         end
 
         it 'should have at least one non-empty state set' do
