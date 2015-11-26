@@ -8,6 +8,7 @@ Rley
 [![Gem Version](https://badge.fury.io/rb/rley.svg)](http://badge.fury.io/rb/rley)
 [![Dependency Status](https://gemnasium.com/famished-tiger/Rley.svg)](https://gemnasium.com/famished-tiger/Rley)
 [![License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat)](https://github.com/famished-tiger/Rley/blob/master/LICENSE.txt)
+[![Inline docs](http://inch-ci.org/github/famished-tiger/Rley.svg?branch=master)](http://inch-ci.org/github/famished-tiger/Rley)
 
 __Rley__ is a Ruby implementation of a parser using the [Earley](http://en.wikipedia.org/wiki/Earley_parser) algorithm.  
 The project aims to build a parser convenient for lightweight NLP (Natural Language Processing) purposes.  
