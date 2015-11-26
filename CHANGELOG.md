@@ -1,3 +1,6 @@
+### 0.2.14 / 2015-11-25
+* [FIX] Method `StateSet#ambiguities` overlooked some ambiguities in parse sets.
+
 ### 0.2.13 / 2015-11-25
 * [NEW] method `Parsing#ambiguous?` returns true if more than one successful parse tree can be retried from parse results.
 * [CHANGED] method `Parsing#success?`. New implementation that relies on start symbol derivation.

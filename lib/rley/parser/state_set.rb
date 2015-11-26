@@ -79,7 +79,7 @@ module Rley # This module is used as a namespace
         
         # Group parse state by lhs symbol and origin
         groupings = complete_states.group_by do |st|
-          "#{st.dotted_rule.lhs.object_id}_#{st.origin}"
+          "#{st.dotted_rule.lhs.object_id}"
         end
         
         # Retain the groups having more than one element.

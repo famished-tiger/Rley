@@ -568,9 +568,8 @@ MSG
           err = StandardError
           expect { subject.parse(wrong) }
             .to raise_error(err, err_msg.chomp)
-
-          expect(parse_result.success?).to eq(false)
-
+=begin
+          # This code is never reached (because of exception)
           ###################### S(0) == . a a c c
           # Expectation chart[0]:
           expected = [
@@ -599,6 +598,7 @@ MSG
           ###################### S(3) == a a c? c
           state_set_3 = parse_result.chart[3]
           expect(state_set_3.states).to be_empty  # This is an error symptom
+=end
         end
 
         it 'should parse a grammar with nullable nonterminals' do
