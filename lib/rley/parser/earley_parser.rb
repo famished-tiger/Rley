@@ -1,12 +1,14 @@
 require_relative '../syntax/grammar'
+require_relative 'grm_items_builder'  # Use mix-in module
 require_relative 'parse_tracer'
-require_relative 'dotted_item'
 require_relative 'parsing'
 
 module Rley # This module is used as a namespace
   module Parser # This module is used as a namespace
     # Implementation of a parser that uses the Earley parsing algorithm.  
     class EarleyParser
+      include GrmItemsBuilder # Mix-in module for created dotted items of given grammar
+      
       # The grammar of the language.
       attr_reader(:grammar)
 
@@ -23,7 +25,7 @@ module Rley # This module is used as a namespace
       
       def initialize(aGrammar)
         @grammar = aGrammar
-        @dotted_items = build_dotted_items(grammar)
+        @dotted_items = build_dotted_items(grammar) # Method from mixin
         @start_mapping = build_start_mapping(dotted_items)
         @next_mapping = build_next_mapping(dotted_items)
       end
@@ -31,8 +33,6 @@ module Rley # This module is used as a namespace
       # Parse a sequence of input tokens.
       # @param aTokenSequence [Array] Array of Tokens objects returned by a 
       # tokenizer/scanner/lexer.
-      # @param aGrammar [Grammar] The grammar of the language 
-      # (to use by the parser).
       # @param aTraceLevel [Fixnum] The specified trace level.
       # The possible values are:
       # 0: No trace output (default case)
@@ -68,20 +68,6 @@ module Rley # This module is used as a namespace
       end
 
       private
-
-      def build_dotted_items(aGrammar)
-        items = []
-        aGrammar.rules.each do |prod|
-          rhs_size = prod.rhs.size
-          if rhs_size == 0
-            items << DottedItem.new(prod, 0)
-          else
-            items += (0..rhs_size).map { |i| DottedItem.new(prod, i) }
-          end
-        end
-
-        return items
-      end
 
       # Create a Hash with pairs of the kind:
       # non-terminal => [start dotted items]

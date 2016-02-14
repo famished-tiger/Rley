@@ -1,3 +1,6 @@
+### 0.2.15 / 2016-02-14
+* [CHANGE] A lot of internal changes. This is the last version before a Grammar Flow Graph-based parsing implementation.
+
 ### 0.2.14 / 2015-11-25
 * [FIX] Method `StateSet#ambiguities` overlooked some ambiguities in parse sets.
 

@@ -7,8 +7,8 @@ Rley
 [![Coverage Status](https://img.shields.io/coveralls/famished-tiger/Rley.svg)](https://coveralls.io/r/famished-tiger/Rley?branch=master)
 [![Gem Version](https://badge.fury.io/rb/rley.svg)](http://badge.fury.io/rb/rley)
 [![Dependency Status](https://gemnasium.com/famished-tiger/Rley.svg)](https://gemnasium.com/famished-tiger/Rley)
-[![License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat)](https://github.com/famished-tiger/Rley/blob/master/LICENSE.txt)
 [![Inline docs](http://inch-ci.org/github/famished-tiger/Rley.svg?branch=master)](http://inch-ci.org/github/famished-tiger/Rley)
+[![License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat)](https://github.com/famished-tiger/Rley/blob/master/LICENSE.txt)
 
 __Rley__ is a Ruby implementation of a parser using the [Earley](http://en.wikipedia.org/wiki/Earley_parser) algorithm.  
 The project aims to build a parser convenient for lightweight NLP (Natural Language Processing) purposes.  
@@ -30,13 +30,10 @@ The Earley's algorithm being more general is able to parse input that conforms t
 
 This project is in "earley" stage.  
 ####Roadmap:
+- Rewrite the parser using the GFG (Grammar Flow Graph) approach
+- Replace parse trees by shared packed parse forests
 - Document the parser API
 - Add more validation tests and sample grammars
-- Add AST generation (and semantic actions?)
-- Add DSL for grammar specification
-- Add grammar validations
-- Add error reporting
-
 - Add a command-line interface
 - Provide documentation and examples
 
@@ -60,5 +57,5 @@ Here are a few other ones:
 
 Copyright
 ---------
-Copyright (c) 2014-2015, Dimitri Geshef. 
+Copyright (c) 2014-2016, Dimitri Geshef. 
 __Rley__ is released under the MIT License see [LICENSE.txt](https://github.com/famished-tiger/Rley/blob/master/LICENSE.txt) for details.

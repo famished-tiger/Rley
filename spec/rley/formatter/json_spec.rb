@@ -1,7 +1,6 @@
 require_relative '../../spec_helper'
 require 'stringio'
 
-# require_relative '../../../lib/rley/dynamic_grammar'
 require_relative '../support/grammar_abc_helper'
 require_relative '../../../lib/rley/parser/token'
 require_relative '../../../lib/rley/parser/earley_parser'

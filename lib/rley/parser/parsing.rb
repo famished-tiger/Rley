@@ -11,7 +11,7 @@ module Rley # This module is used as a namespace
       # The sequence of input token to parse
       attr_reader(:tokens)
 
-      # @param aTraceLevel [Fixnum] The specified trace level.
+      # @param aTracer [ParseTracer] An object that traces the parsing.
       # The possible values are:
       # 0: No trace output (default case)
       # 1: Show trace of scanning and completion rules
