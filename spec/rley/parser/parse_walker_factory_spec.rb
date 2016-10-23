@@ -63,8 +63,10 @@ module Rley # Open this namespace to avoid module qualifier prefixes
         parser = Parser::GFGEarleyParser.new(sample_grammar)
         parser.parse(sample_tokens)
       end
-
-      let(:subject) { ParseWalkerFactory.new }
+      
+      let(:accept_entry) { sample_result.accepting_entry }
+      let(:accept_index) { sample_result.chart.last_index }
+      subject { ParseWalkerFactory.new }
 
 
       context 'Initialization:' do
@@ -75,18 +77,18 @@ module Rley # Open this namespace to avoid module qualifier prefixes
 
       context 'Parse graph traversal:' do
         it 'should create an Enumerator as a walker' do
-          expect(subject.build_walker(sample_result)).to be_kind_of(Enumerator)
+          expect(subject.build_walker(accept_entry, accept_index)).to be_kind_of(Enumerator)
         end
 
         it 'should return the accepting parse entry in the first place' do
-          walker = subject.build_walker(sample_result)
+          walker = subject.build_walker(accept_entry, accept_index)
           first_event = walker.next
           expectations = [:visit, sample_result.accepting_entry, 4]
           event_expectations(first_event, expectations)
         end
 
         it 'should traverse the parse graph backwards' do
-          walker = subject.build_walker(sample_result)
+          walker = subject.build_walker(accept_entry, accept_index)
           event1 = walker.next
           expectations = [:visit, 'Phi. | 0', 4]
           event_expectations(event1, expectations)
@@ -222,7 +224,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
         end
         
         it 'should raise an exception at end of visit' do
-          walker = subject.build_walker(sample_result)
+          walker = subject.build_walker(accept_entry, accept_index)
           32.times { walker.next }
           
           expect{ walker.next }.to raise_error(StopIteration)

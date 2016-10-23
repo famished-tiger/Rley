@@ -13,7 +13,7 @@ module Rley # This module is used as a namespace
       def initialize(aParsingResult)
         @parsing = aParsingResult
       end
-
+        
       # Factory that produces the parse forest
       def build_parse_forest()
         a_walker = walker(parsing)
@@ -39,13 +39,15 @@ private
       # of a GFGParsing
       def walker(aParseResult)
         walker_factory = ParseWalkerFactory.new
-        walker = walker_factory.build_walker(aParseResult)
+        accept_entry = aParseResult.accepting_entry
+        accept_index = aParseResult.chart.last_index        
+        walker = walker_factory.build_walker(accept_entry, accept_index)
       end
 
       # Create a Builder, that is, an object
       # that will create piece by piece the forest
       def builder(aParseResult)
-        ParseForestBuilder.new(aParseResult)
+        ParseForestBuilder.new(aParseResult.tokens)
       end
     end # class
   end # module

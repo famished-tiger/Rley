@@ -1,3 +1,8 @@
+### 0.3.01 / 2016-10-23
+* [CHANGED] Method `ParseWalkerFactory#build_walker`. Signature change in order prevent direct dependency on `GFGParsing` class.
+* [CHANGED] Class `ParseForestBuilder`. Removal of `parsing` attribute, no direct dependency on `GFGParsing` class.
+* [CHANGED] Internal changed to `ParseForestFactory` class. 
+
 ### 0.3.00 / 2016-10-23
 * [CHANGE] Many new classes. The gem bundles a second parser that copes with ambiguous grammars. 
 

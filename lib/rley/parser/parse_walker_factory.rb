@@ -35,10 +35,9 @@ module Rley # This module is used as a namespace
     class ParseWalkerFactory
       # Build an Enumerator that will yield the parse entries as it
       # walks backwards on the parse graph
-      def build_walker(aParseResult)
+      def build_walker(acceptingEntry, maxIndex)
         # Local context for the enumerator
-        parsing = aParseResult
-        ctx = init_context(aParseResult)
+        ctx = init_context(acceptingEntry, maxIndex)
 
         walker = Enumerator.new do |receiver| # 'receiver' is a Yielder
           # At this point: current entry == accepting entry
@@ -56,7 +55,7 @@ module Rley # This module is used as a namespace
               end
             end
 
-            result = jump_to_antecedent(ctx, parsing)
+            result = jump_to_antecedent(ctx)
             # Emit detection of scan edge if any...            
             receiver << result[0] if result.size > 1
             ctx.curr_entry = result.last
@@ -68,10 +67,10 @@ module Rley # This module is used as a namespace
 
 private
       # Context factory method
-      def init_context(aParseResult)
+      def init_context(acceptingEntry, maxIndex)
         context = ParseWalkerContext.new
-        context.entry_set_index = aParseResult.chart.last_index
-        context.curr_entry = aParseResult.accepting_entry
+        context.entry_set_index = maxIndex
+        context.curr_entry = acceptingEntry
         context.visitees = Set.new
         context.nterm2start = {}
         context.return_stack = []
@@ -125,12 +124,12 @@ private
       # Given the current entry from context object
       # Go to the parse entry that is one of its antecedent
       # The context object is updated
-      def jump_to_antecedent(aContext, aParseResult)
+      def jump_to_antecedent(aContext)
         entries = []
         return entries if aContext.curr_entry.orphan?
         
         if aContext.curr_entry.antecedents.size == 1
-          entries = antecedent_of(aContext, aParseResult)
+          entries = antecedent_of(aContext)
         else
           entries = select_antecedent(aContext)
         end
@@ -139,7 +138,7 @@ private
       end
 
       # Handle the case of an entry having one antecedent only
-      def antecedent_of(aContext, aParseResult)
+      def antecedent_of(aContext)
         new_entry = aContext.curr_entry.antecedents.first
         events = [new_entry]
         traversed_edge = new_entry.vertex.edges.first

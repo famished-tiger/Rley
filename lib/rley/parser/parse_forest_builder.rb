@@ -9,8 +9,8 @@ module Rley # This module is used as a namespace
     # (say, a parse forest) from simpler objects (terminal and non-terminal
     # nodes) and using a step by step approach.
     class ParseForestBuilder
-      # Link to parse result
-      attr_reader(:parsing)
+      # The sequence of input tokens  
+      attr_reader(:tokens)
 
       # Link to forest object
       attr_reader(:forest)
@@ -25,8 +25,8 @@ module Rley # This module is used as a namespace
       # This is needed for synchronizing backtracking
       attr_reader(:entry2path_to_alt)
 
-      def initialize(aParsingResult)
-        @parsing = aParsingResult
+      def initialize(theTokens)
+        @tokens = theTokens
         @curr_path = []
         @entry2node = {}
         @entry2path_to_alt = {}
@@ -66,7 +66,7 @@ private
           if curr_path.empty?
             # Build parse forest with root node derived from the
             # accepting parse entry.
-            @forest = create_forest(anEntry)
+            @forest = create_forest(anEntry, anIndex)
           else
             # if current_parent node matches the lhs non-terminal of anEntry
             # set its origin to the origin of its first child (if not yet assigned)
@@ -155,8 +155,8 @@ private
       end
       
       # Create an empty parse forest
-      def create_forest(anEntry)
-        full_range = { low: 0, high: parsing.chart.last_index }
+      def create_forest(anEntry, anIndex)
+        full_range = { low: 0, high: anIndex }
         root_node = create_non_terminal_node(anEntry, full_range)
         return Rley::SPPF::ParseForest.new(root_node)      
       end
@@ -183,7 +183,7 @@ private
 
       def create_token_node(anEntry, anIndex)
         token_position = anIndex - 1
-        curr_token = parsing.tokens[token_position]
+        curr_token = tokens[token_position]
         new_node = SPPF::TokenNode.new(curr_token, token_position)
         candidate = add_node_to_forest(new_node)
         entry2node[anEntry] = candidate        

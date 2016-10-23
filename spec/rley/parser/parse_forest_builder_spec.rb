@@ -45,12 +45,12 @@ module Rley # Open this namespace to avoid module qualifier prefixes
 
       let(:walker) do
         factory = ParseWalkerFactory.new
-        factory.build_walker(sample_result)
+        accept_entry = sample_result.accepting_entry
+        accept_index = sample_result.chart.last_index
+        factory.build_walker(accept_entry, accept_index)
       end
 
-      subject do
-        ParseForestBuilder.new(sample_result)
-      end
+      subject { ParseForestBuilder.new(sample_tokens) }
 
       # Emit a text representation of the current path.
       def path_to_s()
@@ -60,12 +60,12 @@ module Rley # Open this namespace to avoid module qualifier prefixes
 
 
       context 'Initialization:' do
-        it 'should be created with a GFGParsing' do
-          expect { ParseForestBuilder.new(sample_result) }.not_to raise_error
+        it 'should be created with a sequence of tokens' do
+          expect { ParseForestBuilder.new(sample_tokens) }.not_to raise_error
         end
 
-        it 'should know the parse result' do
-          expect(subject.parsing).to eq(sample_result)
+        it 'should know the input tokens' do
+          expect(subject.tokens).to eq(sample_tokens)
         end
 
         it 'should have an empty path' do

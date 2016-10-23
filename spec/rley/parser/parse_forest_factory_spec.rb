@@ -62,19 +62,20 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           expect(subject.parsing).to eq(sample_result)
         end
       end
-=begin      
+      
       context 'Parse forest construction' do
         it 'should build a parse forest' do
           forest = subject.build_parse_forest
-          
+          expect(forest).to be_kind_of(SPPF::ParseForest)
+=begin          
           require 'yaml' 
           require_relative '../sppf/forest_representation'           
           File.open("forest.yml", "w") { |f| YAML.dump(forest, f) }
           pen = ForestRepresentation.new
-          pen.generate_graph(forest, File.open("forest.dot", "w"))          
+          pen.generate_graph(forest, File.open("forest.dot", "w")) 
+=end          
         end        
-      end # context
-=end      
+      end # context      
     end # describe
   end # module
 end # module
