@@ -2,7 +2,10 @@ require_relative 'start_vertex'
 require_relative 'end_vertex'
 require_relative 'item_vertex'
 require_relative 'epsilon_edge'
+require_relative 'call_edge'
+require_relative 'return_edge'
 require_relative 'scan_edge'
+require_relative 'shortcut_edge'
 
 module Rley # This module is used as a namespace
   module GFG # This module is used as a namespace
@@ -27,11 +30,18 @@ module Rley # This module is used as a namespace
 
         build_graph(theDottedItems)
       end
+      
+      # Return the vertex with given vertex label.
+      def find_vertex(aVertexLabel)
+        vertices.find { |a_vertex| a_vertex.label == aVertexLabel }
+      end
 
 private
       def add_vertex(aVertex)
+        fail StandardError, 'GFG vertex cannot be nil' if aVertex.nil?
+
         # TODO: make setting of start vertex more robust
-        start_vertex = aVertex if vertices.empty?
+        @start_vertex = aVertex if vertices.empty?
         vertices << aVertex
       end
 
@@ -54,7 +64,9 @@ private
           end
         end
       end
-      
+
+      # For each non-terminal from the grammar, say N
+      # Add the .N and N. vertices to the graph
       def build_all_starts_ends(theDottedItems)
         productions_raw = theDottedItems.map(&:production)
         productions = productions_raw.uniq
@@ -98,9 +110,12 @@ private
       #     Rule 5
       #     add a call edge: N => α[1] .A  α[n] -> .A
       #     add a return edge: A. -> N => α[1] A.  α[n]
+      #     add a shortcut edge: ( N => α[1] .A  α[n] ) -> ( N => α[1] A.  α[n] )
       def augment_graph(theDottedItems, firstItemPos)
         production = theDottedItems[firstItemPos].production
         max_index = production.rhs.size + 1
+        prev_vertex = nil
+        
         (0...max_index).each do |index|
           current_item = theDottedItems[firstItemPos+index]
           new_vertex = ItemVertex.new(current_item)
@@ -119,6 +134,12 @@ private
               build_call_return_edges(vertices[-2], new_vertex)
             end
           end
+          
+          prev_symbol = current_item.prev_symbol
+          if prev_symbol && prev_symbol.kind_of?(Syntax::NonTerminal)
+            build_shortcut_edge(prev_vertex, new_vertex)
+          end
+          prev_vertex = new_vertex
         end
       end
 
@@ -147,18 +168,22 @@ private
         ScanEdge.new(fromVertex, toVertex, fromVertex.dotted_item.next_symbol)
       end
 
-      def build_call_return_edges(call_vertex, return_vertex)
-        nt_symbol = call_vertex.dotted_item.next_symbol
+      def build_call_return_edges(calling_vertex, return_vertex)
+        nt_symbol = calling_vertex.dotted_item.next_symbol
 
         # Retrieve corresponding start vertex
         start_vertex = start_vertex_for[nt_symbol]
-        # Create an edge call vertex -> start vertex
-        EpsilonEdge.new(call_vertex, start_vertex)
+        # Create an edge 'calling' vertex -> start vertex
+        CallEdge.new(calling_vertex, start_vertex)
 
         # Retrieve corresponding end vertex
         end_vertex = end_vertex_for[nt_symbol]
         # Create an edge end vertex -> return vertex
-        EpsilonEdge.new(end_vertex, return_vertex)
+        ReturnEdge.new(end_vertex, return_vertex)
+      end
+      
+      def build_shortcut_edge(fromVertex, toVertex)
+        ShortcutEdge.new(fromVertex, toVertex)
       end
     end # class
   end # module

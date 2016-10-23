@@ -11,6 +11,10 @@ module Rley # This module is used as a namespace
         @successor = theSuccessor
         thePredecessor.add_edge(self)
       end
+      
+      def to_s()
+        " --> #{successor.label}"
+      end      
 
     end # class
   end # module

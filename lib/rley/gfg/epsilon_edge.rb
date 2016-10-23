@@ -13,10 +13,6 @@ module Rley # This module is used as a namespace
       def initialize(thePredecessor, theSuccessor)
         super(thePredecessor, theSuccessor)
       end
-      
-      def to_s()
-        " --> #{successor.label}"
-      end
 
     end # class
   end # module

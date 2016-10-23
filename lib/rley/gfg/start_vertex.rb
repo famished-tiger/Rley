@@ -12,10 +12,10 @@ module Rley # This module is used as a namespace
       def initialize(aNonTerminal)
         super(aNonTerminal)
       end
-      
+
       def label()
         return ".#{non_terminal}"
-      end
+      end       
 
     end # class
   end # module

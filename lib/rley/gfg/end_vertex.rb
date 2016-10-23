@@ -15,7 +15,7 @@ module Rley # This module is used as a namespace
       
       def label()
         return "#{non_terminal}."
-      end
+      end      
 
     end # class
   end # module

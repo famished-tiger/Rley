@@ -1,5 +1,4 @@
 require_relative '../../spec_helper'
-require 'pp'
 
 require_relative '../support/grammar_abc_helper'
 require_relative '../../../lib/rley/parser/grm_items_builder'
@@ -51,6 +50,10 @@ module Rley # Open this namespace to avoid module qualifier prefixes
       context 'Initialization:' do
         it 'should be created with an array of dotted items' do
           expect { GrmFlowGraph.new(items_from_grammar) }.not_to raise_error
+        end
+
+        it 'should know its main start vertex' do
+          expect(subject.start_vertex).to eq(subject.vertices.first)
         end
 
         it 'should have the correct number of vertices' do
@@ -128,8 +131,27 @@ module Rley # Open this namespace to avoid module qualifier prefixes
               'A => a . --> A.',
               'A => . --> A.'
             ]
-            
+
             compare_graph_expectations(graph, expected)
+        end
+
+        it 'should have shortcut edges' do
+          subject.vertices.each do |a_vertex|
+            next unless a_vertex.kind_of?(ItemVertex)
+            if a_vertex.next_symbol.kind_of?(Syntax::NonTerminal)
+              expect(a_vertex.shortcut).not_to be_nil            
+              my_d_item = a_vertex.dotted_item
+              
+              # Retrieve dotted item of shortcut successor
+              other_d_item = a_vertex.shortcut.successor.dotted_item
+              
+              # Now the checks...
+              expect(my_d_item.production).to eq(other_d_item.production)
+              expect(my_d_item.position).to eq(other_d_item.prev_position)
+            else
+              expect(a_vertex.shortcut).to be_nil
+            end
+          end
         end
       end # context
     end # describe

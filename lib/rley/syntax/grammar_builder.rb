@@ -67,21 +67,25 @@ module Rley # This module is used as a namespace
       end
 
       # Given the grammar symbols and productions added to the builder,
-      # build the resulting grammar.
+      # build the resulting grammar (if not yet done).
       def grammar()
-        fail StandardError, 'No symbol found for grammar' if symbols.empty?
-        if productions.empty?
-          fail StandardError, 'No production found for grammar'
+        unless @grammar
+          fail StandardError, 'No symbol found for grammar' if symbols.empty?
+          if productions.empty?
+            fail StandardError, 'No production found for grammar'
+          end
+          
+          # Check that each non-terminal appears at least once in lhs.
+          all_non_terminals = symbols.values.select { |s| s.is_a?(NonTerminal) }
+          all_non_terminals.each do |n_term|
+            next if productions.any? { |prod| n_term == prod.lhs }
+            fail StandardError, "Nonterminal #{n_term.name} not rewritten"
+          end
+
+          @grammar = Grammar.new(productions.dup)
         end
         
-        # Check that each non-terminal appears at least once in lhs.
-        all_non_terminals = symbols.values.select { |s| s.is_a?(NonTerminal) }
-        all_non_terminals.each do |n_term|
-          next if productions.any? { |prod| n_term == prod.lhs }
-          fail StandardError, "Nonterminal #{n_term.name} not rewritten"
-        end
-
-        return Grammar.new(productions.dup)
+        return @grammar
       end
 
       private

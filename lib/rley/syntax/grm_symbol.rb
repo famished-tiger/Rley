@@ -12,6 +12,12 @@ module Rley # This module is used as a namespace
         @name = aName.dup
       end
       
+      # Return true iff the symbol is a terminal
+      def terminal?()
+        # Default implementation to override if necessary
+        return false
+      end
+      
       # The String representation of the grammar symbol
       # @return [String]
       def to_s()

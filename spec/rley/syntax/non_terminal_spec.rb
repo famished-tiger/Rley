@@ -17,6 +17,10 @@ module Rley # Open this namespace to avoid module qualifier prefixes
         it 'should know its name' do
           expect(subject.name).to eq(sample_name)
         end
+        
+        it 'should know that is a not a terminal' do
+          expect(subject).not_to be_terminal
+        end
       end # context
 
         

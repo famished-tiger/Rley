@@ -101,6 +101,11 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           expect(subject.grammar).to be_kind_of(Grammar)
           grm = subject.grammar
           expect(grm.rules).to eq(subject.productions)
+          
+          # Invoking the factory method again should return 
+          # the same grammar object
+          second_time = subject.grammar
+          expect(second_time).to eq(grm)
         end
 
         it 'should complain in absence of symbols' do

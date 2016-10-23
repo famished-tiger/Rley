@@ -1,3 +1,7 @@
+### 0.3.00 / 2016-10-23
+* [CHANGE] Many new classes. The gem bundles a second parser that copes with ambiguous grammars. 
+
+
 ### 0.2.15 / 2016-02-14
 * [CHANGE] A lot of internal changes. This is the last version before a Grammar Flow Graph-based parsing implementation.
 

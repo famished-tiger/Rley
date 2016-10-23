@@ -2,7 +2,8 @@ require_relative 'edge'
 
 module Rley # This module is used as a namespace
   module GFG # This module is used as a namespace
-    # Abstract class. Represents an edge in a grammar flow graph
+    # Specialization of an edge in a grammar flow graph
+    # that is taken as a consequence of a scan rule.
     # Responsibilities:
     # - To know the successor vertex
     class ScanEdge < Edge

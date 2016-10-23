@@ -12,6 +12,11 @@ module Rley # This module is used as a namespace
         super(aName)
       end
       
+      # Return true iff the symbol is a terminal
+      def terminal?()
+        return true
+      end
+      
       # @return [false] Return true if the symbol derives
       # the empty string. As terminal symbol corresponds to a input token
       # it is by definition non-nullable.

@@ -1,20 +1,9 @@
-require_relative '../syntax/grammar'
-require_relative 'grm_items_builder'  # Use mix-in module
-require_relative 'parse_tracer'
-require_relative 'parsing'
+require_relative 'base_parser'
 
 module Rley # This module is used as a namespace
   module Parser # This module is used as a namespace
     # Implementation of a parser that uses the Earley parsing algorithm.  
-    class EarleyParser
-      include GrmItemsBuilder # Mix-in module for created dotted items of given grammar
-      
-      # The grammar of the language.
-      attr_reader(:grammar)
-
-      # The dotted items/rules for the productions of the grammar
-      attr_reader(:dotted_items)
-
+    class EarleyParser < BaseParser
       # A Hash that defines the mapping: non-terminal => [start dotted items]
       attr_reader(:start_mapping)
 
@@ -24,8 +13,7 @@ module Rley # This module is used as a namespace
       attr_reader(:next_mapping)
       
       def initialize(aGrammar)
-        @grammar = aGrammar
-        @dotted_items = build_dotted_items(grammar) # Method from mixin
+        super(aGrammar)
         @start_mapping = build_start_mapping(dotted_items)
         @next_mapping = build_next_mapping(dotted_items)
       end

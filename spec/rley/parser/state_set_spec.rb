@@ -17,6 +17,10 @@ module Rley # Open this namespace to avoid module qualifier prefixes
         it 'should be created without argument' do
           expect { StateSet.new }.not_to raise_error
         end
+        
+        it 'should be empty at creation' do
+          expect(subject.states).to be_empty
+        end
       end # context
 
       context 'Provided services:' do

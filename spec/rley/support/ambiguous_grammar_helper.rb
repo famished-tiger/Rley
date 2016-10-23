@@ -15,7 +15,7 @@ module AmbiguousGrammarHelper
     builder.add_production('E' => 'id')
     builder
   end
-  
+
   # Basic tokenizing method
   def tokenize(aText, aGrammar)
     tokens = aText.scan(/\S+/).map do |lexeme|
@@ -30,7 +30,7 @@ module AmbiguousGrammarHelper
       end
       Rley::Parser::Token.new(lexeme, terminal)
     end
-    
+
     return tokens
   end
 end # module

@@ -91,35 +91,56 @@ module Rley # Open this namespace to avoid module qualifier prefixes
 
         it 'should know the symbol before the dot' do
           expect(subject.prev_symbol).to eq(t_a)
-          
+
           # Case of an empty production
           instance = DottedItem.new(empty_prod, 0)
           expect(instance.prev_symbol).to be_nil
-          
+
           # Case of a dot at start position
           instance = DottedItem.new(sample_prod, 0)
-          expect(instance.prev_symbol).to be_nil          
+          expect(instance.prev_symbol).to be_nil
         end
 
         it 'should know the symbol after the dot' do
           expect(subject.next_symbol).to eq(t_b)
         end
-        
+
         it 'should calculate the previous position of the dot' do
           expect(subject.prev_position).to eq(0)
-          
+
           # Case of an empty production
           instance = DottedItem.new(empty_prod, 0)
           expect(instance.prev_position).to be_nil
-          
+
           # Case of a dot at start position
           instance = DottedItem.new(sample_prod, 0)
-          expect(instance.prev_position).to be_nil 
+          expect(instance.prev_position).to be_nil
 
           # Case of single symbol production
           instance = DottedItem.new(other_prod, 1)
-          expect(instance.prev_position).to eq(0)           
+          expect(instance.prev_position).to eq(0)
         end
+
+        it 'should determine if it is a successor of another dotted item' do
+          expect(subject).not_to be_successor_of(subject)
+          
+          # Case: different productions
+          instance = DottedItem.new(empty_prod, 0)
+          expect(subject).not_to be_successor_of(subject)
+
+          # Case: one position difference
+          instance = DottedItem.new(sample_prod, 0)
+          expect(subject).to be_successor_of(instance)
+          expect(instance).not_to be_successor_of(subject)
+
+          # Case: more than one position difference
+          instance2 = DottedItem.new(sample_prod, 2)
+          expect(instance).not_to be_successor_of(instance2)
+          expect(subject).not_to be_successor_of(instance2)
+          expect(instance2).to be_successor_of(subject)           
+        end
+
+
 
         it 'should give its text representation' do
           expectation = 'sentence => A . B C'

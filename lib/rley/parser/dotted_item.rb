@@ -100,7 +100,18 @@ module Rley # This module is used as a namespace
 
       # An item with the dot in front of a terminal is called a shift item
       def shift_item?()
+        return position == 0
       end
+      
+      # Return true if this dotted item has a dot one place
+      # to the right compared to the dotted item argument.
+      def successor_of?(another)
+        return false if production != another.production
+        to_the_left = prev_position
+        return false if to_the_left.nil?
+        return to_the_left == another.position
+      end
+      
 
       private
 
