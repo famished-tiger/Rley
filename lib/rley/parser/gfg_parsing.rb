@@ -1,6 +1,6 @@
 require_relative 'gfg_chart'
 require_relative 'parse_entry_tracker'
-require_relative 'parse_forest_builder'
+require_relative 'parse_forest_factory'
 
 
 module Rley # This module is used as a namespace
@@ -128,33 +128,14 @@ module Rley # This module is used as a namespace
       end
 
 
-=begin
+
       # Factory method. Builds a ParseForest from the parse result.
-      # @return [ParseForest]
-      # Algorithm:
-      # set state_set_index = index of last entry set in chart
-      # Search the completed parse state that corresponds to the full parse
+      # @return [ParseForest]      
       def parse_forest()
-        state_tracker = new_state_tracker
-        builder = forest_builder(state_tracker.state_set_index)
+        factory = ParseForestFactory.new(self)
 
-        loop do
-          state_tracker.symbol_on_left
-          # match_symbol = state_tracker.symbol_on_left
-          # puts '--------------------'
-          # puts "Active parse state: #{state_tracker.parse_state}"
-          # puts "Matching symbol: #{match_symbol}"
-          # puts 'Parse tree:'
-          # puts builder.root.to_string(0)
-
-          # Place the symbol on left of the dot in the parse tree
-          done = insert_matched_symbol(state_tracker, builder)
-          break if done
-        end
-
-        return builder.parse_forest
+        return factory.build_parse_forest
       end
-=end
 
       # Retrieve the very first parse entry added to the chart.
       # This entry corresponds to the start vertex of the GF graph
@@ -171,108 +152,7 @@ module Rley # This module is used as a namespace
         return chart.accepting_entry
       end
 
-=begin
 
-
-
-      # This method is called when a parse entry for chart entry at position
-      # 'pos' expects a terminal as next symbol.
-      # If the input token matches the terminal symbol then:
-      # Retrieve all parse entrys for chart entry at 'aPosition'
-      # that have the given terminal as next symbol.
-      # For each s of the above entrys, push to chart entry aPosition + 1
-      # a new entry like: <next dotted rule, s.origin, aPosition + 1>
-      # In other words, we place the dotted rules in the next entry set
-      # such that the dot appears after terminal.
-      # @param aTerminal [Terminal] a terminal symbol that
-      #   immediately follows a dot
-      # @param aPosition [Fixnum] position in the input token sequence.
-      # @param nextMapping [Proc or Lambda] code to evaluate in order to
-      #   determine the "next" dotted rule for a given one.
-      def scanning(aTerminal, aPosition, &nextMapping)
-        curr_token = tokens[aPosition]
-        return unless curr_token.terminal == aTerminal
-
-        entrys = entrys_expecting(aTerminal, aPosition, false)
-        entrys.each do |s|
-          next_item = nextMapping.call(s.dotted_rule)
-          push_entry(next_item, s.origin, aPosition + 1, :scanning)
-        end
-      end
-
-
-
-      # This method is called when a parse entry at chart entry reaches the end
-      # of a production.
-      # For every entry in chart[aPosition] that is complete
-      #  (i.e. of the form: { dotted_rule: X -> γ •, origin: j}),
-      # Find entrys s in chart[j] of the form
-      #  {dotted_rule: Y -> α • X β, origin: i}
-      #  In other words, rules that predicted the non-terminal X.
-      # For each s, add to chart[aPosition] a entry of the form
-      #  { dotted_rule: Y → α X • β, origin: i})
-      def completion(aState, aPosition, &nextMapping)
-        curr_origin = aState.origin
-        curr_lhs = aState.dotted_rule.lhs
-        entrys = entrys_expecting(curr_lhs, curr_origin, false)
-        entrys.each do |s|
-          next_item = nextMapping.call(s.dotted_rule)
-          push_entry(next_item, s.origin, aPosition, :completion)
-        end
-      end
-
-
-      # The list of ParseState from the chart entry at given position
-      # that expect the given terminal
-      def entrys_expecting(aTerminal, aPosition, toSort)
-        expecting = chart[aPosition].entrys_expecting(aTerminal)
-        return expecting if !toSort || expecting.size < 2
-
-        # Put predicted entrys ahead
-        (predicted, others) = expecting.partition(&:predicted?)
-
-        # Sort entry in reverse order of their origin value
-        [predicted, others].each do |set|
-          set.sort! { |a, b| b.origin <=> a.origin }
-        end
-
-        return predicted + others
-      end
-
-
-
-
-      # Insert in a parse tree the symbol on the left of the
-      # current dotted rule.
-      def insert_matched_symbol(aStateTracker, aBuilder)
-        # Retrieve symbol before the dot in active parse entry
-        match_symbol = aStateTracker.symbol_on_left
-
-        # Retrieve tree node being processed
-        tree_node = aBuilder.current_node
-
-        done = false
-        case [match_symbol.class, tree_node.class]
-          when [Syntax::Terminal, PTree::TerminalNode]
-            aStateTracker.to_prev_entry_set
-            predecessor_entry_terminal(match_symbol, aStateTracker, aBuilder)
-
-          when [NilClass, Rley::PTree::TerminalNode],
-            [NilClass, PTree::NonTerminalNode]
-            # Retrieve all parse entrys that expect the lhs
-            new_entrys = entrys_expecting_lhs(aStateTracker, aBuilder)
-            done = true if new_entrys.empty?
-            # Select an unused parse entry
-            aStateTracker.select_entry(new_entrys)
-
-          when [Syntax::NonTerminal, PTree::NonTerminalNode]
-            completed_entry_for(match_symbol, aStateTracker, aBuilder)
-        end
-
-        done ||= aBuilder.root == aBuilder.current_node
-        return done
-      end
-=end
       private
 
       # Raise an exception to indicate a syntax error.
@@ -322,61 +202,7 @@ module Rley # This module is used as a namespace
 
         return instance
       end
-=begin
 
-      # A terminal symbol is on the left of dot.
-      # Go to the predecessor entry for the given terminal
-      def predecessor_entry_terminal(_a_symb, aStateTracker, aTreeBuilder)
-        index = aStateTracker.entry_set_index
-        aTreeBuilder.current_node.range = { low: index, high: index + 1 }
-        link_node_to_token(aTreeBuilder, aStateTracker.entry_set_index)
-        unless aTreeBuilder.current_node.is_a?(PTree::TerminalNode)
-          fail StandardError, 'Expected terminal node'
-        end
-        aTreeBuilder.move_back
-        entry_set = chart[aStateTracker.entry_set_index]
-        previous_entry = entry_set.predecessor_entry(aStateTracker.parse_entry)
-        aStateTracker.parse_entry = previous_entry
-      end
-
-
-      # Retrieve a complete entry with given terminal symbol as lhs.
-      def completed_entry_for(a_symb, aTracker, aTreeBuilder)
-        new_entrys = chart[aTracker.entry_set_index].entrys_rewriting(a_symb)
-        aTracker.select_entry(new_entrys)
-        aTreeBuilder.range = { high: aTracker.entry_set_index }
-        aTreeBuilder.use_complete_entry(aTracker.parse_entry)
-        link_node_to_token(aTreeBuilder, aTracker.entry_set_index - 1)
-        aTreeBuilder.move_down
-      end
-
-
-      def entrys_expecting_lhs(aStateTracker, aTreeBuilder)
-        lhs = aStateTracker.curr_dotted_item.production.lhs
-        new_entrys = entrys_expecting(lhs, aStateTracker.entry_set_index, true)
-        new_entrys.reject! { |st| st == aStateTracker.parse_entry }
-        # Filter out parse entrys with incompatible range
-        if new_entrys.size > 1
-          previous_node = aTreeBuilder.current_path[-3]
-          new_entrys.select! do |parse_entry|
-            parse_entry.dotted_rule.production.lhs == previous_node.symbol
-          end
-        end
-
-        return new_entrys
-      end
-
-      # If the current node is a terminal node
-      # then link the token to that node
-      def link_node_to_token(aTreeBuilder, aStateSetIndex)
-        return unless aTreeBuilder.current_node.is_a?(PTree::TerminalNode)
-        return unless aTreeBuilder.current_node.token.nil?
-
-        a_node = aTreeBuilder.current_node
-        a_node.token = tokens[aStateSetIndex] unless a_node.token
-      end
-
-=end
     end # class
   end # module
 end # module

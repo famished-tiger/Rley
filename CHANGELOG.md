@@ -1,3 +1,9 @@
+### 0.3.02 / 2016-11-01
+* [FIX] Method `ParseWalkerFactory#visit_entry` didn't generate events for entries with start vertex. This caused issue in parse forest generation.
+* [NEW] File `parse_forest_builder_spec.rb`: added more parse forest building tests.
+* [CHANGED] Method `ParseWalkerFactory#antecedent_of`. Code refactoring.
+* [CHANGED] Method `ParseForestBuilder#receive_event`. Code refactoring.
+
 ### 0.3.01 / 2016-10-23
 * [CHANGED] Method `ParseWalkerFactory#build_walker`. Signature change in order prevent direct dependency on `GFGParsing` class.
 * [CHANGED] Class `ParseForestBuilder`. Removal of `parsing` attribute, no direct dependency on `GFGParsing` class.

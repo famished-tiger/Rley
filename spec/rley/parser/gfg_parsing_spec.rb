@@ -317,12 +317,9 @@ SNIPPET
           parser.parse(tokens)
         end
 
-        # Helper. Build a state tracker and a parse tree builder.
-        def prepare_parse_forest(aParsing)
-          # Accessing private methods by sending message
-          entry_tracker = aParsing.send(:new_entry_tracker)
-          builder = aParsing.send(:forest_builder, entry_tracker.entry_set_index)
-          return [entry_tracker, builder]
+        it 'should build a parse forest' do
+          expect{subject.parse_forest }.not_to raise_error
+          
         end
 =begin
         it 'should create the root of a parse forest' do

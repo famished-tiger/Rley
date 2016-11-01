@@ -63,7 +63,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
         parser = Parser::GFGEarleyParser.new(sample_grammar)
         parser.parse(sample_tokens)
       end
-      
+
       let(:accept_entry) { sample_result.accepting_entry }
       let(:accept_index) { sample_result.chart.last_index }
       subject { ParseWalkerFactory.new }
@@ -100,7 +100,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           event3 = walker.next
           expectations = [:visit, 'S. | 0', 4]
           event_expectations(event3, expectations)
-          
+
           # Backtrack created: first alternative selected
           event4 = walker.next
           expectations = [:visit, 'S => a T . | 0', 4]
@@ -112,16 +112,16 @@ module Rley # Open this namespace to avoid module qualifier prefixes
 
           event6 = walker.next
           expectations = [:visit, 'T => b b b . | 1', 4]
-          event_expectations(event6, expectations)        
-          
+          event_expectations(event6, expectations)
+
           event7 = walker.next
           expectations = [:visit, 'T => b b . b | 1', 3]
-          event_expectations(event7, expectations)      
+          event_expectations(event7, expectations)
 
           event8 = walker.next
           expectations = [:visit, 'T => b . b b | 1', 2]
-          event_expectations(event8, expectations)       
-          
+          event_expectations(event8, expectations)
+
           event9 = walker.next
           expectations = [:visit, 'T => . b b b | 1', 1]
           event_expectations(event9, expectations)
@@ -144,7 +144,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
 
           event14 = walker.next
           expectations = [:visit, 'Phi => . S | 0', 0]
-          event_expectations(event14, expectations) 
+          event_expectations(event14, expectations)
 
           event15 = walker.next
           expectations = [:visit, '.Phi | 0', 0]
@@ -153,80 +153,100 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           # Backtracking is occurring
           event16 = walker.next
           expectations = [:backtrack, 'S. | 0', 4]
-          event_expectations(event16, expectations)          
-          
-          event18 = walker.next
+          event_expectations(event16, expectations)
+
+          event17 = walker.next
           expectations = [:visit, 'S => A T . | 0', 4]
+          event_expectations(event17, expectations)
+
+          event18 = walker.next
+          expectations = [:revisit, 'T. | 1', 4]
           event_expectations(event18, expectations)
 
+          # Multiple visit occurred: jump to antecedent of start entry
           event19 = walker.next
-          expectations = [:revisit, 'T. | 1', 4]
+          expectations = [:visit, 'S => A . T | 0', 1]
           event_expectations(event19, expectations)
 
-          # Multiple visit occurred: jump to antecedent of start entry
           event20 = walker.next
-          expectations = [:visit, 'S => A . T | 0', 1]
+          expectations = [:visit, 'A. | 0', 1]
           event_expectations(event20, expectations)
 
-          event21 = walker.next
-          expectations = [:visit, 'A. | 0', 1]
-          event_expectations(event21, expectations)
-          
           # Backtrack created: first alternative selected
-          event22 = walker.next
+          event21 = walker.next
           expectations = [:visit, 'A => a . | 0', 1]
-          event_expectations(event22, expectations)                     
-          
-          event23 = walker.next
+          event_expectations(event21, expectations)
+
+          event22 = walker.next
           expectations = [:visit, 'A => . a | 0', 0]
+          event_expectations(event22, expectations)
+
+          event23 = walker.next
+          expectations = [:visit, '.A | 0', 0]
           event_expectations(event23, expectations)
 
           event24 = walker.next
-          expectations = [:visit, '.A | 0', 0]
+          expectations = [:visit, 'S => . A T | 0', 0]
           event_expectations(event24, expectations)
 
           event25 = walker.next
-          expectations = [:visit, 'S => . A T | 0', 0]
+          expectations = [:revisit, '.S | 0', 0]
           event_expectations(event25, expectations)
 
-          # Backtracking is occurring
           event26 = walker.next
-          expectations = [:backtrack, 'A. | 0', 1]
-          event_expectations(event26, expectations)          
-          
+          expectations = [:revisit, '.Phi | 0', 0]
+          event_expectations(event26, expectations)
+
+          # Backtracking is occurring
           event27 = walker.next
-          expectations = [:visit, 'A => B A . | 0', 1]
+          expectations = [:backtrack, 'A. | 0', 1]
           event_expectations(event27, expectations)
-          
+
           event28 = walker.next
-          expectations = [:revisit, 'A. | 0', 1]
+          expectations = [:visit, 'A => B A . | 0', 1]
           event_expectations(event28, expectations)
 
           event29 = walker.next
-          expectations = [:visit, 'A => B . A | 0', 0]
-          event_expectations(event29, expectations)           
+          expectations = [:revisit, 'A. | 0', 1]
+          event_expectations(event29, expectations)
 
           event30 = walker.next
-          expectations = [:visit, 'B. | 0', 0]
+          expectations = [:visit, 'A => B . A | 0', 0]
           event_expectations(event30, expectations)
 
           event31 = walker.next
-          expectations = [:visit, 'B => . | 0', 0]
+          expectations = [:visit, 'B. | 0', 0]
           event_expectations(event31, expectations)
 
           event32 = walker.next
-          expectations = [:visit, '.B | 0', 0]
-          event_expectations(event32, expectations)  
+          expectations = [:visit, 'B => . | 0', 0]
+          event_expectations(event32, expectations)
 
           event33 = walker.next
+          expectations = [:visit, '.B | 0', 0]
+          event_expectations(event33, expectations)
+
+          event34 = walker.next
           expectations = [:visit, 'A => . B A | 0', 0]
-          event_expectations(event33, expectations)        
+          event_expectations(event34, expectations)
+          
+          event35 = walker.next
+          expectations = [:revisit, '.A | 0', 0]
+          event_expectations(event35, expectations)
+
+          event36 = walker.next
+          expectations = [:revisit, '.S | 0', 0]
+          event_expectations(event36, expectations)
+
+          event37 = walker.next
+          expectations = [:revisit, '.Phi | 0', 0]
+          event_expectations(event37, expectations)          
         end
-        
+
         it 'should raise an exception at end of visit' do
           walker = subject.build_walker(accept_entry, accept_index)
-          32.times { walker.next }
-          
+          37.times { walker.next }
+
           expect{ walker.next }.to raise_error(StopIteration)
         end
 

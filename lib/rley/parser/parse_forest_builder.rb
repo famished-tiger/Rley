@@ -1,3 +1,8 @@
+require_relative '../syntax/terminal'
+require_relative '../syntax/non_terminal'
+require_relative '../gfg/end_vertex'
+require_relative '../gfg/item_vertex'
+require_relative '../gfg/start_vertex'
 require_relative '../sppf/epsilon_node'
 require_relative '../sppf/non_terminal_node'
 require_relative '../sppf/alternative_node'
@@ -9,7 +14,7 @@ module Rley # This module is used as a namespace
     # (say, a parse forest) from simpler objects (terminal and non-terminal
     # nodes) and using a step by step approach.
     class ParseForestBuilder
-      # The sequence of input tokens  
+      # The sequence of input tokens
       attr_reader(:tokens)
 
       # Link to forest object
@@ -17,6 +22,9 @@ module Rley # This module is used as a namespace
 
       # Link to current path
       attr_reader(:curr_path)
+
+      # The last parse entry visited
+      attr_reader(:last_visitee)
 
       # A hash with pairs of the form: visited parse entry => forest node
       attr_reader(:entry2node)
@@ -34,18 +42,17 @@ module Rley # This module is used as a namespace
 
       def receive_event(anEvent, anEntry, anIndex)
         # puts "Event: #{anEvent} #{anEntry} #{anIndex}"
-        case anEntry.vertex
-          when GFG::StartVertex
-            process_start_entry(anEvent, anEntry, anIndex)
-
-          when GFG::ItemVertex
-            process_item_entry(anEvent, anEntry, anIndex)
-
-          when GFG::EndVertex
-            process_end_entry(anEvent, anEntry, anIndex)
-          else
-            fail NotImplementedError
+        if anEntry.dotted_entry?
+          process_item_entry(anEvent, anEntry, anIndex)
+        elsif anEntry.start_entry?
+          process_start_entry(anEvent, anEntry, anIndex)
+        elsif anEntry.end_entry?
+          process_end_entry(anEvent, anEntry, anIndex)
+        else
+          fail NotImplementedError
         end
+
+        @last_visitee = anEntry
       end
 
       # Return the current_parent node
@@ -56,32 +63,20 @@ module Rley # This module is used as a namespace
 private
 
       def process_start_entry(anEvent, anEntry, anIndex)
-        self.curr_path.pop while curr_parent.kind_of?(SPPF::AlternativeNode)
         self.curr_path.pop
       end
 
       def process_end_entry(anEvent, anEntry, anIndex)
         case anEvent
         when :visit
-          if curr_path.empty?
-            # Build parse forest with root node derived from the
-            # accepting parse entry.
-            @forest = create_forest(anEntry, anIndex)
-          else
-            # if current_parent node matches the lhs non-terminal of anEntry
-            # set its origin to the origin of its first child (if not yet assigned)
-            curr_parent.range.assign(low: anEntry.origin)
-            @entry2node[anEntry] = self.curr_parent
-            if anEntry.antecedents.size > 1
-              # Store current path for later backtracking
-              # puts "Store backtrack context #{anEntry}"
-              # puts "path [#{curr_path.join(', ')}]"
-              self.entry2path_to_alt[anEntry] = curr_path.dup
-              curr_parent.refinement = :or
-
-              create_alternative_node(anEntry.antecedents.first)
-            end
-          end
+          # create a node with the non-terminal
+          #   with same right extent as curr_entry_set_index
+          # add the new node as first child of current_parent
+          # append the new node to the curr_path
+          range = { low: anEntry.origin, high: anIndex }
+          non_terminal = anEntry.vertex.non_terminal
+          create_non_terminal_node(anEntry, range, non_terminal)
+          @forest = create_forest(curr_parent) unless @last_visitee
 
         when :backtrack
           # Restore path
@@ -90,15 +85,9 @@ private
           antecedent_index = curr_parent.subnodes.size
           # puts "Current parent #{curr_parent.to_string(0)}"
           # puts "Antecedent index #{antecedent_index}"
-          create_alternative_node(anEntry.antecedents[antecedent_index])
+
 
         when :revisit
-          # Remove most recent entry in path
-          @curr_path.pop
-
-          # Remove also its reference in parent
-          curr_parent.subnodes.pop
-
           # Retrieve the already existing node corresponding to re-visited entry
           popular = @entry2node[anEntry]
 
@@ -110,55 +99,45 @@ private
         end
       end
 
-=begin
-  if it is a dotted item entry (pattern is: X => α . β):
-    if there is at least one symbol before the dot
-      if that symbol is a non-terminal:
 
-      if that symbol is a terminal # else
-        create a token node,
-          with same origin as token,
-          with same right extent = origin + 1
-        add the new node as first child of current_parent
-        set curr_entry_set_index to curr_entry_set_index - 1
-    if it is a dotted item entry with a beginning dot: # else
-      if current_parent node matches the lhs non-terminal of anEntry
-        set its origin to the origin of its first child (if not yet assigned)
-      remove this node from the path
-=end
       def process_item_entry(anEvent, anEntry, anIndex)
+        if anEntry.exit_entry?
+          # Previous entry was an end entry (X. pattern)
+          # Does the previous entry have multiple antecedent?
+          if last_visitee.end_entry? && last_visitee.antecedents.size > 1
+            # Store current path for later backtracking
+            # puts "Store backtrack context #{last_visitee}"
+            # puts "path [#{curr_path.join(', ')}]"
+            self.entry2path_to_alt[last_visitee] = curr_path.dup
+            curr_parent.refinement = :or
+
+            create_alternative_node(anEntry)
+          end
+        end
+
         # Retrieve the grammar symbol before the dot (if any)
         prev_symbol = anEntry.prev_symbol
         case prev_symbol
           when Syntax::Terminal
-            # create a token node,
-            #   with same origin as token,
-            #   with same right extent = origin + 1
-            # add the new node as first child of current_parent
+            # Add node without changing current path
             create_token_node(anEntry, anIndex)
 
-
           when Syntax::NonTerminal
-            # create a node with the non-terminal before the dot,
-            #   with same right extent as curr_entry_set_index
-            # add the new node as first child of current_parent
-            # append the new node to the curr_path
-            range = { high: anIndex }
-            create_non_terminal_node(anEntry, range, prev_symbol)
+            # Do nothing
 
           when NilClass # Dot at the beginning of production
             if anEntry.vertex.dotted_item.production.empty?
-              # Empty rhs => create an epsilon node
+              # Empty rhs => create an epsilon node ...
+              # ... without changing current path
               create_epsilon_node(anEntry, anIndex)
             end
+            self.curr_path.pop if curr_parent.kind_of?(SPPF::AlternativeNode)
         end
       end
-      
+
       # Create an empty parse forest
-      def create_forest(anEntry, anIndex)
-        full_range = { low: 0, high: anIndex }
-        root_node = create_non_terminal_node(anEntry, full_range)
-        return Rley::SPPF::ParseForest.new(root_node)      
+      def create_forest(aRootNode)
+        return Rley::SPPF::ParseForest.new(aRootNode)
       end
 
 
@@ -167,6 +146,7 @@ private
         non_terminal = nonTSymb.nil? ? anEntry.vertex.non_terminal : nonTSymb
         new_node = Rley::SPPF::NonTerminalNode.new(non_terminal, aRange)
         entry2node[anEntry] = new_node
+        # puts "FOREST ADD #{curr_parent.key if curr_parent}/#{new_node.key}"
         add_subnode(new_node)
 
         return new_node
@@ -177,29 +157,34 @@ private
       def create_alternative_node(anEntry)
         alternative = Rley::SPPF::AlternativeNode.new(anEntry.vertex, curr_parent.range)
         add_subnode(alternative)
+        # puts "FOREST ADD #{alternative.key}"
 
         return alternative
       end
 
+      # create a token node,
+      #   with same origin as token,
+      #   with same right extent = origin + 1
+      # add the new node as first child of current_parent
       def create_token_node(anEntry, anIndex)
         token_position = anIndex - 1
         curr_token = tokens[token_position]
         new_node = SPPF::TokenNode.new(curr_token, token_position)
         candidate = add_node_to_forest(new_node)
-        entry2node[anEntry] = candidate        
+        entry2node[anEntry] = candidate
 
-        return candidate        
+        return candidate
       end
 
 
       def create_epsilon_node(anEntry, anIndex)
         new_node = SPPF::EpsilonNode.new(anIndex)
         candidate = add_node_to_forest(new_node)
-        entry2node[anEntry] = candidate        
+        entry2node[anEntry] = candidate
 
         return candidate
       end
-      
+
       # Add the given node if not yet present in parse forest
       def add_node_to_forest(aNode)
         key_node = aNode.key
@@ -210,7 +195,7 @@ private
           forest.key2node[key_node] = new_node
           # puts "FOREST ADD #{key_node}"
         end
-        add_subnode(new_node, false)  
+        add_subnode(new_node, false)
 
         return new_node
       end

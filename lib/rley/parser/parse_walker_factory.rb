@@ -1,4 +1,10 @@
 require 'set'
+require_relative '../gfg/call_edge'
+require_relative '../gfg/scan_edge'
+require_relative '../gfg/epsilon_edge'
+require_relative '../gfg/end_vertex'
+require_relative '../gfg/item_vertex'
+require_relative '../gfg/start_vertex'
 
 module Rley # This module is used as a namespace
   module Parser # This module is used as a namespace
@@ -87,8 +93,7 @@ private
           aContext.nterm2start[anEntry.vertex.non_terminal] = anEntry
         end
 
-        if aContext.visitees.include?(anEntry)
-          # multiple time visit
+        if aContext.visitees.include?(anEntry) # Already visited?...
           case anEntry.vertex
             when GFG::EndVertex
               # Jump to related start entry...
@@ -98,8 +103,7 @@ private
               event = [:revisit, anEntry, index]
 
             when GFG::StartVertex
-              # Skip start entries while revisiting
-              event = nil
+              event = [:revisit, anEntry, index]
 
             when GFG::ItemVertex
               # Skip item entries while revisiting
@@ -142,18 +146,23 @@ private
         new_entry = aContext.curr_entry.antecedents.first
         events = [new_entry]
         traversed_edge = new_entry.vertex.edges.first
-        case new_entry.vertex
-          when GFG::EndVertex
-            # Return edge encountered
-            # Push current entry onto stack
-            # puts "Push on return stack #{aContext.curr_entry}"
-            aContext.return_stack << aContext.curr_entry
-          else
-            if traversed_edge.is_a?(GFG::ScanEdge)
-              # Scan edge encountered, decrease sigma set index
-              aContext.entry_set_index -= 1
-            end
-          end
+        if new_entry.vertex.kind_of?(GFG::EndVertex)
+          # Return edge encountered
+          # Push current entry onto stack
+          # puts "Push on return stack #{aContext.curr_entry}"
+          aContext.return_stack << aContext.curr_entry
+        elsif traversed_edge.kind_of?(GFG::CallEdge)
+          # Pop top of stack
+          tos = aContext.return_stack.pop
+          # puts "Pop from return stack matching entry #{new_entry}"
+        elsif traversed_edge.kind_of?(GFG::ScanEdge)  
+          # Scan edge encountered, decrease sigma set index
+          aContext.entry_set_index -= 1
+        elsif traversed_edge.kind_of?(GFG::EpsilonEdge)
+          # Do nothing
+        else
+          fail NotImplementedError, "edge is a #{traversed_edge.class}"        
+        end
 
         return events
       end
@@ -169,7 +178,6 @@ private
             new_entry = bp.visitee.antecedents[bp.antecedent_index]
 
           when GFG::StartVertex
-            # An start vertex with multiple requires a backtrack point
             new_entry = select_calling_entry(aContext)
           else
             fail StandardError, "Internal error"
@@ -204,6 +212,7 @@ private
         if bp.antecedent_index == bp.visitee.antecedents.size - 1
           aContext.backtrack_points.pop
         end
+        # puts "Backtracking to #{bp.visitee}"
         
         # Emit a backtrack event
         return [:backtrack, bp.visitee, aContext.entry_set_index]
