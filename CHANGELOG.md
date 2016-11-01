@@ -1,3 +1,6 @@
+### 0.3.04 / 2016-11-01
+* [FIX] File `state_set_spec.rb` : Failing mock tests. Reverted `expect` to `allow` expectations.
+
 ### 0.3.03 / 2016-11-01
 * [FIX] File `parse_forest_factory_spec.rb`: Commented out reference to local files.
 * [FIX] Files `*_spec.rb` : Replaced most `allow` expectations by `expect`
