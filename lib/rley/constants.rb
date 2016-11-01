@@ -3,7 +3,7 @@
 
 module Rley # Module used as a namespace
   # The version number of the gem.
-  Version = '0.3.02'
+  Version = '0.3.03'
 
   # Brief description of the gem.
   Description = "Ruby implementation of the Earley's parsing algorithm"

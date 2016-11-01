@@ -15,7 +15,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
         end
 
         it 'should know its label' do
-          allow(sample_nt).to receive(:to_s).and_return('NT')
+          expect(sample_nt).to receive(:to_s).and_return('NT')
           expect(subject.label).to eq('NT.')
         end
         

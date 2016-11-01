@@ -15,23 +15,23 @@ module Rley # Open this namespace to avoid module qualifier prefixes
 
       context 'Initialization:' do
         it 'should be created with two vertice arguments & a non-terminal' do
-          allow(vertex1).to receive(:shortcut=)
-          allow(vertex1).to receive(:next_symbol).and_return(nt_b_sequence)
+          expect(vertex1).to receive(:shortcut=)
+          expect(vertex1).to receive(:next_symbol).and_return(nt_b_sequence)
 
           expect { ShortcutEdge.new(vertex1, vertex2) }
             .not_to raise_error
         end
 
         it 'should know the successor vertex' do
-          allow(vertex1).to receive(:shortcut=)
-          allow(vertex1).to receive(:next_symbol).and_return(nt_b_sequence)
+          expect(vertex1).to receive(:shortcut=)
+          expect(vertex1).to receive(:next_symbol).and_return(nt_b_sequence)
           
           expect(subject.successor).to eq(vertex2)
         end
 
         it 'should know the related terminal' do
-          allow(vertex1).to receive(:shortcut=)
-          allow(vertex1).to receive(:next_symbol).and_return(nt_b_sequence)
+          expect(vertex1).to receive(:shortcut=)
+          expect(vertex1).to receive(:next_symbol).and_return(nt_b_sequence)
 
           expect(subject.nonterminal).to eq(nt_b_sequence)
         end

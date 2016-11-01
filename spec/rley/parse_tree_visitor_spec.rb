@@ -206,7 +206,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           [:after_ptree, [grm_abc_ptree1]]
         ]
         expectations.each do |(msg, args)|
-          allow(listener1).to receive(msg).with(*args).ordered
+          expect(listener1).to receive(msg).with(*args).ordered
         end
         
         # Here we go...

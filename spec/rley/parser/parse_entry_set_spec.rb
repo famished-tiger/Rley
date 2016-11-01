@@ -99,19 +99,19 @@ module Rley # Open this namespace to avoid module qualifier prefixes
 
           # Adding states
           subject.push_entry(entry1)
-          allow(vertex1).to receive(:production).and_return(prod1)
-          allow(vertex1).to receive(:"reduce_item?").and_return(true)
-          allow(vertex1).to receive(:lhs).and_return(:something)
+          expect(vertex1).to receive(:production).and_return(prod1)
+          expect(vertex1).to receive(:"reduce_item?").and_return(true)
+          expect(vertex1).to receive(:lhs).and_return(:something)
           expect(subject.ambiguities.size).to eq(0)
-          allow(vertex2).to receive(:production).and_return(prod2)
-          allow(vertex2).to receive(:"reduce_item?").and_return(true)
-          allow(vertex2).to receive(:lhs).and_return(:something_else)
+          expect(vertex2).to receive(:production).and_return(prod2)
+          expect(vertex2).to receive(:"reduce_item?").and_return(true)
+          expect(vertex2).to receive(:lhs).and_return(:something_else)
           subject.push_entry(entry2)
           expect(subject.ambiguities.size).to eq(0)
           # dotted_rule3 = double('fake_dotted_rule3')
-          # allow(dotted_rule3).to receive(:production).and_return(prod2)
-          # allow(dotted_rule3).to receive(:"reduce_item?").and_return(true)
-          # allow(dotted_rule3).to receive(:lhs).and_return(:something_else)
+          # expect(dotted_rule3).to receive(:production).and_return(prod2)
+          # expect(dotted_rule3).to receive(:"reduce_item?").and_return(true)
+          # expect(dotted_rule3).to receive(:lhs).and_return(:something_else)
           # entry3 = ParseEntry.new(dotted_rule3, 5)
           subject.push_entry(entry3)
           expect(subject.ambiguities[0]).to eq([entry2, entry3])
@@ -125,8 +125,8 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           # Adding states
           subject.push_entry(entry1)
           subject.push_entry(entry2)
-          allow(vertex1).to receive(:next_symbol).and_return(:b)
-          allow(vertex2).to receive(:next_symbol).and_return(:a)
+          expect(vertex1).to receive(:next_symbol).and_return(:b)
+          expect(vertex2).to receive(:next_symbol).and_return(:a)
           expect(subject.states_expecting(:a)).to eq([entry2])
           expect(subject.states_expecting(:b)).to eq([entry1])
         end
@@ -140,8 +140,8 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           # Adding states
           subject.push_entry(entry1)
           subject.push_entry(entry2)
-          allow(vertex1).to receive(:production).and_return(:dummy)
-          allow(vertex2).to receive(:production).and_return(a_prod)
+          expect(vertex1).to receive(:production).and_return(:dummy)
+          expect(vertex2).to receive(:production).and_return(a_prod)
           expect(subject.states_for(a_prod)).to eq([entry2])
         end
 
@@ -153,11 +153,11 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           # Adding states
           subject.push_entry(entry1)
           subject.push_entry(entry2)
-          allow(vertex1).to receive(:production).and_return(prod1)
-          allow(prod1).to receive(:lhs).and_return(:dummy)
-          allow(vertex2).to receive(:production).and_return(prod2)
-          allow(vertex2).to receive(:reduce_item?).and_return(true)
-          allow(prod2).to receive(:lhs).and_return(non_term)
+          expect(vertex1).to receive(:production).and_return(prod1)
+          expect(prod1).to receive(:lhs).and_return(:dummy)
+          expect(vertex2).to receive(:production).and_return(prod2)
+          expect(vertex2).to receive(:reduce_item?).and_return(true)
+          expect(prod2).to receive(:lhs).and_return(non_term)
           expect(subject.states_rewriting(non_term)).to eq([entry2])
         end
 
@@ -166,7 +166,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
         it 'should complain when impossible predecessor of parse state' do
           subject.push_entry(entry1)
           subject.push_entry(entry2)
-          allow(vertex1).to receive(:prev_position).and_return(nil)
+          expect(vertex1).to receive(:prev_position).and_return(nil)
           err = StandardError
           expect { subject.predecessor_state(entry1) }.to raise_error(err)
         end

@@ -1,13 +1,18 @@
+### 0.3.03 / 2016-11-01
+* [FIX] File `parse_forest_factory_spec.rb`: Commented out reference to local files.
+* [FIX] Files `*_spec.rb` : Replaced most `allow` expectations by `expect`
+* [CHANGE] Updated development dependency upon RSpec version 3.5
+
 ### 0.3.02 / 2016-11-01
 * [FIX] Method `ParseWalkerFactory#visit_entry` didn't generate events for entries with start vertex. This caused issue in parse forest generation.
 * [NEW] File `parse_forest_builder_spec.rb`: added more parse forest building tests.
-* [CHANGED] Method `ParseWalkerFactory#antecedent_of`. Code refactoring.
-* [CHANGED] Method `ParseForestBuilder#receive_event`. Code refactoring.
+* [CHANGE] Method `ParseWalkerFactory#antecedent_of`. Code refactoring.
+* [CHANGE] Method `ParseForestBuilder#receive_event`. Code refactoring.
 
 ### 0.3.01 / 2016-10-23
-* [CHANGED] Method `ParseWalkerFactory#build_walker`. Signature change in order prevent direct dependency on `GFGParsing` class.
-* [CHANGED] Class `ParseForestBuilder`. Removal of `parsing` attribute, no direct dependency on `GFGParsing` class.
-* [CHANGED] Internal changed to `ParseForestFactory` class. 
+* [CHANGE] Method `ParseWalkerFactory#build_walker`. Signature change in order prevent direct dependency on `GFGParsing` class.
+* [CHANGE] Class `ParseForestBuilder`. Removal of `parsing` attribute, no direct dependency on `GFGParsing` class.
+* [CHANGE] Internal changed to `ParseForestFactory` class. 
 
 ### 0.3.00 / 2016-10-23
 * [CHANGE] Many new classes. The gem bundles a second parser that copes with ambiguous grammars. 

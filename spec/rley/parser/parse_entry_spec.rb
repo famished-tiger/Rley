@@ -110,13 +110,13 @@ module Rley # Open this namespace to avoid module qualifier prefixes
 
           # Case: item vertex not at end of rhs
           v1 = double('vertex-not-at-end')
-          allow(v1).to receive(:complete?).and_return(false)
+          expect(v1).to receive(:complete?).and_return(false)
           instance3 = ParseEntry.new(v1, 3)
           expect(instance3).not_to be_exit_entry
 
           # Case: item vertex at end of rhs
           v2 = double('vertex-at-end')
-          allow(v2).to receive(:complete?).and_return(true)
+          expect(v2).to receive(:complete?).and_return(true)
           instance4 = ParseEntry.new(v2, 3)
           expect(instance4).to be_exit_entry
         end
@@ -154,13 +154,13 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           
           # Case: item vertex not at start of rhs
           v1 = double('vertex-not-at-start')
-          allow(v1).to receive(:prev_symbol).and_return('symbol')
+          expect(v1).to receive(:prev_symbol).and_return('symbol')
           instance3 = ParseEntry.new(v1, 3)
           expect(instance3.prev_symbol).to eq('symbol') 
 
           # Case: item vertex at start of rhs
           v2 = double('vertex-at-start')
-          allow(v2).to receive(:prev_symbol).and_return(nil)
+          expect(v2).to receive(:prev_symbol).and_return(nil)
           instance4 = ParseEntry.new(v2, 0)
           expect(instance4.prev_symbol).to be_nil          
         end
@@ -176,13 +176,13 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           
           # Case: item vertex not at end of rhs
           v1 = double('vertex-not-at-end')
-          allow(v1).to receive(:next_symbol).and_return('symbol')
+          expect(v1).to receive(:next_symbol).and_return('symbol')
           instance3 = ParseEntry.new(v1, 3)
           expect(instance3.next_symbol).to eq('symbol') 
 
           # Case: item vertex at end of rhs
           v2 = double('vertex-at-end')
-          allow(v2).to receive(:next_symbol).and_return(nil)
+          expect(v2).to receive(:next_symbol).and_return(nil)
           instance4 = ParseEntry.new(v2, 3)
           expect(instance4.next_symbol).to be_nil          
         end  

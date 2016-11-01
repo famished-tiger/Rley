@@ -48,11 +48,11 @@ EOSTRING
 
   pkg.extra_rdoc_files = ['README.md']
 
-  pkg.add_development_dependency('rake', ['>= 10.0.0'])
-  pkg.add_development_dependency('rspec', ['>= 3.0.0'])
-  pkg.add_development_dependency('simplecov', ['>= 0.8.0'])
-  pkg.add_development_dependency('coveralls', ['>= 0.7.0'])
-  pkg.add_development_dependency('rubygems', ['>= 2.0.0'])
+  pkg.add_development_dependency 'rake', '~> 10.0', '>= 10.0.0'
+  pkg.add_development_dependency 'rspec', '~> 3.5', '>= 3.5.0'
+  pkg.add_development_dependency 'simplecov', '~> 0.8', '>= 0.8.0'
+  pkg.add_development_dependency 'coveralls', '~> 0.7', '>= 0.7.0'
+  pkg.add_development_dependency 'rubygems', '~> 2.0', '>= 2.0.0'
 
   pkg.license = 'MIT'
   pkg.required_ruby_version = '>= 1.9.3'
