@@ -1,4 +1,4 @@
-require_relative 'parse_tree_node'  # Load superclass
+require_relative 'parse_tree_node' # Load superclass
 
 module Rley # This module is used as a namespace
   module PTree # This module is used as a namespace

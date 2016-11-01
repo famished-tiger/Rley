@@ -11,7 +11,6 @@ require_relative '../../../lib/rley/parser/parse_entry'
 module Rley # Open this namespace to avoid module qualifier prefixes
   module Parser # Open this namespace to avoid module qualifier prefixes
     describe ParseEntry do
-
       let(:t_a) { Syntax::Terminal.new('A') }
       let(:t_b) { Syntax::Terminal.new('B') }
       let(:t_c) { Syntax::Terminal.new('C') }
@@ -24,7 +23,6 @@ module Rley # Open this namespace to avoid module qualifier prefixes
       let(:empty_prod) do
         Syntax::Production.new(nt_sentence, [])
       end
-
 
       let(:dotted_rule) { DottedItem.new(sample_prod, 2) }
       let(:origin_val) { 3 }

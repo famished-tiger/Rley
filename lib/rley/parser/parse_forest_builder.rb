@@ -29,7 +29,8 @@ module Rley # This module is used as a namespace
       # A hash with pairs of the form: visited parse entry => forest node
       attr_reader(:entry2node)
 
-      # A hash with pairs of the form: parent end entry => path to alternative node
+      # A hash with pairs of the form: 
+      # parent end entry => path to alternative node
       # This is needed for synchronizing backtracking
       attr_reader(:entry2path_to_alt)
 
@@ -49,7 +50,7 @@ module Rley # This module is used as a namespace
         elsif anEntry.end_entry?
           process_end_entry(anEvent, anEntry, anIndex)
         else
-          fail NotImplementedError
+          raise NotImplementedError
         end
 
         @last_visitee = anEntry
@@ -57,50 +58,51 @@ module Rley # This module is used as a namespace
 
       # Return the current_parent node
       def curr_parent()
-        return self.curr_path.last
+        return curr_path.last
       end
 
-private
+      private
 
-      def process_start_entry(anEvent, anEntry, anIndex)
-        self.curr_path.pop
+      def process_start_entry(_anEvent, _anEntry, _anIndex)
+        curr_path.pop
       end
 
       def process_end_entry(anEvent, anEntry, anIndex)
         case anEvent
-        when :visit
-          # create a node with the non-terminal
-          #   with same right extent as curr_entry_set_index
-          # add the new node as first child of current_parent
-          # append the new node to the curr_path
-          range = { low: anEntry.origin, high: anIndex }
-          non_terminal = anEntry.vertex.non_terminal
-          create_non_terminal_node(anEntry, range, non_terminal)
-          @forest = create_forest(curr_parent) unless @last_visitee
+          when :visit
+            # create a node with the non-terminal
+            #   with same right extent as curr_entry_set_index
+            # add the new node as first child of current_parent
+            # append the new node to the curr_path
+            range = { low: anEntry.origin, high: anIndex }
+            non_terminal = anEntry.vertex.non_terminal
+            create_non_terminal_node(anEntry, range, non_terminal)
+            @forest = create_forest(curr_parent) unless @last_visitee
 
-        when :backtrack
-          # Restore path
-          @curr_path = self.entry2path_to_alt[anEntry].dup
-          # puts "Restore path #{curr_path.join(', ')}]"
-          antecedent_index = curr_parent.subnodes.size
-          # puts "Current parent #{curr_parent.to_string(0)}"
-          # puts "Antecedent index #{antecedent_index}"
+          when :backtrack
+            # Restore path
+            @curr_path = entry2path_to_alt[anEntry].dup
+            # puts "Restore path #{curr_path.join(', ')}]"
+            antecedent_index = curr_parent.subnodes.size
+            # puts "Current parent #{curr_parent.to_string(0)}"
+            # puts "Antecedent index #{antecedent_index}"
 
 
-        when :revisit
-          # Retrieve the already existing node corresponding to re-visited entry
-          popular = @entry2node[anEntry]
+          when :revisit
+            # Retrieve the already existing node corresponding 
+            # to re-visited entry
+            popular = @entry2node[anEntry]
 
-          # Share with parent
-          curr_parent.add_subnode(popular)
+            # Share with parent
+            curr_parent.add_subnode(popular)
 
-        else
-          fail NotImplementedError
+          else
+            raise NotImplementedError
         end
       end
 
 
-      def process_item_entry(anEvent, anEntry, anIndex)
+      def process_item_entry(_anEvent, anEntry, anIndex)
         if anEntry.exit_entry?
           # Previous entry was an end entry (X. pattern)
           # Does the previous entry have multiple antecedent?
@@ -108,7 +110,7 @@ private
             # Store current path for later backtracking
             # puts "Store backtrack context #{last_visitee}"
             # puts "path [#{curr_path.join(', ')}]"
-            self.entry2path_to_alt[last_visitee] = curr_path.dup
+            entry2path_to_alt[last_visitee] = curr_path.dup
             curr_parent.refinement = :or
 
             create_alternative_node(anEntry)
@@ -122,16 +124,13 @@ private
             # Add node without changing current path
             create_token_node(anEntry, anIndex)
 
-          when Syntax::NonTerminal
-            # Do nothing
-
           when NilClass # Dot at the beginning of production
             if anEntry.vertex.dotted_item.production.empty?
               # Empty rhs => create an epsilon node ...
               # ... without changing current path
               create_epsilon_node(anEntry, anIndex)
             end
-            self.curr_path.pop if curr_parent.kind_of?(SPPF::AlternativeNode)
+            curr_path.pop if curr_parent.kind_of?(SPPF::AlternativeNode)
         end
       end
 
@@ -155,7 +154,9 @@ private
 
       # Add an alternative node to the forest
       def create_alternative_node(anEntry)
-        alternative = Rley::SPPF::AlternativeNode.new(anEntry.vertex, curr_parent.range)
+        vertex = anEntry.vertex
+        range = curr_parent.range
+        alternative = Rley::SPPF::AlternativeNode.new(vertex, range)
         add_subnode(alternative)
         # puts "FOREST ADD #{alternative.key}"
 
@@ -205,7 +206,7 @@ private
       # Optionally add the node to the current path
       def add_subnode(aNode, addToPath = true)
         curr_parent.add_subnode(aNode) unless curr_path.empty?
-        self.curr_path << aNode if addToPath
+        curr_path << aNode if addToPath
       end
     end # class
   end # module

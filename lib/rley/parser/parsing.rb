@@ -32,7 +32,7 @@ module Rley # This module is used as a namespace
 
         # Retrieve all the complete states with start symbol in lhs 
         end_states = last_chart_entry.states_rewriting(start_symbol)
-        success_states = end_states.select { |st| st.origin == 0 }
+        success_states = end_states.select { |st| st.origin.zero? }
         
         return !success_states.empty?
       end
@@ -41,7 +41,7 @@ module Rley # This module is used as a namespace
       # for the same lhs and same origin in any state set.
       def ambiguous?()
         found = chart.state_sets.find { |set| !set.ambiguities.empty? }
-        return ! found.nil?
+        return !found.nil?
       end
 
       # Factory method. Builds a ParseTree from the parse result.
@@ -74,7 +74,7 @@ module Rley # This module is used as a namespace
       # Push a parse state (dotted item + origin) to the
       # chart entry with given index if it isn't yet in the chart entry.
       def push_state(aDottedItem, anOrigin, aChartIndex, aReason)
-        fail StandardError, 'Dotted item may not be nil' if aDottedItem.nil?
+        raise StandardError, 'Dotted item may not be nil' if aDottedItem.nil?
         chart.push_state(aDottedItem, anOrigin, aChartIndex, aReason)
       end
 
@@ -93,13 +93,13 @@ module Rley # This module is used as a namespace
       # @param aPosition [Fixnum] position in the input token sequence.
       # @param nextMapping [Proc or Lambda] code to evaluate in order to
       #   determine the "next" dotted rule for a given one.
-      def scanning(aTerminal, aPosition, &nextMapping)
+      def scanning(aTerminal, aPosition, &_nextMapping)
         curr_token = tokens[aPosition]
         return unless curr_token.terminal == aTerminal
 
         states = states_expecting(aTerminal, aPosition, false)
         states.each do |s|
-          next_item = nextMapping.call(s.dotted_rule)
+          next_item = yield s.dotted_rule
           push_state(next_item, s.origin, aPosition + 1, :scanning)
         end
       end
@@ -115,12 +115,12 @@ module Rley # This module is used as a namespace
       #  In other words, rules that predicted the non-terminal X.
       # For each s, add to chart[aPosition] a state of the form
       #  { dotted_rule: Y → α X • β, origin: i})
-      def completion(aState, aPosition, &nextMapping)
+      def completion(aState, aPosition, &_nextMapping)
         curr_origin = aState.origin
         curr_lhs = aState.dotted_rule.lhs
         states = states_expecting(curr_lhs, curr_origin, false)
         states.each do |s|
-          next_item = nextMapping.call(s.dotted_rule)
+          next_item = yield s.dotted_rule
           push_state(next_item, s.origin, aPosition, :completion)
         end
       end
@@ -207,7 +207,7 @@ module Rley # This module is used as a namespace
         aTreeBuilder.current_node.range = { low: index, high: index + 1 }
         link_node_to_token(aTreeBuilder, aStateTracker.state_set_index)
         unless aTreeBuilder.current_node.is_a?(PTree::TerminalNode)
-          fail StandardError, 'Expected terminal node'
+          raise StandardError, 'Expected terminal node'
         end
         aTreeBuilder.move_back
         state_set = chart[aStateTracker.state_set_index]

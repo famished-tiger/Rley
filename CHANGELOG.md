@@ -1,3 +1,6 @@
+### 0.3.05 / 2016-11-01
+* [CHANGE] Code re-styling to please Rubocop 0.45.0: only 2 offences remain (from a few hundreds!)
+
 ### 0.3.04 / 2016-11-01
 * [FIX] File `state_set_spec.rb` : Failing mock tests. Reverted `expect` to `allow` expectations.
 

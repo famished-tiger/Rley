@@ -14,13 +14,13 @@ module Rley # Open this namespace to avoid module qualifier prefixes
   describe ParseForestVisitor do
     include GrammarSPPFHelper # Mix-in module with builder for grammar sppf
     include GrammarHelper     # Mix-in with token factory method
-    
+
     # Assumption the aParseEntry corresponds to an end GFG node
     def create_non_terminal_node(aParseEntry, aRange)
       a_vertex = aParseEntry.vertex
       return Rley::SPPF::NonTerminalNode.new(a_vertex.non_terminal, aRange)
-    end    
-    
+    end
+
     let(:grammar_sppf) do
       builder = grammar_sppf_builder
       builder.grammar
@@ -29,14 +29,15 @@ module Rley # Open this namespace to avoid module qualifier prefixes
     let(:sample_tokens) do
       build_token_sequence(%w(a b b b), grammar_sppf)
     end
-    
+
     # A forest with just a root node
     let(:rooted_forest) do
       parser = Parser::GFGEarleyParser.new(grammar_sppf)
       parse_result = parser.parse(sample_tokens)
+      accepting_entry = parse_result.accepting_entry
       full_range = { low: 0, high: parse_result.chart.last_index }
-      root_node = create_non_terminal_node(parse_result.accepting_entry, full_range)
-      Rley::SPPF::ParseForest.new(root_node)      
+      root_node = create_non_terminal_node(accepting_entry, full_range)
+      Rley::SPPF::ParseForest.new(root_node)
     end
 
 =begin
@@ -108,15 +109,15 @@ module Rley # Open this namespace to avoid module qualifier prefixes
       # Use doubles/mocks to simulate subscribers
       let(:listener1) { double('fake-subscriber1') }
       let(:listener2) { double('fake-subscriber2') }
-      
+
       it 'should react to the start_visit_pforest message' do
         subject.subscribe(listener1)
-        
+
         # Notify subscribers when start the visit of the pforest
         expect(listener1).to receive(:before_pforest).with(rooted_forest)
         subject.start_visit_pforest(rooted_forest)
-      end  
-=begin    
+      end
+=begin
       # Default instantiation rule
       subject do
         instance = ParseForestVisitor.new(grm_abc_pforest1)
@@ -226,11 +227,11 @@ module Rley # Open this namespace to avoid module qualifier prefixes
         expectations.each do |(msg, args)|
           expect(listener1).to receive(msg).with(*args).ordered
         end
-        
+
         # Here we go...
         subject.start
       end
-=end      
+=end
     end # context
   end # describe
 end # module

@@ -188,13 +188,13 @@ module Rley # This module is used as a namespace
         term_names = terminals.map(&:name)
         err_msg = "Syntax error at or near token #{pos}"
         err_msg << ">>>#{lexeme_at_pos}<<<:\nExpected "
-        if terminals.size > 1
-          err_msg << "one of: ['#{term_names.join("', '")}'],"
-        else
-           err_msg << ": #{term_names[0]},"
-        end
+        err_msg << if terminals.size > 1
+                     "one of: ['#{term_names.join("', '")}'],"
+                   else
+                     ": #{term_names[0]},"
+                   end
         err_msg << " found a '#{aParsing.tokens[pos - 1].terminal.name}'"
-        fail StandardError, err_msg + ' instead.'
+        raise StandardError, err_msg + ' instead.'
       end
     end # class
   end # module

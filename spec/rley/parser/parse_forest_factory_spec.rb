@@ -22,13 +22,13 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           # contains a hidden left recursion and a cycle
           builder = Syntax::GrammarBuilder.new
           builder.add_terminals('a', 'b')
-          builder.add_production('Phi' => %'S')
-          builder.add_production('S' => %w[A T])
-          builder.add_production('S' => %w[a T])
+          builder.add_production('Phi' => 'S')
+          builder.add_production('S' => %w(A T))
+          builder.add_production('S' => %w(a T))
           builder.add_production('A' => 'a')
-          builder.add_production('A' => %w[B A])
+          builder.add_production('A' => %w(B A))
           builder.add_production('B' => [])
-          builder.add_production('T' => %w( b b b))
+          builder.add_production('T' => %w(b b b))
           builder.grammar
       end
 
@@ -48,7 +48,9 @@ module Rley # Open this namespace to avoid module qualifier prefixes
 
       # Emit a text representation of the current path.
       def path_to_s()
-        text_parts = subject.curr_path.map { |path_element|  path_element.to_string(0) }
+        text_parts = subject.curr_path.map do |path_element|
+          path_element.to_string(0)
+        end
         return text_parts.join('/')
       end
 
@@ -62,21 +64,21 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           expect(subject.parsing).to eq(sample_result)
         end
       end
-      
+
       context 'Parse forest construction' do
         it 'should build a parse forest' do
           forest = subject.build_parse_forest
           expect(forest).to be_kind_of(SPPF::ParseForest)
-=begin          
-          require 'yaml' 
-          require_relative '../../../exp/lab/forest_representation'           
+=begin
+          require 'yaml'
+          require_relative '../../../exp/lab/forest_representation'
           File.open("forest.yml", "w") { |f| YAML.dump(forest, f) }
           pen = ForestRepresentation.new
-          pen.generate_graph(forest, File.open("forest.dot", "w")) 
-=end          
-        end        
-      end # context      
+          pen.generate_graph(forest, File.open("forest.dot", "w"))
+=end
+        end
+      end # context
     end # describe
   end # module
 end # module
-# End of file      
+# End of file

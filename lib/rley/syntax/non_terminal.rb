@@ -6,15 +6,13 @@ module Rley # This module is used as a namespace
     # a composition of terminal or non-terminal symbols
     class NonTerminal < GrmSymbol
       attr_writer(:nullable)
-    
+
       # Constructor.
       # @param aName [String] The name of the grammar symbol.
       def initialize(aName)
         super(aName)
       end
-      
-      public
-      
+
       # @return [false/true] Return true if the symbol derives
       # the empty string. As non-terminal symbol is nullable when it can
       # can match to zero input token.

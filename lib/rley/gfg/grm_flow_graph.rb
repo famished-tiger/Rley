@@ -11,17 +11,17 @@ module Rley # This module is used as a namespace
   module GFG # This module is used as a namespace
     # TODO: add definition
     class GrmFlowGraph
-        # The set of all vertices in the graph
-        attr_reader :vertices
+      # The set of all vertices in the graph
+      attr_reader :vertices
 
-        # The vertex marked as start node of the graph
-        attr_reader :start_vertex
+      # The vertex marked as start node of the graph
+      attr_reader :start_vertex
 
-        # A Hash with pairs of the form: non-terminal symbol => start node
-        attr_reader :start_vertex_for
+      # A Hash with pairs of the form: non-terminal symbol => start node
+      attr_reader :start_vertex_for
 
-        # A Hash with pairs of the form: non-terminal symbol => end node
-        attr_reader :end_vertex_for
+      # A Hash with pairs of the form: non-terminal symbol => end node
+      attr_reader :end_vertex_for
 
       def initialize(theDottedItems)
         @vertices = []
@@ -30,15 +30,16 @@ module Rley # This module is used as a namespace
 
         build_graph(theDottedItems)
       end
-      
+
       # Return the vertex with given vertex label.
       def find_vertex(aVertexLabel)
         vertices.find { |a_vertex| a_vertex.label == aVertexLabel }
       end
 
-private
+      private
+
       def add_vertex(aVertex)
-        fail StandardError, 'GFG vertex cannot be nil' if aVertex.nil?
+        raise StandardError, 'GFG vertex cannot be nil' if aVertex.nil?
 
         # TODO: make setting of start vertex more robust
         @start_vertex = aVertex if vertices.empty?
@@ -48,19 +49,16 @@ private
       def build_graph(theDottedItems)
         build_all_starts_ends(theDottedItems)
 
-        curr_production = nil
+        curr_prod = nil
         theDottedItems.each_with_index do |d_item, index_item|
-          if curr_production.nil? || curr_production != d_item.production
-            # Another production found...
-            curr_production = d_item.production
-            lhs = curr_production.lhs
-            # build_start_end_for(lhs) #Build start/end vertex per non-terminal
-            if curr_production.empty?
-              add_single_item(d_item)
-            else
-              # Add vertices and edges for dotted items of production
-              augment_graph(theDottedItems, index_item)
-            end
+          next unless curr_prod.nil? || curr_prod != d_item.production
+          # Another production found...
+          curr_prod = d_item.production
+          if curr_prod.empty?
+            add_single_item(d_item)
+          else
+            # Add vertices and edges for dotted items of production
+            augment_graph(theDottedItems, index_item)
           end
         end
       end
@@ -77,15 +75,15 @@ private
       #   add a start vertex labelled .N
       #   add an end vertex labelled N.
       def build_start_end_for(aNonTerminal)
-        unless start_vertex_for.include?(aNonTerminal)
-          new_start_vertex = StartVertex.new(aNonTerminal)
-          start_vertex_for[aNonTerminal] = new_start_vertex
-          add_vertex(new_start_vertex)
+        return if start_vertex_for.include?(aNonTerminal)
 
-          new_end_vertex = EndVertex.new(aNonTerminal)
-          end_vertex_for[aNonTerminal] = new_end_vertex
-          add_vertex(new_end_vertex)
-        end
+        new_start_vertex = StartVertex.new(aNonTerminal)
+        start_vertex_for[aNonTerminal] = new_start_vertex
+        add_vertex(new_start_vertex)
+
+        new_end_vertex = EndVertex.new(aNonTerminal)
+        end_vertex_for[aNonTerminal] = new_end_vertex
+        add_vertex(new_end_vertex)
       end
 
 
@@ -99,7 +97,8 @@ private
       # Add vertices and edges for dotted items derived from same production
       # production of the form: N => α[1] ... α[n] (non-empty rhs):
       # # Rule 3
-      # create n+1 nodes labelled:  N => . α[1] ... α[n], N => α[1] . ... α[n], ..., N => α[1] ... α[n] .
+      # create n+1 nodes labelled:
+      #   N => . α[1] ... α[n], N => α[1] . ... α[n], ..., N => α[1] ... α[n] .
       # add an epsilon entry edge: .N -> N => . α[1] ... α[n]
       # add an epsilon exit edge: N => α[1] ... α[n] . -> N.
       # For each symbol in rhs:
@@ -110,14 +109,15 @@ private
       #     Rule 5
       #     add a call edge: N => α[1] .A  α[n] -> .A
       #     add a return edge: A. -> N => α[1] A.  α[n]
-      #     add a shortcut edge: ( N => α[1] .A  α[n] ) -> ( N => α[1] A.  α[n] )
+      #     add a shortcut edge:
+      # ( N => α[1] .A  α[n] ) -> ( N => α[1] A.  α[n] )
       def augment_graph(theDottedItems, firstItemPos)
         production = theDottedItems[firstItemPos].production
         max_index = production.rhs.size + 1
         prev_vertex = nil
-        
+
         (0...max_index).each do |index|
-          current_item = theDottedItems[firstItemPos+index]
+          current_item = theDottedItems[firstItemPos + index]
           new_vertex = ItemVertex.new(current_item)
           add_vertex(new_vertex)
           build_exit_edge(new_vertex) if current_item.reduce_item? # At end?
@@ -134,7 +134,7 @@ private
               build_call_return_edges(vertices[-2], new_vertex)
             end
           end
-          
+
           prev_symbol = current_item.prev_symbol
           if prev_symbol && prev_symbol.kind_of?(Syntax::NonTerminal)
             build_shortcut_edge(prev_vertex, new_vertex)
@@ -181,7 +181,7 @@ private
         # Create an edge end vertex -> return vertex
         ReturnEdge.new(end_vertex, return_vertex)
       end
-      
+
       def build_shortcut_edge(fromVertex, toVertex)
         ShortcutEdge.new(fromVertex, toVertex)
       end

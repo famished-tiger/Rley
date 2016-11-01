@@ -33,7 +33,8 @@ module Rley # Open this namespace to avoid module qualifier prefixes
 
       context 'Construction:' do
         it 'should be created with a item vertex and a token range' do
-          expect { AlternativeNode.new(sample_vertex, sample_range) }.not_to raise_error
+          expect { AlternativeNode.new(sample_vertex, sample_range) }
+            .not_to raise_error
         end      
       end
       
@@ -64,7 +65,6 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           expect(subject.to_string(0)).to eq('Alt(sentence => A B C .)[0, 3]')
         end
       end # context
-
     end # describe
   end # module
 end # module

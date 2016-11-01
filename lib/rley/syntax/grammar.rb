@@ -53,7 +53,7 @@ module Rley # This module is used as a namespace
       # Validation method. Return the validated list of productions
       def validate_productions(theProductions)
         msg = 'A grammar must have at least one production'
-        fail StandardError, msg if theProductions.nil? || theProductions.empty?
+        raise StandardError, msg if theProductions.nil? || theProductions.empty?
         return theProductions
       end
 
@@ -111,8 +111,6 @@ module Rley # This module is used as a namespace
 
         return nullable
       end
-
-      private
 
       def add_symbol(aSymbol)
         its_name = aSymbol.name

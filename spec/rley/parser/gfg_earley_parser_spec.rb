@@ -66,11 +66,15 @@ module Rley # Open this namespace to avoid module qualifier prefixes
 
       # Helper method that mimicks the output of a tokenizer
       # for the language specified by grammar_expr
-      def grm2_tokens()       
-        input_sequence = [ {'2' => 'integer'}, '+', {'3' => 'integer'},
-          '*', {'4' => 'integer'}
+      def grm2_tokens()
+        input_sequence = [
+          { '2' => 'integer' }, 
+          '+', 
+          { '3' => 'integer' },
+          '*', 
+          { '4' => 'integer' }
         ]
-        return  build_token_sequence(input_sequence, grammar_expr)
+        return build_token_sequence(input_sequence, grammar_expr)
       end
 
       # Default instantiation rule
@@ -272,7 +276,7 @@ SNIPPET
             "M => M . '*' T | 2",   # end rule
             'S. | 0',               # exit rule
             'P => S . | 0',         # end rule
-            "S => S . '+' M | 0", # end rule
+            "S => S . '+' M | 0",   # end rule
             'P. | 0'                # exit rule
           ]
           compare_entry_texts(parse_result.chart[3], expected)
@@ -361,12 +365,12 @@ SNIPPET
           builder.add_production('S' => %w(S * S))
           builder.add_production('S' => 'L')
           builder.add_production('L' => 'integer')
-          input_sequence = [ 
-            {'2' => 'integer'},
-            '+', 
-            {'3' => 'integer'}, 
-            '*', 
-            {'4' => 'integer'}
+          input_sequence = [
+            { '2' => 'integer' },
+            '+',
+            { '3' => 'integer' },
+            '*',
+            { '4' => 'integer' }
           ]
           tokens = build_token_sequence(input_sequence, builder.grammar)
           instance = GFGEarleyParser.new(builder.grammar)
@@ -470,7 +474,7 @@ SNIPPET
             'P. | 0'                # exit rule
           ]
           compare_entry_texts(parse_result.chart[5], expected)
-          
+
           expected_antecedents = {
             'L => integer . | 4' => ['L => . integer | 4'],
             'L. | 4' => ['L => integer . | 4'],
@@ -478,14 +482,14 @@ SNIPPET
             'S. | 4' => ['S => L . | 4'],
             "S => S '*' S . | 2" => ['S. | 4'],
             "S => S '*' S . | 0" => ['S. | 4'],
-            "S => S . '+' S | 4" => ['S. | 4'], 
+            "S => S . '+' S | 4" => ['S. | 4'],
             "S => S . '*' S | 4" => ['S. | 4'],
             'S. | 2' => ["S => S '*' S . | 2"],
             'S. | 0' => ["S => S '*' S . | 0", "S => S '+' S . | 0"],
             "S => S '+' S . | 0" => ['S. | 2'],
             "S => S . '+' S | 2" => ['S. | 2'],
             "S => S . '*' S | 2" => ['S. | 2'],
-            'P => S . | 0'  => ['S. | 0'],
+            'P => S . | 0' => ['S. | 0'],
             "S => S . '+' S | 0" => ['S. | 0'],
             "S => S . '*' S | 0" => ['S. | 0'],
             'P. | 0' => ['P => S . | 0']
@@ -518,7 +522,7 @@ SNIPPET
           # Expectation chart[1]:
           expected = [
             'E => id . | 0',      # scan 'abc'
-            'E. | 0',              # exit rule
+            'E. | 0',             # exit rule
             'S => E . | 0',       # end rule
             'E => E . + E | 0',   # end rule
             'S. | 0'              # exit rule
@@ -603,14 +607,14 @@ MSG
           builder.add_terminals(t_int, t_plus, t_lparen, t_rparen)
           builder.add_production('S' => 'E')
           builder.add_production('E' => 'int')
-          builder.add_production('E' => %w[( E + E )])
-          builder.add_production('E' => %w( E + E ))
-          input_sequence = [ 
-            {'7' => 'int'},
-            '+', 
-            {'8' => 'int'}, 
-            '+', 
-            {'9' => 'int'}
+          builder.add_production('E' => %w(( E + E )))
+          builder.add_production('E' => %w(E + E))
+          input_sequence = [
+            { '7' => 'int' },
+            '+',
+            { '8' => 'int' },
+            '+',
+            { '9' => 'int' }
           ]
           tokens = build_token_sequence(input_sequence, builder.grammar)
           instance = GFGEarleyParser.new(builder.grammar)
@@ -644,7 +648,7 @@ MSG
           expected = [
             "E => E '+' . E | 0",         # scan '+'
             '.E | 2',                     # exit rule
-           'E => . int | 2',              # start rule
+            'E => . int | 2',             # start rule
             "E => . '(' E '+' E ')' | 2", # start rule
             "E => . E '+' E | 2"          # start rule
           ]
@@ -718,7 +722,7 @@ MSG
           builder.add_production('Q' => t_star)
           builder.add_production('Q' => t_slash)
           builder.add_production('Q' => []) # Empty production
-          
+
           tokens = build_token_sequence(%w(a a / a), builder.grammar)
           instance = GFGEarleyParser.new(builder.grammar)
           expect { instance.parse(tokens) }.not_to raise_error
@@ -823,9 +827,6 @@ MSG
           # S => ;
           # This grammar requires a time that is quadratic in the number of
           # input tokens
-
-          t_x = Syntax::VerbatimSymbol.new('x')
-
           builder = Syntax::GrammarBuilder.new
           builder.add_terminals('a')
           builder.add_production('S' => %w(a S))
@@ -909,10 +910,8 @@ MSG
           ]
           compare_entry_texts(parse_result.chart[4], expected)
         end
-
       end # context
     end # describe
   end # module
 end # module
-
-# End of module
+# End of file

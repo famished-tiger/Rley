@@ -6,7 +6,7 @@ module Rley # This module is used as a namespace
   # The right part consists of symbols that are predicted to match the
   # input tokens.
   # The terminology stems from the traditional way to visualize the partition
-  # by using a fat dot character as a separator between the left and right 
+  # by using a fat dot character as a separator between the left and right
   # parts
   # An item with the dot at the beginning (i.e. before any rhs symbol)
   #  is called a predicted item.
@@ -29,7 +29,7 @@ module Rley # This module is used as a namespace
         @production = aProduction
         @position = valid_position(aPosition)
       end
-      
+
       # Return a String representation of the dotted item.
       # @return [String]
       def to_s()
@@ -41,68 +41,68 @@ module Rley # This module is used as a namespace
           text_values.insert(position, '.')
         end
         suffix = text_values.join(' ')
-        
+
         return prefix + suffix
       end
-      
+
       # Return true if the dot position is at the start of the rhs.
       def at_start?()
-        return position == 0 || position == -2
+        return position.zero? || position == -2
       end
 
-      # An item with the dot at the beginning is called 
-      # predicted item  
-      alias_method :predicted_item?, :at_start?
+      # An item with the dot at the beginning is called
+      # predicted item
+      alias predicted_item? at_start?
 
       # A dotted item is called a reduce item if the dot is at the end.
       def reduce_item?()
         return position < 0 # Either -1 or -2
       end
-      
+
       # The non-terminal symbol that is on the left-side of the production
       def lhs()
         return production.lhs
       end
-      
+
       # Return the symbol before the dot.
       # nil is returned if the dot is at the start of the rhs
       def prev_symbol()
         before_position = prev_position
-        if before_position.nil?
-          result = nil
-        else
-          result = production.rhs[before_position]
-        end
-        
+        result = if before_position.nil?
+                   nil
+                 else
+                   production.rhs[before_position]
+                 end
+
         return result
       end
-      
+
       # Return the symbol after the dot.
       # nil is returned if the dot is at the end
       def next_symbol()
-        return (position < 0) ? nil : production.rhs[position]
+        return position < 0 ? nil : production.rhs[position]
       end
-      
-      # Calculate the position of the dot if were moved by 
+
+      # Calculate the position of the dot if were moved by
       # one step on the left.
       def prev_position()
         case position
           when -2, 0
             result = nil
           when -1
-            result = (production.rhs.size == 1) ? 0 : (production.rhs.size - 1)
+            result = production.rhs.size == 1 ? 0 : production.rhs.size - 1
           else
             result = position - 1
         end
-        
+
         return result
       end
 
       # An item with the dot in front of a terminal is called a shift item
       def shift_item?()
-        return position == 0
+        return position.zero?
       end
-      
+
       # Return true if this dotted item has a dot one place
       # to the right compared to the dotted item argument.
       def successor_of?(another)
@@ -111,7 +111,7 @@ module Rley # This module is used as a namespace
         return false if to_the_left.nil?
         return to_the_left == another.position
       end
-      
+
 
       private
 
@@ -119,16 +119,16 @@ module Rley # This module is used as a namespace
       def valid_position(aPosition)
         rhs_size = production.rhs.size
         if aPosition < 0 || aPosition > rhs_size
-          fail StandardError, 'Out of bound index'
+          raise StandardError, 'Out of bound index'
         end
 
-        if rhs_size == 0
-          index = -2 # Minus 2 at start/end of empty production
-        elsif aPosition == rhs_size
-          index = -1 # Minus 1 at end of non-empty production
-        else
-          index = aPosition
-        end
+        index = if rhs_size.zero?
+                  -2 # Minus 2 at start/end of empty production
+                elsif aPosition == rhs_size
+                  -1 # Minus 1 at end of non-empty production
+                else
+                  aPosition
+                end
 
         return index
       end

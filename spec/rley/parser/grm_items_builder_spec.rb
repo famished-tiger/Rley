@@ -31,7 +31,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
             'A => a A . c',
             'A => a A c .',
             'A => . b',
-            'A => b .',
+            'A => b .'
           ]
           expect(items.map(&:to_s)).to eq(expectations)
         end

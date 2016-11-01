@@ -14,14 +14,6 @@ module Rley # This module is used as a namespace
       # The set of parse entries
       attr_reader :entries
 
-      # A Hash with pairs of the form:
-      #   terminal symbol => [ parse entry expecting the terminal ]
-      #attr_reader :entries4term
-
-      # A Hash with pairs of the form:
-      #   non terminal symbol => [ parse entry expecting the non-terminal ]
-      # attr_reader :entries4n_term
-
       def initialize()
         @entries = []
         @entries4term = Hash.new { |hash, key| hash[key] = [] } 
@@ -33,10 +25,14 @@ module Rley # This module is used as a namespace
         return entries[index]
       end  
 
+      # Returns a Hash with pairs of the form:
+      #   terminal symbol => [ parse entry expecting the terminal ]
       def entries4term(aTerminal)
         return @entries4term.fetch(aTerminal, [])
       end
       
+      # Returns a Hash with pairs of the form:
+      #   non terminal symbol => [ parse entry expecting the non-terminal ]
       def entries4n_term(aNonTerminal)
         return @entries4n_term.fetch(aNonTerminal, [])
       end
@@ -49,8 +45,6 @@ module Rley # This module is used as a namespace
         match = entries.find { |entry| entry == anEntry }
         if match
           result = match
-        #if entries.include?(anEntry)  # TODO: check performance
-        #  result = false
         else
           @entries << anEntry
           expecting = anEntry.next_symbol
@@ -64,12 +58,12 @@ module Rley # This module is used as a namespace
       
       # Return an Array of Arrays of ambiguous parse entries.
       def ambiguities()
-        complete_entries = entries.select { |entry| entry.exit_entry? }
+        complete_entries = entries.select(&:exit_entry?)
         return [] if complete_entries.size <= 1
         
         # Group parse entries by lhs symbol and origin
         groupings = complete_entries.group_by do |entry|
-          "#{entry.vertex.dotted_rule.lhs.object_id}"
+          entry.vertex.dotted_rule.lhs.object_id.to_s
         end
         
         # Retain the groups having more than one element.
@@ -87,15 +81,16 @@ module Rley # This module is used as a namespace
         return @entries4term.keys
       end      
       
-private
+      private
+
       def add_lookup4symbol(anEntry)
         symb = anEntry.next_symbol
         case symb
-        when Syntax::Terminal
-          @entries4term[symb] << anEntry  
-          
-        when Syntax::NonTerminal
-          @entries4n_term[symb] << anEntry
+          when Syntax::Terminal
+            @entries4term[symb] << anEntry  
+            
+          when Syntax::NonTerminal
+            @entries4n_term[symb] << anEntry
         end
       end
     end # class

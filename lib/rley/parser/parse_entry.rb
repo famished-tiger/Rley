@@ -4,7 +4,6 @@ require_relative '../gfg/item_vertex'
 
 module Rley # This module is used as a namespace
   module Parser # This module is used as a namespace
-
     # Responsibilities:
     # - To know whether the vertex is a start, end or item vertex
     # - To know the next symbol to expect
@@ -34,12 +33,7 @@ module Rley # This module is used as a namespace
       def ==(other)
         return true if object_id == other.object_id
 
-        if (vertex == other.vertex) && (origin == other.origin)
-          result = true
-        else
-          result = false
-        end
-
+        result = (vertex == other.vertex) && (origin == other.origin)
         return result
       end
 
@@ -137,7 +131,7 @@ module Rley # This module is used as a namespace
 
       # Return the validated GFG vertex
       def valid_vertex(aVertex)
-        fail StandardError, 'GFG vertex cannot be nil' if aVertex.nil?
+        raise StandardError, 'GFG vertex cannot be nil' if aVertex.nil?
 
         return aVertex
       end

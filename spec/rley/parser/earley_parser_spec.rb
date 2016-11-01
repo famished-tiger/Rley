@@ -220,8 +220,8 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           ######################
           # Expectation chart[5]:
           expected = [
-            "A => 'a' A 'c' . | 0",  # scan from S(4) 1
-            'S => A . | 0'  # complete from 0 and S(0) 0
+            "A => 'a' A 'c' . | 0", # scan from S(4) 1
+            'S => A . | 0' # complete from 0 and S(0) 0
           ]
           state_set_5 = parse_result.chart[5]
           expect(state_set_5.states.size).to eq(2)
@@ -325,7 +325,7 @@ SNIPPET
           ###################### S(5): 2 + 3 * 4 .
           # Expectation chart[5]:
           expected = [
-            'T => integer . | 4',    # scan from S(4) 2
+            'T => integer . | 4',   # scan from S(4) 2
             "M => M '*' T . | 2",   # complete from (1) and S(4) 1
             "S => S '+' M . | 0",   # complete from (2) and S(2) 1
             "M => M . '*' T | 2",   # complete from (2) and S(2) 2
@@ -357,14 +357,14 @@ SNIPPET
             "Ss => . A A 'x' | 0",  # Start rule
             'A => . | 0',           # predict from (1)
             "Ss => A . A 'x' | 0",  # modified predict from (1)
-            "Ss => A A . 'x' | 0",  # modified predict from (1)
+            "Ss => A A . 'x' | 0"   # modified predict from (1)
           ]
           compare_state_texts(parse_result.chart[0], expected)
 
           ###################### S(1): x .
           # Expectation chart[1]:
           expected = [
-            "Ss => A A 'x' . | 0",  # scan from S(0) 4
+            "Ss => A A 'x' . | 0" # scan from S(0) 4
           ]
           compare_state_texts(parse_result.chart[1], expected)
         end
@@ -415,7 +415,7 @@ SNIPPET
           ###################### S(1): 2 . + 3 * 4
           # Expectation chart[1]:
           expected = [
-            'L => integer . | 0',  # scan from S(0) 4
+            'L => integer . | 0', # scan from S(0) 4
             'S => L . | 0',       # complete from (1) and S(0) 4
             'P => S . | 0',       # complete from (2) and S(0) 1
             "S => S . '+' S | 0", # complete from (2) and S(0) 2
@@ -439,7 +439,7 @@ SNIPPET
           expected = [
             'L => integer . | 2', # scan from S(2) 5
             'S => L . | 2',       # complete from (1) and S(2) 4
-            "S => S '+' S . | 0",  # complete from (2) and S(2) 1
+            "S => S '+' S . | 0", # complete from (2) and S(2) 1
             "S => S . '+' S | 2", # complete from (2) and S(2) 2
             "S => S . '*' S | 2", # complete from (2) and S(2) 3
             'P => S . | 0',       # complete from (2) and S(0) 1
@@ -649,15 +649,15 @@ MSG
           ###################### S(1) == a . a / a
           # Expectation chart[1]:
           expected = [
-            "F => 'a' . | 0", # scan from S(0) 4
-            'E => F . | 0',   # complete from (1) and S(0) 3
-            'Z => E . | 0',   # complete from (2) and S(0) 1
-            'E => E . Q F | 0',  # complete from (2) and S(0) 2
-            "Q => . '*' | 1",  # Predict from (4)
-            "Q => . '/' | 1",  # Predict from (4)
-            'Q => . | 1',      # Predict from (4)
-            'E => E Q . F | 0',  # Modified predict from (4)
-            "F => . 'a' | 1"   # Predict from (8)
+            "F => 'a' . | 0",   # scan from S(0) 4
+            'E => F . | 0',     # complete from (1) and S(0) 3
+            'Z => E . | 0',     # complete from (2) and S(0) 1
+            'E => E . Q F | 0', # complete from (2) and S(0) 2
+            "Q => . '*' | 1",   # Predict from (4)
+            "Q => . '/' | 1",   # Predict from (4)
+            'Q => . | 1',       # Predict from (4)
+            'E => E Q . F | 0', # Modified predict from (4)
+            "F => . 'a' | 1"    # Predict from (8)
           ]
           compare_state_texts(parse_result.chart[1], expected)
 

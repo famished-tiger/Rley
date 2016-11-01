@@ -18,8 +18,6 @@ module Rley # This module is used as a namespace
         @indentation = 0
       end
 
-      public
-
       # Method called by a ParseTreeVisitor to which the formatter subscribed.
       # Notification of a visit event: the visitor is about to visit the given
       # parse tree

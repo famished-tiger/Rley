@@ -9,16 +9,16 @@ require_relative '../gfg/start_vertex'
 module Rley # This module is used as a namespace
   module Parser # This module is used as a namespace
     ParseWalkerContext = Struct.new(
-      :curr_entry,  # Parse entry currently being visited
-      :entry_set_index,  # Sigma set index of current parse entry
-      :visitees,  # The set of already visited parse entries
+      :curr_entry, # Parse entry currently being visited
+      :entry_set_index, # Sigma set index of current parse entry
+      :visitees, # The set of already visited parse entries
       :nterm2start, # A Hash non-terminal symbol => start entry
       :return_stack, # A stack of parse entries
       :backtrack_points
     )
 
     WalkerBacktrackpoint = Struct.new(
-      :entry_set_index,  # Sigma set index of current parse entry
+      :entry_set_index, # Sigma set index of current parse entry
       :return_stack, # A stack of parse entries
       :visitee, # The parse entry being visited
       :antecedent_index
@@ -31,11 +31,11 @@ module Rley # This module is used as a namespace
     # Terminology warning: this class implements an external iterator
     # for a given GFGParsing object. In other words, its instances are objects
     # distinct for the GFGParsing.
-    # This is different from the internal iterators, usually implemented in Ruby
-    # with an each method.
+    # This is different from the internal iterators, usually implemented 
+    # in Ruby with an :each method.
     # Allows to perform a backwards traversal over the relevant parse entries.
-    # backwards traversal means that the traversal starts from the accepting (final)
-    # parse entries and goes to the initial parse entry.
+    # backwards traversal means that the traversal starts from the 
+    # accepting (final) parse entries and goes to the initial parse entry.
     # Relevant parse entries are parse entries that "count" in the parse
     # (i.e. they belong to a path that leads to the accepting parse entry)
     class ParseWalkerFactory
@@ -53,16 +53,13 @@ module Rley # This module is used as a namespace
             receiver << event unless event.nil?
 
             if ctx.curr_entry.orphan? # No antecedent?...
-              if ctx.backtrack_points.empty?
-                break
-              else
-                receiver << use_backtrack_point(ctx)
-                receiver << visit_entry(ctx.curr_entry, ctx)
-              end
+              break if ctx.backtrack_points.empty?
+              receiver << use_backtrack_point(ctx)
+              receiver << visit_entry(ctx.curr_entry, ctx)
             end
 
             result = jump_to_antecedent(ctx)
-            # Emit detection of scan edge if any...            
+            # Emit detection of scan edge if any...
             receiver << result[0] if result.size > 1
             ctx.curr_entry = result.last
           end
@@ -71,7 +68,8 @@ module Rley # This module is used as a namespace
         return walker
       end
 
-private
+      private
+
       # Context factory method
       def init_context(acceptingEntry, maxIndex)
         context = ParseWalkerContext.new
@@ -108,8 +106,8 @@ private
             when GFG::ItemVertex
               # Skip item entries while revisiting
               event = nil
-          else
-            fail NotImplementedError
+            else
+              raise NotImplementedError
           end
         else
           # first time visit
@@ -120,7 +118,7 @@ private
         return event
       end
 
-      def detect_scan_edge(ctx)
+      def detect_scan_edge(_ctx)
         return nil unless aContext.curr_entry.dotted_entry?
       end
 
@@ -131,12 +129,12 @@ private
       def jump_to_antecedent(aContext)
         entries = []
         return entries if aContext.curr_entry.orphan?
-        
-        if aContext.curr_entry.antecedents.size == 1
-          entries = antecedent_of(aContext)
-        else
-          entries = select_antecedent(aContext)
-        end
+
+        entries = if aContext.curr_entry.antecedents.size == 1
+                    antecedent_of(aContext)
+                  else
+                    select_antecedent(aContext)
+                  end
 
         return entries
       end
@@ -153,15 +151,15 @@ private
           aContext.return_stack << aContext.curr_entry
         elsif traversed_edge.kind_of?(GFG::CallEdge)
           # Pop top of stack
-          tos = aContext.return_stack.pop
+          aContext.return_stack.pop
           # puts "Pop from return stack matching entry #{new_entry}"
-        elsif traversed_edge.kind_of?(GFG::ScanEdge)  
+        elsif traversed_edge.kind_of?(GFG::ScanEdge)
           # Scan edge encountered, decrease sigma set index
           aContext.entry_set_index -= 1
         elsif traversed_edge.kind_of?(GFG::EpsilonEdge)
           # Do nothing
         else
-          fail NotImplementedError, "edge is a #{traversed_edge.class}"        
+          raise NotImplementedError, "edge is a #{traversed_edge.class}"
         end
 
         return events
@@ -180,7 +178,7 @@ private
           when GFG::StartVertex
             new_entry = select_calling_entry(aContext)
           else
-            fail StandardError, "Internal error"
+            raise StandardError, 'Internal error'
         end
 
         return [ new_entry ]
@@ -213,7 +211,7 @@ private
           aContext.backtrack_points.pop
         end
         # puts "Backtracking to #{bp.visitee}"
-        
+
         # Emit a backtrack event
         return [:backtrack, bp.visitee, aContext.entry_set_index]
       end
@@ -233,8 +231,7 @@ private
           item = antecd.vertex.dotted_item
           (antecd.origin == tos.origin) && tos_dotted_item.successor_of?(item)
         end
-        
-        # TODO: double-check validity of next line
+
         new_entry = aContext.curr_entry unless new_entry
 
         # puts "Pop from return stack matching entry #{new_entry}"

@@ -8,17 +8,16 @@ module Rley # This module is used as a namespace
     class ShortcutEdge < Edge
       # The terminal symbol expected from the input stream
       attr_reader :nonterminal
-      
+
       def initialize(thePredecessor, theSuccessor)
         @successor = theSuccessor
         @nonterminal = thePredecessor.next_symbol
         thePredecessor.shortcut = self
       end
-      
+
       def to_s()
         " -#{nonterminal}-> #{successor.label}"
       end
-
     end # class
   end # module
 end # module

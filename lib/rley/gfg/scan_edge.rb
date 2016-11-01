@@ -9,16 +9,15 @@ module Rley # This module is used as a namespace
     class ScanEdge < Edge
       # The terminal symbol expected from the input stream
       attr_reader :terminal
-      
+
       def initialize(thePredecessor, theSuccessor, aTerminal)
         super(thePredecessor, theSuccessor)
         @terminal = aTerminal
       end
-      
+
       def to_s()
         " -#{terminal}-> #{successor.label}"
       end
-
     end # class
   end # module
 end # module

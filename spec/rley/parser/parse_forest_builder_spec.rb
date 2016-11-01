@@ -5,7 +5,7 @@ require_relative '../../../lib/rley/parser/parse_walker_factory'
 
 require_relative '../support/grammar_helper'
 require_relative '../support/expectation_helper'
-require_relative '../support/grammar_L0_helper'
+require_relative '../support/grammar_l0_helper'
 
 # Load the class under test
 require_relative '../../../lib/rley/parser/parse_forest_builder'
@@ -23,13 +23,13 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           # contains a hidden left recursion and a cycle
           builder = Syntax::GrammarBuilder.new
           builder.add_terminals('a', 'b')
-          builder.add_production('Phi' => %'S')
-          builder.add_production('S' => %w[A T])
-          builder.add_production('S' => %w[a T])
+          builder.add_production('Phi' => 'S')
+          builder.add_production('S' => %w(A T))
+          builder.add_production('S' => %w(a T))
           builder.add_production('A' => 'a')
-          builder.add_production('A' => %w[B A])
+          builder.add_production('A' => %w(B A))
           builder.add_production('B' => [])
-          builder.add_production('T' => %w( b b b))
+          builder.add_production('T' => %w(b b b))
           builder.grammar
       end
 
@@ -53,7 +53,9 @@ module Rley # Open this namespace to avoid module qualifier prefixes
 
       # Emit a text representation of the current path.
       def path_to_s()
-        text_parts = subject.curr_path.map { |path_element|  path_element.to_string(0) }
+        text_parts = subject.curr_path.map do |path_element|
+          path_element.to_string(0)
+        end
         return text_parts.join('/')
       end
 
@@ -70,10 +72,9 @@ module Rley # Open this namespace to avoid module qualifier prefixes
         it 'should have an empty path' do
           expect(subject.curr_path).to be_empty
         end
-      end
+      end # context
 
       context 'Parse forest construction' do
-
         it 'should initialize the root node' do
           first_event = walker.next
           subject.receive_event(*first_event)
@@ -108,7 +109,8 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           event4 = walker.next
           subject.receive_event(*event4)
 
-          expect(subject.curr_parent.to_string(0)).to eq('Alt(S => a T .)[0, 4]')
+          parent_as_text = subject.curr_parent.to_string(0)
+          expect(parent_as_text).to eq('Alt(S => a T .)[0, 4]')
           expected_path4 = 'Phi[0, 4]/S[0, 4]/Alt(S => a T .)[0, 4]'
           expect(path_to_s).to eq(expected_path4)
           expect(subject.curr_path[-2].refinement).to eq(:or)
@@ -136,7 +138,8 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           expect(path_to_s).to eq(expected_path6)
           expect(subject.curr_parent.subnodes.size).to eq(1)
           token_event6 = 'b[3, 4]'
-          expect(subject.curr_parent.subnodes.first.to_string(0)).to eq(token_event6)
+          child = subject.curr_parent.subnodes.first
+          expect(child.to_string(0)).to eq(token_event6)
 
           event7 = walker.next
           subject.receive_event(*event7)
@@ -146,7 +149,8 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           expect(path_to_s).to eq(expected_path7)
           expect(subject.curr_parent.subnodes.size).to eq(2)
           token_event7 = 'b[2, 3]'
-          expect(subject.curr_parent.subnodes.first.to_string(0)).to eq(token_event7)
+          child = subject.curr_parent.subnodes.first
+          expect(child.to_string(0)).to eq(token_event7)
 
           event8 = walker.next
           subject.receive_event(*event8)
@@ -156,7 +160,8 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           expect(path_to_s).to eq(expected_path8)
           expect(subject.curr_parent.subnodes.size).to eq(3)
           token_event8 = 'b[1, 2]'
-          expect(subject.curr_parent.subnodes.first.to_string(0)).to eq(token_event8)
+          child = subject.curr_parent.subnodes.first
+          expect(child.to_string(0)).to eq(token_event8)
 
           event9 = walker.next
           subject.receive_event(*event9)
@@ -168,19 +173,22 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           event10 = walker.next
           subject.receive_event(*event10)
           expect(event10[1].to_s).to eq('.T | 1')
-          expect(subject.curr_parent.to_string(0)).to eq('Alt(S => a T .)[0, 4]')
+          parent_as_text = subject.curr_parent.to_string(0)
+          expect(parent_as_text).to eq('Alt(S => a T .)[0, 4]')
           expected_path10 = 'Phi[0, 4]/S[0, 4]/Alt(S => a T .)[0, 4]'
           expect(path_to_s).to eq(expected_path10)
 
           event11 = walker.next
           subject.receive_event(*event11)
           expect(event11[1].to_s).to eq('S => a . T | 0')
-          expect(subject.curr_parent.to_string(0)).to eq('Alt(S => a T .)[0, 4]')
+          parent_as_text = subject.curr_parent.to_string(0)
+          expect(parent_as_text).to eq('Alt(S => a T .)[0, 4]')
           expected_path11 = 'Phi[0, 4]/S[0, 4]/Alt(S => a T .)[0, 4]'
           expect(path_to_s).to eq(expected_path11)
           expect(subject.curr_parent.subnodes.size).to eq(2)
           token_event11 = 'a[0, 1]'
-          expect(subject.curr_parent.subnodes.first.to_string(0)).to eq(token_event11)
+          child = subject.curr_parent.subnodes.first
+          expect(child.to_string(0)).to eq(token_event11)
 
           event12 = walker.next
           subject.receive_event(*event12)
@@ -219,7 +227,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
 
           event16 = walker.next
           subject.receive_event(*event16)
-          expect(event16[0]).to eq(:backtrack)  # Backtrack event!
+          expect(event16[0]).to eq(:backtrack) # Backtrack event!
           expect(event16[1].to_s).to eq('S. | 0')
           expect(subject.curr_parent.to_string(0)).to eq('S[0, 4]')
           expected_path16 = 'Phi[0, 4]/S[0, 4]'
@@ -229,7 +237,8 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           event17 = walker.next
           subject.receive_event(*event17)
           expect(event17[1].to_s).to eq('S => A T . | 0')
-          expect(subject.curr_parent.to_string(0)).to eq('Alt(S => A T .)[0, 4]')
+          parent_as_text = subject.curr_parent.to_string(0)
+          expect(parent_as_text).to eq('Alt(S => A T .)[0, 4]')
           expected_path17 = 'Phi[0, 4]/S[0, 4]/Alt(S => A T .)[0, 4]'
           expect(path_to_s).to eq(expected_path17)
           expect(subject.curr_path[-2].refinement).to eq(:or)
@@ -243,16 +252,18 @@ module Rley # Open this namespace to avoid module qualifier prefixes
 
           event18 = walker.next
           subject.receive_event(*event18)
-          expect(event18[0]).to eq(:revisit)  # Revisit event!
+          expect(event18[0]).to eq(:revisit) # Revisit event!
           expect(event18[1].to_s).to eq('T. | 1')
-          expect(subject.curr_parent.to_string(0)).to eq('Alt(S => A T .)[0, 4]')
+          parent_as_text = subject.curr_parent.to_string(0)
+          expect(parent_as_text).to eq('Alt(S => A T .)[0, 4]')
           expected_path18 = 'Phi[0, 4]/S[0, 4]/Alt(S => A T .)[0, 4]'
           expect(path_to_s).to eq(expected_path18)
 
           event19 = walker.next
           subject.receive_event(*event19)
           expect(event19[1].to_s).to eq('S => A . T | 0')
-          expect(subject.curr_parent.to_string(0)).to eq('Alt(S => A T .)[0, 4]')
+          parent_as_text = subject.curr_parent.to_string(0)
+          expect(parent_as_text).to eq('Alt(S => A T .)[0, 4]')
           expected_path19 = 'Phi[0, 4]/S[0, 4]/Alt(S => A T .)[0, 4]'
           expect(path_to_s).to eq(expected_path19)
 
@@ -268,8 +279,10 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           event21 = walker.next
           subject.receive_event(*event21)
           expect(event21[1].to_s).to eq('A => a . | 0')
-          expect(subject.curr_parent.to_string(0)).to eq('Alt(A => a .)[0, 1]')
-          expected_path21 = 'Phi[0, 4]/S[0, 4]/Alt(S => A T .)[0, 4]/A[0, 1]/Alt(A => a .)[0, 1]'
+          parent_as_text = subject.curr_parent.to_string(0)
+          expect(parent_as_text).to eq('Alt(A => a .)[0, 1]')
+          path_prefix = 'Phi[0, 4]/S[0, 4]/Alt(S => A T .)[0, 4]/A[0, 1]/'
+          expected_path21 = path_prefix + 'Alt(A => a .)[0, 1]'
           expect(path_to_s).to eq(expected_path21)
           expect(subject.curr_path[-2].refinement).to eq(:or)
 
@@ -283,7 +296,8 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           event23 = walker.next
           subject.receive_event(*event23)
           expect(event23[1].to_s).to eq('.A | 0')
-          expect(subject.curr_parent.to_string(0)).to eq('Alt(S => A T .)[0, 4]')
+          parent_as_text = subject.curr_parent.to_string(0)
+          expect(parent_as_text).to eq('Alt(S => A T .)[0, 4]')
           expected_path23 = 'Phi[0, 4]/S[0, 4]/Alt(S => A T .)[0, 4]'
           expect(path_to_s).to eq(expected_path23)
 
@@ -318,7 +332,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
 
           event27 = walker.next
           subject.receive_event(*event27)
-          expect(event27[0]).to eq(:backtrack)  # Backtrack event!
+          expect(event27[0]).to eq(:backtrack) # Backtrack event!
           expect(event27[1].to_s).to eq('A. | 0')
           expect(subject.curr_parent.to_string(0)).to eq('A[0, 1]')
           expected_path27 = 'Phi[0, 4]/S[0, 4]/Alt(S => A T .)[0, 4]/A[0, 1]'
@@ -328,24 +342,28 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           subject.receive_event(*event28)
           expect(event28[0]).to eq(:visit)
           expect(event28[1].to_s).to eq('A => B A . | 0')
-          expect(subject.curr_parent.to_string(0)).to eq('Alt(A => B A .)[0, 1]')
-          expected_path28 = 'Phi[0, 4]/S[0, 4]/Alt(S => A T .)[0, 4]/A[0, 1]/Alt(A => B A .)[0, 1]'
+          parent_as_text = subject.curr_parent.to_string(0)
+          expect(parent_as_text).to eq('Alt(A => B A .)[0, 1]')
+          path_prefix = 'Phi[0, 4]/S[0, 4]/Alt(S => A T .)[0, 4]/A[0, 1]/'
+          expected_path28 = path_prefix + 'Alt(A => B A .)[0, 1]'
           expect(path_to_s).to eq(expected_path28)
 
           event29 = walker.next
           subject.receive_event(*event29)
-          expect(event29[0]).to eq(:revisit)  # Revisit event!
+          expect(event29[0]).to eq(:revisit) # Revisit event!
           expect(event29[1].to_s).to eq('A. | 0')
-          expect(subject.curr_parent.to_string(0)).to eq('Alt(A => B A .)[0, 1]')
-          expected_path29 = 'Phi[0, 4]/S[0, 4]/Alt(S => A T .)[0, 4]/A[0, 1]/Alt(A => B A .)[0, 1]'
+          parent_as_text = subject.curr_parent.to_string(0)
+          expect(parent_as_text).to eq('Alt(A => B A .)[0, 1]')
+          expected_path29 = path_prefix + 'Alt(A => B A .)[0, 1]'
           expect(path_to_s).to eq(expected_path29)
 
           event30 = walker.next
           subject.receive_event(*event30)
           expect(event30[0]).to eq(:visit)
           expect(event30[1].to_s).to eq('A => B . A | 0')
-          expect(subject.curr_parent.to_string(0)).to eq('Alt(A => B A .)[0, 1]')
-          expected_path30 = 'Phi[0, 4]/S[0, 4]/Alt(S => A T .)[0, 4]/A[0, 1]/Alt(A => B A .)[0, 1]'
+          parent_as_text = subject.curr_parent.to_string(0)
+          expect(parent_as_text).to eq('Alt(A => B A .)[0, 1]')
+          expected_path30 = path_prefix + 'Alt(A => B A .)[0, 1]'
           expect(path_to_s).to eq(expected_path30)
 
           event31 = walker.next
@@ -353,7 +371,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           expect(event31[0]).to eq(:visit)
           expect(event31[1].to_s).to eq('B. | 0')
           expect(subject.curr_parent.to_string(0)).to eq('B[0, 0]')
-          expected_path31 = 'Phi[0, 4]/S[0, 4]/Alt(S => A T .)[0, 4]/A[0, 1]/Alt(A => B A .)[0, 1]/B[0, 0]'
+          expected_path31 = path_prefix + 'Alt(A => B A .)[0, 1]/B[0, 0]'
           expect(path_to_s).to eq(expected_path31)
 
           event32 = walker.next
@@ -362,15 +380,16 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           # Empty production!
           expect(event32[1].to_s).to eq('B => . | 0')
           expect(subject.curr_parent.to_string(0)).to eq('B[0, 0]')
-          expected_path30 = 'Phi[0, 4]/S[0, 4]/Alt(S => A T .)[0, 4]/A[0, 1]/Alt(A => B A .)[0, 1]/B[0, 0]'
+          expected_path30 = path_prefix + 'Alt(A => B A .)[0, 1]/B[0, 0]'
           expect(path_to_s).to eq(expected_path30)
 
           event33 = walker.next
           subject.receive_event(*event33)
           expect(event33[0]).to eq(:visit)
           expect(event33[1].to_s).to eq('.B | 0')
-          expect(subject.curr_parent.to_string(0)).to eq('Alt(A => B A .)[0, 1]')
-          expected_path33 = 'Phi[0, 4]/S[0, 4]/Alt(S => A T .)[0, 4]/A[0, 1]/Alt(A => B A .)[0, 1]'
+          parent_as_text = subject.curr_parent.to_string(0)
+          expect(parent_as_text).to eq('Alt(A => B A .)[0, 1]')
+          expected_path33 = path_prefix + 'Alt(A => B A .)[0, 1]'
           expect(path_to_s).to eq(expected_path33)
 
           event34 = walker.next
@@ -378,14 +397,15 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           expect(event34[0]).to eq(:visit)
           expect(event34[1].to_s).to eq('A => . B A | 0')
           expect(subject.curr_parent.to_string(0)).to eq('A[0, 1]')
-          expected_path34 = 'Phi[0, 4]/S[0, 4]/Alt(S => A T .)[0, 4]/A[0, 1]'
-          expect(path_to_s).to eq(expected_path34)
+          path34 = 'Phi[0, 4]/S[0, 4]/Alt(S => A T .)[0, 4]/A[0, 1]'
+          expect(path_to_s).to eq(path34)
 
           event35 = walker.next
           subject.receive_event(*event35)
           expect(event35[0]).to eq(:revisit)
           expect(event35[1].to_s).to eq('.A | 0')
-          expect(subject.curr_parent.to_string(0)).to eq('Alt(S => A T .)[0, 4]')
+          parent_as_text = subject.curr_parent.to_string(0)
+          expect(parent_as_text).to eq('Alt(S => A T .)[0, 4]')
           expected_path35 = 'Phi[0, 4]/S[0, 4]/Alt(S => A T .)[0, 4]'
           expect(path_to_s).to eq(expected_path35)
 
@@ -410,18 +430,18 @@ module Rley # Open this namespace to avoid module qualifier prefixes
       context 'Natural language processing' do
         include GrammarL0Helper
 
-        let(:grammar_L0) do
-          builder = grammar_L0_builder
+        let(:grammar_l0) do
+          builder = grammar_l0_builder
           builder.grammar
         end
 
         let(:sentence_tokens) do
           sentence = 'I prefer a morning flight'
-          tokenizer_L0(sentence, grammar_L0)
+          tokenizer_l0(sentence, grammar_l0)
         end
 
         let(:sentence_result) do
-          parser = Parser::GFGEarleyParser.new(grammar_L0)
+          parser = Parser::GFGEarleyParser.new(grammar_l0)
           parser.parse(sentence_tokens)
         end
 
@@ -500,7 +520,8 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           expect(path_to_s).to eq(expected_path8)
           expect(subject.curr_parent.subnodes.size).to eq(1)
           token_event8 = 'Noun[4, 5]'
-          expect(subject.curr_parent.subnodes.first.to_string(0)).to eq(token_event8)
+          child = subject.curr_parent.subnodes.first
+          expect(child.to_string(0)).to eq(token_event8)
 
           event9 = walker.next
           subject.receive_event(*event9)
@@ -515,27 +536,28 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           expect(event10[0]).to eq(:visit)
           expect(event10[1].to_s).to eq('Nominal. | 3')
           expect(subject.curr_parent.to_string(0)).to eq('Nominal[3, 4]')
-          expected_path10 = 'S[0, 5]/VP[1, 5]/NP[2, 5]/Nominal[3, 5]/Nominal[3, 4]'
-          expect(path_to_s).to eq(expected_path10)
+          path10 = 'S[0, 5]/VP[1, 5]/NP[2, 5]/Nominal[3, 5]/Nominal[3, 4]'
+          expect(path_to_s).to eq(path10)
 
           event11 = walker.next
           subject.receive_event(*event11)
           expect(event11[0]).to eq(:visit)
           expect(event11[1].to_s).to eq('Nominal => Noun . | 3')
           expect(subject.curr_parent.to_string(0)).to eq('Nominal[3, 4]')
-          expected_path11 = 'S[0, 5]/VP[1, 5]/NP[2, 5]/Nominal[3, 5]/Nominal[3, 4]'
-          expect(path_to_s).to eq(expected_path11)
+          path11 = 'S[0, 5]/VP[1, 5]/NP[2, 5]/Nominal[3, 5]/Nominal[3, 4]'
+          expect(path_to_s).to eq(path11)
           expect(subject.curr_parent.subnodes.size).to eq(1)
           token_event11 = 'Noun[3, 4]'
-          expect(subject.curr_parent.subnodes.first.to_string(0)).to eq(token_event11)
+          child = subject.curr_parent.subnodes.first
+          expect(child.to_string(0)).to eq(token_event11)
 
           event12 = walker.next
           subject.receive_event(*event12)
           expect(event12[0]).to eq(:visit)
           expect(event12[1].to_s).to eq('Nominal => . Noun | 3')
           expect(subject.curr_parent.to_string(0)).to eq('Nominal[3, 4]')
-          expected_path12 = 'S[0, 5]/VP[1, 5]/NP[2, 5]/Nominal[3, 5]/Nominal[3, 4]'
-          expect(path_to_s).to eq(expected_path12)
+          path12 = 'S[0, 5]/VP[1, 5]/NP[2, 5]/Nominal[3, 5]/Nominal[3, 4]'
+          expect(path_to_s).to eq(path12)
 
           event13 = walker.next
           subject.receive_event(*event13)
@@ -569,7 +591,8 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           expected_path16 = 'S[0, 5]/VP[1, 5]/NP[2, 5]'
           expect(path_to_s).to eq(expected_path16)
           token_event16 = 'Determiner[2, 3]'
-          expect(subject.curr_parent.subnodes.first.to_string(0)).to eq(token_event16)
+          child = subject.curr_parent.subnodes.first
+          expect(child.to_string(0)).to eq(token_event16)
 
           event17 = walker.next
           subject.receive_event(*event17)
@@ -595,7 +618,8 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           expected_path19 = 'S[0, 5]/VP[1, 5]'
           expect(path_to_s).to eq(expected_path19)
           token_event19 = 'Verb[1, 2]'
-          expect(subject.curr_parent.subnodes.first.to_string(0)).to eq(token_event19)
+          child = subject.curr_parent.subnodes.first
+          expect(child.to_string(0)).to eq(token_event19)
 
           event20 = walker.next
           subject.receive_event(*event20)
@@ -637,8 +661,9 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           expected_path24 = 'S[0, 5]/NP[0, 1]'
           expect(path_to_s).to eq(expected_path24)
           token_event24 = 'Pronoun[0, 1]'
-          expect(subject.curr_parent.subnodes.first.to_string(0)).to eq(token_event24)           
-          
+          child = subject.curr_parent.subnodes.first
+          expect(child.to_string(0)).to eq(token_event24)
+
           event25 = walker.next
           subject.receive_event(*event25)
           expect(event25[0]).to eq(:visit)
@@ -668,7 +693,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           expect(event28[0]).to eq(:visit)
           expect(event28[1].to_s).to eq('.S | 0')
           expected_path28 = ''
-          expect(path_to_s).to eq(expected_path28)           
+          expect(path_to_s).to eq(expected_path28)
         end
       end # context
     end # describe

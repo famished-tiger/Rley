@@ -15,9 +15,11 @@ module Rley # This module is used as a namespace
       # The sequence of input token to parse
       attr_reader(:tokens)
 
-      # A Hash with pairs of the form: parse entry => [ antecedent parse entries ]
-      # It associates to a every parse entry its antecedent(s), that is, the parse entry/ies
-      # that causes the key parse entry to be created with one the gfg rules
+      # A Hash with pairs of the form: 
+      # parse entry => [ antecedent parse entries ]
+      # It associates to a every parse entry its antecedent(s), that is,
+      # the parse entry/ies that causes the key parse entry to be created 
+      # with one the gfg rules
       attr_reader(:antecedence)
 
       # @param aTracer [ParseTracer] An object that traces the parsing.
@@ -42,7 +44,8 @@ module Rley # This module is used as a namespace
       def call_rule(anEntry, aPosition)
         next_symbol = anEntry.next_symbol
         start_vertex = gf_graph.start_vertex_for[next_symbol]
-        apply_rule(anEntry, start_vertex, aPosition, aPosition, :call_rule)        
+        pos = aPosition
+        apply_rule(anEntry, start_vertex, pos, pos, :call_rule)        
       end
 
       # Let the current sigma set be the ith parse entry set.
@@ -62,8 +65,8 @@ module Rley # This module is used as a namespace
       end
 
       # This method must be invoked when an entry is added to a parse entry set
-      # and is of the form [B => γ ., k] (the dot is at the end of the production.
-      # Then entry [B., k] is added to the current entry set.
+      # and is of the form [B => γ ., k] (the dot is at the end of the 
+      # production. Then entry [B., k] is added to the current entry set.
       # Gist: for an entry corresponding to a reduced production, add an entry
       # for each exit edge in the graph.
       def exit_rule(anEntry, aPosition)
@@ -86,12 +89,15 @@ module Rley # This module is used as a namespace
         expecting_nterm_k.each do |ntry|
           # Get the vertices after the expected non-terminal
           vertex_after_terminal = ntry.vertex.shortcut.successor
-          apply_rule(anEntry, vertex_after_terminal, ntry.origin, aPosition, :end_rule)
+          origin = ntry.origin
+          pos = aPosition
+          apply_rule(anEntry, vertex_after_terminal, origin, pos, :end_rule)
         end
       end
 
       # Given that the terminal t is at the specified position,
-      #   Locate all entries in the current sigma set that expect t: [A => α . t γ, i]
+      #   Locate all entries in the current sigma set that expect t: 
+      #     [A => α . t γ, i]
       #     and allow them to cross the edge, adding the node on the back side
       #     of the edge as an entry to the next sigma set:
       #       add an entry to the next sigma set [A => α t . γ, i]
@@ -108,7 +114,9 @@ module Rley # This module is used as a namespace
           # Get the vertices after the expected terminal
           ntry.vertex.edges.each do |an_edge|
             vertex_after_terminal = an_edge.successor
-            apply_rule(ntry, vertex_after_terminal, ntry.origin, aPosition + 1, :scan_rule)
+            origin = ntry.origin
+            pos = aPosition + 1
+            apply_rule(ntry, vertex_after_terminal, origin, pos, :scan_rule)
           end
         end
       end
@@ -117,17 +125,15 @@ module Rley # This module is used as a namespace
       # Return true if the parse was successful (= input tokens
       # followed the syntax specified by the grammar)
       def success?()
-        return chart.accepting_entry() ? true : false
+        return chart.accepting_entry ? true : false
       end
 
       # Return true if there are more than one complete state
       # for the same lhs and same origin in any state set.
       def ambiguous?()
         found = chart.sets.find { |set| !set.ambiguities.empty? }
-        return ! found.nil?
+        return !found.nil?
       end
-
-
 
       # Factory method. Builds a ParseForest from the parse result.
       # @return [ParseForest]      
@@ -152,7 +158,6 @@ module Rley # This module is used as a namespace
         return chart.accepting_entry
       end
 
-
       private
 
       # Raise an exception to indicate a syntax error.
@@ -165,13 +170,13 @@ module Rley # This module is used as a namespace
         term_names = expected.map(&:name)
         err_msg = "Syntax error at or near token #{aPosition + 1}"
         err_msg << ">>>#{lexeme_at_pos}<<<:\nExpected "
-        if expected.size > 1
-          err_msg << "one of: ['#{term_names.join("', '")}'],"
-        else
-           err_msg << ": #{term_names[0]},"
-        end
+        err_msg << if expected.size > 1
+                     "one of: ['#{term_names.join("', '")}'],"
+                   else
+                     ": #{term_names[0]},"
+                   end
         err_msg << " found a '#{actual.name}'"
-        fail StandardError, err_msg + ' instead.'
+        raise StandardError, err_msg + ' instead.'
       end
 
       def apply_rule(antecedentEntry, aVertex, anOrigin, aPosition, aRuleId)
@@ -183,7 +188,7 @@ module Rley # This module is used as a namespace
       # Push a parse entry (vertex + origin) to the
       # chart entry with given index if it isn't yet in the chart entry.
       def push_entry(aVertex, anOrigin, aChartIndex, aReason)
-        fail StandardError, 'Vertex may not be nil' if aVertex.nil?
+        raise StandardError, 'Vertex may not be nil' if aVertex.nil?
         chart.push_entry(aVertex, anOrigin, aChartIndex, aReason)
       end
 
@@ -202,7 +207,6 @@ module Rley # This module is used as a namespace
 
         return instance
       end
-
     end # class
   end # module
 end # module

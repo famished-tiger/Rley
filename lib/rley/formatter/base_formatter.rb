@@ -13,8 +13,6 @@ module Rley # This module is used as a namespace
         @output = anIO
       end
 
-      public
-
       # Given a parse tree visitor, perform the visit
       # and render the visit events in the output stream.
       # @param aVisitor [ParseTreeVisitor]

@@ -9,7 +9,7 @@ module Rley # This module is used as a namespace
         items = []
         aGrammar.rules.each do |prod|
           rhs_size = prod.rhs.size
-          if rhs_size == 0
+          if rhs_size.zero?
             items << DottedItem.new(prod, 0)
           else
             items += (0..rhs_size).map { |i| DottedItem.new(prod, i) }
@@ -21,3 +21,4 @@ module Rley # This module is used as a namespace
     end # module
   end # module
 end # module
+# End of file

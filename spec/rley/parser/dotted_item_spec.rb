@@ -126,7 +126,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           
           # Case: different productions
           instance = DottedItem.new(empty_prod, 0)
-          expect(subject).not_to be_successor_of(subject)
+          expect(subject).not_to be_successor_of(instance)
 
           # Case: one position difference
           instance = DottedItem.new(sample_prod, 0)

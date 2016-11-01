@@ -27,13 +27,6 @@ module Rley # This module is used as a namespace
         push_entry(aGFGraph.start_vertex, 0, 0, :start_rule)
       end
 
-      # The dotted item/rule used to seed the parse chart.
-      # It corresponds to the start production and a dot placed
-      # at the beginning of the rhs
-      # def start_dotted_rule()
-        # return self[0].entries.first.dotted_rule
-      # end
-
       # Return the start (non-terminal) symbol of the grammar.
       def start_symbol()
         return sets.first.entries[0].vertex.non_terminal
@@ -47,11 +40,11 @@ module Rley # This module is used as a namespace
       # Return the index value of the last non-empty entry set.
       def last_index()
         first_empty = sets.find_index(&:empty?)
-        if first_empty.nil?
-          index = sets.size - 1
-        else
-          index = (first_empty == 0) ? 0 : first_empty - 1
-        end
+        index = if first_empty.nil?
+                  sets.size - 1
+                else
+                  first_empty.zero? ? 0 : first_empty - 1
+                end
 
         return index
       end
@@ -71,7 +64,7 @@ module Rley # This module is used as a namespace
             when :completion
                tracer.trace_completion(anIndex, new_entry)
             else
-              fail NotImplementedError, "Unknown push_entry mode #{aReason}"
+              raise NotImplementedError, "Unknown push_entry mode #{aReason}"
           end
         end
 
@@ -92,9 +85,9 @@ module Rley # This module is used as a namespace
         # Retrieve all the end entries (i.e. of the form
         last_entries = sets[last_index].entries.select(&:end_entry?)
 
-        # ... now find the end vertex for start symbol and with origin at zero...
+        # ... now find the end vertex for start symbol and with origin at zero.
         success_entries = last_entries.select do |entry|
-          entry.origin == 0 && entry.vertex.non_terminal == start_symbol
+          entry.origin.zero? && entry.vertex.non_terminal == start_symbol
         end
 
         return success_entries.first

@@ -45,13 +45,13 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           # contains a hidden left recursion and a cycle
           builder = Syntax::GrammarBuilder.new
           builder.add_terminals('a', 'b')
-          builder.add_production('Phi' => %'S')
-          builder.add_production('S' => %w[A T])
-          builder.add_production('S' => %w[a T])
+          builder.add_production('Phi' => 'S')
+          builder.add_production('S' => %w(A T))
+          builder.add_production('S' => %w(a T))
           builder.add_production('A' => 'a')
-          builder.add_production('A' => %w[B A])
+          builder.add_production('A' => %w(B A))
           builder.add_production('B' => [])
-          builder.add_production('T' => %w( b b b))
+          builder.add_production('T' => %w(b b b))
           builder.grammar
       end
 
@@ -77,7 +77,9 @@ module Rley # Open this namespace to avoid module qualifier prefixes
 
       context 'Parse graph traversal:' do
         it 'should create an Enumerator as a walker' do
-          expect(subject.build_walker(accept_entry, accept_index)).to be_kind_of(Enumerator)
+          entry = accept_entry
+          index = accept_index
+          expect(subject.build_walker(entry, index)).to be_kind_of(Enumerator)
         end
 
         it 'should return the accepting parse entry in the first place' do
@@ -247,9 +249,8 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           walker = subject.build_walker(accept_entry, accept_index)
           37.times { walker.next }
 
-          expect{ walker.next }.to raise_error(StopIteration)
+          expect { walker.next }.to raise_error(StopIteration)
         end
-
       end # context
     end # describe
   end # module

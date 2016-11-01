@@ -6,7 +6,6 @@ module Rley # This module is used as a namespace
   module Parser # This module is used as a namespace
     # Implementation of a parser that uses the Earley parsing algorithm.
     class GFGEarleyParser < BaseParser
-
       # The Grammar Flow graph for the given grammar
       attr_reader :gf_graph
 
@@ -48,7 +47,8 @@ module Rley # This module is used as a namespace
         return result
       end
 
-private
+      private
+
       # Let the current sigma set be the ith parse entry set.
       # This method is invoked when an entry is added to the parse entry set
       # and is of the form [A => alpha . B beta, k].
@@ -77,8 +77,8 @@ private
       end
 
       # This method must be invoked when an entry is added to a parse entry set
-      # and is of the form [B => γ ., k] (the dot is at the end of the production.
-      # Then entry [B., k] is added to the current entry set.
+      # and is of the form [B => γ ., k] (the dot is at the end of the
+      # production. Then entry [B., k] is added to the current entry set.
       # Gist: for an entry corresponding to a reduced production, add an entry
       # for each exit edge in the graph.
       def exit_rule(aParsing, anEntry, aPosition, aTracer)
@@ -100,13 +100,15 @@ private
       end
 
       # Given that the terminal t is at the specified position,
-      #   Locate all entries in the current sigma set that expect t: [A => α . t γ, i]
+      #   Locate all entries in the current sigma set that expect t:
+      #     [A => α . t γ, i]
       #     and allow them to cross the edge, adding the node on the back side
       #     of the edge as an entry to the next sigma set:
       #       add an entry to the next sigma set [A => α t . γ, i]
       def scan_rule(aParsing, aPosition, aTracer)
         if aTracer.level > 1
-          puts "Chart[#{aPosition}] Scan rule applied upon #{aParsing.tokens[aPosition]}:"
+          prefix = "Chart[#{aPosition}] Scan rule applied upon "
+          puts prefix + aParsing.tokens[aPosition].to_s
         end
         aParsing.scan_rule(aPosition)
       end
@@ -124,13 +126,13 @@ private
         term_names = terminals.map(&:name)
         err_msg = "Syntax error at or near token #{pos}"
         err_msg << ">>>#{lexeme_at_pos}<<<:\nExpected "
-        if terminals.size > 1
-          err_msg << "one of: ['#{term_names.join("', '")}'],"
-        else
-           err_msg << ": #{term_names[0]},"
-        end
+        err_msg << if terminals.size > 1
+                     "one of: ['#{term_names.join("', '")}'],"
+                   else
+                     ": #{term_names[0]},"
+                   end
         err_msg << " found a '#{aParsing.tokens[pos - 1].terminal.name}'"
-        fail StandardError, err_msg + ' instead.'
+        raise StandardError, err_msg + ' instead.'
       end
     end # class
   end # module

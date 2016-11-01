@@ -6,8 +6,8 @@ module Rley # This module is used as a namespace
     # let's assume that the integer literal '3' is the fifth input token and
     # that the '+' and '11' tokens are respectively at position 6 and 7;
     # then the token range associated with E is [5, 7]
-    # While the parse tree/forest is being constructed the boundaries of the token range
-    # can be temporarily undefined (= set to nil)
+    # While the parse tree/forest is being constructed the boundaries of the 
+    # token range can be temporarily undefined (= set to nil)
     class TokenRange
       # The index of the lower bound of token range
       attr_reader(:low)

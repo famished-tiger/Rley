@@ -7,31 +7,31 @@ module GrammarL0Helper
   ########################################
   # Factory method. Define a grammar for a micro English-like language
   # based on Jurafky & Martin L0 language (chapter 12 of the book).
-  # It defines the syntax of a sentence in a language with a 
+  # It defines the syntax of a sentence in a language with a
   # very limited syntax and lexicon in the context of airline reservation.
-  def grammar_L0_builder()
+  def grammar_l0_builder()
     builder = Rley::Syntax::GrammarBuilder.new
     builder.add_terminals('Noun', 'Verb', 'Pronoun', 'Proper-Noun')
-    builder.add_terminals('Determiner', 'Preposition', )
-    builder.add_production('S' => %w[NP VP])
+    builder.add_terminals('Determiner', 'Preposition')
+    builder.add_production('S' => %w(NP VP))
     builder.add_production('NP' => 'Pronoun')
     builder.add_production('NP' => 'Proper-Noun')
-    builder.add_production('NP' => %w[Determiner Nominal])
-    builder.add_production('Nominal' => %w[Nominal Noun])
+    builder.add_production('NP' => %w(Determiner Nominal))
+    builder.add_production('Nominal' => %w(Nominal Noun))
     builder.add_production('Nominal' => 'Noun')
     builder.add_production('VP' => 'Verb')
-    builder.add_production('VP' => %w[Verb NP])
-    builder.add_production('VP' => %w[Verb NP PP])
-    builder.add_production('VP' => %w[Verb PP])
-    builder.add_production('PP' => %w[Preposition PP])
+    builder.add_production('VP' => %w(Verb NP))
+    builder.add_production('VP' => %w(Verb NP PP))
+    builder.add_production('VP' => %w(Verb PP))
+    builder.add_production('PP' => %w(Preposition PP))
     builder
   end
-  
+
   # Return the language lexicon.
   # A lexicon is just a Hash with pairs of the form:
   # word => terminal symbol name
-  def lexicon_L0()
-    lexicon = {
+  def lexicon_l0()
+    return {
       'flight' => 'Noun',
       'breeze' => 'Noun',
       'trip' => 'Noun',
@@ -63,19 +63,20 @@ module GrammarL0Helper
       'near' => 'Preposition'
     }
   end
-  
-  
+
+
   # Highly simplified tokenizer implementation.
-  def tokenizer_L0(aText, aGrammar)
+  def tokenizer_l0(aText, aGrammar)
     tokens = aText.scan(/\S+/).map do |word|
-      term_name = lexicon_L0[word]
+      term_name = lexicon_l0[word]
       if term_name.nil?
-        fail StandardError, "Word '#{word}' not found in lexicon"
+        raise StandardError, "Word '#{word}' not found in lexicon"
       end
       terminal = aGrammar.name2symbol[term_name]
       Rley::Parser::Token.new(word, terminal)
     end
-    
+
     return tokens
   end
 end # module
+# End of file

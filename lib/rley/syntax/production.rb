@@ -18,8 +18,8 @@ module Rley # This module is used as a namespace
 
       # Provide common alternate names to lhs and rhs accessors
 
-      alias_method :body, :rhs
-      alias_method :head, :lhs
+      alias body rhs
+      alias head lhs
 
       def initialize(aNonTerminal, theSymbols)
         @lhs = valid_lhs(aNonTerminal)
@@ -40,7 +40,7 @@ module Rley # This module is used as a namespace
         unless aNonTerminal.kind_of?(NonTerminal)
           msg_prefix = 'Left side of production must be a non-terminal symbol'
           msg_suffix = ", found a #{aNonTerminal.class} instead."
-          fail StandardError, msg_prefix + msg_suffix
+          raise StandardError, msg_prefix + msg_suffix
         end
 
         return aNonTerminal

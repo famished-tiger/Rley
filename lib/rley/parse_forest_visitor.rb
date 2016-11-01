@@ -7,10 +7,10 @@ module Rley # This module is used as a namespace
 
     # List of objects that subscribed to the visit event notification.
     attr_reader(:subscribers)
-    
+
     # A Hash with pairs of the form: Node => node visit data
     attr_reader(:agenda)
-    
+
     # Indicates the kind of forest traversal to perform: :post_order, :pre-order
     attr_reader(:traversal)
 
@@ -21,8 +21,6 @@ module Rley # This module is used as a namespace
       @subscribers = []
       @traversal = aTraversalStrategy
     end
-
-    public
 
     # Add a subscriber for the visit event notifications.
     # @param aSubscriber [Object]
@@ -57,7 +55,7 @@ module Rley # This module is used as a namespace
         broadcast(:before_non_terminal, aNonTerminalNode)
         traverse_children(aNonTerminalNode)
       else
-        traverse_children(aNonTerminalNode)  
+        traverse_children(aNonTerminalNode)
         broadcast(:before_non_terminal, aNonTerminalNode)
       end
       broadcast(:after_non_terminal, aNonTerminalNode)
@@ -72,7 +70,7 @@ module Rley # This module is used as a namespace
     end
 
 
-    # Visit event. The visitor has completed its visit of the given 
+    # Visit event. The visitor has completed its visit of the given
     # non-terminal node.
     # @param aNonTerminalNode [NonTerminalNode] the node to visit.
     def end_visit_nonterminal(aNonTerminalNode)
@@ -86,17 +84,17 @@ module Rley # This module is used as a namespace
     end
 
     private
-    
-    # Visit event. The visitor is about to visit the children of a non 
+
+    # Visit event. The visitor is about to visit the children of a non
     # terminal node.
     # @param aParentNode [NonTeminalNode] the (non-terminal) parent node.
     def traverse_children(aParentNode)
       children = aParentNode.children
       broadcast(:before_children, aParentNode, children)
-      
+
       # Let's proceed with the visit of children
       children.each { |a_node| a_node.accept(self) }
-      
+
       broadcast(:after_children, aParentNode, children)
     end
 

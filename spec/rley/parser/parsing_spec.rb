@@ -170,7 +170,6 @@ SNIPPET
           return [state_tracker, builder]
         end
 
-# Spiff
         it 'should create the root of a parse tree' do
           (state_tracker, builder) = prepare_parse_tree(subject)
           # The root node should correspond to the start symbol and

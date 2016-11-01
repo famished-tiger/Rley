@@ -26,7 +26,7 @@ module AmbiguousGrammarHelper
           terminal = aGrammar.name2symbol['id']
         else
           msg = "Unknown input text '#{lexeme}'"
-          fail StandardError, msg
+          raise StandardError, msg
       end
       Rley::Parser::Token.new(lexeme, terminal)
     end

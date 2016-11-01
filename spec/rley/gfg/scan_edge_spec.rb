@@ -16,9 +16,11 @@ module Rley # Open this namespace to avoid module qualifier prefixes
 
       context 'Initialization:' do
         it 'should be created with two vertice arguments & a terminal' do
-          expect { ScanEdge.new(vertex1, vertex2, sample_terminal) }.not_to raise_error
+          v1 = vertex1
+          v2 = vertex2
+          expect { ScanEdge.new(v1, v2, sample_terminal) }.not_to raise_error
         end
-        
+
         it 'should know the related terminal' do
           expect(subject.terminal).to eq(sample_terminal)
         end

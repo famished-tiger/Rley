@@ -8,21 +8,20 @@ module Rley # This module is used as a namespace
     # Responsibilities (in addition to inherited ones):
     # - Know its related non-terminal symbol
     class NonTerminalVertex < Vertex
-        attr_reader :non_terminal
+      attr_reader :non_terminal
       
       def initialize(aNonTerminal)
         super()
         @non_terminal = aNonTerminal
       end
       
-protected
+      protected
 
       # Validation method for adding an outgoing edge to the vertex.
       # A start vertex may accept an indegree and outdegree greater than one
       def check_add_edge(anEdge)
         return anEdge
       end      
-
     end # class
   end # module
 end # module

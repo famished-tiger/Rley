@@ -49,7 +49,7 @@ module Rley # This module is used as a namespace
         curr_node = current_node
         unless curr_node.is_a?(PTree::NonTerminalNode)
           msg = "Current node isn't a non-terminal node #{curr_node.class}"
-          fail StandardError, msg
+          raise StandardError, msg
         end
         children = curr_node.children
         path_increment = [children.size - 1, children.last]
@@ -122,7 +122,7 @@ module Rley # This module is used as a namespace
         if curr_node.symbol != prod.lhs
           snapshot = root.to_string(0)
           msg = "Current node is a #{curr_node.symbol} instead of #{prod.lhs}."
-          fail StandardError, msg + "\n" + snapshot
+          raise StandardError, msg + "\n" + snapshot
         end
         self.range = aRange
         prod.rhs.each { |symb| add_node(symb, {}) }
@@ -153,20 +153,20 @@ module Rley # This module is used as a namespace
 
       def low_bound(aRange)
         result = case aRange
-          when Fixnum then aRange
-          when Hash then aRange[:low]
-          when PTree::TokenRange then aRange.low
-        end
+                   when Integer then aRange
+                   when Hash then aRange[:low]
+                   when PTree::TokenRange then aRange.low
+                 end
 
         return { low: result }
       end
 
       def high_bound(aRange)
         result = case aRange
-          when Fixnum then aRange
-          when Hash then aRange[:high]
-          when PTree::TokenRange then aRange.high
-        end
+                   when Integer then aRange
+                   when Hash then aRange[:high]
+                   when PTree::TokenRange then aRange.high
+                 end
 
         return { high: result }
       end

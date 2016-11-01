@@ -79,8 +79,9 @@ module Rley # Open this namespace to avoid module qualifier prefixes
         end
 
         it 'should have no antecedence for the initial parse entry' do
-           expect(subject.antecedence.size).to eq(1)
-          expect(subject.antecedence.fetch(subject.initial_entry)).to be_empty
+          antecedence = subject.antecedence
+          expect(antecedence.size).to eq(1)
+          expect(antecedence.fetch(subject.initial_entry)).to be_empty
         end
 
 =begin
@@ -186,7 +187,7 @@ SNIPPET
 
         it 'should apply the scan rule correctly' do
           # Filling manually first entry set...
-          fill_first_set()
+          fill_first_set
           # There are two entries expecting a terminal:
           # ['A => . a A c', 'A => . b']
           fourth_entry = subject.chart[0].entries[3] # 'A => . a A c'
@@ -201,15 +202,16 @@ SNIPPET
           # Entry must be past the terminal symbol
           expect(last_entry.vertex.label).to eq('A => a . A c')
           expect(last_entry.origin).to eq(0)
-          expect(subject.antecedence.fetch(last_entry)).to eq([fourth_entry])          
+          antecedence = subject.antecedence
+          expect(antecedence.fetch(last_entry)).to eq([fourth_entry])          
         end
 
         it 'should apply the exit rule correctly' do
           # Filling manually first entry set...
-          fill_first_set()
+          fill_first_set
 
           # Initial manually first entry set...
-          seed_second_set()
+          seed_second_set
 
           # Given that the scanned token is 'b'...
           # Then a new entry is added in next entry set
@@ -231,10 +233,10 @@ SNIPPET
 
         it 'should apply the end rule correctly' do
           # Filling manually first entry set...
-          fill_first_set()
+          fill_first_set
 
           # Initial manually first entry set...
-          seed_second_set()
+          seed_second_set
           last_entry = subject.chart[1].last
 
           # Given that the scanned token is 'b'...
@@ -290,7 +292,6 @@ SNIPPET
       end # context
 
       context 'Parse forest building:' do
-
         let(:sample_grammar1) do
           builder = grammar_abc_builder
           builder.grammar
@@ -318,7 +319,7 @@ SNIPPET
         end
 
         it 'should build a parse forest' do
-          expect{subject.parse_forest }.not_to raise_error
+          expect { subject.parse_forest }.not_to raise_error
           
         end
 =begin

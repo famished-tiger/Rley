@@ -18,7 +18,7 @@ module GrammarBExprHelper
     builder.add_production('T' => 'integer')
     builder
   end
-  
+
   # Basic expression tokenizer
   def expr_tokenizer(aText, aGrammar)
     tokens = aText.scan(/\S+/).map do |lexeme|
@@ -29,11 +29,12 @@ module GrammarBExprHelper
           terminal = aGrammar.name2symbol['integer']
         else
           msg = "Unknown input text '#{lexeme}'"
-          fail StandardError, msg
+          raise StandardError, msg
       end
       Rley::Parser::Token.new(lexeme, terminal)
     end
-    
+
     return tokens
   end
 end # module
+# End of file

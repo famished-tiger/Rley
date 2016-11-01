@@ -16,11 +16,8 @@ module Rley # This module is used as a namespace
       def ==(other)
         return true if object_id == other.object_id
 
-        if (dotted_rule == other.dotted_rule) && (origin == other.origin)
-          result = true
-        else
-          result = false
-        end
+        result = (dotted_rule == other.dotted_rule) && 
+                 (origin == other.origin)
 
         return result
       end
@@ -50,11 +47,11 @@ module Rley # This module is used as a namespace
         return false unless dotted_rule.production == other_production
 
         prev_position = other.dotted_rule.prev_position
-        if prev_position.nil?
-          result = false
-        else
-          result = dotted_rule.position == prev_position
-        end
+        result = if prev_position.nil?
+                   false
+                 else
+                   dotted_rule.position == prev_position
+                 end
 
         return result
       end
@@ -72,7 +69,7 @@ module Rley # This module is used as a namespace
 
       # Return the validated dotted item(rule)
       def valid_dotted_rule(aDottedRule)
-        fail StandardError, 'Dotted item cannot be nil' if aDottedRule.nil?
+        raise StandardError, 'Dotted item cannot be nil' if aDottedRule.nil?
 
         return aDottedRule
       end

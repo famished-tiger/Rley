@@ -49,7 +49,7 @@ module Rley # This module is used as a namespace
       def trace_completion(aStatesetIndex, aParseState)
         return unless level
 
-        if aStatesetIndex == lexemes.size && aParseState.origin == 0 && 
+        if aStatesetIndex == lexemes.size && aParseState.origin.zero? && 
            aParseState.complete?
           picture = '=' * (col_width * lexemes.size - 1)
         else
@@ -70,13 +70,13 @@ module Rley # This module is used as a namespace
       def emit_heading()
         longest = lexemes.map(&:length).max
         @col_width = longest + 3
-        headers = lexemes.map { |l| "#{l.center(col_width - 1, ' ')}" }
+        headers = lexemes.map { |l| l.center(col_width - 1, ' ').to_s }
         print_if 1, '|.' + headers.join('.') + ".|\n"
       end
 
       def padding(aStatesetIndex, aParseState, aPicture)
         l_pad_pattern = '.' + ' ' * (col_width - 1)
-        left_padding =  l_pad_pattern * ([0, aParseState.origin].max)
+        left_padding =  l_pad_pattern * [0, aParseState.origin].max
         r_pad_pattern = ' ' * (col_width - 1) + '.'
         right_padding = r_pad_pattern * (lexemes.size - aStatesetIndex)
         return left_padding + aPicture + right_padding

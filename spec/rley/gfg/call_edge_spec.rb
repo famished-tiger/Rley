@@ -25,7 +25,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
       let(:nt_sentence) { Rley::Syntax::NonTerminal.new('sentence') }
       let(:nt_b_sequence) { Rley::Syntax::NonTerminal.new('b_sequence') }
       let(:sample_prod) { build_prod(nt_sentence, t_a, nt_b_sequence, t_c) }
-      let(:sample_item) { Parser::DottedItem.new(sample_prod, 1) }    
+      let(:sample_item) { Parser::DottedItem.new(sample_prod, 1) }
 
       let(:vertex1) { ItemVertex.new(sample_item) }
       let(:vertex2) { StartVertex.new('to') }
@@ -36,14 +36,13 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           expect { CallEdge.new(vertex1, vertex2) }.not_to raise_error
         end
       end # context
-      
-      
+
       context 'Provided services:' do
         it 'should know its key' do
           expectation = "CALL_#{sample_prod.object_id}_#{sample_item.position}"
           expect(subject.key).to eq(expectation)
         end
-      end # context      
+      end # context
     end # describe
   end # module
 end # module

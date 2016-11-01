@@ -11,7 +11,6 @@ require_relative '../../../lib/rley/gfg/item_vertex'
 module Rley # Open this namespace to avoid module qualifier prefixes
   module GFG # Open this namespace to avoid module qualifier prefixes
     describe ItemVertex do
-
       # Factory method. Builds a production with given left-hand side (LHS)
       # and given RHS (right-hand side)
       def build_prod(theLHS, *theRHSSymbols)
@@ -25,8 +24,8 @@ module Rley # Open this namespace to avoid module qualifier prefixes
       let(:nt_b_sequence) { Rley::Syntax::NonTerminal.new('b_sequence') }
       let(:sample_prod) { build_prod(nt_sentence, t_a, nt_b_sequence, t_c) }
       let(:other_prod) {  build_prod(nt_sentence, t_a) }
-      let(:recursive_prod) {build_prod(nt_b_sequence, nt_b_sequence, t_b )}
-      let(:b_prod) {build_prod(nt_b_sequence, t_b )}
+      let(:recursive_prod) { build_prod(nt_b_sequence, nt_b_sequence, t_b) }
+      let(:b_prod) { build_prod(nt_b_sequence, t_b) }
       let(:empty_prod) { build_prod(nt_sentence) }
       let(:sample_item) { Parser::DottedItem.new(sample_prod, 1) }
       let(:next_item) { Parser::DottedItem.new(sample_prod, 2) }
@@ -88,7 +87,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
         
         
         it 'should know the next symbol (if any) in the rhs' do
-          #Case: dot is not penultimate
+          # Case: dot is not penultimate
           expect(subject.next_symbol).to eq(nt_b_sequence)
 
           # Case: dot is penultimate

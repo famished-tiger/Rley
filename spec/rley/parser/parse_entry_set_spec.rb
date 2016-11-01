@@ -20,10 +20,10 @@ module Rley # Open this namespace to avoid module qualifier prefixes
       let(:t_a) { Rley::Syntax::Terminal.new('a') }
       let(:t_b) { Rley::Syntax::Terminal.new('b') }
       let(:t_c) { Rley::Syntax::Terminal.new('c') }
-      let(:nt_repeated_c) { Rley::Syntax::NonTerminal.new('Repetition') }
-      let(:repeated_prod) { build_prod(nt_repeated_c, t_c, nt_repeated_c) }
+      let(:nt_rep_c) { Rley::Syntax::NonTerminal.new('Repetition') }
+      let(:repeated_prod) { build_prod(nt_rep_c, t_c, nt_rep_c) }
       let(:nt_sentence) { Rley::Syntax::NonTerminal.new('Sentence') }
-      let(:sample_prod) { build_prod(nt_sentence, t_a, t_b, t_b, nt_repeated_c) }
+      let(:sample_prod) { build_prod(nt_sentence, t_a, t_b, t_b, nt_rep_c) }
 
       let(:sample_item1) { Parser::DottedItem.new(sample_prod, 1) }
       let(:sample_item2) { Parser::DottedItem.new(sample_prod, 2) }
@@ -88,7 +88,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
         it 'should list the entries expecting a given non-terminal' do
           # Case: an entry expecting a non-terminal
           subject.push_entry(entry3)
-          expect(subject.entries4n_term(nt_repeated_c)).to eq([entry3])
+          expect(subject.entries4n_term(nt_rep_c)).to eq([entry3])
         end
 
 =begin

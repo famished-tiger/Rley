@@ -22,8 +22,6 @@ module Rley # This module is used as a namespace
         @sibling_flags = [ false ]
       end
 
-      public
-
       # Method called by a ParseTreeVisitor to which the formatter subscribed.
       # Notification of a visit event: the visitor is about to visit the given
       # parse tree
@@ -31,7 +29,7 @@ module Rley # This module is used as a namespace
       def before_ptree(_ptree)
         print_text('', "{\n")
         indent
-        print_text('', "\"root\":")
+        print_text('', '"root":')
         indent
       end
 

@@ -29,7 +29,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
 
       # Grammar 1: arithmetical expressions with integers
       let(:grm1_ops) do
-        operators = %w[+ - * / ( ) ]
+        operators = %w[+ - * / ( )]
         build_verbatim_symbols(operators)
       end
 

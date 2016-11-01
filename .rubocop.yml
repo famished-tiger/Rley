@@ -2,11 +2,12 @@ AllCops:
   Exclude:
     - 'examples/**/*'
     - 'features/**/*'
+    - 'exp/**/*'    
     - 'gems/**/*'
-    - 'lab/**/*'
+    - 'refs/**/*'
 
 AbcSize:
-  Max: 35
+  Max: 45
     
 # This is disabled because some demos use UTF-8
 AsciiComments:
@@ -60,7 +61,7 @@ MethodLength:
  
 # Avoid modules longer than 500 lines of code 
 ModuleLength:
-  Max: 500
+  Max: 700
  
 NonNilCheck:
   Enabled: false
@@ -84,4 +85,7 @@ TrailingWhitespace:
   Enabled: false
   
 VariableName:
+  Enabled: false
+
+VariableNumber:
   Enabled: false  

@@ -23,7 +23,7 @@ module Rley # This module is used as a namespace
           when Array then result = other == members
           else
             msg = "Cannot compare a SymbolSeq with a #{other.class}"
-            fail StandardError, msg
+            raise StandardError, msg
         end
 
         return result

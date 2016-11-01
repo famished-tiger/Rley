@@ -19,8 +19,6 @@ module Rley # This module is used as a namespace
       @traversal = aTraversalStrategy
     end
 
-    public
-
     # Add a subscriber for the visit event notifications.
     # @param aSubscriber [Object]
     def subscribe(aSubscriber)

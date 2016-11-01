@@ -6,11 +6,11 @@ require_relative '../../../lib/rley/gfg/vertex'
 module Rley # Open this namespace to avoid module qualifier prefixes
   module GFG # Open this namespace to avoid module qualifier prefixes
     describe Vertex do
-      subject { Vertex.new() }
+      subject { Vertex.new }
 
       context 'Initialization:' do
         it 'should be created without argument' do
-          expect { Vertex.new() }.not_to raise_error
+          expect { Vertex.new }.not_to raise_error
         end
 
         it "shouldn't have edges at start" do

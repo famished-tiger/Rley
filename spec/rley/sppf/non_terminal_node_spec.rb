@@ -56,7 +56,6 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           expect(subject.to_string(0)).to eq('VP[0, 3]')
         end
       end # context
-
     end # describe
   end # module
 end # module

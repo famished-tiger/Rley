@@ -8,7 +8,6 @@ module Rley # This module is used as a namespace
     # Responsibilities (in addition to inherited ones):
     # - Know its related non-terminal symbol
     class StartVertex < NonTerminalVertex
-      
       def initialize(aNonTerminal)
         super(aNonTerminal)
       end
@@ -16,7 +15,6 @@ module Rley # This module is used as a namespace
       def label()
         return ".#{non_terminal}"
       end       
-
     end # class
   end # module
 end # module

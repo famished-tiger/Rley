@@ -17,9 +17,9 @@ module ExpectationHelper
   # consequent label => [ antecedent label(s) ]
   def check_antecedence(aParsing, aPosition, expectations)
     entry_set = aParsing.chart[aPosition]
-    
+
     expectations.each do |consequent_label, antecedent_labels|
-      consequent = entry_set.entries.find do |entry| 
+      consequent = entry_set.entries.find do |entry|
         entry.to_s == consequent_label
       end
       actual_antecedents = aParsing.antecedence.fetch(consequent)
@@ -34,3 +34,4 @@ module ExpectationHelper
     expect(actual_names.sort).to eq(termNames.sort)
   end
 end # module
+# End of file
