@@ -59,7 +59,7 @@ MethodLength:
   Max: 50
   CountComments: false 
  
-# Avoid modules longer than 500 lines of code 
+# Avoid modules longer than 700 lines of code 
 ModuleLength:
   Max: 700
  

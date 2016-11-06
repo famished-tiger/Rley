@@ -12,7 +12,8 @@ module Rley # This module is used as a namespace
       :curr_entry, # Parse entry currently being visited
       :entry_set_index, # Sigma set index of current parse entry
       :visitees, # The set of already visited parse entries
-      :nterm2start, # A Hash non-terminal symbol => start entry
+      :nterm2start, # Nested hashes. Pairs of first level are of the form:
+      # non-terminal symbol => { index(=origin) => start entry }
       :return_stack, # A stack of parse entries
       :backtrack_points
     )
@@ -76,26 +77,42 @@ module Rley # This module is used as a namespace
         context.entry_set_index = maxIndex
         context.curr_entry = acceptingEntry
         context.visitees = Set.new
-        context.nterm2start = {}
+        context.nterm2start = init_nterm2start
         context.return_stack = []
         context.backtrack_points = []
 
         return context
+      end
+      
+      
+      # Initialize the non-terminal to start entry mapping
+      def init_nterm2start()
+        h = Hash.new do |hsh, defval|
+          entry, index = defval
+          nonterm = entry.vertex.non_terminal          
+          if hsh.include? nonterm
+            pre = hsh[nonterm]
+            pre[index] = entry
+          else
+            hsh[nonterm] = { index => entry }
+          end
+        end
+          
+        return h
       end
 
       # [event, entry, index, vertex]
       def visit_entry(anEntry, aContext)
         index = aContext.entry_set_index
 
-        if anEntry.start_entry?
-          aContext.nterm2start[anEntry.vertex.non_terminal] = anEntry
-        end
+        aContext.nterm2start[[anEntry, index]] if anEntry.start_entry?
 
         if aContext.visitees.include?(anEntry) # Already visited?...
           case anEntry.vertex
             when GFG::EndVertex
               # Jump to related start entry...
-              new_entry = aContext.nterm2start[anEntry.vertex.non_terminal]
+              pairs = aContext.nterm2start[anEntry.vertex.non_terminal]
+              new_entry = pairs[anEntry.origin]
               aContext.curr_entry = new_entry
               aContext.entry_set_index = new_entry.origin
               event = [:revisit, anEntry, index]
@@ -105,7 +122,7 @@ module Rley # This module is used as a namespace
 
             when GFG::ItemVertex
               # Skip item entries while revisiting
-              event = nil
+              event = [:revisit, anEntry, index]
             else
               raise NotImplementedError
           end

@@ -1,3 +1,11 @@
+### 0.3.06 / 2016-11-06
+* [FIX] There were missing links to shared parse forest nodes for ambiguous parses.
+* [NEW] RSpec file `ambiguous_parse_spec.rb` added in order to test the parse forest building for an ambiguous parse.
+* [CHANGE] Attribute `ParseWalkerContext#nterm2start`: previous implementation assumed -wrongly- that for each non terminal there was only one start entry. 
+  Now this attribute uses nested hashes as data structure in order to disambiguate the mapping.
+* [CHANGE] Method `ParseWalkerFactory#visit_entry` updated to reflect change in the `ParseWalkerContext#nterm2start` attribute.
+* [CHANGE] Method `ParseWalkerFactory#visit_entry` now emits an event if an item entry is re-visited (previously, no such event were generated)
+
 ### 0.3.05 / 2016-11-01
 * [CHANGE] Code re-styling to please Rubocop 0.45.0: only 2 offences remain (from a few hundreds!)
 

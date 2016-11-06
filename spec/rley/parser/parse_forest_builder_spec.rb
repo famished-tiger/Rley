@@ -42,13 +42,6 @@ module Rley # Open this namespace to avoid module qualifier prefixes
         parser.parse(sample_tokens)
       end
 
-      let(:walker) do
-        factory = ParseWalkerFactory.new
-        accept_entry = sample_result.accepting_entry
-        accept_index = sample_result.chart.last_index
-        factory.build_walker(accept_entry, accept_index)
-      end
-
       subject { ParseForestBuilder.new(sample_tokens) }
 
       # Emit a text representation of the current path.
@@ -59,6 +52,25 @@ module Rley # Open this namespace to avoid module qualifier prefixes
         return text_parts.join('/')
       end
 
+      def next_event(eventType, anEntryText)
+        event = @walker.next
+        subject.receive_event(*event)
+        expect(event[0]).to eq(eventType)
+        expect(event[1].to_s).to eq(anEntryText)
+      end
+
+      def expected_curr_parent(anExpectation)
+        expect(subject.curr_parent.to_string(0)).to eq(anExpectation)
+      end
+
+      def expected_curr_path(anExpectation)
+        expect(path_to_s).to eq(anExpectation)
+      end
+
+      def expected_first_child(anExpectation)
+          child = subject.curr_parent.subnodes.first
+          expect(child.to_string(0)).to eq(anExpectation)
+      end
 
       context 'Initialization:' do
         it 'should be created with a sequence of tokens' do
@@ -75,355 +87,190 @@ module Rley # Open this namespace to avoid module qualifier prefixes
       end # context
 
       context 'Parse forest construction' do
+        before(:each) do
+          factory = ParseWalkerFactory.new
+          accept_entry = sample_result.accepting_entry
+          accept_index = sample_result.chart.last_index
+          @walker = factory.build_walker(accept_entry, accept_index)
+        end
+
         it 'should initialize the root node' do
-          first_event = walker.next
-          subject.receive_event(*first_event)
+          next_event(:visit, 'Phi. | 0')
           forest = subject.forest
 
           expect(forest.root.to_string(0)).to eq('Phi[0, 4]')
-          expect(subject.curr_path).to eq([forest.root])
-          expect(subject.entry2node[first_event[1]]).to eq(forest.root)
+          expected_curr_path('Phi[0, 4]')
         end
 
         it 'should initialize the first child of the root node' do
-          event1 = walker.next
-          subject.receive_event(*event1)
+          next_event(:visit, 'Phi. | 0') # Event 1
+          next_event(:visit, 'Phi => S . | 0') # Event 2
+          next_event(:visit, 'S. | 0') # Event 3
 
-          event2 = walker.next
-          subject.receive_event(*event2)
-
-          event3 = walker.next
-          subject.receive_event(*event3)
-
-          expect(subject.curr_parent.to_string(0)).to eq('S[0, 4]')
-          expected_path3 = 'Phi[0, 4]/S[0, 4]'
-          expect(path_to_s).to eq(expected_path3)
+          expected_curr_path('Phi[0, 4]/S[0, 4]')
         end
 
         it 'should build alternative node when detecting backtrack point' do
           3.times do
-            event = walker.next
+            event = @walker.next
             subject.receive_event(*event)
           end
 
-          event4 = walker.next
-          subject.receive_event(*event4)
-
-          parent_as_text = subject.curr_parent.to_string(0)
-          expect(parent_as_text).to eq('Alt(S => a T .)[0, 4]')
-          expected_path4 = 'Phi[0, 4]/S[0, 4]/Alt(S => a T .)[0, 4]'
-          expect(path_to_s).to eq(expected_path4)
+          next_event(:visit, 'S => a T . | 0') # Event 4
+          expected_curr_path('Phi[0, 4]/S[0, 4]/Alt(S => a T .)[0, 4]')
           expect(subject.curr_path[-2].refinement).to eq(:or)
         end
 
         it 'should build token node when scan edge was detected' do
           4.times do
-            event = walker.next
+            event = @walker.next
             subject.receive_event(*event)
           end
 
-          event5 = walker.next
-          subject.receive_event(*event5)
-          expect(event5[1].to_s).to eq('T. | 1')
-          expect(subject.curr_parent.to_string(0)).to eq('T[1, 4]')
-          expected_path5 = 'Phi[0, 4]/S[0, 4]/Alt(S => a T .)[0, 4]/T[1, 4]'
-          expect(path_to_s).to eq(expected_path5)
+          next_event(:visit, 'T. | 1') # Event5
+          expected_curr_path('Phi[0, 4]/S[0, 4]/Alt(S => a T .)[0, 4]/T[1, 4]')
           expect(subject.curr_parent.subnodes).to be_empty
 
-          event6 = walker.next
-          subject.receive_event(*event6)
-          expect(event6[1].to_s).to eq('T => b b b . | 1')
+          next_event(:visit, 'T => b b b . | 1') # Event 6
           expect(subject.curr_parent.to_string(0)).to eq('T[1, 4]')
-          expected_path6 = 'Phi[0, 4]/S[0, 4]/Alt(S => a T .)[0, 4]/T[1, 4]'
-          expect(path_to_s).to eq(expected_path6)
+          expected_curr_path('Phi[0, 4]/S[0, 4]/Alt(S => a T .)[0, 4]/T[1, 4]')
           expect(subject.curr_parent.subnodes.size).to eq(1)
-          token_event6 = 'b[3, 4]'
-          child = subject.curr_parent.subnodes.first
-          expect(child.to_string(0)).to eq(token_event6)
+          expected_first_child('b[3, 4]')
 
-          event7 = walker.next
-          subject.receive_event(*event7)
-          expect(event7[1].to_s).to eq('T => b b . b | 1')
-          expect(subject.curr_parent.to_string(0)).to eq('T[1, 4]')
-          expected_path7 = 'Phi[0, 4]/S[0, 4]/Alt(S => a T .)[0, 4]/T[1, 4]'
-          expect(path_to_s).to eq(expected_path7)
+          next_event(:visit, 'T => b b . b | 1') # Event 7
+          expected_curr_path('Phi[0, 4]/S[0, 4]/Alt(S => a T .)[0, 4]/T[1, 4]')
           expect(subject.curr_parent.subnodes.size).to eq(2)
-          token_event7 = 'b[2, 3]'
-          child = subject.curr_parent.subnodes.first
-          expect(child.to_string(0)).to eq(token_event7)
+          expected_first_child('b[2, 3]')
 
-          event8 = walker.next
-          subject.receive_event(*event8)
-          expect(event8[1].to_s).to eq('T => b . b b | 1')
-          expect(subject.curr_parent.to_string(0)).to eq('T[1, 4]')
-          expected_path8 = 'Phi[0, 4]/S[0, 4]/Alt(S => a T .)[0, 4]/T[1, 4]'
-          expect(path_to_s).to eq(expected_path8)
+          next_event(:visit, 'T => b . b b | 1') # Event 8
+          expected_curr_path('Phi[0, 4]/S[0, 4]/Alt(S => a T .)[0, 4]/T[1, 4]')
           expect(subject.curr_parent.subnodes.size).to eq(3)
-          token_event8 = 'b[1, 2]'
-          child = subject.curr_parent.subnodes.first
-          expect(child.to_string(0)).to eq(token_event8)
+          expected_first_child('b[1, 2]')
 
-          event9 = walker.next
-          subject.receive_event(*event9)
-          expect(event9[1].to_s).to eq('T => . b b b | 1')
-          expect(subject.curr_parent.to_string(0)).to eq('T[1, 4]')
-          expected_path9 = 'Phi[0, 4]/S[0, 4]/Alt(S => a T .)[0, 4]/T[1, 4]'
-          expect(path_to_s).to eq(expected_path9)
+          next_event(:visit, 'T => . b b b | 1') # Event 9
+          expected_curr_path('Phi[0, 4]/S[0, 4]/Alt(S => a T .)[0, 4]/T[1, 4]')
 
-          event10 = walker.next
-          subject.receive_event(*event10)
-          expect(event10[1].to_s).to eq('.T | 1')
-          parent_as_text = subject.curr_parent.to_string(0)
-          expect(parent_as_text).to eq('Alt(S => a T .)[0, 4]')
-          expected_path10 = 'Phi[0, 4]/S[0, 4]/Alt(S => a T .)[0, 4]'
-          expect(path_to_s).to eq(expected_path10)
+          next_event(:visit, '.T | 1') # Event 10
+          expected_curr_path('Phi[0, 4]/S[0, 4]/Alt(S => a T .)[0, 4]')
 
-          event11 = walker.next
-          subject.receive_event(*event11)
-          expect(event11[1].to_s).to eq('S => a . T | 0')
-          parent_as_text = subject.curr_parent.to_string(0)
-          expect(parent_as_text).to eq('Alt(S => a T .)[0, 4]')
-          expected_path11 = 'Phi[0, 4]/S[0, 4]/Alt(S => a T .)[0, 4]'
-          expect(path_to_s).to eq(expected_path11)
+          next_event(:visit, 'S => a . T | 0') # Event 11
+          expected_curr_path('Phi[0, 4]/S[0, 4]/Alt(S => a T .)[0, 4]')
           expect(subject.curr_parent.subnodes.size).to eq(2)
-          token_event11 = 'a[0, 1]'
-          child = subject.curr_parent.subnodes.first
-          expect(child.to_string(0)).to eq(token_event11)
+          expected_first_child('a[0, 1]')
 
-          event12 = walker.next
-          subject.receive_event(*event12)
-          expect(event12[1].to_s).to eq('S => . a T | 0')
-
+          next_event(:visit, 'S => . a T | 0') # Event 12
           # Alternate node is popped
-          expect(subject.curr_parent.to_string(0)).to eq('S[0, 4]')
-          expected_path12 = 'Phi[0, 4]/S[0, 4]'
-          expect(path_to_s).to eq(expected_path12)
+          expected_curr_path('Phi[0, 4]/S[0, 4]')
 
-          event13 = walker.next
-          subject.receive_event(*event13)
-          expect(event13[1].to_s).to eq('.S | 0')
-          expect(subject.curr_parent.to_string(0)).to eq('Phi[0, 4]')
-          expected_path13 = 'Phi[0, 4]'
-          expect(path_to_s).to eq(expected_path13)
+          next_event(:visit, '.S | 0') # Event 13
+          expected_curr_path('Phi[0, 4]')
 
-          event14 = walker.next
-          subject.receive_event(*event14)
-          expect(event14[1].to_s).to eq('Phi => . S | 0')
-          expect(subject.curr_parent.to_string(0)).to eq('Phi[0, 4]')
-          expected_path14 = 'Phi[0, 4]'
-          expect(path_to_s).to eq(expected_path14)
+          next_event(:visit, 'Phi => . S | 0') # Event 14
+          expected_curr_path('Phi[0, 4]')
 
-          event15 = walker.next
-          subject.receive_event(*event15)
-          expect(event15[1].to_s).to eq('.Phi | 0')
+          next_event(:visit, '.Phi | 0') # Event 15
           expect(path_to_s).to be_empty
         end
 
         it 'should handle backtracking' do
           15.times do
-            event = walker.next
+            event = @walker.next
             subject.receive_event(*event)
           end
 
-          event16 = walker.next
-          subject.receive_event(*event16)
-          expect(event16[0]).to eq(:backtrack) # Backtrack event!
-          expect(event16[1].to_s).to eq('S. | 0')
-          expect(subject.curr_parent.to_string(0)).to eq('S[0, 4]')
-          expected_path16 = 'Phi[0, 4]/S[0, 4]'
-          expect(path_to_s).to eq(expected_path16)
+          # Backtracking is occurring
+          next_event(:backtrack, 'S. | 0') # Event 16
+          expected_curr_path('Phi[0, 4]/S[0, 4]')
 
           # Alternate node should be created
-          event17 = walker.next
-          subject.receive_event(*event17)
-          expect(event17[1].to_s).to eq('S => A T . | 0')
-          parent_as_text = subject.curr_parent.to_string(0)
-          expect(parent_as_text).to eq('Alt(S => A T .)[0, 4]')
-          expected_path17 = 'Phi[0, 4]/S[0, 4]/Alt(S => A T .)[0, 4]'
-          expect(path_to_s).to eq(expected_path17)
+          next_event(:visit, 'S => A T . | 0') # Event 17
+          expected_curr_path('Phi[0, 4]/S[0, 4]/Alt(S => A T .)[0, 4]')
           expect(subject.curr_path[-2].refinement).to eq(:or)
         end
 
         it 'should detect second time visit of an entry' do
           17.times do
-            event = walker.next
+            event = @walker.next
             subject.receive_event(*event)
           end
 
-          event18 = walker.next
-          subject.receive_event(*event18)
-          expect(event18[0]).to eq(:revisit) # Revisit event!
-          expect(event18[1].to_s).to eq('T. | 1')
-          parent_as_text = subject.curr_parent.to_string(0)
-          expect(parent_as_text).to eq('Alt(S => A T .)[0, 4]')
-          expected_path18 = 'Phi[0, 4]/S[0, 4]/Alt(S => A T .)[0, 4]'
-          expect(path_to_s).to eq(expected_path18)
+          next_event(:revisit, 'T. | 1') # REVISIT Event 18
+          expected_curr_path('Phi[0, 4]/S[0, 4]/Alt(S => A T .)[0, 4]')
 
-          event19 = walker.next
-          subject.receive_event(*event19)
-          expect(event19[1].to_s).to eq('S => A . T | 0')
-          parent_as_text = subject.curr_parent.to_string(0)
-          expect(parent_as_text).to eq('Alt(S => A T .)[0, 4]')
-          expected_path19 = 'Phi[0, 4]/S[0, 4]/Alt(S => A T .)[0, 4]'
-          expect(path_to_s).to eq(expected_path19)
+          next_event(:visit, 'S => A . T | 0') # Event 19
+          expected_curr_path('Phi[0, 4]/S[0, 4]/Alt(S => A T .)[0, 4]')
 
-          event20 = walker.next
-          subject.receive_event(*event20)
-          # Next entry is an end entry...
-          expect(event20[1].to_s).to eq('A. | 0')
-          expect(subject.curr_parent.to_string(0)).to eq('A[0, 1]')
+          next_event(:visit, 'A. | 0') # Event 20
           expected_path20 = 'Phi[0, 4]/S[0, 4]/Alt(S => A T .)[0, 4]/A[0, 1]'
-          expect(path_to_s).to eq(expected_path20)
-
-
-          event21 = walker.next
-          subject.receive_event(*event21)
-          expect(event21[1].to_s).to eq('A => a . | 0')
-          parent_as_text = subject.curr_parent.to_string(0)
-          expect(parent_as_text).to eq('Alt(A => a .)[0, 1]')
+          expected_curr_path(expected_path20)
           path_prefix = 'Phi[0, 4]/S[0, 4]/Alt(S => A T .)[0, 4]/A[0, 1]/'
-          expected_path21 = path_prefix + 'Alt(A => a .)[0, 1]'
-          expect(path_to_s).to eq(expected_path21)
+
+          next_event(:visit, 'A => a . | 0') # Event 21
+          expected_curr_path(path_prefix + 'Alt(A => a .)[0, 1]')
           expect(subject.curr_path[-2].refinement).to eq(:or)
 
-          event22 = walker.next
-          subject.receive_event(*event22)
-          expect(event22[1].to_s).to eq('A => . a | 0')
-          expect(subject.curr_parent.to_string(0)).to eq('A[0, 1]')
-          expected_path22 = expected_path20
-          expect(path_to_s).to eq(expected_path22)
+          next_event(:visit, 'A => . a | 0') # Event 22
+          expected_curr_path(expected_path20)
 
-          event23 = walker.next
-          subject.receive_event(*event23)
-          expect(event23[1].to_s).to eq('.A | 0')
-          parent_as_text = subject.curr_parent.to_string(0)
-          expect(parent_as_text).to eq('Alt(S => A T .)[0, 4]')
-          expected_path23 = 'Phi[0, 4]/S[0, 4]/Alt(S => A T .)[0, 4]'
-          expect(path_to_s).to eq(expected_path23)
+          next_event(:visit, '.A | 0') # Event 23
+          expected_curr_path('Phi[0, 4]/S[0, 4]/Alt(S => A T .)[0, 4]')
 
-          event24 = walker.next
-          subject.receive_event(*event24)
-          expect(event24[1].to_s).to eq('S => . A T | 0')
-          expect(subject.curr_parent.to_string(0)).to eq('S[0, 4]')
-          expected_path24 = 'Phi[0, 4]/S[0, 4]'
-          expect(path_to_s).to eq(expected_path24)
+          next_event(:visit, 'S => . A T | 0') # Event 24
+          expected_curr_path('Phi[0, 4]/S[0, 4]')
 
-          event25 = walker.next
-          subject.receive_event(*event25)
-          expect(event25[0]).to eq(:revisit)  # Revisit event!
-          expect(event25[1].to_s).to eq('.S | 0')
-          expect(subject.curr_parent.to_string(0)).to eq('Phi[0, 4]')
-          expected_path25 = 'Phi[0, 4]'
-          expect(path_to_s).to eq(expected_path25)
+          next_event(:revisit, '.S | 0') # REVISIT event 25
+          expected_curr_path('Phi[0, 4]')
 
-          event26 = walker.next
-          subject.receive_event(*event26)
-          expect(event26[0]).to eq(:revisit)  # Revisit event!
-          expect(event26[1].to_s).to eq('.Phi | 0')
-          expected_path26 = ''
-          expect(path_to_s).to eq(expected_path26)
+          next_event(:revisit, 'Phi => . S | 0') # REVISIT event 26
+          expected_curr_path('Phi[0, 4]')
+
+          next_event(:revisit, '.Phi | 0') # REVISIT event 27
+          expected_curr_path('')
         end
 
-        it 'should handle remaining events' do
-          26.times do
-            event = walker.next
+        it 'should handle remaining # Events' do
+          27.times do
+            event = @walker.next
             subject.receive_event(*event)
           end
 
-          event27 = walker.next
-          subject.receive_event(*event27)
-          expect(event27[0]).to eq(:backtrack) # Backtrack event!
-          expect(event27[1].to_s).to eq('A. | 0')
-          expect(subject.curr_parent.to_string(0)).to eq('A[0, 1]')
-          expected_path27 = 'Phi[0, 4]/S[0, 4]/Alt(S => A T .)[0, 4]/A[0, 1]'
-          expect(path_to_s).to eq(expected_path27)
+          # Backtracking is occurring
+          next_event(:backtrack, 'A. | 0') # BACKTRACK Event 28
+          expected_curr_path('Phi[0, 4]/S[0, 4]/Alt(S => A T .)[0, 4]/A[0, 1]')
 
-          event28 = walker.next
-          subject.receive_event(*event28)
-          expect(event28[0]).to eq(:visit)
-          expect(event28[1].to_s).to eq('A => B A . | 0')
-          parent_as_text = subject.curr_parent.to_string(0)
-          expect(parent_as_text).to eq('Alt(A => B A .)[0, 1]')
           path_prefix = 'Phi[0, 4]/S[0, 4]/Alt(S => A T .)[0, 4]/A[0, 1]/'
-          expected_path28 = path_prefix + 'Alt(A => B A .)[0, 1]'
-          expect(path_to_s).to eq(expected_path28)
 
-          event29 = walker.next
-          subject.receive_event(*event29)
-          expect(event29[0]).to eq(:revisit) # Revisit event!
-          expect(event29[1].to_s).to eq('A. | 0')
-          parent_as_text = subject.curr_parent.to_string(0)
-          expect(parent_as_text).to eq('Alt(A => B A .)[0, 1]')
-          expected_path29 = path_prefix + 'Alt(A => B A .)[0, 1]'
-          expect(path_to_s).to eq(expected_path29)
+          next_event(:visit, 'A => B A . | 0') # Event 29
+          expected_curr_path(path_prefix + 'Alt(A => B A .)[0, 1]')
 
-          event30 = walker.next
-          subject.receive_event(*event30)
-          expect(event30[0]).to eq(:visit)
-          expect(event30[1].to_s).to eq('A => B . A | 0')
-          parent_as_text = subject.curr_parent.to_string(0)
-          expect(parent_as_text).to eq('Alt(A => B A .)[0, 1]')
-          expected_path30 = path_prefix + 'Alt(A => B A .)[0, 1]'
-          expect(path_to_s).to eq(expected_path30)
+          next_event(:revisit, 'A. | 0') # REVISIT Event 30
+          expected_curr_path(path_prefix + 'Alt(A => B A .)[0, 1]')
 
-          event31 = walker.next
-          subject.receive_event(*event31)
-          expect(event31[0]).to eq(:visit)
-          expect(event31[1].to_s).to eq('B. | 0')
-          expect(subject.curr_parent.to_string(0)).to eq('B[0, 0]')
-          expected_path31 = path_prefix + 'Alt(A => B A .)[0, 1]/B[0, 0]'
-          expect(path_to_s).to eq(expected_path31)
+          next_event(:visit, 'A => B . A | 0') # Event 31
+          expected_curr_path(path_prefix + 'Alt(A => B A .)[0, 1]')
 
-          event32 = walker.next
-          subject.receive_event(*event32)
-          expect(event32[0]).to eq(:visit)
-          # Empty production!
-          expect(event32[1].to_s).to eq('B => . | 0')
-          expect(subject.curr_parent.to_string(0)).to eq('B[0, 0]')
-          expected_path30 = path_prefix + 'Alt(A => B A .)[0, 1]/B[0, 0]'
-          expect(path_to_s).to eq(expected_path30)
+          next_event(:visit, 'B. | 0') # Event 32
+          expected_curr_path(path_prefix + 'Alt(A => B A .)[0, 1]/B[0, 0]')
 
-          event33 = walker.next
-          subject.receive_event(*event33)
-          expect(event33[0]).to eq(:visit)
-          expect(event33[1].to_s).to eq('.B | 0')
-          parent_as_text = subject.curr_parent.to_string(0)
-          expect(parent_as_text).to eq('Alt(A => B A .)[0, 1]')
-          expected_path33 = path_prefix + 'Alt(A => B A .)[0, 1]'
-          expect(path_to_s).to eq(expected_path33)
+          # Entry with empty production!
+          next_event(:visit, 'B => . | 0') # Event 33
+          expected_curr_path(path_prefix + 'Alt(A => B A .)[0, 1]/B[0, 0]')
+          expected_first_child('_[0, 0]')
 
-          event34 = walker.next
-          subject.receive_event(*event34)
-          expect(event34[0]).to eq(:visit)
-          expect(event34[1].to_s).to eq('A => . B A | 0')
-          expect(subject.curr_parent.to_string(0)).to eq('A[0, 1]')
-          path34 = 'Phi[0, 4]/S[0, 4]/Alt(S => A T .)[0, 4]/A[0, 1]'
-          expect(path_to_s).to eq(path34)
+          next_event(:visit, '.B | 0') # Event 34
+          expected_curr_path(path_prefix + 'Alt(A => B A .)[0, 1]')
 
-          event35 = walker.next
-          subject.receive_event(*event35)
-          expect(event35[0]).to eq(:revisit)
-          expect(event35[1].to_s).to eq('.A | 0')
-          parent_as_text = subject.curr_parent.to_string(0)
-          expect(parent_as_text).to eq('Alt(S => A T .)[0, 4]')
-          expected_path35 = 'Phi[0, 4]/S[0, 4]/Alt(S => A T .)[0, 4]'
-          expect(path_to_s).to eq(expected_path35)
+          next_event(:visit, 'A => . B A | 0') # Event 35
+          expected_curr_path('Phi[0, 4]/S[0, 4]/Alt(S => A T .)[0, 4]/A[0, 1]')
 
-          event36 = walker.next
-          subject.receive_event(*event36)
-          expect(event36[0]).to eq(:revisit)
-          expect(event36[1].to_s).to eq('.S | 0')
-          expect(subject.curr_parent.to_string(0)).to eq('S[0, 4]')
-          expected_path36 = 'Phi[0, 4]/S[0, 4]'
-          expect(path_to_s).to eq(expected_path36)
+          next_event(:revisit, '.A | 0') # Event 36
+          expected_curr_path('Phi[0, 4]/S[0, 4]/Alt(S => A T .)[0, 4]')
 
-          event37 = walker.next
-          subject.receive_event(*event37)
-          expect(event37[0]).to eq(:revisit)
-          expect(event37[1].to_s).to eq('.Phi | 0')
-          expect(subject.curr_parent.to_string(0)).to eq('Phi[0, 4]')
-          expected_path37 = 'Phi[0, 4]'
-          expect(path_to_s).to eq(expected_path37)
+          next_event(:revisit, 'S => . A T | 0') # Event 37
+          expected_curr_path('Phi[0, 4]/S[0, 4]')
+
+          next_event(:revisit, '.S | 0') # Event 38
+          expected_curr_path('Phi[0, 4]')
         end
       end # context
 
@@ -445,255 +292,112 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           parser.parse(sentence_tokens)
         end
 
-        let(:walker) do
+        before(:each) do
           factory = ParseWalkerFactory.new
           accept_entry = sentence_result.accepting_entry
           accept_index = sentence_result.chart.last_index
-          factory.build_walker(accept_entry, accept_index)
+          @walker = factory.build_walker(accept_entry, accept_index)
         end
 
         subject { ParseForestBuilder.new(sentence_tokens) }
 
         it 'should handle walker events' do
-          event1 = walker.next
-          subject.receive_event(*event1)
-          expect(event1[0]).to eq(:visit)
-          expect(event1[1].to_s).to eq('S. | 0')
-          expect(subject.curr_parent.to_string(0)).to eq('S[0, 5]')
-          expected_path1 = 'S[0, 5]'
-          expect(path_to_s).to eq(expected_path1)
+          next_event(:visit, 'S. | 0') # Event 1
+          expected_curr_path('S[0, 5]')
 
-          event2 = walker.next
-          subject.receive_event(*event2)
-          expect(event2[0]).to eq(:visit)
-          expect(event2[1].to_s).to eq('S => NP VP . | 0')
-          expect(subject.curr_parent.to_string(0)).to eq('S[0, 5]')
-          expected_path2 = expected_path1
-          expect(path_to_s).to eq(expected_path2)
+          next_event(:visit, 'S => NP VP . | 0') # Event2
+          expected_curr_path('S[0, 5]')
 
-          event3 = walker.next
-          subject.receive_event(*event3)
-          expect(event3[0]).to eq(:visit)
-          expect(event3[1].to_s).to eq('VP. | 1')
-          expect(subject.curr_parent.to_string(0)).to eq('VP[1, 5]')
-          expected_path3 = 'S[0, 5]/VP[1, 5]'
-          expect(path_to_s).to eq(expected_path3)
+          next_event(:visit, 'VP. | 1') # Event 3
+          expected_curr_path('S[0, 5]/VP[1, 5]')
 
-          event4 = walker.next
-          subject.receive_event(*event4)
-          expect(event4[0]).to eq(:visit)
-          expect(event4[1].to_s).to eq('VP => Verb NP . | 1')
-          expect(subject.curr_parent.to_string(0)).to eq('VP[1, 5]')
-          expected_path4 = 'S[0, 5]/VP[1, 5]'
-          expect(path_to_s).to eq(expected_path4)
+          next_event(:visit, 'VP => Verb NP . | 1') # Event 4
+          expected_curr_path('S[0, 5]/VP[1, 5]')
 
-          event5 = walker.next
-          subject.receive_event(*event5)
-          expect(event5[0]).to eq(:visit)
-          expect(event5[1].to_s).to eq('NP. | 2')
-          expect(subject.curr_parent.to_string(0)).to eq('NP[2, 5]')
-          expected_path5 = 'S[0, 5]/VP[1, 5]/NP[2, 5]'
-          expect(path_to_s).to eq(expected_path5)
+          next_event(:visit, 'NP. | 2') # Event 5
+          expected_curr_path('S[0, 5]/VP[1, 5]/NP[2, 5]')
 
-          event6 = walker.next
-          subject.receive_event(*event6)
-          expect(event6[0]).to eq(:visit)
-          expect(event6[1].to_s).to eq('NP => Determiner Nominal . | 2')
-          expect(subject.curr_parent.to_string(0)).to eq('NP[2, 5]')
-          expected_path6 = 'S[0, 5]/VP[1, 5]/NP[2, 5]'
-          expect(path_to_s).to eq(expected_path6)
 
-          event7 = walker.next
-          subject.receive_event(*event7)
-          expect(event7[0]).to eq(:visit)
-          expect(event7[1].to_s).to eq('Nominal. | 3')
-          expect(subject.curr_parent.to_string(0)).to eq('Nominal[3, 5]')
-          expected_path7 = 'S[0, 5]/VP[1, 5]/NP[2, 5]/Nominal[3, 5]'
-          expect(path_to_s).to eq(expected_path7)
+          next_event(:visit, 'NP => Determiner Nominal . | 2') # Event 6
+          expected_curr_path('S[0, 5]/VP[1, 5]/NP[2, 5]')
 
-          event8 = walker.next
-          subject.receive_event(*event8)
-          expect(event8[0]).to eq(:visit)
-          expect(event8[1].to_s).to eq('Nominal => Nominal Noun . | 3')
-          expect(subject.curr_parent.to_string(0)).to eq('Nominal[3, 5]')
-          expected_path8 = 'S[0, 5]/VP[1, 5]/NP[2, 5]/Nominal[3, 5]'
-          expect(path_to_s).to eq(expected_path8)
+          next_event(:visit, 'Nominal. | 3') # Event 7
+          expected_curr_path('S[0, 5]/VP[1, 5]/NP[2, 5]/Nominal[3, 5]')
+
+          next_event(:visit, 'Nominal => Nominal Noun . | 3') # Event 8
+          expected_curr_path('S[0, 5]/VP[1, 5]/NP[2, 5]/Nominal[3, 5]')
           expect(subject.curr_parent.subnodes.size).to eq(1)
-          token_event8 = 'Noun[4, 5]'
-          child = subject.curr_parent.subnodes.first
-          expect(child.to_string(0)).to eq(token_event8)
+          expected_first_child('Noun[4, 5]')
 
-          event9 = walker.next
-          subject.receive_event(*event9)
-          expect(event9[0]).to eq(:visit)
-          expect(event9[1].to_s).to eq('Nominal => Nominal . Noun | 3')
-          expect(subject.curr_parent.to_string(0)).to eq('Nominal[3, 5]')
-          expected_path9 = 'S[0, 5]/VP[1, 5]/NP[2, 5]/Nominal[3, 5]'
-          expect(path_to_s).to eq(expected_path9)
 
-          event10 = walker.next
-          subject.receive_event(*event10)
-          expect(event10[0]).to eq(:visit)
-          expect(event10[1].to_s).to eq('Nominal. | 3')
-          expect(subject.curr_parent.to_string(0)).to eq('Nominal[3, 4]')
+          next_event(:visit, 'Nominal => Nominal . Noun | 3') # Event 9
+          expected_curr_path('S[0, 5]/VP[1, 5]/NP[2, 5]/Nominal[3, 5]')
+
+
+          next_event(:visit, 'Nominal. | 3') # Event 10
           path10 = 'S[0, 5]/VP[1, 5]/NP[2, 5]/Nominal[3, 5]/Nominal[3, 4]'
-          expect(path_to_s).to eq(path10)
+          expected_curr_path(path10)
 
-          event11 = walker.next
-          subject.receive_event(*event11)
-          expect(event11[0]).to eq(:visit)
-          expect(event11[1].to_s).to eq('Nominal => Noun . | 3')
-          expect(subject.curr_parent.to_string(0)).to eq('Nominal[3, 4]')
+          next_event(:visit, 'Nominal => Noun . | 3') # Event11
           path11 = 'S[0, 5]/VP[1, 5]/NP[2, 5]/Nominal[3, 5]/Nominal[3, 4]'
-          expect(path_to_s).to eq(path11)
+          expected_curr_path(path11)
           expect(subject.curr_parent.subnodes.size).to eq(1)
-          token_event11 = 'Noun[3, 4]'
-          child = subject.curr_parent.subnodes.first
-          expect(child.to_string(0)).to eq(token_event11)
+          expected_first_child('Noun[3, 4]')
 
-          event12 = walker.next
-          subject.receive_event(*event12)
-          expect(event12[0]).to eq(:visit)
-          expect(event12[1].to_s).to eq('Nominal => . Noun | 3')
-          expect(subject.curr_parent.to_string(0)).to eq('Nominal[3, 4]')
+          next_event(:visit, 'Nominal => . Noun | 3') # Event 12
           path12 = 'S[0, 5]/VP[1, 5]/NP[2, 5]/Nominal[3, 5]/Nominal[3, 4]'
-          expect(path_to_s).to eq(path12)
+          expected_curr_path(path12)
 
-          event13 = walker.next
-          subject.receive_event(*event13)
-          expect(event13[0]).to eq(:visit)
-          expect(event13[1].to_s).to eq('.Nominal | 3')
-          expect(subject.curr_parent.to_string(0)).to eq('Nominal[3, 5]')
-          expected_path13 = 'S[0, 5]/VP[1, 5]/NP[2, 5]/Nominal[3, 5]'
-          expect(path_to_s).to eq(expected_path13)
+          next_event(:visit, '.Nominal | 3') # Event 13
+          expected_curr_path('S[0, 5]/VP[1, 5]/NP[2, 5]/Nominal[3, 5]')
 
-          event14 = walker.next
-          subject.receive_event(*event14)
-          expect(event14[0]).to eq(:visit)
-          expect(event14[1].to_s).to eq('Nominal => . Nominal Noun | 3')
-          expect(subject.curr_parent.to_string(0)).to eq('Nominal[3, 5]')
-          expected_path14 = 'S[0, 5]/VP[1, 5]/NP[2, 5]/Nominal[3, 5]'
-          expect(path_to_s).to eq(expected_path14)
+          next_event(:visit, 'Nominal => . Nominal Noun | 3') # Event 14
+          expected_curr_path('S[0, 5]/VP[1, 5]/NP[2, 5]/Nominal[3, 5]')
 
-          event15 = walker.next
-          subject.receive_event(*event15)
-          expect(event15[0]).to eq(:revisit)
-          expect(event15[1].to_s).to eq('.Nominal | 3')
-          expect(subject.curr_parent.to_string(0)).to eq('NP[2, 5]')
-          expected_path15 = 'S[0, 5]/VP[1, 5]/NP[2, 5]'
-          expect(path_to_s).to eq(expected_path15)
+          next_event(:revisit, '.Nominal | 3') # REVISIT Event 15
+          expected_curr_path('S[0, 5]/VP[1, 5]/NP[2, 5]')
 
-          event16 = walker.next
-          subject.receive_event(*event16)
-          expect(event16[0]).to eq(:visit)
-          expect(event16[1].to_s).to eq('NP => Determiner . Nominal | 2')
-          expect(subject.curr_parent.to_string(0)).to eq('NP[2, 5]')
-          expected_path16 = 'S[0, 5]/VP[1, 5]/NP[2, 5]'
-          expect(path_to_s).to eq(expected_path16)
-          token_event16 = 'Determiner[2, 3]'
-          child = subject.curr_parent.subnodes.first
-          expect(child.to_string(0)).to eq(token_event16)
+          next_event(:visit, 'NP => Determiner . Nominal | 2') # Event 16 
+          expected_curr_path('S[0, 5]/VP[1, 5]/NP[2, 5]')
+          expected_first_child('Determiner[2, 3]')
 
-          event17 = walker.next
-          subject.receive_event(*event17)
-          expect(event17[0]).to eq(:visit)
-          expect(event17[1].to_s).to eq('NP => . Determiner Nominal | 2')
-          expect(subject.curr_parent.to_string(0)).to eq('NP[2, 5]')
-          expected_path17 = 'S[0, 5]/VP[1, 5]/NP[2, 5]'
-          expect(path_to_s).to eq(expected_path17)
+          next_event(:visit, 'NP => . Determiner Nominal | 2') # Event 17 
+          expected_curr_path('S[0, 5]/VP[1, 5]/NP[2, 5]')
 
-          event18 = walker.next
-          subject.receive_event(*event18)
-          expect(event18[0]).to eq(:visit)
-          expect(event18[1].to_s).to eq('.NP | 2')
-          expect(subject.curr_parent.to_string(0)).to eq('VP[1, 5]')
-          expected_path18 = 'S[0, 5]/VP[1, 5]'
-          expect(path_to_s).to eq(expected_path18)
+          next_event(:visit, '.NP | 2') # Event 18 
+          expected_curr_path('S[0, 5]/VP[1, 5]')
 
-          event19 = walker.next
-          subject.receive_event(*event19)
-          expect(event19[0]).to eq(:visit)
-          expect(event19[1].to_s).to eq('VP => Verb . NP | 1')
-          expect(subject.curr_parent.to_string(0)).to eq('VP[1, 5]')
-          expected_path19 = 'S[0, 5]/VP[1, 5]'
-          expect(path_to_s).to eq(expected_path19)
-          token_event19 = 'Verb[1, 2]'
-          child = subject.curr_parent.subnodes.first
-          expect(child.to_string(0)).to eq(token_event19)
+          next_event(:visit, 'VP => Verb . NP | 1') # Event 19 
+          expected_curr_path('S[0, 5]/VP[1, 5]')
+          expected_first_child('Verb[1, 2]')
 
-          event20 = walker.next
-          subject.receive_event(*event20)
-          expect(event20[0]).to eq(:visit)
-          expect(event20[1].to_s).to eq('VP => . Verb NP | 1')
-          expect(subject.curr_parent.to_string(0)).to eq('VP[1, 5]')
-          expected_path20 = 'S[0, 5]/VP[1, 5]'
-          expect(path_to_s).to eq(expected_path20)
+          next_event(:visit, 'VP => . Verb NP | 1') # Event 20 
+          expected_curr_path('S[0, 5]/VP[1, 5]')
 
-          event21 = walker.next
-          subject.receive_event(*event21)
-          expect(event21[0]).to eq(:visit)
-          expect(event21[1].to_s).to eq('.VP | 1')
-          expect(subject.curr_parent.to_string(0)).to eq('S[0, 5]')
-          expected_path21 = 'S[0, 5]'
-          expect(path_to_s).to eq(expected_path21)
+          next_event(:visit, '.VP | 1') # Event 21 
+          expected_curr_path('S[0, 5]')
 
-          event22 = walker.next
-          subject.receive_event(*event22)
-          expect(event22[0]).to eq(:visit)
-          expect(event22[1].to_s).to eq('S => NP . VP | 0')
-          expect(subject.curr_parent.to_string(0)).to eq('S[0, 5]')
-          expected_path22 = 'S[0, 5]'
-          expect(path_to_s).to eq(expected_path22)
+          next_event(:visit, 'S => NP . VP | 0') # Event22 
+          expected_curr_path('S[0, 5]')
 
-          event23 = walker.next
-          subject.receive_event(*event23)
-          expect(event23[0]).to eq(:visit)
-          expect(event23[1].to_s).to eq('NP. | 0')
-          expect(subject.curr_parent.to_string(0)).to eq('NP[0, 1]')
-          expected_path23 = 'S[0, 5]/NP[0, 1]'
-          expect(path_to_s).to eq(expected_path23)
+          next_event(:visit, 'NP. | 0') # Event 23 
+          expected_curr_path('S[0, 5]/NP[0, 1]')
 
-          event24 = walker.next
-          subject.receive_event(*event24)
-          expect(event24[0]).to eq(:visit)
-          expect(event24[1].to_s).to eq('NP => Pronoun . | 0')
-          expect(subject.curr_parent.to_string(0)).to eq('NP[0, 1]')
-          expected_path24 = 'S[0, 5]/NP[0, 1]'
-          expect(path_to_s).to eq(expected_path24)
-          token_event24 = 'Pronoun[0, 1]'
-          child = subject.curr_parent.subnodes.first
-          expect(child.to_string(0)).to eq(token_event24)
+          next_event(:visit, 'NP => Pronoun . | 0') # Event 24 
+          expected_curr_path('S[0, 5]/NP[0, 1]')
+          expected_first_child('Pronoun[0, 1]')
 
-          event25 = walker.next
-          subject.receive_event(*event25)
-          expect(event25[0]).to eq(:visit)
-          expect(event25[1].to_s).to eq('NP => . Pronoun | 0')
-          expect(subject.curr_parent.to_string(0)).to eq('NP[0, 1]')
-          expected_path25 = 'S[0, 5]/NP[0, 1]'
-          expect(path_to_s).to eq(expected_path25)
+          next_event(:visit, 'NP => . Pronoun | 0') # Event 25 
+          expected_curr_path('S[0, 5]/NP[0, 1]')
 
-          event26 = walker.next
-          subject.receive_event(*event26)
-          expect(event26[0]).to eq(:visit)
-          expect(event26[1].to_s).to eq('.NP | 0')
-          expect(subject.curr_parent.to_string(0)).to eq('S[0, 5]')
-          expected_path26 = 'S[0, 5]'
-          expect(path_to_s).to eq(expected_path26)
+          next_event(:visit, '.NP | 0') # Event 26 
+          expected_curr_path('S[0, 5]')
 
-          event27 = walker.next
-          subject.receive_event(*event27)
-          expect(event27[0]).to eq(:visit)
-          expect(event27[1].to_s).to eq('S => . NP VP | 0')
-          expect(subject.curr_parent.to_string(0)).to eq('S[0, 5]')
-          expected_path27 = 'S[0, 5]'
-          expect(path_to_s).to eq(expected_path27)
+          next_event(:visit, 'S => . NP VP | 0') # Event 27 
+          expected_curr_path('S[0, 5]')
 
-          event28 = walker.next
-          subject.receive_event(*event28)
-          expect(event28[0]).to eq(:visit)
-          expect(event28[1].to_s).to eq('.S | 0')
-          expected_path28 = ''
-          expect(path_to_s).to eq(expected_path28)
+          next_event(:visit, '.S | 0') # Event28 
+          expected_curr_path('')
         end
       end # context
     end # describe
