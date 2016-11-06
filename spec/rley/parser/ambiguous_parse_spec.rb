@@ -257,10 +257,10 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           next_event(:revisit, 'S. | 0') #  Event 53
           expected_curr_path('P[0, 5]/S[0, 5]/Alt(S => S + S .)[0, 5]')
 
-          next_event(:revisit,  'S => . S + S | 0') #  Event 54
+          next_event(:revisit, 'S => . S + S | 0') #  Event 54
           expected_curr_path('P[0, 5]/S[0, 5]')
 
-          next_event(:revisit,  '.S | 0') #  Event 55
+          next_event(:revisit, '.S | 0') #  Event 55
           expected_curr_path('P[0, 5]')
 
           next_event(:revisit, 'P => . S | 0') #  Event 56
