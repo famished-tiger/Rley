@@ -1,3 +1,8 @@
+### 0.3.07 / 2016-11-08
+* [FIX] The sharing a of forest node could be repeated in a production in a revisit event.
+* [CHANGE] Method `ParseWalkerFactory#process_end_entry`. Added a guard condition to avoid repeated node sharing
+* [NEW] RSpec file `ambiguous_parse_spec.rb` added in order to test the fix.
+
 ### 0.3.06 / 2016-11-06
 * [FIX] There were missing links to shared parse forest nodes for ambiguous parses.
 * [NEW] RSpec file `ambiguous_parse_spec.rb` added in order to test the parse forest building for an ambiguous parse.

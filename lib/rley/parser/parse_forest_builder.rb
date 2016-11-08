@@ -92,9 +92,10 @@ module Rley # This module is used as a namespace
             # Retrieve the already existing node corresponding 
             # to re-visited entry
             popular = @entry2node[anEntry]
-
-            # Share with parent
-            curr_parent.add_subnode(popular)
+            
+            # Share with parent (if needed)...
+            children = curr_parent.subnodes            
+            curr_parent.add_subnode(popular) unless children.include? popular
 
           else
             raise NotImplementedError
