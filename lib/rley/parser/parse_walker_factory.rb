@@ -168,6 +168,7 @@ module Rley # This module is used as a namespace
           aContext.return_stack << aContext.curr_entry
         elsif traversed_edge.kind_of?(GFG::CallEdge)
           # Pop top of stack
+          fail ScriptError, "Return stack empty!" if aContext.return_stack.empty?
           aContext.return_stack.pop
           # puts "Pop from return stack matching entry #{new_entry}"
         elsif traversed_edge.kind_of?(GFG::ScanEdge)
@@ -187,13 +188,19 @@ module Rley # This module is used as a namespace
         case aContext.curr_entry.vertex
           when GFG::EndVertex
             # puts "Add backtrack point stack #{aContext.curr_entry}"
-            # An end vertex with multiple antecedents requires
-            # a backtrack point for a correct graph traversal
             bp = add_backtrack_point(aContext)
             new_entry = bp.visitee.antecedents[bp.antecedent_index]
 
           when GFG::StartVertex
             new_entry = select_calling_entry(aContext)
+            
+          when GFG::ItemVertex
+            # Push current entry onto stack
+            # puts "Special push on return stack #{aContext.curr_entry}"
+            aContext.return_stack << aContext.curr_entry        
+            # puts "Add special backtrack point stack #{aContext.curr_entry}"
+            bp = add_backtrack_point(aContext)
+            new_entry = bp.visitee.antecedents[bp.antecedent_index]          
           else
             raise StandardError, 'Internal error'
         end
@@ -239,6 +246,7 @@ module Rley # This module is used as a namespace
       # Observation: calling parse entry is an parse entry linked
       # to a item vertex
       def select_calling_entry(aContext)
+        fail ScriptError, "Empty return stack" if aContext.return_stack.empty?
         # Retrieve top of stack
         tos = aContext.return_stack.pop
         tos_dotted_item = tos.vertex.dotted_item

@@ -1,3 +1,8 @@
+### 0.3.08 / 2016-11-17
+* [FIX] Method `ParseWalkerFactory#select_antecedent` did not support alternative nodes creation when visiting an item entry for highly ambiguous parse.
+* [FIX] Method `ParseWalkerFactory#select_antecedent` did not manage properly call/return stack for alternative nodes created when visiting an item entry for highly ambiguous parse.
+
+
 ### 0.3.07 / 2016-11-08
 * [FIX] The sharing a of forest node could be repeated in a production in a revisit event.
 * [CHANGE] Method `ParseWalkerFactory#process_end_entry`. Added a guard condition to avoid repeated node sharing

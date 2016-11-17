@@ -82,7 +82,7 @@ module Rley # This module is used as a namespace
           when :backtrack
             # Restore path
             @curr_path = entry2path_to_alt[anEntry].dup
-            # puts "Restore path #{curr_path.join(', ')}]"
+            # puts "Restore path [#{curr_path.map{|e|e.to_string(0)}.join(', ')}]"
             antecedent_index = curr_parent.subnodes.size
             # puts "Current parent #{curr_parent.to_string(0)}"
             # puts "Antecedent index #{antecedent_index}"
@@ -103,35 +103,76 @@ module Rley # This module is used as a namespace
       end
 
 
-      def process_item_entry(_anEvent, anEntry, anIndex)
-        if anEntry.exit_entry?
-          # Previous entry was an end entry (X. pattern)
-          # Does the previous entry have multiple antecedent?
-          if last_visitee.end_entry? && last_visitee.antecedents.size > 1
-            # Store current path for later backtracking
-            # puts "Store backtrack context #{last_visitee}"
-            # puts "path [#{curr_path.join(', ')}]"
-            entry2path_to_alt[last_visitee] = curr_path.dup
-            curr_parent.refinement = :or
+      def process_item_entry(anEvent, anEntry, anIndex)
+        case anEvent
+          when :visit      
+            if anEntry.exit_entry?
+              # Previous entry was an end entry (X. pattern)
+              # Does the previous entry have multiple antecedent?
+              if last_visitee.end_entry? && last_visitee.antecedents.size > 1
+                # Store current path for later backtracking
+                # puts "Store backtrack context #{last_visitee}"
+                # puts "path [#{curr_path.map{|e|e.to_string(0)}.join(', ')}]"
+                entry2path_to_alt[last_visitee] = curr_path.dup
+                curr_parent.refinement = :or
 
-            create_alternative_node(anEntry)
-          end
-        end
-
-        # Retrieve the grammar symbol before the dot (if any)
-        prev_symbol = anEntry.prev_symbol
-        case prev_symbol
-          when Syntax::Terminal
-            # Add node without changing current path
-            create_token_node(anEntry, anIndex)
-
-          when NilClass # Dot at the beginning of production
-            if anEntry.vertex.dotted_item.production.empty?
-              # Empty rhs => create an epsilon node ...
-              # ... without changing current path
-              create_epsilon_node(anEntry, anIndex)
+                create_alternative_node(anEntry)
+              end
             end
-            curr_path.pop if curr_parent.kind_of?(SPPF::AlternativeNode)
+            
+            # Does this entry have multiple antecedent?
+            if anEntry.antecedents.size > 1
+              # Store current path for later backtracking
+              # puts "Store backtrack context #{anEntry}"
+              # puts "path [#{curr_path.map{|e|e.to_string(0)}.join(', ')}]"
+              entry2path_to_alt[anEntry] = curr_path.dup
+              # curr_parent.refinement = :or
+
+              create_alternative_node(anEntry)
+            end      
+
+            # Retrieve the grammar symbol before the dot (if any)
+            prev_symbol = anEntry.prev_symbol
+            case prev_symbol
+              when Syntax::Terminal
+                # Add node without changing current path
+                create_token_node(anEntry, anIndex)
+
+              when NilClass # Dot at the beginning of production
+                if anEntry.vertex.dotted_item.production.empty?
+                  # Empty rhs => create an epsilon node ...
+                  # ... without changing current path
+                  create_epsilon_node(anEntry, anIndex)
+                end
+                curr_path.pop if curr_parent.kind_of?(SPPF::AlternativeNode)
+            end
+            
+          when :backtrack
+            # Restore path
+            @curr_path = entry2path_to_alt[anEntry].dup
+            # puts "Special restore path [#{curr_path.map{|e|e.to_string(0)}.join(', ')}]"
+            antecedent_index = curr_parent.subnodes.size
+            # puts "Current parent #{curr_parent.to_string(0)}"
+            # puts "Antecedent index #{antecedent_index}"
+            
+            create_alternative_node(anEntry)            
+            
+        when :revisit
+            # Retrieve the grammar symbol before the dot (if any)
+            prev_symbol = anEntry.prev_symbol
+            case prev_symbol
+              when Syntax::Terminal
+                # Add node without changing current path
+                create_token_node(anEntry, anIndex)
+
+              when NilClass # Dot at the beginning of production
+                if anEntry.vertex.dotted_item.production.empty?
+                  # Empty rhs => create an epsilon node ...
+                  # ... without changing current path
+                  create_epsilon_node(anEntry, anIndex)
+                end
+                curr_path.pop if curr_parent.kind_of?(SPPF::AlternativeNode)
+            end        
         end
       end
 
