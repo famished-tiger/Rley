@@ -150,6 +150,13 @@ The subset of English grammar is based on an example from the NLTK book.
     end
 ```
 
+More ambitious NLP applications will surely rely on a Part-of-Speech tagger instead of
+creating a lexicon and tokenizer from scratch. Here are a few Ruby Part-of-Speech gems:  
+* [engtagger](https://rubygems.org/gems/engtagger)
+* [rbtagger](https://rubygems.org/gems/rbtagger)
+
+
+
 ## Building the parser
 ```ruby
   # Easy with Rley...
