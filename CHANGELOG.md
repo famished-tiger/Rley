@@ -1,3 +1,7 @@
+### 0.3.09 / 2016-11-27
+* [CHANGE] File `README.md` fully rewritten and added an example.
+* [CHANGE] Directory `examples` completely reorganized.
+
 ### 0.3.08 / 2016-11-17
 * [FIX] Method `ParseWalkerFactory#select_antecedent` did not support alternative nodes creation when visiting an item entry for highly ambiguous parse.
 * [FIX] Method `ParseWalkerFactory#select_antecedent` did not manage properly call/return stack for alternative nodes created when visiting an item entry for highly ambiguous parse.
