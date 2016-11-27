@@ -11,7 +11,6 @@
 
 A Ruby library for constructing general parsers for _any_ context-free languages.  
 
----
 
 What is Rley?
 -------------
@@ -69,10 +68,10 @@ English language subset.
 The tour is organized into the following steps:  
 1. [Defining the language grammar](#defining-the-language-grammar)  
 2. [Creating a lexicon](#creating-a-lexicon)
-3. [Creating a tokenizer](#creating-a-tokenizer)
-4. [Building the parser](building-the-parser)
-5. [Parsing some input](parsing-some-input)
-6. Generating the parse forest
+3. [Creating a tokenizer](#creating-a-tokenizer) 
+4. [Building the parser](building-the-parser) 
+5. [Parsing some input](#parsing-some-input) 
+6. [Generating the parse forest](generating-the-parse-forest)
 
 ### Defining the language grammar
 The grammar is based on an example from the NLTK book.
