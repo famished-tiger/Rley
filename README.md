@@ -27,11 +27,11 @@ encode efficiently all the possible parse trees that result from an ambiguous
 grammar.  
 
 As another distinctive mark, __Rley__ is also the first Ruby implementation of a
-parsing library based on the new _Grammar Flow Graph_ approach.
+parsing library based on the new _Grammar Flow Graph_ approach (_TODO: add details_).
 
 ### What it can do?
 Maybe parsing algorithms and internal implementation details are of lesser
-interest to you and the good question to ask is "what Rley can really do?"".  
+interest to you and the good question to ask is "what Rley can really do?".  
 
 In a nutshell:  
 * Rley can parse context-free languages that other well-known libraries cannot
@@ -67,10 +67,10 @@ The purpose of this section is show how to create a parser for a minimalistic
 English language subset.  
 The tour is organized into the following steps:  
 1. [Defining the language grammar](#defining-the-language-grammar)  
-2. [Creating a lexicon](#creating-a-lexicon)
-3. [Creating a tokenizer](#creating-a-tokenizer) 
-4. [Building the parser](building-the-parser) 
-5. [Parsing some input](#parsing-some-input) 
+2. [Creating a lexicon](#creating-a-lexicon)  
+3. [Creating a tokenizer](#creating-a-tokenizer)  
+4. [Building the parser](building-the-parser)  
+5. [Parsing some input](#parsing-some-input)  
 6. [Generating the parse forest](generating-the-parse-forest)
 
 ### Defining the language grammar
