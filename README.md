@@ -64,17 +64,21 @@ Installing the latest stable version is simple:
 
 ## A whirlwind tour of Rley
 The purpose of this section is show how to create a parser for a minimalistic
-English language subset.  
+English language subset. 
 The tour is organized into the following steps:  
 1. [Defining the language grammar](#defining-the-language-grammar)  
 2. [Creating a lexicon](#creating-a-lexicon)  
 3. [Creating a tokenizer](#creating-a-tokenizer)  
 4. [Building the parser](building-the-parser)  
 5. [Parsing some input](#parsing-some-input)  
-6. [Generating the parse forest](generating-the-parse-forest)
+6. [Generating the parse forest](#generating-the-parse-forest)
+
+The complete source code of the tour can be found in the 
+[examples](https://github.com/famished-tiger/Rley/tree/master/examples/NLP/mini_en_demo.rb)
+directory
 
 ### Defining the language grammar
-The grammar is based on an example from the NLTK book.
+The subset of English grammar is based on an example from the NLTK book.
 
 ```ruby  
     require 'rley'  # Load Rley library
@@ -100,6 +104,7 @@ The grammar is based on an example from the NLTK book.
 ```  
 
 ## Creating a lexicon
+
 ```ruby
     # To simplify things, lexicon is implemented as a Hash with pairs of the form:
     # word => terminal symbol name
@@ -125,6 +130,7 @@ The grammar is based on an example from the NLTK book.
       'with' => 'Preposition'
     }
 ```  
+
 
 ## Creating a tokenizer
 ```ruby
@@ -168,12 +174,13 @@ The grammar is based on an example from the NLTK book.
 
 
 
-# Examples
+## Examples
 
-The project source directory contains several example scripts that demonstrate how grammars are to be constructed and used.
+The project source directory contains several example scripts that demonstrate 
+how grammars are to be constructed and used.
 
 
-### Other similar Ruby projects ###
+## Other similar Ruby projects
 __Rley__ isn't the sole implementation of the Earley parser algorithm in Ruby.  
 Here are a few other ones:  
 - [Kanocc gem](https://rubygems.org/gems/kanocc) -- Advertised as a Ruby based parsing and translation framework.  
@@ -191,7 +198,7 @@ Here are a few other ones:
   The code doesn't seem to be maintained: latest commit dates from Oct. 2011.
 
 
-##  Thanks to
+##  Thanks to:
 * Professor Keshav Pingali, one of the creators of the Grammar Flow Graph parsing approach for his encouraging e-mail exchanges.
 
 ---

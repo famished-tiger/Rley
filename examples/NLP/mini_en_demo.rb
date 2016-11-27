@@ -3,6 +3,8 @@ require 'rley'  # Load Rley library
 ########################################
 # Step 1. Define a grammar for a micro English-like language
 # based on example from NLTK book (chapter 8 of the book).
+# Bird, Steven, Edward Loper and Ewan Klein: "Natural Language Processing 
+# with Python"; 2009, O’Reilly Media Inc., ISBN 978-0596516499
 # It defines the syntax of a sentence in a mini English-like language 
 # with a very simplified syntax.
 
@@ -55,8 +57,8 @@ Lexicon = {
 # Step 3. Creating a tokenizer
 # A tokenizer reads the input string and converts it into a sequence of tokens
 # Highly simplified tokenizer implementation.
-def tokenizer(aText, aGrammar)
-  tokens = aText.scan(/\S+/).map do |word|
+def tokenizer(aTextToParse, aGrammar)
+  tokens = aTextToParse.scan(/\S+/).map do |word|
     term_name = Lexicon[word]
     if term_name.nil?
       raise StandardError, "Word '#{word}' not found in lexicon"
@@ -68,6 +70,7 @@ def tokenizer(aText, aGrammar)
   return tokens
 end
 
+More realistic NLP will will most probably
 
 ########################################
 # Step 4. Create a parser for that grammar
@@ -86,3 +89,4 @@ puts "Parsing successful? #{result.success?}" # => Parsing successful? true
 ########################################
 # Step 6. Generating the parse forest
 pforest = result.parse_forest
+
