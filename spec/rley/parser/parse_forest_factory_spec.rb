@@ -17,7 +17,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
 
       let(:sample_grammar) do
           # Grammar based on paper from Elisabeth Scott
-          # "SPPF=Style Parsing From Earley Recognizers" in
+          # "SPPF-Style Parsing From Earley Recognizers" in
           # Notes in Theoretical Computer Science 203, (2008), pp. 53-67
           # contains a hidden left recursion and a cycle
           builder = Syntax::GrammarBuilder.new

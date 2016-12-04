@@ -1,5 +1,6 @@
 require_relative 'token_node'
 require_relative 'non_terminal_node'
+require_relative 'alternative_node'
 
 module Rley # This module is used as a namespace
   module SPPF # This module is used as a namespace
@@ -18,16 +19,27 @@ module Rley # This module is used as a namespace
       
       # A Hash with pairs of the kind node key => node
       attr_reader(:key2node)
+      
+      # A setter that tells that the parse is ambiguous.
+      attr_writer(:is_ambiguous)
+
 
       # @param theRootNode [ParseForestNode] The root node of the parse tree.
       def initialize(theRootNode)
         @root = theRootNode
         @key2node = {}
+        @is_ambiguous = false
       end
       
       # Returns true if the given node is present in the forest.
       def include?(aNode)
         return key2node.include?(aNode)
+      end
+      
+      # Returns true if the parse encountered a structural ambiguity
+      # (i.e. more than one parse tree for the given input)
+      def ambiguous?()
+        return @is_ambiguous
       end
 
 

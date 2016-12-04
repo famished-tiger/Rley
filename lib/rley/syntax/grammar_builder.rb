@@ -18,9 +18,12 @@ module Rley # This module is used as a namespace
       # The list of production rules for the grammar to build
       attr_reader(:productions)
 
-      def initialize()
+
+      def initialize(&aBlock)
         @symbols = {}
         @productions = []
+
+        instance_exec(&aBlock) if block_given?
       end
       
       # Retrieve a grammar symbol from its name.
@@ -87,6 +90,8 @@ module Rley # This module is used as a namespace
         
         return @grammar
       end
+      
+      alias rule add_production
 
       private
 

@@ -1,3 +1,12 @@
+### 0.3.10 / 2016-12-04
+* [NEW] Method `ParseForest#ambiguous?`. Indicates whether the parse is ambiguous.
+* [CHANGE] File `README.md` updated with new grammar builder syntax & typo fixes.
+* [CHANGE] Method `GrammarBuilder#initialize`: Accepts a block argument that allows lighter construction.
+
+### 0.3.09 / 2016-11-27
+* [CHANGE] File `README.md` fully rewritten and added an example.
+* [CHANGE] Directory `examples` completely reorganized.
+
 ### 0.3.09 / 2016-11-27
 * [CHANGE] File `README.md` fully rewritten and added an example.
 * [CHANGE] Directory `examples` completely reorganized.

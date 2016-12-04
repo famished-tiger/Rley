@@ -9,20 +9,20 @@ require 'rley'  # Load Rley library
 # with a very simplified syntax.
 
 # Instantiate a builder object that will build the grammar for us
-builder = Rley::Syntax::GrammarBuilder.new
+builder = Rley::Syntax::GrammarBuilder.new do
+  # Next 2 lines we define the terminal symbols (=word categories in the lexicon)
+  add_terminals('Noun', 'Proper-Noun', 'Verb') 
+  add_terminals('Determiner', 'Preposition')
 
-# Next 2 lines we define the terminal symbols (=word categories in the lexicon)
-builder.add_terminals('Noun', 'Proper-Noun', 'Verb') 
-builder.add_terminals('Determiner', 'Preposition')
-
-# Here we define the productions (= grammar rules)
-builder.add_production('S' => %w[NP VP])
-builder.add_production('NP' => 'Proper-Noun')
-builder.add_production('NP' => %w[Determiner Noun])
-builder.add_production('NP' => %w[Determiner Noun PP])
-builder.add_production('VP' => %w[Verb NP])
-builder.add_production('VP' => %w[Verb NP PP])
-builder.add_production('PP' => %w[Preposition NP])
+  # Here we define the productions (= grammar rules)
+  rule 'S' => %w[NP VP]
+  rule 'NP' => 'Proper-Noun'
+  rule 'NP' => %w[Determiner Noun]
+  rule 'NP' => %w[Determiner Noun PP]
+  rule 'VP' => %w[Verb NP]
+  rule 'VP' => %w[Verb NP PP]
+  rule 'PP' => %w[Preposition NP]
+end 
 
 # And now, let's build the grammar...
 grammar = builder.grammar
@@ -70,8 +70,6 @@ def tokenizer(aTextToParse, aGrammar)
   return tokens
 end
 
-More realistic NLP will will most probably
-
 ########################################
 # Step 4. Create a parser for that grammar
 # Easy with Rley...
@@ -80,6 +78,7 @@ parser = Rley::Parser::GFGEarleyParser.new(grammar)
 ########################################
 # Step 5. Parsing the input
 input_to_parse = 'John saw Mary with a telescope'
+# input_to_parse = 'the dog saw a man in the park' # This one is ambiguous
 # Convert input text into a sequence of token objects...
 tokens = tokenizer(input_to_parse, grammar)
 result = parser.parse(tokens)
@@ -90,3 +89,4 @@ puts "Parsing successful? #{result.success?}" # => Parsing successful? true
 # Step 6. Generating the parse forest
 pforest = result.parse_forest
 
+puts "Parsing ambiguous? #{pforest.ambiguous?}" # => Parsing ambiguous? false

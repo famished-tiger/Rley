@@ -6,10 +6,10 @@ require_relative '../../../lib/rley/syntax/grammar_builder'
 module Rley # Open this namespace to avoid module qualifier prefixes
   module Syntax # Open this namespace to avoid module qualifier prefixes
     describe GrammarBuilder do
-      context 'Initialization:' do
-        it 'should be created without argument' do
+      context 'Initialization without argument:' do
+        it 'could be created without argument' do
           expect { GrammarBuilder.new }.not_to raise_error
-        end
+        end   
 
         it 'should have no grammar symbols at start' do
             expect(subject.symbols).to be_empty
@@ -19,6 +19,24 @@ module Rley # Open this namespace to avoid module qualifier prefixes
             expect(subject.productions).to be_empty
         end
       end # context
+      
+      context 'Initialization with argument:' do
+        it 'could be created with a block argument' do
+          expect do GrammarBuilder.new { nil }
+          end.not_to raise_error
+        end        
+
+        it 'could have grammar symbols from block argument' do
+          instance = GrammarBuilder.new do
+            add_terminals('a', 'b', 'c')
+          end
+          expect(instance.symbols.size).to eq(3)
+        end
+
+        it 'should have no productions at start' do
+            expect(subject.productions).to be_empty
+        end
+      end # context      
 
       context 'Adding symbols:' do
         it 'should build terminals from their names' do
@@ -79,7 +97,8 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           expect_rhs = [ subject['a'], subject['A'], subject['c'] ]
           expect(new_prod.rhs.members).to eq(expect_rhs)
 
-          subject.add_production('A' => ['b'])
+          # GrammarBuilder#rule is an alias of add_production
+          subject.rule('A' => ['b'])
           expect(subject.productions.size).to eq(3)
           new_prod = subject.productions.last
           expect(new_prod.lhs).to eq(subject['A'])
@@ -89,11 +108,13 @@ module Rley # Open this namespace to avoid module qualifier prefixes
 
       context 'Building grammar:' do
         subject do
-          instance = GrammarBuilder.new
-          instance.add_terminals('a', 'b', 'c')
-          instance.add_production('S' => ['A'])
-          instance.add_production('A' => %w(a A c))
-          instance.add_production('A' => ['b'])
+          instance = GrammarBuilder.new do
+            add_terminals('a', 'b', 'c')
+            add_production('S' => ['A'])
+            add_production('A' => %w(a A c))
+            add_production('A' => ['b'])
+          end
+
           instance
         end
 

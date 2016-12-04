@@ -29,7 +29,7 @@ module Rley # This module is used as a namespace
       # A hash with pairs of the form: visited parse entry => forest node
       attr_reader(:entry2node)
 
-      # A hash with pairs of the form: 
+      # A hash with pairs of the form:
       # parent end entry => path to alternative node
       # This is needed for synchronizing backtracking
       attr_reader(:entry2path_to_alt)
@@ -89,12 +89,12 @@ module Rley # This module is used as a namespace
 
 
           when :revisit
-            # Retrieve the already existing node corresponding 
+            # Retrieve the already existing node corresponding
             # to re-visited entry
             popular = @entry2node[anEntry]
-            
+
             # Share with parent (if needed)...
-            children = curr_parent.subnodes            
+            children = curr_parent.subnodes
             curr_parent.add_subnode(popular) unless children.include? popular
 
           else
@@ -105,7 +105,7 @@ module Rley # This module is used as a namespace
 
       def process_item_entry(anEvent, anEntry, anIndex)
         case anEvent
-          when :visit      
+          when :visit
             if anEntry.exit_entry?
               # Previous entry was an end entry (X. pattern)
               # Does the previous entry have multiple antecedent?
@@ -119,7 +119,7 @@ module Rley # This module is used as a namespace
                 create_alternative_node(anEntry)
               end
             end
-            
+
             # Does this entry have multiple antecedent?
             if anEntry.antecedents.size > 1
               # Store current path for later backtracking
@@ -129,7 +129,7 @@ module Rley # This module is used as a namespace
               # curr_parent.refinement = :or
 
               create_alternative_node(anEntry)
-            end      
+            end
 
             # Retrieve the grammar symbol before the dot (if any)
             prev_symbol = anEntry.prev_symbol
@@ -146,7 +146,7 @@ module Rley # This module is used as a namespace
                 end
                 curr_path.pop if curr_parent.kind_of?(SPPF::AlternativeNode)
             end
-            
+
           when :backtrack
             # Restore path
             @curr_path = entry2path_to_alt[anEntry].dup
@@ -154,9 +154,9 @@ module Rley # This module is used as a namespace
             antecedent_index = curr_parent.subnodes.size
             # puts "Current parent #{curr_parent.to_string(0)}"
             # puts "Antecedent index #{antecedent_index}"
-            
-            create_alternative_node(anEntry)            
-            
+
+            create_alternative_node(anEntry)
+
         when :revisit
             # Retrieve the grammar symbol before the dot (if any)
             prev_symbol = anEntry.prev_symbol
@@ -172,7 +172,7 @@ module Rley # This module is used as a namespace
                   create_epsilon_node(anEntry, anIndex)
                 end
                 curr_path.pop if curr_parent.kind_of?(SPPF::AlternativeNode)
-            end        
+            end
         end
       end
 
@@ -187,8 +187,8 @@ module Rley # This module is used as a namespace
         non_terminal = nonTSymb.nil? ? anEntry.vertex.non_terminal : nonTSymb
         new_node = Rley::SPPF::NonTerminalNode.new(non_terminal, aRange)
         entry2node[anEntry] = new_node
-        # puts "FOREST ADD #{curr_parent.key if curr_parent}/#{new_node.key}"
         add_subnode(new_node)
+        # puts "FOREST ADD #{curr_parent.key if curr_parent}/#{new_node.key}"
 
         return new_node
       end
@@ -200,6 +200,7 @@ module Rley # This module is used as a namespace
         range = curr_parent.range
         alternative = Rley::SPPF::AlternativeNode.new(vertex, range)
         add_subnode(alternative)
+        forest.is_ambiguous = true
         # puts "FOREST ADD #{alternative.key}"
 
         return alternative
@@ -231,13 +232,13 @@ module Rley # This module is used as a namespace
       # Add the given node if not yet present in parse forest
       def add_node_to_forest(aNode)
         key_node = aNode.key
-        if forest.include?(key_node)
-          new_node = forest.key2node[key_node]
-        else
-          new_node = aNode
-          forest.key2node[key_node] = new_node
-          # puts "FOREST ADD #{key_node}"
-        end
+          if forest.include?(key_node)
+            new_node = forest.key2node[key_node]
+          else
+            new_node = aNode
+            forest.key2node[key_node] = new_node
+            # puts "FOREST ADD #{key_node}"
+          end
         add_subnode(new_node, false)
 
         return new_node

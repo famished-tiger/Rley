@@ -9,7 +9,7 @@
 [Rley](https://github.com/famished-tiger/Rley)
 ======
 
-A Ruby library for constructing general parsers for _any_ context-free languages.  
+A Ruby library for constructing general parsers for _any_ context-free language.  
 
 
 What is Rley?
@@ -69,7 +69,7 @@ The tour is organized into the following steps:
 1. [Defining the language grammar](#defining-the-language-grammar)  
 2. [Creating a lexicon](#creating-a-lexicon)  
 3. [Creating a tokenizer](#creating-a-tokenizer)  
-4. [Building the parser](building-the-parser)  
+4. [Building the parser](#building-the-parser)  
 5. [Parsing some input](#parsing-some-input)  
 6. [Generating the parse forest](#generating-the-parse-forest)
 
@@ -84,21 +84,20 @@ The subset of English grammar is based on an example from the NLTK book.
     require 'rley'  # Load Rley library
 
     # Instantiate a builder object that will build the grammar for us
-    builder = Rley::Syntax::GrammarBuilder.new
+    builder = Rley::Syntax::GrammarBuilder.new do
+      # Terminal symbols (= word categories in lexicon)
+      add_terminals('Noun', 'Proper-Noun', 'Verb') 
+      add_terminals('Determiner', 'Preposition')
 
-    # Next 2 lines we define the terminal symbols (=word categories in the lexicon)
-    builder.add_terminals('Noun', 'Proper-Noun', 'Verb')
-    builder.add_terminals('Determiner', 'Preposition')
-
-    # Here we define the productions (= grammar rules)
-    builder.add_production('S' => %w[NP VP])
-    builder.add_production('NP' => 'Proper-Noun')
-    builder.add_production('NP' => %w[Determiner Noun])
-    builder.add_production('NP' => %w[Determiner Noun PP])
-    builder.add_production('VP' => %w[Verb NP])
-    builder.add_production('VP' => %w[Verb NP PP])
-    builder.add_production('PP' => %w[Preposition NP])
-
+      # Here we define the productions (= grammar rules)
+      rule 'S' => %w[NP VP]
+      rule 'NP' => 'Proper-Noun'
+      rule 'NP' => %w[Determiner Noun]
+      rule 'NP' => %w[Determiner Noun PP]
+      rule 'VP' => %w[Verb NP]
+      rule 'VP' => %w[Verb NP PP]
+      rule 'PP' => %w[Preposition NP]
+    end 
     # And now, let's build the grammar...
     grammar = builder.grammar
 ```  
@@ -207,8 +206,6 @@ Here are a few other ones:
 
 ##  Thanks to:
 * Professor Keshav Pingali, one of the creators of the Grammar Flow Graph parsing approach for his encouraging e-mail exchanges.
-
----
 
 Copyright
 ---------
