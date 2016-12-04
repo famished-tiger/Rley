@@ -1,3 +1,6 @@
+### 0.3.11 / 2016-12-04
+* [NEW] Directory `examples\data_formats\JSON`. A JSON demo parser.
+
 ### 0.3.10 / 2016-12-04
 * [NEW] Method `ParseForest#ambiguous?`. Indicates whether the parse is ambiguous.
 * [CHANGE] File `README.md` updated with new grammar builder syntax & typo fixes.
