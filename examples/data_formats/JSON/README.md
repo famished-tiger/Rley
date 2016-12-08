@@ -3,7 +3,7 @@
 ### Source files
 This project consists of the following files:  
 
-- **demo_json.rb** a demo command-line program using the classes below.  
+- **JSON_demo.rb** a demo command-line program using the classes below.  
   It parses the JSON file specified in the command-line.  
 
 - **JSON_grammar.rb** implementing the class `JSONGrammar`.  

@@ -8,11 +8,12 @@ module AmbiguousGrammarHelper
   # expression grammar.
   # (based on an example from Fisher and LeBlanc: "Crafting a Compiler")
   def grammar_builder()
-    builder = Rley::Syntax::GrammarBuilder.new
-    builder.add_terminals('+', 'id')
-    builder.add_production('S' => 'E')
-    builder.add_production('E' => %w(E + E))
-    builder.add_production('E' => 'id')
+    builder = Rley::Syntax::GrammarBuilder.new do
+      add_terminals('+', 'id')
+      rule 'S' => 'E'
+      rule 'E' => %w(E + E)
+      rule 'E' => 'id'
+    end
     builder
   end
 

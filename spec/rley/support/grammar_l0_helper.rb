@@ -10,20 +10,21 @@ module GrammarL0Helper
   # It defines the syntax of a sentence in a language with a
   # very limited syntax and lexicon in the context of airline reservation.
   def grammar_l0_builder()
-    builder = Rley::Syntax::GrammarBuilder.new
-    builder.add_terminals('Noun', 'Verb', 'Pronoun', 'Proper-Noun')
-    builder.add_terminals('Determiner', 'Preposition')
-    builder.add_production('S' => %w(NP VP))
-    builder.add_production('NP' => 'Pronoun')
-    builder.add_production('NP' => 'Proper-Noun')
-    builder.add_production('NP' => %w(Determiner Nominal))
-    builder.add_production('Nominal' => %w(Nominal Noun))
-    builder.add_production('Nominal' => 'Noun')
-    builder.add_production('VP' => 'Verb')
-    builder.add_production('VP' => %w(Verb NP))
-    builder.add_production('VP' => %w(Verb NP PP))
-    builder.add_production('VP' => %w(Verb PP))
-    builder.add_production('PP' => %w(Preposition PP))
+    builder = Rley::Syntax::GrammarBuilder.new do
+      add_terminals('Noun', 'Verb', 'Pronoun', 'Proper-Noun')
+      add_terminals('Determiner', 'Preposition')
+      rule 'S' => %w(NP VP)
+      rule 'NP' => 'Pronoun'
+      rule 'NP' => 'Proper-Noun'
+      rule 'NP' => %w(Determiner Nominal)
+      rule 'Nominal' => %w(Nominal Noun)
+      rule 'Nominal' => 'Noun'
+      rule 'VP' => 'Verb'
+      rule 'VP' => %w(Verb NP)
+      rule 'VP' => %w(Verb NP PP)
+      rule 'VP' => %w(Verb PP)
+      rule 'PP' => %w(Preposition PP)
+    end
     builder
   end
 

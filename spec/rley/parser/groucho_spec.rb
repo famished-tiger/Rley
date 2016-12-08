@@ -20,16 +20,17 @@ module Rley # Open this namespace to avoid module qualifier prefixes
       include ExpectationHelper # Mix-in with expectation on parse entry sets
 
       let(:sample_grammar) do
-        builder = Rley::Syntax::GrammarBuilder.new
-        builder.add_terminals('N', 'V', 'Pro')  # N(oun), V(erb), Pro(noun)
-        builder.add_terminals('Det', 'P')       # Det(erminer), P(reposition)
-        builder.add_production('S' => %w(NP VP))
-        builder.add_production('NP' => %w(Det N))
-        builder.add_production('NP' => %w(Det N PP))
-        builder.add_production('NP' => 'Pro')
-        builder.add_production('VP' => %w(V NP))
-        builder.add_production('VP' => %w(VP PP))
-        builder.add_production('PP' => %w(P NP))
+        builder = Rley::Syntax::GrammarBuilder.new do
+          add_terminals('N', 'V', 'Pro')  # N(oun), V(erb), Pro(noun)
+          add_terminals('Det', 'P')       # Det(erminer), P(reposition)
+          rule 'S' => %w(NP VP)
+          rule 'NP' => %w(Det N)
+          rule 'NP' => %w(Det N PP)
+          rule 'NP' => 'Pro'
+          rule 'VP' => %w(V NP)
+          rule 'VP' => %w(VP PP)
+          rule 'PP' => %w(P NP)
+        end
         builder.grammar
       end
 

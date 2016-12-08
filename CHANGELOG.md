@@ -1,3 +1,6 @@
+### 0.3.12 / 2016-12-08
+* [NEW] Directory `examples\general\calc`. A simple arithmetic expression demo parser.
+
 ### 0.3.11 / 2016-12-04
 * [NEW] Directory `examples\data_formats\JSON`. A JSON demo parser.
 

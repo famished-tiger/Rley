@@ -20,15 +20,16 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           # "SPPF-Style Parsing From Earley Recognizers" in
           # Notes in Theoretical Computer Science 203, (2008), pp. 53-67
           # contains a hidden left recursion and a cycle
-          builder = Syntax::GrammarBuilder.new
-          builder.add_terminals('a', 'b')
-          builder.add_production('Phi' => 'S')
-          builder.add_production('S' => %w(A T))
-          builder.add_production('S' => %w(a T))
-          builder.add_production('A' => 'a')
-          builder.add_production('A' => %w(B A))
-          builder.add_production('B' => [])
-          builder.add_production('T' => %w(b b b))
+          builder = Syntax::GrammarBuilder.new do
+            add_terminals('a', 'b')
+            rule 'Phi' => 'S'
+            rule 'S' => %w(A T)
+            rule 'S' => %w(a T)
+            rule 'A' => 'a'
+            rule 'A' => %w(B A)
+            rule 'B' => []
+            rule 'T' => %w(b b b)
+          end
           builder.grammar
       end
 

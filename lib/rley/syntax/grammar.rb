@@ -3,11 +3,11 @@ require 'set'
 module Rley # This module is used as a namespace
   module Syntax # This module is used as a namespace
     # A grammar specifies the syntax of a language.
-    #   Formally, a grammar has:
-    #   One start symbol,
-    #   One or more other production rules,
-    #   Each production has a rhs that is a sequence of grammar symbols.
-    #   Grammar symbols are categorized into
+    #   Formally, a grammar has: 
+    #   * One start symbol,
+    #   * One or more other production rules,
+    #   * Each production has a rhs that is a sequence of grammar symbols.
+    #   * Grammar symbols are categorized into 
     #   -terminal symbols
     #   -non-terminal symbols
     class Grammar
@@ -24,8 +24,7 @@ module Rley # This module is used as a namespace
       # A Hash with pairs of the kind: symbol name => grammar symbol
       attr_reader(:name2symbol)
 
-      # @param theProductions [Array of Production] the list of productions
-      # of the grammar.
+      # @param theProductions [Array<Production>] productions of the grammar.
       def initialize(theProductions)
         @rules = []
         @symbols = []

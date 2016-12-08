@@ -358,13 +358,14 @@ SNIPPET
           t_plus = Syntax::VerbatimSymbol.new('+')
           t_star = Syntax::VerbatimSymbol.new('*')
 
-          builder = Syntax::GrammarBuilder.new
-          builder.add_terminals(t_int, t_plus, t_star)
-          builder.add_production('P' => 'S')
-          builder.add_production('S' => %w(S + S))
-          builder.add_production('S' => %w(S * S))
-          builder.add_production('S' => 'L')
-          builder.add_production('L' => 'integer')
+          builder = Syntax::GrammarBuilder.new do
+            add_terminals(t_int, t_plus, t_star)
+            rule 'P' => 'S'
+            rule 'S' => %w(S + S)
+            rule 'S' => %w(S * S)
+            rule 'S' => 'L'
+            rule 'L' => 'integer'
+          end
           input_sequence = [
             { '2' => 'integer' },
             '+',
@@ -603,12 +604,13 @@ MSG
           t_lparen = Syntax::VerbatimSymbol.new('(')
           t_rparen = Syntax::VerbatimSymbol.new(')')
 
-          builder = Syntax::GrammarBuilder.new
-          builder.add_terminals(t_int, t_plus, t_lparen, t_rparen)
-          builder.add_production('S' => 'E')
-          builder.add_production('E' => 'int')
-          builder.add_production('E' => %w(( E + E )))
-          builder.add_production('E' => %w(E + E))
+          builder = Syntax::GrammarBuilder.new do
+            add_terminals(t_int, t_plus, t_lparen, t_rparen)
+            rule 'S' => 'E'
+            rule 'E' => 'int'
+            rule 'E' => %w(( E + E ))
+            rule 'E' => %w(E + E)
+          end
           input_sequence = [
             { '7' => 'int' },
             '+',
@@ -713,15 +715,16 @@ MSG
           t_star = Syntax::VerbatimSymbol.new('*')
           t_slash = Syntax::VerbatimSymbol.new('/')
 
-          builder = Syntax::GrammarBuilder.new
-          builder.add_terminals(t_a, t_star, t_slash)
-          builder.add_production('Z' => 'E')
-          builder.add_production('E' => %w(E Q F))
-          builder.add_production('E' => 'F')
-          builder.add_production('F' => t_a)
-          builder.add_production('Q' => t_star)
-          builder.add_production('Q' => t_slash)
-          builder.add_production('Q' => []) # Empty production
+          builder = Syntax::GrammarBuilder.new do
+            add_terminals(t_a, t_star, t_slash)
+            rule 'Z' => 'E'
+            rule 'E' => %w(E Q F)
+            rule 'E' => 'F'
+            rule 'F' => t_a
+            rule 'Q' => t_star
+            rule 'Q' => t_slash
+            rule 'Q' => [] # Empty production
+          end
 
           tokens = build_token_sequence(%w(a a / a), builder.grammar)
           instance = GFGEarleyParser.new(builder.grammar)

@@ -8,14 +8,15 @@ module GrammarBExprHelper
   # expression grammar.
   # (based on the article about Earley's algorithm in Wikipedia)
   def grammar_expr_builder()
-    builder = Rley::Syntax::GrammarBuilder.new
-    builder.add_terminals('+', '*', 'integer')
-    builder.add_production('P' => 'S')
-    builder.add_production('S' => %w(S + M))
-    builder.add_production('S' => 'M')
-    builder.add_production('M' => %w(M * T))
-    builder.add_production('M' => 'T')
-    builder.add_production('T' => 'integer')
+    builder = Rley::Syntax::GrammarBuilder.new do
+      add_terminals('+', '*', 'integer')
+      rule 'P' => 'S'
+      rule 'S' => %w(S + M)
+      rule 'S' => 'M'
+      rule 'M' => %w(M * T)
+      rule 'M' => 'T'
+      rule 'T' => 'integer'
+    end
     builder
   end
 

@@ -34,25 +34,23 @@ module Rley # This module is used as a namespace
         return symbols[aSymbolName]
       end
 
-      # Add the terminal symbols of the language
-      # @param terminalSymbols [String or Terminal] one or more 
-      # terminal symbols to add to the grammar.
+      # Add the given terminal symbols to the grammar of the language
+      # @param terminalSymbols [String or Terminal] 1..* terminal symbols.
       def add_terminals(*terminalSymbols)
         new_symbs = build_symbols(Terminal, terminalSymbols)
         symbols.merge!(new_symbs)
       end
 
 
-      # Add a production rule in the grammar.
-      # @param aProductionRepr [Hash] A Hash-based representation of the 
-      # production. It consists of a key-value pair of the form: 
-      # String => Array.
+      # Add a production rule in the grammar given one 
+      # key-value pair of the form: String => Array.
       #   Where the key is the name of the non-terminal appearing in the 
       #   left side of the rule. 
       #   The value, an Array, is a sequence of grammar symbol names.
       # The rule is created and inserted in the grammar.
       # Example:
-      #   builder.add_production('A' => ['a', 'A', 'c'])
+      #   builder.add_production('A' => ['a', 'A', 'c'])      
+      # @param aProductionRepr [Hash] A Hash-based representation of production 
       def add_production(aProductionRepr)
         aProductionRepr.each_pair do |(lhs_name, rhs_repr)|
           lhs = get_nonterminal(lhs_name)

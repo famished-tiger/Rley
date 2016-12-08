@@ -5,11 +5,12 @@ module GrammarABCHelper
   # Factory method. Creates a grammar builder for a simple grammar.
   # (based on example in N. Wirth "Compiler Construction" book, p. 6)
   def grammar_abc_builder()
-    builder = Rley::Syntax::GrammarBuilder.new
-    builder.add_terminals('a', 'b', 'c')
-    builder.add_production('S' => 'A')
-    builder.add_production('A' => %w(a A c))
-    builder.add_production('A' => 'b')
+    builder = Rley::Syntax::GrammarBuilder.new do
+      add_terminals('a', 'b', 'c')
+      rule 'S' => 'A'
+      rule 'A' => %w(a A c)
+      rule 'A' => 'b'
+    end
 
     return builder
   end

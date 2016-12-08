@@ -9,13 +9,14 @@ module GrammarAmbig01Helper
   # Grammar 3: An ambiguous arithmetic expression language
   # (based on example in article on Earley's algorithm in Wikipedia)
   def grammar_ambig01_builder()
-    builder = Rley::Syntax::GrammarBuilder.new
-    builder.add_terminals('integer', '+', '*')
-    builder.add_production('P' => 'S')
-    builder.add_production('S' => %w(S + S))
-    builder.add_production('S' => %w(S * S))
-    builder.add_production('S' => 'L')
-    builder.add_production('L' => 'integer')
+    builder = Rley::Syntax::GrammarBuilder.new do
+      add_terminals('integer', '+', '*')
+      rule 'P' => 'S'
+      rule 'S' => %w(S + S)
+      rule 'S' => %w(S * S)
+      rule 'S' => 'L'
+      rule 'L' => 'integer'
+    end
     builder
   end
 
