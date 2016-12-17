@@ -23,6 +23,7 @@ result = parser.parse_file(file_name) # result object contains parse details
 unless result.success?
   # Stop if the parse failed...
   puts "Parsing of '#{file_name}' failed"
+  puts result.failure_reason.message
   exit(1)
 end
 

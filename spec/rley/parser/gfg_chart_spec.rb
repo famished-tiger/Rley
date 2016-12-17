@@ -46,26 +46,21 @@ module Rley # Open this namespace to avoid module qualifier prefixes
       # from the abc grammar
       let(:items_from_grammar) { build_items_for_grammar(grammar_abc) }
       let(:sample_gfg) { GFG::GrmFlowGraph.new(items_from_grammar) }
-      let(:sample_tracer) { ParseTracer.new(0, output, token_seq) }
       let(:sample_start_symbol) { sample_gfg.start_vertex.non_terminal }
 
 
       # Default instantiation rule
-      subject { GFGChart.new(count_token, sample_gfg, sample_tracer) }
+      subject { GFGChart.new(count_token, sample_gfg) }
 
 
       context 'Initialization:' do
-        it 'should be created with start vertex, token count, tracer' do
-          expect { GFGChart.new(count_token, sample_gfg, sample_tracer) }
+        it 'should be created with start vertex, token count' do
+          expect { GFGChart.new(count_token, sample_gfg) }
             .not_to raise_error
         end
 
         it 'should have correct entry set count' do
           expect(subject.sets.size).to eq(count_token + 1)
-        end
-
-        it 'should reference a tracer' do
-          expect(subject.tracer).to eq(sample_tracer)
         end
 
         it 'should know the start symbol' do
@@ -83,52 +78,6 @@ module Rley # Open this namespace to avoid module qualifier prefixes
         end
 
 
-=end
-      end # context
-
-      context 'Provided services:' do
-=begin
-        let(:t_a) { Syntax::Terminal.new('a') }
-        let(:t_b) { Syntax::Terminal.new('b') }
-        let(:t_c) { Syntax::Terminal.new('c') }
-        let(:nt_sentence) { Syntax::NonTerminal.new('sentence') }
-
-        let(:sample_prod) do
-          Syntax::Production.new(nt_sentence, [t_a, t_b, t_c])
-        end
-
-        let(:origin_val) { 3 }
-        let(:dotted_rule) { DottedItem.new(sample_prod, 2) }
-        let(:complete_rule) { DottedItem.new(sample_prod, 3) }
-        let(:sample_parse_state) { ParseState.new(dotted_rule, origin_val) }
-        let(:sample_tracer) { ParseTracer.new(1, output, token_seq) }
-
-        # Factory method.
-        def parse_state(origin, aDottedRule)
-          ParseState.new(aDottedRule, origin)
-        end
-
-
-        it 'should trace its initialization' do
-          subject[0]  # Force constructor call here
-          expectation = <<-SNIPPET
-['I', 'saw', 'John', 'with', 'a', 'dog']
-|.  I   . saw  . John . with .  a   . dog  .|
-|>      .      .      .      .      .      .| [0:0] sentence => A B . C
-SNIPPET
-          expect(output.string).to eq(expectation)
-        end
-
-        it 'should trace parse state pushing' do
-          subject[0]  # Force constructor call here
-          output.string = ''
-
-          subject.push_state(dotted_rule, 3, 5, :prediction)
-          expectation = <<-SNIPPET
-|.      .      .      >      .| [3:5] sentence => A B . C
-SNIPPET
-          expect(output.string).to eq(expectation)
-        end
 =end
       end # context
     end # describe

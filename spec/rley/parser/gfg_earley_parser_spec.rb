@@ -7,8 +7,11 @@ require_relative '../../../lib/rley/syntax/grammar_builder'
 require_relative '../../../lib/rley/parser/token'
 require_relative '../../../lib/rley/parser/dotted_item'
 require_relative '../../../lib/rley/parser/gfg_parsing'
+
+# Load builders and lexers for sample grammars
 require_relative '../support/grammar_abc_helper'
 require_relative '../support/ambiguous_grammar_helper'
+require_relative '../support/grammar_pb_helper'
 require_relative '../support/grammar_helper'
 require_relative '../support/expectation_helper'
 
@@ -68,10 +71,10 @@ module Rley # Open this namespace to avoid module qualifier prefixes
       # for the language specified by grammar_expr
       def grm2_tokens()
         input_sequence = [
-          { '2' => 'integer' }, 
-          '+', 
+          { '2' => 'integer' },
+          '+',
           { '3' => 'integer' },
-          '*', 
+          '*',
           { '4' => 'integer' }
         ]
         return build_token_sequence(input_sequence, grammar_expr)
@@ -178,39 +181,6 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           expect(entry_set_5.entries.size).to eq(4)
           compare_entry_texts(entry_set_5, expected)
         end
-=begin
-        it 'should trace a parse with level 1' do
-          # Substitute temporarily $stdout by a StringIO
-          prev_ostream = $stdout
-          $stdout = StringIO.new('', 'w')
-
-          trace_level = 1
-          subject.parse(grm1_tokens, trace_level)
-          expectations = <<-SNIPPET
-['a', 'a', 'b', 'c', 'c']
-|. a . a . b . c . c .|
-|>   .   .   .   .   .| [0:0] S => . A
-|>   .   .   .   .   .| [0:0] A => . 'a' A 'c'
-|>   .   .   .   .   .| [0:0] A => . 'b'
-|[---]   .   .   .   .| [0:1] A => 'a' . A 'c'
-|.   >   .   .   .   .| [1:1] A => . 'a' A 'c'
-|.   >   .   .   .   .| [1:1] A => . 'b'
-|.   [---]   .   .   .| [1:2] A => 'a' . A 'c'
-|.   .   >   .   .   .| [2:2] A => . 'a' A 'c'
-|.   .   >   .   .   .| [2:2] A => . 'b'
-|.   .   [---]   .   .| [2:3] A => 'b' .
-|.   [------->   .   .| [1:3] A => 'a' A . 'c'
-|.   .   .   [---]   .| [3:4] A => 'a' A 'c' .
-|[--------------->   .| [0:4] A => 'a' A . 'c'
-|.   .   .   .   [---]| [4:5] A => 'a' A 'c' .
-|[===================]| [0:5] S => A .
-SNIPPET
-          expect($stdout.string).to eq(expectations)
-
-          # Restore standard ouput stream
-          $stdout = prev_ostream
-        end
-=end
 
         it 'should parse a valid simple expression' do
           instance = GFGEarleyParser.new(grammar_expr)
@@ -586,40 +556,81 @@ SNIPPET
         it 'should parse an invalid simple input' do
           # Parse an erroneous input (b is missing)
           wrong = build_token_sequence(%w(a a c c), grammar_abc)
-
+          parse_result = subject.parse(wrong)
+          expect(parse_result.success?).to eq(false)
           err_msg = <<-MSG
-Syntax error at or near token 3>>>c<<<:
+Syntax error at or near token 3 >>>c<<<
 Expected one of: ['a', 'b'], found a 'c' instead.
 MSG
-          err = StandardError
-          expect { subject.parse(wrong) }
-            .to raise_error(err, err_msg.chomp)
+          expect(parse_result.failure_reason.message).to eq(err_msg.chomp)            
         end
 
-        it 'should parse a common sample' do
-          # Grammar based on example found in paper of K. Pingali, G. Bilardi:
-          # "A Graphical Model for Context-Free Gammar Parsing"
-          t_int = Syntax::Literal.new('int', /[-+]?\d+/)
-          t_plus = Syntax::VerbatimSymbol.new('+')
-          t_lparen = Syntax::VerbatimSymbol.new('(')
-          t_rparen = Syntax::VerbatimSymbol.new(')')
+        it 'should report error when no input provided but was required' do
+          helper = GrammarPBHelper.new
+          grammar = helper.grammar
+          instance = GFGEarleyParser.new(grammar)
+          tokens = helper.tokenize('')
+          parse_result = instance.parse(tokens)
+          expect(parse_result.success?).to eq(false)
+          err_msg = 'Input cannot be empty.'
+          expect(parse_result.failure_reason.message).to eq(err_msg)
+        end
 
-          builder = Syntax::GrammarBuilder.new do
-            add_terminals(t_int, t_plus, t_lparen, t_rparen)
-            rule 'S' => 'E'
-            rule 'E' => 'int'
-            rule 'E' => %w(( E + E ))
-            rule 'E' => %w(E + E)
-          end
-          input_sequence = [
-            { '7' => 'int' },
-            '+',
-            { '8' => 'int' },
-            '+',
-            { '9' => 'int' }
+        it 'should report error when input ends prematurely' do
+          helper = GrammarPBHelper.new
+          grammar = helper.grammar
+          instance = GFGEarleyParser.new(grammar)
+          tokens = helper.tokenize('1 +')
+          parse_result = instance.parse(tokens)
+          expect(parse_result.success?).to eq(false)
+          ###################### S(0) == . 1 +
+          # Expectation chart[0]:
+          expected = [
+            '.S | 0',                     # initialization
+            'S => . E | 0',               # start rule
+            '.E | 0',                     # call rule
+            'E => . int | 0',             # start rule
+            "E => . '(' E '+' E ')' | 0", # start rule
+            "E => . E '+' E | 0"          # start rule
           ]
-          tokens = build_token_sequence(input_sequence, builder.grammar)
-          instance = GFGEarleyParser.new(builder.grammar)
+          compare_entry_texts(parse_result.chart[0], expected)
+
+          ###################### S(1) == 1 . +
+          # Expectation chart[1]:
+          expected = [
+            'E => int . | 0',             # scan '1'
+            'E. | 0',                     # exit rule
+            'S => E . | 0',               # end rule
+            "E => E . '+' E | 0",         # end rule
+            'S. | 0'                      # exit rule
+          ]
+          compare_entry_texts(parse_result.chart[1], expected)
+
+          ###################### S(2) == 1 + .
+          # Expectation chart[2]:
+          expected = [
+            "E => E '+' . E | 0",         # scan '+'
+            '.E | 2',                     # exit rule
+            'E => . int | 2',             # start rule
+            "E => . '(' E '+' E ')' | 2", # start rule
+            "E => . E '+' E | 2"          # start rule
+          ]
+          compare_entry_texts(parse_result.chart[2], expected)
+
+          err_msg = "Premature end of input after '+' at position 2"
+          err_msg << "\nExpected one of: ['int', '(']."
+          expect(parse_result.failure_reason.message).to eq(err_msg)
+        end
+
+
+        it 'should parse a common sample' do
+          # Use grammar based on example found in paper of
+          # K. Pingali and G. Bilardi:
+          # "A Graphical Model for Context-Free Grammar Parsing"
+          helper = GrammarPBHelper.new
+          grammar = helper.grammar
+          instance = GFGEarleyParser.new(grammar)
+          tokens = helper.tokenize('7 + 8 + 9')
           parse_result = instance.parse(tokens)
           expect(parse_result.success?).to eq(true)
           ###################### S(0) == . 7 + 8 + 9

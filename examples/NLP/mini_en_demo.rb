@@ -83,7 +83,11 @@ input_to_parse = 'John saw Mary with a telescope'
 tokens = tokenizer(input_to_parse, grammar)
 result = parser.parse(tokens)
 
-puts "Parsing successful? #{result.success?}" # => Parsing successful? true
+puts "Parsing successful? #{result.success?}"
+unless result.success?
+  puts result.failure_reason.message
+  exit(1)
+end
 
 ########################################
 # Step 6. Generating the parse forest

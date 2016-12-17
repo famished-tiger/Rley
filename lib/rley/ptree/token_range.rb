@@ -68,11 +68,6 @@ module Rley # This module is used as a namespace
         return "[#{low_text}, #{high_text}]"
       end
 
-      # Generate a String that represents a value-based identifier 
-      def keystr()
-        return "#{low.object_id}-#{high.object_id}"
-      end
-
       private
 
       def assign_low(aRange)

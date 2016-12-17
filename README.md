@@ -64,7 +64,7 @@ Installing the latest stable version is simple:
 
 ## A whirlwind tour of Rley
 The purpose of this section is show how to create a parser for a minimalistic
-English language subset. 
+English language subset.
 The tour is organized into the following steps:  
 1. [Defining the language grammar](#defining-the-language-grammar)  
 2. [Creating a lexicon](#creating-a-lexicon)  
@@ -73,7 +73,7 @@ The tour is organized into the following steps:
 5. [Parsing some input](#parsing-some-input)  
 6. [Generating the parse forest](#generating-the-parse-forest)
 
-The complete source code of the tour can be found in the 
+The complete source code of the example used in this tour can be found in the
 [examples](https://github.com/famished-tiger/Rley/tree/master/examples/NLP/mini_en_demo.rb)
 directory
 
@@ -86,7 +86,7 @@ The subset of English grammar is based on an example from the NLTK book.
     # Instantiate a builder object that will build the grammar for us
     builder = Rley::Syntax::GrammarBuilder.new do
       # Terminal symbols (= word categories in lexicon)
-      add_terminals('Noun', 'Proper-Noun', 'Verb') 
+      add_terminals('Noun', 'Proper-Noun', 'Verb')
       add_terminals('Determiner', 'Preposition')
 
       # Here we define the productions (= grammar rules)
@@ -97,7 +97,7 @@ The subset of English grammar is based on an example from the NLTK book.
       rule 'VP' => %w[Verb NP]
       rule 'VP' => %w[Verb NP PP]
       rule 'PP' => %w[Preposition NP]
-    end 
+    end
     # And now, let's build the grammar...
     grammar = builder.grammar
 ```  
@@ -178,11 +178,75 @@ creating a lexicon and tokenizer from scratch. Here are a few Ruby Part-of-Speec
     pforest = result.parse_forest
 ```
 
+## Error reporting
+__Rley__ is a non-violent parser, that is, it won't throw an exception when it
+detects a syntax error. Instead, the parse result will be marked as
+non-successful. The parse error can then be identified by calling the
+`GFGParsing#failure_reason` method. This method returns an error reason object
+which can help to produce an error message.  
+
+Consider the example from the [Parsing some input](#parsing-some-input) section
+above and, as an error, we delete the verb `saw` in the sentence to parse.  
+
+```ruby
+    # Verb has been removed from the sentence on next line
+    input_to_parse = 'John Mary with a telescope'
+    # Convert input text into a sequence of token objects...
+    tokens = tokenizer(input_to_parse, grammar)
+    result = parser.parse(tokens)
+
+    puts "Parsing successful? #{result.success?}" # => Parsing successful? false
+    exit(1)
+```
+
+As expected, the parse is now failing.  
+To get an error message, one just need to retrieve the error reason and
+ask it to generate a message.  
+```ruby
+    # Show error message if parse fails...
+    puts result.failure_reason.message unless result.success?
+```
+
+Re-running the example with the error, result in the error message:
+```
+  Syntax error at or near token 2 >>>Mary<<<
+  Expected one 'Verb', found a 'Proper-Noun' instead.
+```
+
+The standard __Rley__ message not only inform about the location of
+the mistake, it also provides some hint by disclosing its expectations.
+
+Let's experiment again with the original sentence but without the word
+`telescope`.
+
+```ruby
+    # Last word has been removed from the sentence on next line
+    input_to_parse = 'John saw Mary with a '
+    # Convert input text into a sequence of token objects...
+    tokens = tokenizer(input_to_parse, grammar)
+    result = parser.parse(tokens)
+
+    puts "Parsing successful? #{result.success?}" # => Parsing successful? false
+    unless result.success?
+      puts result.failure_reason.message
+      exit(1)
+    end
+```
+
+This time, the following output is displayed:
+```
+  Parsing successful? false
+  Premature end of input after 'a' at position 5
+  Expected one 'Noun'.
+```
+Again, the resulting error message is user-friendly.  
+Remark: currently, Rley reports an error position as the index of the  
+input token with which the error was detected.
 
 
 ## Examples
 
-The project source directory contains several example scripts that demonstrate 
+The project source directory contains several example scripts that demonstrate
 how grammars are to be constructed and used.
 
 

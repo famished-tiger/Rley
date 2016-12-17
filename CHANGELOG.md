@@ -1,3 +1,10 @@
+### 0.4.00 / 2016-12-17
+* [CHANGE] Error reporting is vastly changed. Syntax errors don't raise exceptions.
+  parse error can be retrieved via an `ErrorReason` object. Such an object is returned by the
+  method `GFGParsing#failure_reason` method.
+* [CHANGE] File `README.md` updated to reflect the new error reporting.
+* [CHANGE] Examples updated to reflect the new error reporting.  
+
 ### 0.3.12 / 2016-12-08
 * [NEW] Directory `examples\general\calc`. A simple arithmetic expression demo parser.
 

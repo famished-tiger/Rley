@@ -53,16 +53,15 @@ module Rley # Open this namespace to avoid module qualifier prefixes
       let(:sample_gfg) { GFG::GrmFlowGraph.new(items_from_grammar) }
 
       let(:output) { StringIO.new('', 'w') }
-      let(:sample_tracer) { ParseTracer.new(0, output, grm1_tokens) }
 
       # Default instantiation rule
       subject do
-        GFGParsing.new(sample_gfg, grm1_tokens, sample_tracer)
+        GFGParsing.new(sample_gfg, grm1_tokens)
       end
 
       context 'Initialization:' do
         it 'should be created with a GFG, tokens, trace' do
-          expect { GFGParsing.new(sample_gfg, grm1_tokens, sample_tracer) }
+          expect { GFGParsing.new(sample_gfg, grm1_tokens) }
             .not_to raise_error
         end
 

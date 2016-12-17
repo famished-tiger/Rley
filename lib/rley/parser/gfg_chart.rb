@@ -12,17 +12,8 @@ module Rley # This module is used as a namespace
       # An array of entry sets (one per input token + 1)
       attr_reader(:sets)
 
-      # The level of trace details reported on stdout during the parse.
-      # The possible values are:
-      # 0: No trace output (default case)
-      # 1: Show trace of scanning and completion rules
-      # 2: Same as of 1 with the addition of the prediction rules
-      attr_reader(:tracer)
-
       # @param tokenCount [Fixnum] The number of lexemes in the input to parse.
-      # @param aTracer [ParseTracer] A tracer object.
-      def initialize(tokenCount, aGFGraph, aTracer)
-        @tracer = aTracer
+      def initialize(tokenCount, aGFGraph)
         @sets = Array.new(tokenCount + 1) { |_| ParseEntrySet.new }
         push_entry(aGFGraph.start_vertex, 0, 0, :start_rule)
       end
@@ -53,20 +44,6 @@ module Rley # This module is used as a namespace
       def push_entry(aVertex, anOrigin, anIndex, aReason)
         new_entry = ParseEntry.new(aVertex, anOrigin)
         pushed = self[anIndex].push_entry(new_entry)
-        if pushed == new_entry && tracer.level > 0
-          case aReason
-            when :start_rule, :prediction
-              tracer.trace_prediction(anIndex, new_entry)
-
-            when :scanning
-               tracer.trace_scanning(anIndex, new_entry)
-
-            when :completion
-               tracer.trace_completion(anIndex, new_entry)
-            else
-              raise NotImplementedError, "Unknown push_entry mode #{aReason}"
-          end
-        end
 
         return pushed
       end

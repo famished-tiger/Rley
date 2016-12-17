@@ -115,7 +115,7 @@ module Rley # This module is used as a namespace
 
       private
 
-      # Return the given after its validation.
+      # Return the given position after its validation.
       def valid_position(aPosition)
         rhs_size = production.rhs.size
         if aPosition < 0 || aPosition > rhs_size

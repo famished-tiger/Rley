@@ -22,7 +22,8 @@ result = parser.parse_expression(ARGV[0])
 
 unless result.success?
   # Stop if the parse failed...
-  puts "Parsing of '#{file_name}' failed"
+  puts "Parsing of '#{ARGV[0]}' failed"
+  puts "Reason: #{result.failure_reason.message}"
   exit(1)
 end
 
