@@ -2,6 +2,7 @@ coverage
 doc
 gems
 lab
+refs
 Gemfile.lock
 *.txt
 *.bat

@@ -1,4 +1,5 @@
 [![Build Status](https://travis-ci.org/famished-tiger/Rley.svg?branch=master)](https://travis-ci.org/famished-tiger/Rley)
+[![Build status](https://ci.appveyor.com/api/projects/status/l5adgcbfo128rvo9?svg=true)](https://ci.appveyor.com/project/famished-tiger/rley)
 [![Coverage Status](https://img.shields.io/coveralls/famished-tiger/Rley.svg)](https://coveralls.io/r/famished-tiger/Rley?branch=master)
 [![Gem Version](https://badge.fury.io/rb/rley.svg)](http://badge.fury.io/rb/rley)
 [![Dependency Status](https://gemnasium.com/famished-tiger/Rley.svg)](https://gemnasium.com/famished-tiger/Rley)
@@ -262,7 +263,7 @@ Here are a few other ones:
   Aimed in parsing brazilian portuguese.  
   [earley project](https://github.com/joshingly/earley) -- An Earley parser (grammar rules are specified in JSON format).  
   The code doesn't seem to be maintained: latest commit dates from Nov. 2011.  
-- [linguist project](https://github.com/davidkellis/linguist) -- Advertised as library for parsing context-free languages.  
+- [linguist project](https://github.com/davidkellis/linguist) -- Advertised as a library for parsing context-free languages.  
   It is a recognizer not a parser. In other words it can only tell whether a given input
   conforms to the grammar rules or not. As such it cannot build parse trees.  
   The code doesn't seem to be maintained: latest commit dates from Oct. 2011.

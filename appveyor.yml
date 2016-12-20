@@ -1,0 +1,17 @@
+version: '{build}'
+max_jobs: 2
+environment:
+  matrix:
+  - Ruby_version: 200
+  - Ruby_version: 21-x64
+  - Ruby_version: 22
+  - Ruby_version: 22-x64
+  - Ruby_version: 23
+install:
+- cmd: >-
+    SET PATH=C:\Ruby%Ruby_version%\bin;%PATH%
+
+    bundle install --retry=3 --clean
+build: off
+test_script:
+- cmd: bundle exec rake
