@@ -1,9 +1,9 @@
 #[Rley](https://github.com/famished-tiger/Rley)
 
 [![Linux Build Status](https://img.shields.io/travis/famished-tiger/Rley/master.svg?label=Linux%20build)](https://travis-ci.org/famished-tiger/Rley)
-[![Windows Build status](https://img.shields.io/appveyor/ci/famished-tiger/Rley/master.svg?label=Windows%20build)](https://ci.appveyor.com/project/famished-tiger/rley)
+[![Build status](https://ci.appveyor.com/api/projects/status/l5adgcbfo128rvo9?svg=true)](https://ci.appveyor.com/project/famished-tiger/rley)
 [![Coverage Status](https://img.shields.io/coveralls/famished-tiger/Rley.svg)](https://coveralls.io/r/famished-tiger/Rley?branch=master)
-[![Gem Version](https://img.shields.io/gem/v/rley.svg)](https://rubygems.org/gems/rley)
+[![Gem Version](https://badge.fury.io/rb/rley.svg)](http://badge.fury.io/rb/rley)
 [![Dependency Status](https://gemnasium.com/famished-tiger/Rley.svg)](https://gemnasium.com/famished-tiger/Rley)
 [![Inline docs](http://inch-ci.org/github/famished-tiger/Rley.svg?branch=master)](http://inch-ci.org/github/famished-tiger/Rley)
 [![License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat)](https://github.com/famished-tiger/Rley/blob/master/LICENSE.txt)
@@ -11,6 +11,8 @@
 A Ruby library for constructing general parsers for _any_ context-free language.  
 
 ====
+
+
 What is Rley?
 -------------
 __Rley__ uses the [Earley](http://en.wikipedia.org/wiki/Earley_parser)
@@ -43,12 +45,21 @@ application range such as:
 * artificial intelligence and  
 * Natural Language Processing.
 
-#### Features
+### Features
 * Simple API for context-free grammar definition,
 * Allows ambiguous grammars,
 * Generates shared packed parse forests,
 * Accepts left-recursive rules/productions,
 * Provides syntax error detection and reporting.
+
+
+### Compatibility
+Rley supports the following Ruby implementations:  
+- MRI 2.0  
+- MRI 2.1  
+- MRI 2.2  
+- MRI 2.3  
+- JRuby 9.0+  
 
 ---
 
