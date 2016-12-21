@@ -1,3 +1,10 @@
+### 0.4.01 / 2016-12-21
+* [NEW] File `appveyor.yml`. Add AppVeyor CI to Github commits. AppVeyor complements Travis by running builds under Windows OS.
+  This permits to test the portability across operating systems.
+* [CHANGE] File `README.md` Added AppVeyor badge.
+* [CHANGE] File `rley.gemspec` drop support for Ruby 1.9.3. Lowest supported Ruby version is now 2.0.0.
+* [CHANGE] File `.travis.yml` updated list of Ruby versions to use by Travis CI
+
 ### 0.4.00 / 2016-12-17
 * [CHANGE] Error reporting is vastly changed. Syntax errors don't raise exceptions.
   parse error can be retrieved via an `ErrorReason` object. Such an object is returned by the
