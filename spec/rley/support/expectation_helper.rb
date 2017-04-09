@@ -1,5 +1,5 @@
 # Load the builder class
-require_relative '../../../lib/rley/parser/token'
+require_relative '../../../lib/rley/tokens/token'
 
 
 # Mixin module implementing expectation helper methods.

@@ -2,6 +2,7 @@ require_relative 'gfg_chart'
 require_relative 'error_reason'
 require_relative 'parse_entry_tracker'
 require_relative 'parse_forest_factory'
+require_relative 'parse_tree_factory'
 
 
 module Rley # This module is used as a namespace
@@ -148,6 +149,14 @@ module Rley # This module is used as a namespace
 
         return factory.build_parse_forest
       end
+      
+      # Factory method. Builds a ParseTree from the parse result.
+      # @return [ParseTree]
+      def parse_tree()
+        factory = ParseTreeFactory.new(self)
+
+        return factory.build_parse_tree
+      end      
 
       # Retrieve the very first parse entry added to the chart.
       # This entry corresponds to the start vertex of the GF graph

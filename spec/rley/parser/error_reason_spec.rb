@@ -1,5 +1,5 @@
 require_relative '../../spec_helper'
-require_relative '../../../lib/rley/parser/token'
+require_relative '../../../lib/rley/tokens/token'
 
 # Load the class under test
 require_relative '../../../lib/rley/parser/error_reason'
@@ -61,7 +61,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
     describe UnexpectedToken do
       let(:err_lexeme) { '-'}
       let(:err_terminal) { Syntax::Terminal.new('MINUS') }
-      let(:err_token) { Token.new(err_lexeme, err_terminal) }
+      let(:err_token) { Tokens::Token.new(err_lexeme, err_terminal) }
       let(:terminals) do
         ['PLUS', 'LPAREN'].map { |name| Syntax::Terminal.new(name) }
       end
@@ -90,7 +90,7 @@ MSG_END
     describe PrematureInputEnd do
       let(:err_lexeme) { '+'}
       let(:err_terminal) { Syntax::Terminal.new('PLUS') }
-      let(:err_token) { Token.new(err_lexeme, err_terminal) }
+      let(:err_token) { Tokens::Token.new(err_lexeme, err_terminal) }
       let(:terminals) do
         ['INT', 'LPAREN'].map { |name| Syntax::Terminal.new(name) }
       end

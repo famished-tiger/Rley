@@ -51,14 +51,14 @@ private
         when '(', ')', '+', '-', '*', '/'
           type_name = @@lexeme2name[curr_ch]
           token_type = name2symbol[type_name]
-          token = Rley::Parser::Token.new(curr_ch, token_type)
+          token = Rley::Tokens::Token.new(curr_ch, token_type)
 
         # LITERALS
         when /[-0-9]/ # Start character of number literal found
           @scanner.pos = scanner.pos - 1 # Simulate putback
           value = scanner.scan(/-?[0-9]+(\.[0-9]+)?([eE][-+]?[0-9])?/)
           token_type = name2symbol['NUMBER']
-          token = Rley::Parser::Token.new(value, token_type)
+          token = Rley::Tokens::Token.new(value, token_type)
 
 
         else # Unknown token

@@ -29,4 +29,5 @@ end
 
 # Generate a parse forest from the parse result
 pforest = result.parse_forest
+# puts pforest.ambiguous?
 # End of file

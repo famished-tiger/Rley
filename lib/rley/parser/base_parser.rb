@@ -1,7 +1,7 @@
 require_relative '../syntax/grammar'
 require_relative 'grm_items_builder' # Use mix-in module
 require_relative 'parse_tracer'
-require_relative 'parsing'
+
 
 module Rley # This module is used as a namespace
   module Parser # This module is used as a namespace

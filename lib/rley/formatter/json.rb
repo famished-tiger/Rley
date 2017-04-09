@@ -48,8 +48,8 @@ module Rley # This module is used as a namespace
       # Notification of a visit event: the visitor is about to visit
       # the children of a non-terminal node
       # @param _parent [NonTerminalNode]
-      # @param _children [Array] array of children nodes
-      def before_children(_parent, _children)
+      # @param _subnodes [Array] array of children nodes
+      def before_subnodes(_parent, _subnodes)
         print_text('[', nil)
         indent
         sibling_flags.push(false)
@@ -73,8 +73,8 @@ module Rley # This module is used as a namespace
       # Notification of a visit event: the visitor completed the visit of
       # the children of a non-terminal node.
       # @param _parent [NonTerminalNode]
-      # @param _children [Array] array of children nodes
-      def after_children(_parent, _children)
+      # @param _subnodes [Array] array of children nodes
+      def after_subnodes(_parent, _subnodes)
         sibling_flags.pop
         print_text("\n", ']')
         dedent

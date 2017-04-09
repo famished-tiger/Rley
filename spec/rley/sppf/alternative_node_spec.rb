@@ -4,7 +4,7 @@ require_relative '../../spec_helper'
 require_relative '../../../lib/rley/gfg/item_vertex'
 require_relative '../../../lib/rley/syntax/terminal'
 require_relative '../../../lib/rley/syntax/production'
-require_relative '../../../lib/rley/ptree/token_range'
+require_relative '../../../lib/rley/tokens/token_range'
 require_relative '../../../lib/rley/parser/dotted_item'
 
 # Load the class under test
@@ -15,7 +15,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
     describe AlternativeNode do
       # Factory method. Generate a range from its boundary values.
       def range(low, high)
-        return PTree::TokenRange.new(low: low, high: high)
+        return Tokens::TokenRange.new(low: low, high: high)
       end
       
       let(:t_a) { Syntax::Terminal.new('A') }

@@ -54,7 +54,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
             raise StandardError, "Word '#{word}' not found in lexicon"
           end
           terminal = aGrammar.name2symbol[term_name]
-          Rley::Parser::Token.new(word, terminal)
+          Rley::Tokens::Token.new(word, terminal)
         end
 
         return tokens

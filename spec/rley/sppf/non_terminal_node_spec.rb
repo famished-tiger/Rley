@@ -2,7 +2,7 @@ require 'ostruct'
 require_relative '../../spec_helper'
 
 require_relative '../../../lib/rley/syntax/non_terminal'
-require_relative '../../../lib/rley/ptree/token_range'
+require_relative '../../../lib/rley/tokens/token_range'
 
 # Load the class under test
 require_relative '../../../lib/rley/sppf/non_terminal_node'
@@ -12,7 +12,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
     describe NonTerminalNode do
       # Factory method. Generate a range from its boundary values.
       def range(low, high)
-        return PTree::TokenRange.new(low: low, high: high)
+        return Tokens::TokenRange.new(low: low, high: high)
       end
 
       let(:sample_symbol) do

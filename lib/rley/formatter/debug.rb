@@ -41,7 +41,7 @@ module Rley # This module is used as a namespace
       # the children of a non-terminal node
       # @param _parent [NonTerminalNode]
       # @param _children [Array] array of children nodes
-      def before_children(_parent, _children)
+      def before_subnodes(_parent, _children)
         output_event(__method__, indentation)
         indent
       end
@@ -76,7 +76,7 @@ module Rley # This module is used as a namespace
       # the children of a non-terminal node.
       # @param _parent [NonTerminalNode]
       # @param _children [Array] array of children nodes
-      def after_children(_parent, _children)
+      def after_subnodes(_parent, _children)
         dedent
         output_event(__method__, indentation)
       end

@@ -2,7 +2,7 @@ require_relative '../../spec_helper'
 require 'stringio'
 
 require_relative '../../../lib/rley/syntax/terminal'
-require_relative '../../../lib/rley/parser/token'
+require_relative '../../../lib/rley/tokens/token'
 require_relative '../../../lib/rley/gfg/start_vertex'
 require_relative '../../../lib/rley/parser/parse_entry'
 require_relative '../../../lib/rley/parser/parse_tracer'
@@ -39,7 +39,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
 
       let(:token_seq) do
         literals = %w(a a b c c)
-        literals.map { |lexeme| Token.new(lexeme, nil) }
+        literals.map { |lexeme| Tokens::Token.new(lexeme, nil) }
       end
 
       # Helper method. Create an array of dotted items

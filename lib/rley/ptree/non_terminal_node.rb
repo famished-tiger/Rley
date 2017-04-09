@@ -3,17 +3,18 @@ require_relative 'parse_tree_node' # Load superclass
 module Rley # This module is used as a namespace
   module PTree # This module is used as a namespace
     class NonTerminalNode < ParseTreeNode
-      # Link to the input token
-      attr_reader(:children)
+      # Array of sub-nodes.
+      attr_reader(:subnodes)
 
       def initialize(aSymbol, aRange)
         super(aSymbol, aRange)
-        @children = []
+        @subnodes = []
       end
 
-      # @param aChildNode [ParseTreeNode-like] a child node.
-      def add_child(aChildNode)
-        children << aChildNode
+      # Pre-pend the given subnode in front of the list of subnodes
+      # @param aSubnode [ParseTreeNode-like] a child node.
+      def add_subnode(aSubnode)
+        subnodes.unshift(aSubnode)
       end
       
       # Emit a (formatted) string representation of the node.
@@ -22,11 +23,11 @@ module Rley # This module is used as a namespace
         connector = '+- '
         selfie = super(indentation)
         prefix = "\n" + (' ' * connector.size * indentation) + connector
-        children_repr = children.reduce('') do |sub_result, child|
-          sub_result << prefix + child.to_string(indentation + 1) 
+        subnodes_repr = subnodes.reduce('') do |sub_result, subnode|
+          sub_result << prefix + subnode.to_string(indentation + 1) 
         end
         
-        return selfie + children_repr
+        return selfie + subnodes_repr        
       end
       
       # Part of the 'visitee' role in Visitor design pattern.

@@ -6,7 +6,7 @@ require_relative '../../../lib/rley/syntax/non_terminal'
 require_relative '../../../lib/rley/syntax/production'
 require_relative '../../../lib/rley/parser/dotted_item'
 require_relative '../../../lib/rley/parser/parse_state'
-require_relative '../../../lib/rley/parser/token'
+require_relative '../../../lib/rley/tokens/token'
 
 # Load the class under test
 require_relative '../../../lib/rley/parser/parse_tracer'
@@ -18,7 +18,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
 
       let(:token_seq) do
         literals = %w(I saw John with a dog)
-        literals.map { |lexeme| Token.new(lexeme, nil) }
+        literals.map { |lexeme| Tokens::Token.new(lexeme, nil) }
       end
 
       subject { ParseTracer.new(1, output, token_seq) }

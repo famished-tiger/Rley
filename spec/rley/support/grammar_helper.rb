@@ -1,5 +1,5 @@
 # Load the builder class
-require_relative '../../../lib/rley/parser/token'
+require_relative '../../../lib/rley/tokens/token'
 
 
 # Mixin module implementing helper methods.
@@ -12,13 +12,13 @@ module GrammarHelper
       case lexeme
         when String
           terminal = aGrammar.name2symbol[lexeme]
-          Rley::Parser::Token.new(lexeme, terminal)
+          Rley::Tokens::Token.new(lexeme, terminal)
 
         when Hash # lexeme is reality a Hash: literal => terminal name
           sub_array = lexeme.to_a
           sub_array.map do |(literal, name)|
             terminal = aGrammar.name2symbol[name]
-            Rley::Parser::Token.new(literal, terminal)
+            Rley::Tokens::Token.new(literal, terminal)
           end
       end
     end

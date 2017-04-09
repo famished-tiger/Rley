@@ -1,7 +1,11 @@
-require_relative '../ptree/terminal_node'
+require_relative '../syntax/terminal'
+require_relative '../syntax/non_terminal'
+require_relative '../gfg/end_vertex'
+require_relative '../gfg/item_vertex'
+require_relative '../gfg/start_vertex'
 require_relative '../ptree/non_terminal_node'
+require_relative '../ptree/terminal_node'
 require_relative '../ptree/parse_tree'
-
 
 module Rley # This module is used as a namespace
   module Parser # This module is used as a namespace
@@ -9,166 +13,212 @@ module Rley # This module is used as a namespace
     # (say, a parse tree) from simpler objects (terminal and non-terminal
     # nodes) and using a step by step approach.
     class ParseTreeBuilder
-      attr_reader(:root)
-      attr_reader(:current_path)
+      # The sequence of input tokens
+      attr_reader(:tokens)
 
-      def initialize(aStartProduction, aRange)
-        @current_path = []
-        start_symbol = aStartProduction.lhs
-        add_node(start_symbol, aRange)
-        use_production(aStartProduction, aRange)
-        move_down
+      # Link to tree object
+      attr_reader(:tree)
+
+      # Link to current path
+      attr_reader(:curr_path)
+
+      # The last parse entry visited
+      attr_reader(:last_visitee)
+
+      # A hash with pairs of the form: visited parse entry => tree node
+      attr_reader(:entry2node)
+
+
+      def initialize(theTokens)
+        @tokens = theTokens
+        @curr_path = []
+        @entry2node = {}
       end
 
-      # Return the active node.
-      def current_node()
-        return current_path.last
-      end
-
-      # Factory method.
-      def parse_tree()
-        return PTree::ParseTree.new(root)
-      end
-
-
-      # Given that the current node is also lhs of the production
-      # associated with the complete parse state,
-      # Then add the rhs constituents as child nodes of the current node.
-      # Assumption: current node is lhs of the production association
-      # with the parse state.
-      # @param aCompleteState [ParseState] A complete parse state
-      # (dot is at end of rhs)
-      def use_complete_state(aCompleteState)
-        prod = aCompleteState.dotted_rule.production
-        use_production(prod, low: aCompleteState.origin)
-      end
-
-      # Given that the current node is a non-terminal
-      # Make its last child node the current node.
-      def move_down()
-        curr_node = current_node
-        unless curr_node.is_a?(PTree::NonTerminalNode)
-          msg = "Current node isn't a non-terminal node #{curr_node.class}"
-          raise StandardError, msg
+      def receive_event(anEvent, anEntry, anIndex)
+        # puts "Event: #{anEvent} #{anEntry} #{anIndex}"
+        if anEntry.dotted_entry?
+          process_item_entry(anEvent, anEntry, anIndex)
+        elsif anEntry.start_entry?
+          process_start_entry(anEvent, anEntry, anIndex)
+        elsif anEntry.end_entry?
+          process_end_entry(anEvent, anEntry, anIndex)
+        else
+          raise NotImplementedError
         end
-        children = curr_node.children
-        path_increment = [children.size - 1, children.last]
-        @current_path.concat(path_increment)
+
+        @last_visitee = anEntry
       end
 
-
-      # Make the predecessor of current node the
-      # new current node.
-      def move_back()
-        loop do
-          break if current_path.length == 1
-          (parent, pos) = current_path[-3, 2]
-          current_path.pop(2)
-          if pos > 0
-            new_pos = pos - 1
-            new_curr_node = parent.children[new_pos]
-            current_path << new_pos
-            current_path << new_curr_node
-          end
-          break if pos > 0 || new_curr_node.is_a?(PTree::TerminalNode)
-        end
-      end
-
-
-      # Add a child node to the current node.
-      def add_node(aSymbol, aRange)
-        # Create the node
-        a_node = new_node(aSymbol, aRange)
-
-        # Add it to the current node
-        add_child(a_node)
-      end
-
-      # Set unbound endpoints of current node range
-      # to the given range.
-      def range=(aRange)
-        curr_node = current_node
-        return if curr_node.nil?
-        lower = low_bound(aRange)
-        unless lower.nil?
-          current_node.range = lower
-          if curr_node.is_a?(PTree::TerminalNode) && lower[:low]
-            current_node.range = high_bound(lower[:low] + 1)
-          end
-        end
-        upper = high_bound(aRange)
-        current_node.range = upper unless upper.nil?
+      # Return the current_parent node
+      def curr_parent()
+        return curr_path.last
       end
 
       private
 
-      def new_node(aSymbol, aRange)
-        case aSymbol
-          when Syntax::Terminal
-            new_node = PTree::TerminalNode.new(aSymbol, aRange)
-          when Syntax::NonTerminal
-            new_node = PTree::NonTerminalNode.new(aSymbol, aRange)
+      def process_start_entry(_anEvent, _anEntry, _anIndex)
+        curr_path.pop
+      end
+
+      def process_end_entry(anEvent, anEntry, anIndex)
+        case anEvent
+          when :visit
+            # create a node with the non-terminal
+            #   with same right extent as curr_entry_set_index
+            # add the new node as first child of current_parent
+            # append the new node to the curr_path
+            range = { low: anEntry.origin, high: anIndex }
+            non_terminal = anEntry.vertex.non_terminal
+            create_non_terminal_node(anEntry, range, non_terminal)
+            @tree = create_tree(curr_parent) unless @last_visitee
+          else
+            raise NotImplementedError
         end
+      end
+
+
+      def process_item_entry(anEvent, anEntry, anIndex)
+        case anEvent
+          when :visit
+            if anEntry.exit_entry?
+              # Previous entry was an end entry (X. pattern)
+              # Does the previous entry have multiple antecedent?
+              if last_visitee.end_entry? && last_visitee.antecedents.size > 1
+                # Store current path for later backtracking
+                # puts "Store backtrack context #{last_visitee}"
+                # puts "path [#{curr_path.map{|e|e.to_string(0)}.join(', ')}]"
+                entry2path_to_alt[last_visitee] = curr_path.dup
+                curr_parent.refinement = :or
+
+                create_alternative_node(anEntry)
+              end
+            end
+
+            # Does this entry have multiple antecedent?
+            if anEntry.antecedents.size > 1
+              # Store current path for later backtracking
+              # puts "Store backtrack context #{anEntry}"
+              # puts "path [#{curr_path.map{|e|e.to_string(0)}.join(', ')}]"
+              entry2path_to_alt[anEntry] = curr_path.dup
+              # curr_parent.refinement = :or
+
+              create_alternative_node(anEntry)
+            end
+
+            # Retrieve the grammar symbol before the dot (if any)
+            prev_symbol = anEntry.prev_symbol
+            case prev_symbol
+              when Syntax::Terminal
+                # Add node without changing current path
+                create_token_node(anEntry, anIndex)
+
+              when NilClass # Dot at the beginning of production
+                if anEntry.vertex.dotted_item.production.empty?
+                  # Empty rhs => create an epsilon node ...
+                  # ... without changing current path
+                  create_epsilon_node(anEntry, anIndex)
+                end
+                curr_path.pop if curr_parent.kind_of?(SPPF::AlternativeNode)
+            end
+
+          when :backtrack
+            # # Restore path
+            # @curr_path = entry2path_to_alt[anEntry].dup
+            # # puts "Special restore path [#{curr_path.map{|e|e.to_string(0)}.join(', ')}]"
+            # antecedent_index = curr_parent.subnodes.size
+            # # puts "Current parent #{curr_parent.to_string(0)}"
+            # # puts "Antecedent index #{antecedent_index}"
+
+            # create_alternative_node(anEntry)
+
+        when :revisit
+            # # Retrieve the grammar symbol before the dot (if any)
+            # prev_symbol = anEntry.prev_symbol
+            # case prev_symbol
+              # when Syntax::Terminal
+                # # Add node without changing current path
+                # create_token_node(anEntry, anIndex)
+
+              # when NilClass # Dot at the beginning of production
+                # if anEntry.vertex.dotted_item.production.empty?
+                  # # Empty rhs => create an epsilon node ...
+                  # # ... without changing current path
+                  # create_epsilon_node(anEntry, anIndex)
+                # end
+                # curr_path.pop if curr_parent.kind_of?(PTree::AlternativeNode)
+            # end
+        end
+      end
+
+      # Create an empty parse tree
+      def create_tree(aRootNode)
+        return Rley::PTree::ParseTree.new(aRootNode)
+      end
+
+
+      # Factory method. Build and return an PTree non-terminal node.
+      def create_non_terminal_node(anEntry, aRange, nonTSymb = nil)
+        non_terminal = nonTSymb.nil? ? anEntry.vertex.non_terminal : nonTSymb
+        new_node = Rley::PTree::NonTerminalNode.new(non_terminal, aRange)
+        entry2node[anEntry] = new_node
+        add_subnode(new_node)
+        # puts "FOREST ADD #{curr_parent.key if curr_parent}/#{new_node.key}"
 
         return new_node
       end
 
-      # Add children nodes to current one.
-      # The children correspond to the members of the rhs of the production.
-      def use_production(aProduction, aRange)
-        prod = aProduction
-        curr_node = current_node
 
-        if curr_node.symbol != prod.lhs
-          snapshot = root.to_string(0)
-          msg = "Current node is a #{curr_node.symbol} instead of #{prod.lhs}."
-          raise StandardError, msg + "\n" + snapshot
-        end
-        self.range = aRange
-        prod.rhs.each { |symb| add_node(symb, {}) }
+      # Add an alternative node to the tree
+      def create_alternative_node(anEntry)
+        vertex = anEntry.vertex
+        range = curr_parent.range
+        alternative = Rley::PTree::AlternativeNode.new(vertex, range)
+        add_subnode(alternative)
+        tree.is_ambiguous = true
+        # puts "FOREST ADD #{alternative.key}"
 
-        return if curr_node.children.empty?
-        curr_node.children.first.range.assign(low: curr_node.range.low)
-        curr_node.children.last.range.assign(high: curr_node.range.high)
+        return alternative
       end
 
-      # Add the given node as child node of current node
-      def add_child(aNode)
-        curr_node = current_node
+      # create a token node,
+      #   with same origin as token,
+      #   with same right extent = origin + 1
+      # add the new node as first child of current_parent
+      def create_token_node(anEntry, anIndex)
+        token_position = anIndex - 1
+        curr_token = tokens[token_position]
+        new_node = PTree::TerminalNode.new(curr_token, token_position)
+        candidate = add_node_to_tree(new_node)
+        entry2node[anEntry] = candidate
 
-        if curr_node.nil?
-          self.root = aNode
-        else
-          curr_node.children << aNode
-        end
-      end
-
-      # Set the root node of the tree.
-      def root=(aNode)
-        @root = aNode
-        @current_path = [ @root ]
-        root.range = low_bound(0)
+        return candidate
       end
 
 
-      def low_bound(aRange)
-        result = case aRange
-                   when Integer then aRange
-                   when Hash then aRange[:low]
-                   when PTree::TokenRange then aRange.low
-                 end
+      def create_epsilon_node(anEntry, anIndex)
+        new_node = PTree::EpsilonNode.new(anIndex)
+        candidate = add_node_to_tree(new_node)
+        entry2node[anEntry] = candidate
 
-        return { low: result }
+        return candidate
       end
 
-      def high_bound(aRange)
-        result = case aRange
-                   when Integer then aRange
-                   when Hash then aRange[:high]
-                   when PTree::TokenRange then aRange.high
-                 end
+      # Add the given node if not yet present in parse tree
+      def add_node_to_tree(aNode)
+        new_node = aNode
+        # puts "FOREST ADD #{key_node}"
+        add_subnode(new_node, false)
 
-        return { high: result }
+        return new_node
+      end
+
+
+      # Add the given node as sub-node of current parent node
+      # Optionally add the node to the current path
+      def add_subnode(aNode, addToPath = true)
+        curr_parent.add_subnode(aNode) unless curr_path.empty?
+        curr_path << aNode if addToPath
       end
     end # class
   end # module

@@ -1,4 +1,4 @@
-require_relative 'token_range'
+require_relative '../tokens/token_range'
 
 module Rley # This module is used as a namespace
   module PTree # This module is used as a namespace
@@ -11,18 +11,23 @@ module Rley # This module is used as a namespace
 
       def initialize(aSymbol, aRange)
         @symbol = aSymbol
-        @range = TokenRange.new(aRange)
+        @range = Tokens::TokenRange.new(aRange)
       end
-      
+
       def range=(aRange)
         range.assign(aRange)
       end
-      
+
       # Emit a (formatted) string representation of the node.
       # Mainly used for diagnosis/debugging purposes.
       def to_string(indentation)
-        
         return "#{symbol.name}#{range.to_string(indentation)}"
+      end
+
+      # Emit a short string representation of the node.
+      # Mainly used for diagnosis/debugging purposes.
+      def to_s()
+        return "#{symbol.name}#{range.to_string(0)}"
       end
     end # class
   end # module

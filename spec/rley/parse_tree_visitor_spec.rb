@@ -1,8 +1,8 @@
 require_relative '../spec_helper'
 
 require_relative './support/grammar_abc_helper'
-require_relative '../../lib/rley/parser/token'
-require_relative '../../lib/rley/parser/earley_parser'
+require_relative '../../lib/rley/tokens/token'
+require_relative '../../lib/rley/parser/gfg_earley_parser'
 # Load the class under test
 require_relative '../../lib/rley/parse_tree_visitor'
 
@@ -24,11 +24,11 @@ module Rley # Open this namespace to avoid module qualifier prefixes
     # for the language specified by gramma_abc
     let(:grm_abc_tokens1) do
       [
-        Parser::Token.new('a', a_),
-        Parser::Token.new('a', a_),
-        Parser::Token.new('b', b_),
-        Parser::Token.new('c', c_),
-        Parser::Token.new('c', c_)
+        Tokens::Token.new('a', a_),
+        Tokens::Token.new('a', a_),
+        Tokens::Token.new('b', b_),
+        Tokens::Token.new('c', c_),
+        Tokens::Token.new('c', c_)
       ]
     end
 
@@ -45,7 +45,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
     #    +- c[4,5]
     # Capital letters represent non-terminal nodes
     let(:grm_abc_ptree1) do
-      parser = Parser::EarleyParser.new(grammar_abc)
+      parser = Parser::GFGEarleyParser.new(grammar_abc)
       parse_result = parser.parse(grm_abc_tokens1)
       parse_result.parse_tree
     end
@@ -110,13 +110,13 @@ module Rley # Open this namespace to avoid module qualifier prefixes
 
       # Sample non-terminal node
       let(:nterm_node) do
-        first_big_a = grm_abc_ptree1.root.children[0]
-        second_big_a = first_big_a.children[1]
-        second_big_a.children[1]
+        first_big_a = grm_abc_ptree1.root.subnodes[0]
+        second_big_a = first_big_a.subnodes[1]
+        second_big_a.subnodes[1]
       end
 
       # Sample terminal node
-      let(:term_node) { nterm_node.children[0] }
+      let(:term_node) { nterm_node.subnodes[0] }
 
       it 'should react to the start_visit_ptree message' do
         # Notify subscribers when start the visit of the ptree
@@ -132,13 +132,13 @@ module Rley # Open this namespace to avoid module qualifier prefixes
 
       it 'should react to the visit_children message' do
         # Notify subscribers when start the visit of children nodes
-        children = nterm_node.children
+        children = nterm_node.subnodes
         args = [nterm_node, children]
-        expect(listener1).to receive(:before_children).with(*args)
+        expect(listener1).to receive(:before_subnodes).with(*args)
         expect(listener1).to receive(:before_terminal).with(children[0])
         expect(listener1).to receive(:after_terminal).with(children[0])
-        expect(listener1).to receive(:after_children).with(nterm_node, children)
-        subject.send(:traverse_children, nterm_node)
+        expect(listener1).to receive(:after_subnodes).with(nterm_node, children)
+        subject.send(:traverse_subnodes, nterm_node)
       end
 
       it 'should react to the end_visit_nonterminal message' do
@@ -172,37 +172,37 @@ module Rley # Open this namespace to avoid module qualifier prefixes
         #    |  +- c[3,4]
         #    +- c[4,5]
         root = grm_abc_ptree1.root
-        children = root.children
+        children = root.subnodes
         big_a_1 = children[0]
-        big_a_1_children = big_a_1.children
+        big_a_1_children = big_a_1.subnodes
         big_a_2 = big_a_1_children[1]
-        big_a_2_children = big_a_2.children
+        big_a_2_children = big_a_2.subnodes
         big_a_3 = big_a_2_children[1]
-        big_a_3_children = big_a_3.children
+        big_a_3_children = big_a_3.subnodes
         expectations = [
           [:before_ptree, [grm_abc_ptree1]],
           [:before_non_terminal, [root]],
-          [:before_children, [root, children]],
+          [:before_subnodes, [root, children]],
           [:before_non_terminal, [big_a_1]],
-          [:before_children, [big_a_1, big_a_1_children]],
+          [:before_subnodes, [big_a_1, big_a_1_children]],
           [:before_terminal, [big_a_1_children[0]]],
           [:after_terminal, [big_a_1_children[0]]],
           [:before_non_terminal, [big_a_2]],
-          [:before_children, [big_a_2, big_a_2_children]],
+          [:before_subnodes, [big_a_2, big_a_2_children]],
           [:before_terminal, [big_a_2_children[0]]],
           [:after_terminal, [big_a_2_children[0]]],
           [:before_non_terminal, [big_a_3]],
-          [:before_children, [big_a_3, big_a_3_children]],
+          [:before_subnodes, [big_a_3, big_a_3_children]],
           [:before_terminal, [big_a_3_children[0]]],
           [:after_terminal, [big_a_3_children[0]]],
-          [:after_children, [big_a_3, big_a_3_children]],
+          [:after_subnodes, [big_a_3, big_a_3_children]],
           [:before_terminal, [big_a_2_children[2]]],
           [:after_terminal, [big_a_2_children[2]]],
-          [:after_children, [big_a_2, big_a_2_children]],
+          [:after_subnodes, [big_a_2, big_a_2_children]],
           [:before_terminal, [big_a_1_children[2]]],
           [:after_terminal, [big_a_1_children[2]]],
-          [:after_children, [big_a_1, big_a_1_children]],
-          [:after_children, [root, children]],
+          [:after_subnodes, [big_a_1, big_a_1_children]],
+          [:after_subnodes, [root, children]],
           [:after_ptree, [grm_abc_ptree1]]
         ]
         expectations.each do |(msg, args)|

@@ -50,9 +50,9 @@ module Rley # This module is used as a namespace
     def visit_nonterminal(aNonTerminalNode)
       if @traversal == :post_order
         broadcast(:before_non_terminal, aNonTerminalNode)
-        traverse_children(aNonTerminalNode)
+        traverse_subnodes(aNonTerminalNode)
       else
-        traverse_children(aNonTerminalNode)  
+        traverse_subnodes(aNonTerminalNode)  
         broadcast(:before_non_terminal, aNonTerminalNode)
       end
       broadcast(:after_non_terminal, aNonTerminalNode)
@@ -82,17 +82,17 @@ module Rley # This module is used as a namespace
 
     private
     
-    # Visit event. The visitor is about to visit the children of a non 
+    # Visit event. The visitor is about to visit the subnodes of a non 
     # terminal node.
     # @param aParentNode [NonTeminalNode] the (non-terminal) parent node.
-    def traverse_children(aParentNode)
-      children = aParentNode.children
-      broadcast(:before_children, aParentNode, children)
+    def traverse_subnodes(aParentNode)
+      subnodes = aParentNode.subnodes
+      broadcast(:before_subnodes, aParentNode, subnodes)
       
-      # Let's proceed with the visit of children
-      children.each { |a_node| a_node.accept(self) }
+      # Let's proceed with the visit of subnodes
+      subnodes.each { |a_node| a_node.accept(self) }
       
-      broadcast(:after_children, aParentNode, children)
+      broadcast(:after_subnodes, aParentNode, subnodes)
     end
 
     # Send a notification to all subscribers.

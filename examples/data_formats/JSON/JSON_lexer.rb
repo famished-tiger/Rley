@@ -51,7 +51,7 @@ private
         when '{', '}', '[', ']', ',', ':'
           type_name = @@lexeme2name[curr_ch]
           token_type = name2symbol[type_name]
-          token = Rley::Parser::Token.new(curr_ch, token_type)
+          token = Rley::Tokens::Token.new(curr_ch, token_type)
 
         # LITERALS
         when '"'  # Start string delimiter found
@@ -59,7 +59,7 @@ private
           end_delimiter = scanner.getch()
           raise ScanError.new('No closing quotes (") found') if end_delimiter.nil?
           token_type = name2symbol['JSON_STRING']
-          token = Rley::Parser::Token.new(value, token_type)
+          token = Rley::Tokens::Token.new(value, token_type)
 
         when /[ftn]/  # First letter of keywords
           @scanner.pos = scanner.pos - 1 # Simulate putback
@@ -69,7 +69,7 @@ private
             raise ScanError.new("Invalid keyword: #{invalid_keyw}")
           else
             token_type = name2symbol['KEYWORD']
-            token = Rley::Parser::Token.new(keyw, token_type)
+            token = Rley::Tokens::Token.new(keyw, token_type)
           end
 
 
@@ -77,7 +77,7 @@ private
           @scanner.pos = scanner.pos - 1 # Simulate putback
           value = scanner.scan(/-?[0-9]+(\.[0-9]+)?([eE][-+]?[0-9])?/)
           token_type = name2symbol['JSON_NUMBER']
-          token = Rley::Parser::Token.new(value, token_type)
+          token = Rley::Tokens::Token.new(value, token_type)
 
 
         else # Unknown token

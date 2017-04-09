@@ -1,3 +1,7 @@
+### 0.4.02 / 2017-04-09
+* [NEW] Module re-organization for clearer dependencies: Classes `Token` and `TokenRange` are moved to a separate module `Tokens`.
+* [CHANGE] Code, specs, examples and `README.md` adapted to reflect the module re-organization.
+
 ### 0.4.01 / 2016-12-21
 * [NEW] File `appveyor.yml`. Add AppVeyor CI to Github commits. AppVeyor complements Travis by running builds under Windows OS.
   This permits to test the portability across operating systems.

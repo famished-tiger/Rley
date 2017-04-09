@@ -18,7 +18,7 @@ What is Rley?
 __Rley__ uses the [Earley](http://en.wikipedia.org/wiki/Earley_parser)
 algorithm which is a general parsing algorithm that can handle any context-free
 grammar. Earley parsers can literally swallow anything that can be described
-by such a context-free grammar. That's why Earley parsers find their place in so
+by a context-free grammar. That's why Earley parsers find their place in so
 many __NLP__ (_Natural Language Processing_) libraries/toolkits.  
 
 In addition, __Rley__ goes beyond most Earley parser implementations by providing

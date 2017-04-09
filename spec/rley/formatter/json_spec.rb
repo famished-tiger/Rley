@@ -2,8 +2,8 @@ require_relative '../../spec_helper'
 require 'stringio'
 
 require_relative '../support/grammar_abc_helper'
-require_relative '../../../lib/rley/parser/token'
-require_relative '../../../lib/rley/parser/earley_parser'
+require_relative '../../../lib/rley/tokens/token'
+require_relative '../../../lib/rley/parser/gfg_earley_parser'
 require_relative '../../../lib/rley/ptree/parse_tree'
 require_relative '../../../lib/rley/parse_tree_visitor'
 # Load the class under test
@@ -30,11 +30,11 @@ module Rley # Re-open the module to get rid of qualified names
       # for the language specified by gramma_abc
       let(:grm_abc_tokens1) do
         [
-          Parser::Token.new('a', a_),
-          Parser::Token.new('a', a_),
-          Parser::Token.new('b', b_),
-          Parser::Token.new('c', c_),
-          Parser::Token.new('c', c_)
+          Tokens::Token.new('a', a_),
+          Tokens::Token.new('a', a_),
+          Tokens::Token.new('b', b_),
+          Tokens::Token.new('c', c_),
+          Tokens::Token.new('c', c_)
         ]
       end
 
@@ -51,7 +51,7 @@ module Rley # Re-open the module to get rid of qualified names
       #    +- c[4,5]
       # Capital letters represent non-terminal nodes
       let(:grm_abc_ptree1) do
-        parser = Parser::EarleyParser.new(grammar_abc)
+        parser = Parser::GFGEarleyParser.new(grammar_abc)
         parse_result = parser.parse(grm_abc_tokens1)
         parse_result.parse_tree
       end

@@ -4,24 +4,32 @@ module Rley # This module is used as a namespace
   module PTree # This module is used as a namespace
     class TerminalNode < ParseTreeNode
       # Link to the input token
-      attr(:token, true)
+      attr_reader(:token)
 
-      def initialize(aTerminalSymbol, aRange)
-        super(aTerminalSymbol, aRange)
+      # aPosition is the position of the token in the input stream.      
+      def initialize(aToken, aPos)
+        range = aPos.kind_of?(Fixnum) ? { low: aPos, high: aPos + 1 } : aPos
+        super(aToken.terminal, range)
+        @token = aToken
       end
 
       # Emit a (formatted) string representation of the node.
       # Mainly used for diagnosis/debugging purposes.
       def to_string(indentation)
-        value = token.nil? ? '(nil)' : token.lexeme
-        super(indentation) + ": '#{value}'"
+        return super + ": '#{token.lexeme}'"
       end
+      
+      # Emit a short string representation of the node.
+      # Mainly used for diagnosis/debugging purposes.
+      def to_s()
+        return super + ": '#{token.lexeme}'"
+      end      
 
       # Part of the 'visitee' role in Visitor design pattern.
       # @param aVisitor[ParseTreeVisitor] the visitor
       def accept(aVisitor)
         aVisitor.visit_terminal(self)
-      end
+      end      
     end # class
   end # module
 end # module

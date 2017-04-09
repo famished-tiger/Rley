@@ -6,7 +6,7 @@ require_relative '../../../lib/rley/syntax/verbatim_symbol'
 require_relative '../../../lib/rley/syntax/production'
 require_relative '../../../lib/rley/syntax/grammar_builder'
 require_relative '../../../lib/rley/parser/dotted_item'
-require_relative '../../../lib/rley/parser/token'
+require_relative '../../../lib/rley/tokens/token'
 require_relative '../../../lib/rley/parser/parse_tracer'
 require_relative '../../../lib/rley/gfg/grm_flow_graph'
 require_relative '../../../lib/rley/parser/grm_items_builder'
@@ -298,7 +298,7 @@ SNIPPET
 
         let(:token_seq1) do
           %w(a a b c c).map do |letter|
-            Token.new(letter, sample_grammar1.name2symbol[letter])
+            Tokens::Token.new(letter, sample_grammar1.name2symbol[letter])
           end
         end
 

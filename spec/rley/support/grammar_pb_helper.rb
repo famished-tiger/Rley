@@ -1,6 +1,6 @@
 # Load the builder class
 require_relative '../../../lib/rley/syntax/grammar_builder'
-require_relative '../../../lib/rley/parser/token'
+require_relative '../../../lib/rley/tokens/token'
 
 
 # Utility class.
@@ -39,7 +39,7 @@ class GrammarPBHelper
           msg = "Unknown input text '#{lexeme}'"
           raise StandardError, msg
       end
-      Rley::Parser::Token.new(lexeme, terminal)
+      Rley::Tokens::Token.new(lexeme, terminal)
     end
 
     return tokens

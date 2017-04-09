@@ -1,6 +1,6 @@
 # Load the builder class
 require_relative '../../../lib/rley/syntax/grammar_builder'
-require_relative '../../../lib/rley/parser/token'
+require_relative '../../../lib/rley/tokens/token'
 
 
 module GrammarL0Helper
@@ -74,7 +74,7 @@ module GrammarL0Helper
         raise StandardError, "Word '#{word}' not found in lexicon"
       end
       terminal = aGrammar.name2symbol[term_name]
-      Rley::Parser::Token.new(word, terminal)
+      Rley::Tokens::Token.new(word, terminal)
     end
 
     return tokens
