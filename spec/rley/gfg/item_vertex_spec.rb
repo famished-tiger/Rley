@@ -110,6 +110,12 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           shortcut = ShortcutEdge.new(subject, next_vertex)
           expect(subject.shortcut).to eq(shortcut)
         end
+        
+        it 'should reject an invalid shortcut edge' do
+          err = StandardError
+          err_msg = 'Invalid shortcut argument'
+          expect { subject.shortcut = 'invalid'}.to raise_error(err, err_msg)
+        end        
       end # context
     end # describe
   end # module
