@@ -25,6 +25,17 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           expect(subject.range).to eq(sample_range)
         end
       end # context
+      
+      context 'Initialization:' do
+        it 'should assign undefined range bounds' do
+          partial_range =  { low: 0 } # High bound left undefined
+          instance = ParseTreeNode.new(sample_symbol, partial_range)
+          
+          another = { low: 1, high: 4 } # High bound is specified
+          instance.range = another
+          expect(instance.range).to eq({low: 0, high: 4})
+        end      
+      end # context      
     end # describe
   end # module
 end # module

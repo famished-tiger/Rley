@@ -31,6 +31,19 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           subject.push_state(state2)
           expect(subject.states).to eq([state1, state2])
         end
+        
+        it 'should ignore a second push of a state' do
+          expect(subject.states).to be_empty
+          subject.push_state(state1)
+          subject.push_state(state2)
+          expect(subject.states).to eq([state1, state2])
+          
+          # One tries to push an already pushed state
+          expect(subject.push_state(state1)).to be_falsy
+          
+          # ...It is not added
+          expect(subject.states).to eq([state1, state2])          
+        end        
 
         it 'should list the states expecting a given terminal' do
           # Case of no state

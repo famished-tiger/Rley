@@ -212,6 +212,64 @@ module Rley # Open this namespace to avoid module qualifier prefixes
         # Here we go...
         subject.start
       end
+      
+      it 'should also visit in pre-order' do
+        # Reminder: parse tree structure is
+        # S[0,5]
+        # +- A[0,5]
+        #    +- a[0,0]
+        #    +- A[1,4]
+        #    |  +- a[1,1]
+        #    |  +- A[2,3]
+        #    |  |  +- b[2,3]
+        #    |  +- c[3,4]
+        #    +- c[4,5]
+        root = grm_abc_ptree1.root
+        # Here we defeat encapsulation for the good cause
+        subject.instance_variable_set(:@traversal, :pre_order)
+        
+        children = root.subnodes
+        big_a_1 = children[0]
+        big_a_1_children = big_a_1.subnodes
+        big_a_2 = big_a_1_children[1]
+        big_a_2_children = big_a_2.subnodes
+        big_a_3 = big_a_2_children[1]
+        big_a_3_children = big_a_3.subnodes
+        expectations = [
+          [:before_ptree, [grm_abc_ptree1]],
+          # TODO: fix this test
+          #[:before_subnodes, [root, children]],          
+          #[:before_non_terminal, [root]],
+
+          # [:before_non_terminal, [big_a_1]],
+          # [:before_subnodes, [big_a_1, big_a_1_children]],
+          # [:before_terminal, [big_a_1_children[0]]],
+          # [:after_terminal, [big_a_1_children[0]]],
+          # [:before_non_terminal, [big_a_2]],
+          # [:before_subnodes, [big_a_2, big_a_2_children]],
+          # [:before_terminal, [big_a_2_children[0]]],
+          # [:after_terminal, [big_a_2_children[0]]],
+          # [:before_non_terminal, [big_a_3]],
+          # [:before_subnodes, [big_a_3, big_a_3_children]],
+          # [:before_terminal, [big_a_3_children[0]]],
+          # [:after_terminal, [big_a_3_children[0]]],
+          # [:after_subnodes, [big_a_3, big_a_3_children]],
+          # [:before_terminal, [big_a_2_children[2]]],
+          # [:after_terminal, [big_a_2_children[2]]],
+          # [:after_subnodes, [big_a_2, big_a_2_children]],
+          # [:before_terminal, [big_a_1_children[2]]],
+          # [:after_terminal, [big_a_1_children[2]]],
+          # [:after_subnodes, [big_a_1, big_a_1_children]],
+          # [:after_subnodes, [root, children]],
+          # [:after_ptree, [grm_abc_ptree1]]
+        ]
+        expectations.each do |(msg, args)|
+          expect(listener1).to receive(msg).with(*args).ordered
+        end
+        
+        # Here we go...
+        subject.start
+      end      
     end # context
   end # describe
 end # module

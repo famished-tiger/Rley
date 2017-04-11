@@ -55,6 +55,10 @@ module Rley # Open this namespace to avoid module qualifier prefixes
         it 'should have a string representation' do
           expect(subject.to_string(0)).to eq('VP[0, 3]')
         end
+        
+        it 'should return a key value of itself' do
+          expect(subject.key).to eq('VP[0, 3]')
+        end
       end # context
     end # describe
   end # module
