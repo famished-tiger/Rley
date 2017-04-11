@@ -75,7 +75,7 @@ Installing the latest stable version is simple:
 ## A whirlwind tour of Rley
 The purpose of this section is show how to create a parser for a minimalistic
 English language subset.
-The tour is organized into the following steps:  
+The tour is organized as follows:  
 1. [Defining the language grammar](#defining-the-language-grammar)  
 2. [Creating a lexicon](#creating-a-lexicon)  
 3. [Creating a tokenizer](#creating-a-tokenizer)  
@@ -152,7 +152,7 @@ The subset of English grammar is based on an example from the NLTK book.
           raise StandardError, "Word '#{word}' not found in lexicon"
         end
         terminal = aGrammar.name2symbol[term_name]
-        Rley::Parser::Token.new(word, terminal)
+        Rley::Tokens::Token.new(word, terminal)
       end
 
       return tokens
@@ -283,5 +283,5 @@ Here are a few other ones:
 
 Copyright
 ---------
-Copyright (c) 2014-2016, Dimitri Geshef.  
+Copyright (c) 2014-2017, Dimitri Geshef.  
 __Rley__ is released under the MIT License see [LICENSE.txt](https://github.com/famished-tiger/Rley/blob/master/LICENSE.txt) for details.
