@@ -28,7 +28,7 @@ encode efficiently all the possible parse trees that result from an ambiguous
 grammar.  
 
 As another distinctive mark, __Rley__ is also the first Ruby implementation of a
-parsing library based on the new _Grammar Flow Graph_ approach ([References on GFG](#references-GFG) ).
+parsing library based on the new _Grammar Flow Graph_ approach [References on GFG](#references-on-gfg).
 
 ### What it can do?
 Maybe parsing algorithms and internal implementation details are of lesser
@@ -281,7 +281,7 @@ Here are a few other ones:
 ##  Thanks to:
 * Professor Keshav Pingali, one of the creators of the Grammar Flow Graph parsing approach for his encouraging e-mail exchanges.
 
-##  References on GFG
+## References on GFG
 Since the __G__rammar __F__low __G__raph parsing approach is quite new, it has not yet taken a place in
 standard parser textbooks. Here are a few references (and links) of papers on GFG:    
 - K. Pingali, G. Bilardi. [Parsing with Pictures](http://apps.cs.utexas.edu/tech_reports/reports/tr/TR-2102.pdf)
