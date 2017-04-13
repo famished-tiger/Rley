@@ -1,4 +1,4 @@
-#[Rley](https://github.com/famished-tiger/Rley)
+[Rley](https://github.com/famished-tiger/Rley)
 
 [![Linux Build Status](https://img.shields.io/travis/famished-tiger/Rley/master.svg?label=Linux%20build)](https://travis-ci.org/famished-tiger/Rley)
 [![Build status](https://ci.appveyor.com/api/projects/status/l5adgcbfo128rvo9?svg=true)](https://ci.appveyor.com/project/famished-tiger/rley)
@@ -28,7 +28,7 @@ encode efficiently all the possible parse trees that result from an ambiguous
 grammar.  
 
 As another distinctive mark, __Rley__ is also the first Ruby implementation of a
-parsing library based on the new _Grammar Flow Graph_ approach (_TODO: add details_).
+parsing library based on the new _Grammar Flow Graph_ approach ([References on GFG](#references-GFG) ).
 
 ### What it can do?
 Maybe parsing algorithms and internal implementation details are of lesser
@@ -280,6 +280,15 @@ Here are a few other ones:
 
 ##  Thanks to:
 * Professor Keshav Pingali, one of the creators of the Grammar Flow Graph parsing approach for his encouraging e-mail exchanges.
+
+##  References on GFG
+Since the __G__rammar __F__low __G__raph parsing approach is quite new, it has not yet taken a place in
+standard parser textbooks. Here are a few references (and links) of papers on GFG:    
+- K. Pingali, G. Bilardi. [Parsing with Pictures](http://apps.cs.utexas.edu/tech_reports/reports/tr/TR-2102.pdf)
+- K. Pingali, G. Bilardi. [A Graphical Model for Context-Free Grammar Parsing.](https://link.springer.com/chapter/10.1007/978-3-662-46663-6_1)
+  In : International Conference on Compiler Construction. Springer Berlin Heidelberg, 2015. p. 3-27.  
+- M. Fulbright. [An Evaluation of Two Approaches to Parsing](http://apps.cs.utexas.edu/tech_reports/reports/tr/TR-2199.pdf)  
+
 
 Copyright
 ---------
