@@ -1,0 +1,36 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" 
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="469.5" height="502" version="1.1" xmlns="http://www.w3.org/2000/svg">
+<text style='fill: green; font-size: 16px;' x='296.53125' y='490'> John Doe</text>
+<text style='fill: green; font-size: 16px;' x='109.53125' y='424'> name</text>
+<text style='fill: green; font-size: 16px;' x='221.2421875' y='424'> :</text>
+<text style='fill: blue; font-size: 16px;' x='309.3828125' y='424'>string</text>
+<polygon style='fill: white; stroke: black; stroke-width:1;' points='361 467 297 467 329 431' />
+<text style='fill: blue; font-size: 16px;' x='109.796875' y='358'>string</text>
+<line style='stroke:black; stroke-width:1;' x1='130' y1='401' x2='130' y2='365' />
+<text style='fill: blue; font-size: 16px;' x='164.796875' y='358'>name-separator</text>
+<line style='stroke:black; stroke-width:1;' x1='223' y1='401' x2='223' y2='365' />
+<text style='fill: blue; font-size: 16px;' x='309.75' y='358'>value</text>
+<line style='stroke:black; stroke-width:1;' x1='329' y1='401' x2='329' y2='365' />
+<text style='fill: green; font-size: 16px;' x='46.5078125' y='292'> {</text>
+<text style='fill: blue; font-size: 16px;' x='198.40234375' y='292'>member</text>
+<line style='stroke:black; stroke-width:1;' x1='130' y1='335' x2='229' y2='299' />
+<line style='stroke:black; stroke-width:1;' x1='223' y1='335' x2='229' y2='299' />
+<line style='stroke:black; stroke-width:1;' x1='329' y1='335' x2='229' y2='299' />
+<text style='fill: green; font-size: 16px;' x='412.4375' y='292'> }</text>
+<text style='fill: blue; font-size: 16px;' x='5.0' y='226'>begin-object</text>
+<line style='stroke:black; stroke-width:1;' x1='50' y1='269' x2='50' y2='233' />
+<text style='fill: blue; font-size: 16px;' x='185.58984375' y='226'>member-list</text>
+<line style='stroke:black; stroke-width:1;' x1='229' y1='269' x2='229' y2='233' />
+<text style='fill: blue; font-size: 16px;' x='376.96875' y='226'>end-object</text>
+<line style='stroke:black; stroke-width:1;' x1='416' y1='269' x2='416' y2='233' />
+<text style='fill: blue; font-size: 16px;' x='209.984375' y='160'>object</text>
+<line style='stroke:black; stroke-width:1;' x1='50' y1='203' x2='233' y2='167' />
+<line style='stroke:black; stroke-width:1;' x1='229' y1='203' x2='233' y2='167' />
+<line style='stroke:black; stroke-width:1;' x1='416' y1='203' x2='233' y2='167' />
+<text style='fill: blue; font-size: 16px;' x='213.25' y='94'>value</text>
+<line style='stroke:black; stroke-width:1;' x1='233' y1='137' x2='233' y2='101' />
+<text style='fill: blue; font-size: 16px;' x='197.03125' y='28'>JSON-text</text>
+<line style='stroke:black; stroke-width:1;' x1='233' y1='71' x2='233' y2='35' />
+</svg>

@@ -1,6 +1,8 @@
-### 0.4.02 / 2017-04-09
-* [NEW] Module re-organization for clearer dependencies: Classes `Token` and `TokenRange` are moved to a separate module `Tokens`.
-* [CHANGE] Code, specs, examples and `README.md` adapted to reflect the module re-organization.
+### 0.4.03 / 2017-04-17
+* [FIX] File `rley.rb` reference to obsolete `EarleyParser` class removed.
+* [NEW] `BracketNotation` formatter class. Allows parse tree output in Labelled Bracket Notation.
+* [CHANGE] Code refactoring in directory `examples\data_formats\JSON`. The demo command-line tool parses JSON and converts it into LBN (Labelled Bracket Notation). There are two diagrams (in SVG format) generated from the LBN output.
+
 
 ### 0.4.01 / 2016-12-21
 * [NEW] File `appveyor.yml`. Add AppVeyor CI to Github commits. AppVeyor complements Travis by running builds under Windows OS.
@@ -48,7 +50,7 @@
 ### 0.3.06 / 2016-11-06
 * [FIX] There were missing links to shared parse forest nodes for ambiguous parses.
 * [NEW] RSpec file `ambiguous_parse_spec.rb` added in order to test the parse forest building for an ambiguous parse.
-* [CHANGE] Attribute `ParseWalkerContext#nterm2start`: previous implementation assumed -wrongly- that for each non terminal there was only one start entry. 
+* [CHANGE] Attribute `ParseWalkerContext#nterm2start`: previous implementation assumed -wrongly- that for each non terminal there was only one start entry.
   Now this attribute uses nested hashes as data structure in order to disambiguate the mapping.
 * [CHANGE] Method `ParseWalkerFactory#visit_entry` updated to reflect change in the `ParseWalkerContext#nterm2start` attribute.
 * [CHANGE] Method `ParseWalkerFactory#visit_entry` now emits an event if an item entry is re-visited (previously, no such event were generated)
@@ -73,10 +75,10 @@
 ### 0.3.01 / 2016-10-23
 * [CHANGE] Method `ParseWalkerFactory#build_walker`. Signature change in order prevent direct dependency on `GFGParsing` class.
 * [CHANGE] Class `ParseForestBuilder`. Removal of `parsing` attribute, no direct dependency on `GFGParsing` class.
-* [CHANGE] Internal changed to `ParseForestFactory` class. 
+* [CHANGE] Internal changed to `ParseForestFactory` class.
 
 ### 0.3.00 / 2016-10-23
-* [CHANGE] Many new classes. The gem bundles a second parser that copes with ambiguous grammars. 
+* [CHANGE] Many new classes. The gem bundles a second parser that copes with ambiguous grammars.
 
 
 ### 0.2.15 / 2016-02-14
@@ -90,11 +92,11 @@
 * [CHANGED] method `Parsing#success?`. New implementation that relies on start symbol derivation.
 * [NEW] New method `Chart#start_symbol` added. Returns the start symbol of the grammar.
 * [NEW] New method `StateSet#ambiguities` added. Returns the parse sets that are ambiguous (= distinct derivation for same input tokens).
-* [FIX] In special cases the parsing didn't work correctly when there more than one 
+* [FIX] In special cases the parsing didn't work correctly when there more than one
     production rule for the start symbol of a grammar.
 
 ### 0.2.12 / 2015-11-20
-* [FIX] In special cases the parsing didn't work correctly when there more than one 
+* [FIX] In special cases the parsing didn't work correctly when there more than one
     production rule for the start symbol of a grammar.
 
 ### 0.2.11 / 2015-09-05
@@ -150,7 +152,7 @@ Version number bump: major re-design of the parse tree generation.
 * [FIX] Method `Parsing#parse_tree` now handles situations where there are multiple complete parse states for a non-terminal.
 
 ### 0.1.12 / 2014-12-22
-* [FIX] Fixed `Parsing#parse_tree`: code couldn't cope with parse state set containing more 
+* [FIX] Fixed `Parsing#parse_tree`: code couldn't cope with parse state set containing more
   than one parse state that expected the same symbol.
 * [NEW] Added one more parser example (for very basic arithmetic expression)
 
@@ -239,19 +241,19 @@ in method argument names between source code and documentation.
 
 
 ### 0.0.11 / 2014-11-16
-* [CHANGE]  Usage of `GrammarBuilder`simplified: the call to method `GrammarBuilder#add_non_terminal` isn't necessary. Method is removed 
+* [CHANGE]  Usage of `GrammarBuilder`simplified: the call to method `GrammarBuilder#add_non_terminal` isn't necessary. Method is removed
 * [CHANGE] Updated the `examples` folder accordingly.
 
 ### 0.0.10 / 2014-11-15
-* [NEW]  New folder `examples` added with two examples of grammar creation 
+* [NEW]  New folder `examples` added with two examples of grammar creation
 
 ### 0.0.09 / 2014-11-15
-* [NEW]  New class `GrammarBuilder` added and tested, its purpose is 
+* [NEW]  New class `GrammarBuilder` added and tested, its purpose is
 to simplify the construction of grammars.
 
 ### 0.0.08 / 2014-11-14
 * [CHANGE]  `EarleyParser#parse` method: Initial API documentation.
-* [INFO] This version was committed to force Travis CI to execute a complete build 
+* [INFO] This version was committed to force Travis CI to execute a complete build
 failed because Travis couldn't connect to GitHub)
 
 ### 0.0.07 / 2014-11-14

@@ -4,27 +4,33 @@ require 'rley'  # Load the gem
 
 ########################################
 # Define a grammar for JSON
+# Original JSON grammar is available http://www.json.org/fatfree.html
+# Official JSON grammar:  http://rfc7159.net/rfc7159#rfc.section.2
+# Names of grammar elements are based on the RFC 7159 documentation
 builder = Rley::Syntax::GrammarBuilder.new do
-  add_terminals('KEYWORD') # For true, false, null keywords
-  add_terminals('JSON_STRING', 'JSON_NUMBER')
-  add_terminals('LACCOL', 'RACCOL') # For '{', '}' delimiters
-  add_terminals('LBRACKET', 'RBRACKET') # For '[', ']' delimiters
-  add_terminals('COLON', 'COMMA') # For ':', ',' separators
-  rule 'json_text' => 'json_value'
-  rule 'json_value' => 'json_object'
-  rule 'json_value' => 'json_array'
-  rule 'json_value' => 'JSON_STRING'
-  rule 'json_value' => 'JSON_NUMBER'
-  rule 'json_value' => 'KEYWORD'
-  rule 'json_object' => %w(LACCOL json_pairs RACCOL)
-  rule 'json_object' => %w(LACCOL RACCOL)
-  rule 'json_pairs' => %w(json_pairs COMMA single_pair)
-  rule 'json_pairs' => 'single_pair'
-  rule 'single_pair' => %w(JSON_STRING COLON json_value)
-  rule 'json_array' => %w(LBRACKET array_items RBRACKET)
-  rule 'json_array' => %w(LBRACKET RBRACKET)
-  rule 'array_items' => %w(array_items COMMA json_value)
-  rule 'array_items' => %w(json_value)
+  add_terminals('false', 'null', 'true') # Literal names
+  add_terminals('string', 'number')
+  add_terminals('begin-object', 'end-object') # For '{', '}' delimiters
+  add_terminals('begin-array', 'end-array') # For '[', ']' delimiters
+  add_terminals('name-separator', 'value-separator') # For ':', ',' separators
+  rule 'JSON-text' => 'value'
+  rule 'value' => 'false'
+  rule 'value' => 'null'
+  rule 'value' => 'true'   
+  rule 'value' => 'object'
+  rule 'value' => 'array'
+  rule 'value' => 'number'
+  rule 'value' => 'string'  
+  rule 'object' => %w(begin-object member-list end-object)
+  rule 'object' => %w(begin-object end-object)
+  # Next rule is an example of a left recursive rule
+  rule 'member-list' => %w(member-list value-separator member)
+  rule 'member-list' => 'member'
+  rule 'member' => %w(string name-separator value)
+  rule 'array' => %w(begin-array array_items end-array)
+  rule 'array' => %w(begin-array end-array)
+  rule 'array_items' => %w(array_items value-separator value)
+  rule 'array_items' => %w(value)
 end
 
 # And now build the grammar...

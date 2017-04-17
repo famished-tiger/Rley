@@ -217,7 +217,7 @@ ask it to generate a message.
     puts result.failure_reason.message unless result.success?
 ```
 
-Re-running the example with the error, result in the error message:
+Re-running the example with the error, results in the error message:
 ```
   Syntax error at or near token 2 >>>Mary<<<
   Expected one 'Verb', found a 'Proper-Noun' instead.

@@ -114,11 +114,6 @@ module Rley # This module is used as a namespace
                 create_token_node(anEntry, anIndex)
 
               when NilClass # Dot at the beginning of production
-                if anEntry.vertex.dotted_item.production.empty?
-                  # Empty rhs => create an epsilon node ...
-                  # ... without changing current path
-                  create_epsilon_node(anEntry, anIndex)
-                end
                 curr_path.pop if curr_parent.kind_of?(SPPF::AlternativeNode)
             end
 
@@ -189,15 +184,6 @@ module Rley # This module is used as a namespace
         token_position = anIndex - 1
         curr_token = tokens[token_position]
         new_node = PTree::TerminalNode.new(curr_token, token_position)
-        candidate = add_node_to_tree(new_node)
-        entry2node[anEntry] = candidate
-
-        return candidate
-      end
-
-
-      def create_epsilon_node(anEntry, anIndex)
-        new_node = PTree::EpsilonNode.new(anIndex)
         candidate = add_node_to_tree(new_node)
         entry2node[anEntry] = candidate
 

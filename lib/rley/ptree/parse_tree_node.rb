@@ -14,6 +14,7 @@ module Rley # This module is used as a namespace
         @range = Tokens::TokenRange.new(aRange)
       end
 
+      # Assign a value from given range to each  undefined range bound
       def range=(aRange)
         range.assign(aRange)
       end

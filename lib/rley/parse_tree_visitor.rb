@@ -7,7 +7,7 @@ module Rley # This module is used as a namespace
 
     # List of objects that subscribed to the visit event notification.
     attr_reader(:subscribers)
-    
+
     # Indicates the kind of tree traversal to perform: :post_order, :pre-order
     attr_reader(:traversal)
 
@@ -52,7 +52,7 @@ module Rley # This module is used as a namespace
         broadcast(:before_non_terminal, aNonTerminalNode)
         traverse_subnodes(aNonTerminalNode)
       else
-        traverse_subnodes(aNonTerminalNode)  
+        traverse_subnodes(aNonTerminalNode)
         broadcast(:before_non_terminal, aNonTerminalNode)
       end
       broadcast(:after_non_terminal, aNonTerminalNode)
@@ -67,7 +67,7 @@ module Rley # This module is used as a namespace
     end
 
 
-    # Visit event. The visitor has completed its visit of the given 
+    # Visit event. The visitor has completed its visit of the given
     # non-terminal node.
     # @param aNonTerminalNode [NonTerminalNode] the node to visit.
     def end_visit_nonterminal(aNonTerminalNode)
@@ -81,17 +81,17 @@ module Rley # This module is used as a namespace
     end
 
     private
-    
-    # Visit event. The visitor is about to visit the subnodes of a non 
+
+    # Visit event. The visitor is about to visit the subnodes of a non
     # terminal node.
     # @param aParentNode [NonTeminalNode] the (non-terminal) parent node.
     def traverse_subnodes(aParentNode)
       subnodes = aParentNode.subnodes
       broadcast(:before_subnodes, aParentNode, subnodes)
-      
+
       # Let's proceed with the visit of subnodes
       subnodes.each { |a_node| a_node.accept(self) }
-      
+
       broadcast(:after_subnodes, aParentNode, subnodes)
     end
 

@@ -11,12 +11,12 @@ class JSONLexer
   attr_reader(:name2symbol)
 
   @@lexeme2name = {
-    '{' => 'LACCOL',
-    '}' => 'RACCOL',
-    '[' => 'LBRACKET',
-    ']' => 'RBRACKET',
-    ',' => 'COMMA',
-    ':' => 'COLON'
+    '{' => 'begin-object',
+    '}' => 'end-object',
+    '[' => 'begin-array',
+    ']' => 'end-array',
+    ',' => 'value-separator',
+    ':' => 'name-separator'
   }
 
   class ScanError < StandardError ; end
@@ -53,14 +53,6 @@ private
           token_type = name2symbol[type_name]
           token = Rley::Tokens::Token.new(curr_ch, token_type)
 
-        # LITERALS
-        when '"'  # Start string delimiter found
-          value = scanner.scan(/([^"\\]|\\.)*/)
-          end_delimiter = scanner.getch()
-          raise ScanError.new('No closing quotes (") found') if end_delimiter.nil?
-          token_type = name2symbol['JSON_STRING']
-          token = Rley::Tokens::Token.new(value, token_type)
-
         when /[ftn]/  # First letter of keywords
           @scanner.pos = scanner.pos - 1 # Simulate putback
           keyw = scanner.scan(/false|true|null/)
@@ -68,17 +60,23 @@ private
             invalid_keyw = scanner.scan(/\w+/)
             raise ScanError.new("Invalid keyword: #{invalid_keyw}")
           else
-            token_type = name2symbol['KEYWORD']
+            token_type = name2symbol[keyw]
             token = Rley::Tokens::Token.new(keyw, token_type)
           end
 
+        # LITERALS
+        when '"'  # Start string delimiter found
+          value = scanner.scan(/([^"\\]|\\.)*/)
+          end_delimiter = scanner.getch()
+          raise ScanError.new('No closing quotes (") found') if end_delimiter.nil?
+          token_type = name2symbol['string']
+          token = Rley::Tokens::Token.new(value, token_type)
 
         when /[-0-9]/ # Start character of number literal found
           @scanner.pos = scanner.pos - 1 # Simulate putback
           value = scanner.scan(/-?[0-9]+(\.[0-9]+)?([eE][-+]?[0-9])?/)
-          token_type = name2symbol['JSON_NUMBER']
+          token_type = name2symbol['number']
           token = Rley::Tokens::Token.new(value, token_type)
-
 
         else # Unknown token
           erroneous = curr_ch.nil? ? '' : curr_ch
