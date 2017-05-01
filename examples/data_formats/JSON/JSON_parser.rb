@@ -1,6 +1,6 @@
 # Purpose: to demonstrate how to build and render a parse tree for JSON
 # language
-require 'rley'  # Load the gem
+require 'rley'  # Load the Rley gem
 require_relative 'json_lexer'
 
 # Steps to render a parse tree (of a valid parsed input):

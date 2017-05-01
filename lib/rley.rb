@@ -9,7 +9,7 @@ require_relative './rley/parser/gfg_earley_parser'
 require_relative './rley/parse_tree_visitor'
 require_relative './rley/formatter/debug'
 require_relative './rley/formatter/json'
-require_relative './rley/formatter/debug'
+require_relative './rley/formatter/asciitree'
 require_relative './rley/formatter/bracket_notation'
 
 # End of file

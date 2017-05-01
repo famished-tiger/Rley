@@ -4,7 +4,7 @@ require 'rley'  # Load the gem
 
 ########################################
 # Define a grammar for JSON
-# Original JSON grammar is available http://www.json.org/fatfree.html
+# Original JSON grammar is available at: http://www.json.org/fatfree.html
 # Official JSON grammar:  http://rfc7159.net/rfc7159#rfc.section.2
 # Names of grammar elements are based on the RFC 7159 documentation
 builder = Rley::Syntax::GrammarBuilder.new do
@@ -27,11 +27,11 @@ builder = Rley::Syntax::GrammarBuilder.new do
   rule 'member-list' => %w(member-list value-separator member)
   rule 'member-list' => 'member'
   rule 'member' => %w(string name-separator value)
-  rule 'array' => %w(begin-array array_items end-array)
+  rule 'array' => %w(begin-array array-items end-array)
   rule 'array' => %w(begin-array end-array)
-  rule 'array_items' => %w(array_items value-separator value)
-  rule 'array_items' => %w(value)
+  rule 'array-items' => %w(array-items value-separator value)
+  rule 'array-items' => %w(value)
 end
 
-# And now build the grammar...
+# And now build the JSON grammar...
 GrammarJSON = builder.grammar
