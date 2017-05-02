@@ -1,5 +1,5 @@
 [Rley](https://github.com/famished-tiger/Rley)
-
+====
 [![Linux Build Status](https://img.shields.io/travis/famished-tiger/Rley/master.svg?label=Linux%20build)](https://travis-ci.org/famished-tiger/Rley)
 [![Build status](https://ci.appveyor.com/api/projects/status/l5adgcbfo128rvo9?svg=true)](https://ci.appveyor.com/project/famished-tiger/rley)
 [![Coverage Status](https://img.shields.io/coveralls/famished-tiger/Rley.svg)](https://coveralls.io/r/famished-tiger/Rley?branch=master)
@@ -9,9 +9,6 @@
 [![License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat)](https://github.com/famished-tiger/Rley/blob/master/LICENSE.txt)
 
 A Ruby library for constructing general parsers for _any_ context-free language.  
-
-====
-
 
 What is Rley?
 -------------
@@ -28,7 +25,7 @@ encode efficiently all the possible parse trees that result from an ambiguous
 grammar.  
 
 As another distinctive mark, __Rley__ is also the first Ruby implementation of a
-parsing library based on the new _Grammar Flow Graph_ approach [References on GFG](#references-on-gfg).
+parsing library based on the new [Grammar Flow Graph](#grammar-flow-graph) approach .
 
 ### What it can do?
 Maybe parsing algorithms and internal implementation details are of lesser
@@ -277,12 +274,15 @@ Here are a few other ones:
   conforms to the grammar rules or not. As such it cannot build parse trees.  
   The code doesn't seem to be maintained: latest commit dates from Oct. 2011.
 
+## Other interesting Ruby resources
+The extensive resource list not to miss: [Awesome NLP with Ruby](https://github.com/arbox/nlp-with-ruby) 
+actively curated by Andrei Beliankou (aka arbox).
 
 ##  Thanks to:
 * Professor Keshav Pingali, one of the creators of the Grammar Flow Graph parsing approach for his encouraging e-mail exchanges.
 
-## References on GFG
-Since the __G__rammar __F__low __G__raph parsing approach is quite new, it has not yet taken a place in
+## Grammar Flow Graph
+Since the Grammar Flow Graph parsing approach is quite new, it has not yet taken a place in
 standard parser textbooks. Here are a few references (and links) of papers on GFG:    
 - K. Pingali, G. Bilardi. [Parsing with Pictures](http://apps.cs.utexas.edu/tech_reports/reports/tr/TR-2102.pdf)
 - K. Pingali, G. Bilardi. [A Graphical Model for Context-Free Grammar Parsing.](https://link.springer.com/chapter/10.1007/978-3-662-46663-6_1)
