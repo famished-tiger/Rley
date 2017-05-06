@@ -27,6 +27,13 @@ unless result.success?
   exit(1)
 end
 
-# Generate a parse forest from the parse result
-pforest = result.parse_forest
+# Generate a parse tree from the parse result
+ptree = result.parse_tree
+
+# Let's create a parse tree visitor
+visitor = Rley::ParseTreeVisitor.new(ptree)
+
+# Now output formatted parse tree
+renderer = Rley::Formatter::Asciitree.new($stdout)
+renderer.render(visitor)
 # End of file

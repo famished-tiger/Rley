@@ -78,7 +78,7 @@ The tour is organized as follows:
 3. [Creating a tokenizer](#creating-a-tokenizer)  
 4. [Building the parser](#building-the-parser)  
 5. [Parsing some input](#parsing-some-input)  
-6. [Generating the parse forest](#generating-the-parse-forest)
+6. [Generating the parse tree](#generating-the-parse-tree)
 
 The complete source code of the example used in this tour can be found in the
 [examples](https://github.com/famished-tiger/Rley/tree/master/examples/NLP/mini_en_demo.rb)
@@ -180,10 +180,171 @@ creating a lexicon and tokenizer from scratch. Here are a few Ruby Part-of-Speec
     puts "Parsing successful? #{result.success?}" # => Parsing successful? true
 ```
 
-## Generating the parse forest
+At this stage, we're done with parsing. What we need next are convenient means
+to exploit the parse result. As it is, the `result` variable in the last code snippet
+above is a data structure ("Earley item sets") that is tightly related to the intricate details
+of the Earley's parsing algorithm. Obviously, it contains all the necessary data to exploit
+the parsing results but it is too low-level and inconvenient from a programming viewpoint.
+Therefore, __Rley__ provides out of the box two convenient data structures for
+representing the parse outcome:
+- Parse tree (optimal when the parse is unambiguous)   
+- Parse forest (a more sophisticated data structure that copes with ambiguity)
+
+For our whirlwind tour, we will opt for parse trees.
+
+## Generating the parse tree
+
 ```ruby
-    pforest = result.parse_forest
+    ptree = result.parse_tree
+```  
+OK. Now that we have the parse tree, what we can do with it?
+One option is to manipulate the parse tree and its node directly. For instance,
+one could write code to customize and transform the parse tree. This approach gives
+most the of flexibility needed for advanced applications. The other, more common
+option is to rely on the parse tree visitor instantiated from the `Rley::ParseTreeVisitor` class.
+Such a visitor walks over the parse tree nodes and generates visit events that
+are dispatched to subscribed event listeners. All this may, at first, sound
+complicate but the coming code snippets will show it otherwise.
+
+Let's do it by:  
+- Creating a parse tree visitor  
+- Using one of the built-in visit subscribers specifically created to render the
+ parse tree in a given output format.  
+
+### Creating a parse tree visitor  
+Good news: creating a parse tree visitor for the parse tree `ptree` is just
+an one-liner:
+
+```ruby
+    # Let's create a parse tree visitor
+    visitor = Rley::ParseTreeVisitor.new(ptree)
 ```
+
+### Visiting the parse tree
+
+Unsurprisingly, to start the parse tree visit, one calls the `#start` method:
+
+```ruby
+    visitor.start
+```
+
+If you try the above line, no particular result will be visible and for a good reason:
+no object was specified as a visit event subscriber. As a convenience, __Rley__
+bundles a number of [formatter classes](https://github.com/famished-tiger/Rley/tree/master/lib/rley/formatter)
+that were designed to listen to the visit event and then render the parse tree
+in a specific format. To begin with, we'll use the simple formatter
+`Rley::Formatter::Debug` class. Its purpose is just to print out the visit event
+name.
+
+Remove the line with the call to the `#start` method and replace it with the two
+statements:
+```ruby
+    # Let's create a formatter (i.e. visit event listener)
+    renderer = Rley::Formatter::Debug.new($stdout)
+
+    # Subscribe the formatter to the visitor's event and launch the visit
+    renderer.render(visitor)    
+```
+
+These two lines will generate the following output:
+```
+before_ptree
+  before_non_terminal
+    before_subnodes
+      before_non_terminal
+        before_subnodes
+          before_terminal
+          after_terminal
+        after_subnodes
+      after_non_terminal
+      before_non_terminal
+        before_subnodes
+          before_terminal
+          after_terminal
+          before_non_terminal
+            before_subnodes
+              before_terminal
+              after_terminal
+            after_subnodes
+          after_non_terminal
+          before_non_terminal
+            before_subnodes
+              before_terminal
+              after_terminal
+              before_non_terminal
+                before_subnodes
+                  before_terminal
+                  after_terminal
+                  before_terminal
+                  after_terminal
+                after_subnodes
+              after_non_terminal
+            after_subnodes
+          after_non_terminal
+        after_subnodes
+      after_non_terminal
+    after_subnodes
+  after_non_terminal
+after_ptree
+```
+
+At least is something visible: these are the parse tree visit events.
+Note that the indentation of event names depends on the nesting level of
+the tree node being visited.
+
+Not really impressive? So let's use another formatter...
+
+### Visualizing the parse tree structure
+If one replaces the previous formatter by an instance of
+`Rley::Formatter::Asciitree` the output now shows the parse tree structure.
+
+```ruby
+    # Let's create a formatter that will render the parse tree with characters
+    renderer = Rley::Formatter::Asciitree.new($stdout)
+
+    # Subscribe the formatter to the visitor's event and launch the visit
+    renderer.render(visitor)   
+```
+
+The outputs looks like this:
+```
+S
++-- NP
+|   +-- Proper-Noun: 'John'
++-- VP
+    +-- Verb: 'saw'
+    +-- NP
+    |   +-- Proper-Noun: 'Mary'
+    +-- PP
+        +-- Preposition: 'with'
+        +-- NP
+            +-- Determiner: 'a'
+            +-- Noun: 'telescope'
+```
+
+If you are more inclined for graphical representation, then replace the last formatter
+by yet another one:
+
+```ruby
+    # Let's create a formatter that will render the parse tree in labelled bracket notation
+    renderer = Rley::Formatter::BracketNotation .new($stdout)
+
+    # Subscribe the formatter to the visitor's event and launch the visit
+    renderer.render(visitor)   
+```
+
+This results in the strange-looking output:
+```
+[S [NP [Proper-Noun John]][VP [Verb saw][NP [Proper-Noun Mary]][PP [Preposition with][NP [Determiner a][Noun telescope]]]]]
+```
+
+This output is in a format that is recognized by many NLP software.
+The next diagram was created by copy-pasting the output above with the online tool
+[RSyntaxTree](http://yohasebe.com/rsyntaxtree/).
+
+![Sample parse tree diagram](sample_parse_tree.png)
+
+
 
 ## Error reporting
 __Rley__ is a non-violent parser, that is, it won't throw an exception when it
@@ -275,7 +436,7 @@ Here are a few other ones:
   The code doesn't seem to be maintained: latest commit dates from Oct. 2011.
 
 ## Other interesting Ruby resources
-The extensive resource list not to miss: [Awesome NLP with Ruby](https://github.com/arbox/nlp-with-ruby) 
+The extensive resource list not to miss: [Awesome NLP with Ruby](https://github.com/arbox/nlp-with-ruby)
 actively curated by Andrei Beliankou (aka arbox).
 
 ##  Thanks to:

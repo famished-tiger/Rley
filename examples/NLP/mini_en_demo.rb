@@ -90,7 +90,21 @@ unless result.success?
 end
 
 ########################################
-# Step 6. Generating the parse forest
-pforest = result.parse_forest
+# Step 6. Generating a parse tree from parse result
+ptree = result.parse_tree
 
-puts "Parsing ambiguous? #{pforest.ambiguous?}" # => Parsing ambiguous? false
+# Let's create a parse tree visitor
+visitor = Rley::ParseTreeVisitor.new(ptree)
+
+# Let's create a formatter (i.e. visit event listener)
+# renderer = Rley::Formatter::Debug.new($stdout)
+
+# Let's create a formatter that will render the parse tree with characters
+renderer = Rley::Formatter::Asciitree.new($stdout)
+
+# Let's create a formatter that will render the parse tree in labelled bracket notation
+# renderer = Rley::Formatter::BracketNotation .new($stdout)
+
+# Subscribe the formatter to the visitor's event and launch the visit
+renderer.render(visitor)
+# End of file

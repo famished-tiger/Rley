@@ -1,8 +1,22 @@
+### 0.4.05 / 2017-05-06
+* [CHANGE] File `README.md` Added documentation on how to build parse trees and manipulate them.
+* [CHANGE] File `examples\NLP\mini_en_demo.rb` now emits different parse tree representations.
+* [NEW] Directory `www`. Contains a diagram output produced from Rley and fed to online RSyntaxTree tool.
+
+
+
+### 0.4.04 / 2017-05-01
+* [NEW] `Asciitree` formatter class. Allows parse tree output in simple printable text.
+* [CHANGE] Major enhancements in directory `examples\data_formats\JSON`. The demo command-line tool parses JSON and outputs the parse tree in one of the supported formats.
+
 ### 0.4.03 / 2017-04-17
 * [FIX] File `rley.rb` reference to obsolete `EarleyParser` class removed.
 * [NEW] `BracketNotation` formatter class. Allows parse tree output in Labelled Bracket Notation.
 * [CHANGE] Code refactoring in directory `examples\data_formats\JSON`. The demo command-line tool parses JSON and converts it into LBN (Labelled Bracket Notation). There are two diagrams (in SVG format) generated from the LBN output.
 
+### 0.4.02 / 2017-04-09
+* [NEW] Module re-organization for clearer dependencies: Classes `Token` and `TokenRange` are moved to a separate module `Tokens`.
+* [CHANGE] Code, specs, examples and `README.md` adapted to reflect the module re-organization.
 
 ### 0.4.01 / 2016-12-21
 * [NEW] File `appveyor.yml`. Add AppVeyor CI to Github commits. AppVeyor complements Travis by running builds under Windows OS.
