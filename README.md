@@ -342,7 +342,7 @@ This output is in a format that is recognized by many NLP software.
 The next diagram was created by copy-pasting the output above with the online tool
 [RSyntaxTree](http://yohasebe.com/rsyntaxtree/).
 
-![Sample parse tree diagram](sample_parse_tree.png)
+![Sample parse tree diagram](www/sample_parse_tree.png)
 
 
 
