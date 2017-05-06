@@ -339,8 +339,9 @@ This results in the strange-looking output:
 ```
 
 This output is in a format that is recognized by many NLP software.
-The next diagram was created by copy-pasting the output above with the online tool
+The next diagram was created by copy-pasting the output above in the online tool
 [RSyntaxTree](http://yohasebe.com/rsyntaxtree/).
+By the way, this tool is also a Ruby gem, [rsyntaxtree](https://rubygems.org/gems/rsyntaxtree).
 
 ![Sample parse tree diagram](www/sample_parse_tree.png)
 
