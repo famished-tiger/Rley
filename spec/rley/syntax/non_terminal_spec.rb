@@ -32,6 +32,22 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           subject.nullable = false
           expect(subject).not_to be_nullable          
         end
+        
+        it 'should know whether it is defined' do
+          expect(subject.undefined?).to be_nil
+          subject.undefined = true
+          expect(subject).to be_undefined
+          subject.undefined = false
+          expect(subject).not_to be_undefined          
+        end
+
+        it 'should know whether it is generative' do
+          expect(subject.generative?).to be_nil
+          subject.generative = true
+          expect(subject).to be_generative
+          subject.generative = false
+          expect(subject).not_to be_generative          
+        end        
       end # context
     end # describe
   end # module

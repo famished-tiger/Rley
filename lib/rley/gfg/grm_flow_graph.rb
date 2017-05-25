@@ -1,3 +1,4 @@
+require 'set'
 require_relative 'start_vertex'
 require_relative 'end_vertex'
 require_relative 'item_vertex'
@@ -36,6 +37,76 @@ module Rley # This module is used as a namespace
         vertices.find { |a_vertex| a_vertex.label == aVertexLabel }
       end
 
+      # Perform a diagnosis of the grammar elements (symbols and rules)
+      # in order to detect:
+      # If one wants to remove useless rules, then do first:
+      # elimination of non-generating symbols
+      # then elimination of unreachable symbols
+      def diagnose
+        mark_unreachable_symbols
+      end
+
+      Branching = Struct.new(:vertex, :to_visit, :visited) do
+        def initialize(aVertex)
+          super(aVertex)
+          self.to_visit = aVertex.edges.dup
+          self.visited = []
+        end
+
+        def done?
+          self.to_visit.empty?
+        end
+
+        def next_edge
+          next_one = self.to_visit.shift
+          self.visited << next_one.successor unless next_one.nil?
+
+          return next_one
+        end
+      end
+
+      # Walk over all the vertices of the graph that are reachable from a given
+      # start vertex. This is a depth-first graph traversal.
+      # @param aStartVertex [StartVertex] the depth-first traversal begins from here
+      # @param visitAction [Proc] block code called when a new graph vertex is found
+      def traverse_df(aStartVertex, &visitAction)
+        visited = Set.new
+        stack = []
+        visitee = aStartVertex
+
+        begin
+          first_time = !visited.include?(visitee)
+          if first_time
+            visitAction.call(visitee)
+            visited << visitee
+          end
+
+          case visitee
+            when Rley::GFG::StartVertex
+              if first_time
+                stack.push(Branching.new(visitee))
+                curr_edge = stack.last.next_edge
+              else
+                # Skip start and end vertices
+                # Retrieve the corresponding return edge
+                curr_edge = get_matching_return(curr_edge)
+              end
+
+            when Rley::GFG::EndVertex
+              stack.pop if stack.last.done?
+              break if stack.empty?
+              curr_edge = stack.last.next_edge
+
+            else
+              # All other vertex types have only one successor
+              curr_edge = visitee.edges[0]
+          end
+          visitee = curr_edge.successor unless curr_edge.nil?
+        end until stack.empty?
+        # Now process the end vertex matching the initial start vertex
+        visitAction.call(end_vertex_for[aStartVertex.non_terminal])
+      end
+
       private
 
       def add_vertex(aVertex)
@@ -68,7 +139,15 @@ module Rley # This module is used as a namespace
       def build_all_starts_ends(theDottedItems)
         productions_raw = theDottedItems.map(&:production)
         productions = productions_raw.uniq
-        productions.each { |prod| build_start_end_for(prod.lhs) }
+        all_nterms = Set.new
+        productions.each do |prod|
+          all_nterms << prod.lhs
+          nterms_of_rhs = prod.rhs.members.select do |symb|
+            symb.kind_of?(Syntax::NonTerminal)
+          end
+          all_nterms.merge(nterms_of_rhs)
+        end
+        all_nterms.each { |nterm| build_start_end_for(nterm) }
       end
 
       # if there is not yet a start vertex labelled .N in the GFG:
@@ -179,11 +258,42 @@ module Rley # This module is used as a namespace
         # Retrieve corresponding end vertex
         end_vertex = end_vertex_for[nt_symbol]
         # Create an edge end vertex -> return vertex
-        ReturnEdge.new(end_vertex, return_vertex)
+        ReturnEdge.new(end_vertex, return_vertex) if end_vertex
       end
 
       def build_shortcut_edge(fromVertex, toVertex)
         ShortcutEdge.new(fromVertex, toVertex)
+      end
+
+
+      # Retrieve the return edge that matches the given
+      # call edge.
+      def get_matching_return(aCallEdge)
+        # Calculate key of return edge from the key of call edge
+        ret_key = aCallEdge.key.sub(/CALL/, 'RET')
+
+        # Retrieve the corresponding end vertex
+        end_vertex = end_vertex_for[aCallEdge.successor.non_terminal]
+
+        # Retrieve the return edge with specified key
+        return_edge = end_vertex.edges.find { |edge| edge.key == ret_key }
+      end
+
+      # Mark non-terminal symbols that cannot be derived from the start symbol.
+      # In a GFG, a non-terminal symbol N is unreachable if there is no path
+      # from the start symbol to the start node .N
+      def mark_unreachable_symbols()
+        # Mark all non-terminals as unreachable
+        start_vertex_for.values.each do |a_vertex|
+          a_vertex.non_terminal.unreachable = true
+        end
+
+        # Now traverse graph from start vertex
+        # and make all visited non-terminals as reachable
+        traverse_df(start_vertex) do |a_vertex|
+          next unless a_vertex.kind_of?(StartVertex)
+          a_vertex.non_terminal.unreachable = false
+        end
       end
     end # class
   end # module

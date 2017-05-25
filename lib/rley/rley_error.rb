@@ -1,4 +1,4 @@
-# File: exceptions.rb
+# File: rley_error.rb
 
 module Rley # Module used as a namespace
   # @abstract

@@ -15,6 +15,10 @@ module Rley # This module is used as a namespace
 
       # The left-hand side of the rule. It must be a non-terminal symbol
       attr_reader(:lhs)
+      
+      # A production is generative when all of its rhs members are generative (that as, they
+      # can each generate/derive a non-empty string of terminals).
+      attr_writer(:generative)      
 
       # Provide common alternate names to lhs and rhs accessors
 
@@ -31,6 +35,14 @@ module Rley # This module is used as a namespace
       def empty?()
         return rhs.empty?
       end
+      
+      # Return true iff the production is generative      
+      def generative?()
+        if @generative.nil?
+        end
+        
+        return @generative
+      end      
 
       private
 

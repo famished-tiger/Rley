@@ -1,56 +1,74 @@
+require 'set'
 require_relative 'verbatim_symbol'
 require_relative 'literal'
+require_relative 'terminal'
 require_relative 'non_terminal'
 require_relative 'production'
 require_relative 'grammar'
 
 module Rley # This module is used as a namespace
   module Syntax # This module is used as a namespace
-    # Builder GoF pattern. Builder pattern builds a complex object
-    # (say, a grammar) from simpler objects (terminals and productions)
-    # and using a step by step approach.
+    # Builder GoF pattern. Builder builds a complex object
+    #   (say, a grammar) from simpler objects (terminals and productions)
+    #   and using a step by step approach.
     class GrammarBuilder
-      # The list of symbols of the language.
-      # Grammar symbols are categorized into terminal (symbol)
-      # and non-terminal (symbol).
+      # @return [Hash{String, GrmSymbol}] The mapping of grammar symbol names
+      #   to the matching grammar symbol object.
       attr_reader(:symbols)
 
-      # The list of production rules for the grammar to build
+      # @return [Array<Production>] The list of production rules for 
+      #   the grammar to build.
       attr_reader(:productions)
 
-
+      # Creates a new grammar builder.
+      # @param aBlock [Proc] code block used to build the grammar. 
+      # @example Building a tiny English grammar
+      #   builder = Rley::Syntax::GrammarBuilder.new do
+      #     add_terminals('n', 'v', 'adj', 'det')
+      #     rule 'S' => %w(NP VP)
+      #     rule 'VP' => %w(v NP)
+      #     rule 'NP' => %w(det n)
+      #     rule 'NP' => %w(adj NP)
+      #   end
+      #   tiny_eng = builder.grammar
       def initialize(&aBlock)
         @symbols = {}
         @productions = []
 
         instance_exec(&aBlock) if block_given?
       end
-      
+
       # Retrieve a grammar symbol from its name.
       # Raise an exception if not found.
-      # @param aSymbolName [String] the name of a symbol grammar.
-      # @return [GrmSymbol] the retrieved symbol.
+      # @param aSymbolName [String] the name of a grammar symbol.
+      # @return [GrmSymbol] the retrieved symbol object.
       def [](aSymbolName)
         return symbols[aSymbolName]
       end
 
       # Add the given terminal symbols to the grammar of the language
       # @param terminalSymbols [String or Terminal] 1..* terminal symbols.
+      # @return [void]
       def add_terminals(*terminalSymbols)
         new_symbs = build_symbols(Terminal, terminalSymbols)
         symbols.merge!(new_symbs)
       end
 
 
-      # Add a production rule in the grammar given one 
+      # Add a production rule in the grammar given one
       # key-value pair of the form: String => Array.
-      #   Where the key is the name of the non-terminal appearing in the 
-      #   left side of the rule. 
+      #   Where the key is the name of the non-terminal appearing in the
+      #   left side of the rule.
       #   The value, an Array, is a sequence of grammar symbol names.
       # The rule is created and inserted in the grammar.
-      # Example:
-      #   builder.add_production('A' => ['a', 'A', 'c'])      
-      # @param aProductionRepr [Hash] A Hash-based representation of production 
+      # @example Equivalent call syntaxes
+      #   builder.add_production('A' => ['a', 'A', 'c'])
+      #   builder.rule('A' => ['a', 'A', 'c']) # 'rule' is a synonym
+      #   builder.rule('A' => %w(a A  c)) # Use %w syntax for Array of String
+      #   builder.rule 'A' => %w(a A  c)  # Call parentheses are optional
+      # @param aProductionRepr [Hash{String, Array<String>}] A Hash-based representation 
+      #   of a production.
+      # @return [void]      
       def add_production(aProductionRepr)
         aProductionRepr.each_pair do |(lhs_name, rhs_repr)|
           lhs = get_nonterminal(lhs_name)
@@ -69,26 +87,37 @@ module Rley # This module is used as a namespace
 
       # Given the grammar symbols and productions added to the builder,
       # build the resulting grammar (if not yet done).
+      # @return [Grammar] the created grammar object.      
       def grammar()
         unless @grammar
           raise StandardError, 'No symbol found for grammar' if symbols.empty?
           if productions.empty?
             raise StandardError, 'No production found for grammar'
           end
-          
-          # Check that each non-terminal appears at least once in lhs.
-          all_non_terminals = symbols.values.select { |s| s.is_a?(NonTerminal) }
-          all_non_terminals.each do |n_term|
-            next if productions.any? { |prod| n_term == prod.lhs }
-            raise StandardError, "Nonterminal #{n_term.name} not rewritten"
+
+          # Check that each terminal appears at least in a rhs of a production
+          all_terminals = symbols.values.select do |a_symb|
+            a_symb.kind_of?(Terminal)
+          end
+          in_use = Set.new
+          productions.each do |prod|
+            prod.rhs.members.each do |symb|
+              in_use << symb if symb.kind_of?(Syntax::Terminal)
+            end
+          end
+
+          unused = all_terminals.reject { |a_term| in_use.include?(a_term) }
+          unless unused.empty?
+            suffix = "#{unused.map(&:name).join(', ')}."
+            raise StandardError, 'Useless terminal symbol(s): ' + suffix
           end
 
           @grammar = Grammar.new(productions.dup)
         end
-        
+
         return @grammar
       end
-      
+
       alias rule add_production
 
       private
@@ -125,7 +154,7 @@ module Rley # This module is used as a namespace
 
         return a_symbol
       end
-      
+
       # Retrieve the non-terminal symbol with given name.
       # If it doesn't exist yet, then it is created on the fly.
       # @param aSymbolName [String] the name of the grammar symbol to retrieve
@@ -136,7 +165,7 @@ module Rley # This module is used as a namespace
         end
         return symbols[aSymbolName]
       end
-      
+
     end # class
   end # module
 end # module

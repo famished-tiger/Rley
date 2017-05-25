@@ -1,15 +1,16 @@
 require 'set'
+require_relative '../rley_error'
 
 module Rley # This module is used as a namespace
   module Syntax # This module is used as a namespace
     # A grammar specifies the syntax of a language.
-    #   Formally, a grammar has: 
+    #   Formally, a grammar has:
     #   * One start symbol,
     #   * One or more other production rules,
     #   * Each production has a rhs that is a sequence of grammar symbols.
-    #   * Grammar symbols are categorized into 
-    #   -terminal symbols
-    #   -non-terminal symbols
+    #   * Grammar symbols are categorized into:
+    #     -terminal symbols
+    #     -non-terminal symbols
     class Grammar
       # A non-terminal symbol that represents all the possible strings
       # in the language.
@@ -30,15 +31,16 @@ module Rley # This module is used as a namespace
         @symbols = []
         @name2symbol = {}
         valid_productions = validate_productions(theProductions)
+        valid_productions.each { |prod| add_production(prod) }
+        diagnose
+
         # TODO: use topological sorting
         @start_symbol = valid_productions[0].lhs
-        valid_productions.each { |prod| add_production(prod) }
-        compute_nullable
       end
 
       # @return [Array] The list of non-terminals in the grammar.
       def non_terminals()
-        return symbols.select { |s| s.kind_of?(NonTerminal) }
+        @non_terminals ||= symbols.select { |s| s.kind_of?(NonTerminal) }
       end
 
       # @return [Production] The start production of the grammar (i.e.
@@ -61,8 +63,99 @@ module Rley # This module is used as a namespace
         the_lhs = aProduction.lhs
         add_symbol(the_lhs)
 
-        # TODO: remove quadratic execution time
         aProduction.rhs.each { |symb| add_symbol(symb) }
+      end
+
+      # Perform some check of the grammar.
+      def diagnose()
+        mark_undefined
+        mark_generative
+        compute_nullable
+      end
+
+      # Check that each non-terminal appears at least once in lhs.
+      # If it is not the case, then mark it as undefined
+      def mark_undefined
+        defined = Set.new
+
+        # Defined non-terminals appear at least once as lhs of a production
+        rules.each { |prod| defined << prod.lhs }
+        defined.each { |n_term| n_term.undefined = false }
+
+        # Retrieve all non-terminals that aren't marked as non-undefined
+        undefined = non_terminals.select { |n_term| n_term.undefined?.nil? }
+
+        undefined.each { |n_term| n_term.undefined = true }
+      end
+
+
+
+      # Mark all non-terminals and production rules as
+      # generative or not.
+      # A production is generative when it can derive a string of terminals.
+      # A production is therefore generative when all its rhs members are
+      # themselves generatives.
+      # A non-terminal is generative if at least one of its defining production
+      # is itself generative.
+      def mark_generative
+        curr_marked = []
+
+        # Iterate until no new rule can be marked.
+        begin
+          prev_marked = curr_marked.dup
+
+          rules.each do |a_rule|
+            next unless a_rule.generative?.nil?
+            if a_rule.empty?
+              a_rule.generative = false
+              curr_marked << a_rule
+              could_mark_nterm_generative(a_rule)
+              next
+            end
+
+            last_considered = nil
+            a_rule.rhs.members.each do |symbol|
+              last_considered = symbol
+              break unless symbol.generative?
+            end
+            next if last_considered.generative?.nil?
+            a_rule.generative = last_considered.generative?
+            curr_marked << a_rule
+            could_mark_nterm_generative(a_rule)
+          end
+        end until prev_marked.size == curr_marked.size
+
+        # The nonterminals that are not marked yet are non-generative
+        non_terminals.each do |nterm|
+          nterm.generative = false if nterm.generative?.nil?
+        end
+      end
+
+      # Given a production rule with given non-terminal
+      # Check whether that non-terminal should be marked
+      # as generative or not.
+      # A non-terminal may be marked as generative if at
+      # least one of its defining production is generative.
+      def could_mark_nterm_generative(aRule)
+        nterm = aRule.lhs
+
+        # non-terminal already marked? If yes, nothing more to do...
+        return unless nterm.generative?.nil?
+
+        defining_rules = rules_for(nterm) # Retrieve all defining productions
+
+        all_false = true
+        defining_rules.each do |prod|
+          if prod.generative?
+            # One generative rule found!
+            nterm.generative = true
+            all_false = false
+            break
+          else
+            all_false = false if prod.generative?.nil?
+          end
+        end
+        nterm.generative = false if all_false
       end
 
 
@@ -118,6 +211,12 @@ module Rley # This module is used as a namespace
         @symbols << aSymbol
         @name2symbol[its_name] = aSymbol
       end
+
+      # Retrieve all the production rules that share the same symbol in lhs
+      def rules_for(aNonTerm)
+        rules.select { |a_rule| a_rule.lhs == aNonTerm }
+      end
+
     end # class
   end # module
 end # module

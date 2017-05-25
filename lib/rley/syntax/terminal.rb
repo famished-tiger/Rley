@@ -10,6 +10,7 @@ module Rley # This module is used as a namespace
       # aName [String] The name of the grammar symbol.
       def initialize(aName)
         super(aName)
+        self.generative = true
       end
       
       # Return true iff the symbol is a terminal

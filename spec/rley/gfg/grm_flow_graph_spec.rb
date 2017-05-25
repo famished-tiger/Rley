@@ -154,6 +154,102 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           end
         end
       end # context
+      
+      context 'Provided services:' do
+        let(:problematic_grammar) do
+          # Based on grammar example in book
+          # C. Fisher, R. LeBlanc, "Crafting a Compiler"; page 98
+          builder = Rley::Syntax::GrammarBuilder.new
+          builder.add_terminals('a', 'b', 'c')
+          builder.add_production('S' => 'A')
+          builder.add_production('S' => 'B')
+          builder.add_production('A' => 'a')
+          # There is no edge between .B and B => B . b => non-generative
+          builder.add_production('B' => %w(B b))
+          
+          # Non-terminal symbol C is unreachable
+          builder.add_production('C' => 'c')  
+
+          # And now build the grammar...
+          builder.grammar       
+        end
+      
+        it 'should provide depth-first traversal' do
+          result = []
+          subject.traverse_df(subject.start_vertex) do |vertex|
+            result << vertex.label
+          end
+
+          expected = [
+              '.S',
+              'S => . A',
+              '.A',
+              'A => . a A c',
+              'A => a . A c',
+              'A => a A . c',
+              'A => a A c .',
+              'A.',
+              'A => . b',
+              'A => b .',
+              'S.'
+            ]
+          expect(result).to eq(expected)
+        end
+        
+        it 'should perform a diagnosis of a correct grammar' do
+          expect { subject.diagnose }.not_to raise_error
+          grammar_abc.non_terminals.each do |nterm|
+            expect(nterm).not_to be_undefined
+            expect(nterm).not_to be_unreachable
+          end
+        end
+        
+        it 'should detect when a non-terminal is unreachable' do
+          grammar = problematic_grammar
+          items = build_items_for_grammar(grammar)
+
+          graph = GrmFlowGraph.new(items)       
+          expect { graph.diagnose }.not_to raise_error
+          grammar.non_terminals.each do |nterm|
+            expect(nterm).not_to be_undefined
+          end
+          
+          unreachable = grammar.non_terminals.select do |nterm| 
+            nterm.unreachable? 
+          end
+          expect(unreachable.size).to eq(1)
+          expect(unreachable[0].name).to eq('C')
+        end        
+      end # context
+      
+=begin
+      context 'Grammar without undefined symbols:' do
+        it 'should mark all its nonterminals as not undefined' do
+          nonterms = subject.non_terminals
+          nonterms.each do |nterm|
+            expect(nterm).not_to be_undefined
+          end
+        end      
+      end # context
+      
+      context 'Grammar with undefined symbols:' do
+        subject do
+          productions = [prod_S, prod_A1, prod_A2, prod_A3]
+          Grammar.new(productions)
+        end  
+        
+        it 'should detect its nonterminals that are undefined' do
+          nonterms = subject.non_terminals
+          culprits = nonterms.select do |nterm|
+            nterm.undefined?
+          end
+          
+          expect(culprits.size).to eq(1)
+          expect(culprits[0]).to eq(nt_C)
+        end      
+      end # context
+=end      
+      
     end # describe
   end # module
 end # module

@@ -23,7 +23,7 @@ module Rley # This module is used as a namespace
       # Method called by a ParseTreeVisitor to which the formatter subscribed.
       # Notification of a visit event: the visitor is about to visit
       # a non-terminal node
-      # @param nonterm [NonTerminalNode]
+      # @param aNonTerm [NonTerminalNode]
       def before_non_terminal(aNonTerm)
         write("[#{aNonTerm.symbol.name} ")
       end
@@ -32,7 +32,7 @@ module Rley # This module is used as a namespace
       # Method called by a ParseTreeVisitor to which the formatter subscribed.
       # Notification of a visit event: the visitor is about to visit
       # a terminal node
-      # @param _term [TerminalNode]
+      # @param aTerm [TerminalNode]
       def before_terminal(aTerm)
         write("[#{aTerm.symbol.name} ")
       end
@@ -40,7 +40,7 @@ module Rley # This module is used as a namespace
       # Method called by a ParseTreeVisitor to which the formatter subscribed.
       # Notification of a visit event: the visitor completed the visit of
       # a terminal node.
-      # @param _term [TerminalNode]
+      # @param aTerm [TerminalNode]
       def after_terminal(aTerm)
         # Escape all opening and closing square brackets
         escape_lbrackets = aTerm.token.lexeme.gsub(/\[/, "\\[")

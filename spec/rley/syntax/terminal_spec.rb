@@ -25,6 +25,10 @@ module Rley # Open this namespace to avoid module qualifier prefixes
         it "should know that isn't nullable" do
           expect(subject).not_to be_nullable
         end
+        
+        it "should know that it is generative" do
+          expect(subject).to be_generative
+        end        
       end # context
     end # describe
   end # module

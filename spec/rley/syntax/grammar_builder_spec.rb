@@ -9,7 +9,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
       context 'Initialization without argument:' do
         it 'could be created without argument' do
           expect { GrammarBuilder.new }.not_to raise_error
-        end   
+        end
 
         it 'should have no grammar symbols at start' do
             expect(subject.symbols).to be_empty
@@ -19,12 +19,12 @@ module Rley # Open this namespace to avoid module qualifier prefixes
             expect(subject.productions).to be_empty
         end
       end # context
-      
+
       context 'Initialization with argument:' do
         it 'could be created with a block argument' do
           expect do GrammarBuilder.new { nil }
           end.not_to raise_error
-        end        
+        end
 
         it 'could have grammar symbols from block argument' do
           instance = GrammarBuilder.new do
@@ -36,7 +36,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
         it 'should have no productions at start' do
             expect(subject.productions).to be_empty
         end
-      end # context      
+      end # context
 
       context 'Adding symbols:' do
         it 'should build terminals from their names' do
@@ -122,8 +122,8 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           expect(subject.grammar).to be_kind_of(Grammar)
           grm = subject.grammar
           expect(grm.rules).to eq(subject.productions)
-          
-          # Invoking the factory method again should return 
+
+          # Invoking the factory method again should return
           # the same grammar object
           second_time = subject.grammar
           expect(second_time).to eq(grm)
@@ -144,13 +144,18 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           expect { instance.grammar }.to raise_error(err, msg)
         end
 
-        it 'should complain when non-terminal has no production' do
-          instance = GrammarBuilder.new
-          instance.add_terminals('a', 'b', 'c')
-          instance.add_production('S' => ['A'])
+        it 'should complain if one or more terminals are useless' do
+          # Add one useless terminal symbol
+          subject.add_terminals('d')
+
           err = StandardError
-          msg = 'Nonterminal A not rewritten'
-          expect { instance.grammar }.to raise_error(err, msg)
+          msg = 'Useless terminal symbol(s): d.'
+          expect { subject.grammar }.to raise_error(err, msg)
+          
+          # Add another useless terminal
+          subject.add_terminals('e')
+          msg = 'Useless terminal symbol(s): d, e.'
+          expect { subject.grammar }.to raise_error(err, msg)          
         end
 
         it 'should build a grammar with nullable nonterminals' do

@@ -103,7 +103,7 @@ visitor = Rley::ParseTreeVisitor.new(ptree)
 renderer = Rley::Formatter::Asciitree.new($stdout)
 
 # Let's create a formatter that will render the parse tree in labelled bracket notation
-# renderer = Rley::Formatter::BracketNotation .new($stdout)
+# renderer = Rley::Formatter::BracketNotation.new($stdout)
 
 # Subscribe the formatter to the visitor's event and launch the visit
 renderer.render(visitor)

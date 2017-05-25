@@ -182,9 +182,9 @@ creating a lexicon and tokenizer from scratch. Here are a few Ruby Part-of-Speec
 
 At this stage, we're done with parsing. What we need next are convenient means
 to exploit the parse result. As it is, the `result` variable in the last code snippet
-above is a data structure ("Earley item sets") that is tightly related to the intricate details
+above is a data structure ("Earley item sets") that is highly depending on the intricate details
 of the Earley's parsing algorithm. Obviously, it contains all the necessary data to exploit
-the parsing results but it is too low-level and inconvenient from a programming viewpoint.
+the parsing results but it is rather low-level and inconvenient from a programming viewpoint.
 Therefore, __Rley__ provides out of the box two convenient data structures for
 representing the parse outcome:
 - Parse tree (optimal when the parse is unambiguous)   
@@ -201,10 +201,10 @@ OK. Now that we have the parse tree, what we can do with it?
 One option is to manipulate the parse tree and its node directly. For instance,
 one could write code to customize and transform the parse tree. This approach gives
 most the of flexibility needed for advanced applications. The other, more common
-option is to rely on the parse tree visitor instantiated from the `Rley::ParseTreeVisitor` class.
+option is to use an `Rley::ParseTreeVisitor` instance.
 Such a visitor walks over the parse tree nodes and generates visit events that
 are dispatched to subscribed event listeners. All this may, at first, sound
-complicate but the coming code snippets will show it otherwise.
+complicated but the coming code snippets show it otherwise.
 
 Let's do it by:  
 - Creating a parse tree visitor  
@@ -327,7 +327,7 @@ by yet another one:
 
 ```ruby
     # Let's create a formatter that will render the parse tree in labelled bracket notation
-    renderer = Rley::Formatter::BracketNotation .new($stdout)
+    renderer = Rley::Formatter::BracketNotation.new($stdout)
 
     # Subscribe the formatter to the visitor's event and launch the visit
     renderer.render(visitor)   
@@ -338,7 +338,7 @@ This results in the strange-looking output:
 [S [NP [Proper-Noun John]][VP [Verb saw][NP [Proper-Noun Mary]][PP [Preposition with][NP [Determiner a][Noun telescope]]]]]
 ```
 
-This output is in a format that is recognized by many NLP software.
+This output is in a format that is recognized by many NLP softwares.
 The next diagram was created by copy-pasting the output above in the online tool
 [RSyntaxTree](http://yohasebe.com/rsyntaxtree/).
 By the way, this tool is also a Ruby gem, [rsyntaxtree](https://rubygems.org/gems/rsyntaxtree).

@@ -36,8 +36,8 @@ module Rley # This module is used as a namespace
       # Method called by a ParseTreeVisitor to which the formatter subscribed.
       # Notification of a visit event: the visitor is about to visit
       # the children of a non-terminal node
-      # @param _parent [NonTerminalNode]
-      # @param _children [Array] array of children nodes
+      # @param parent [NonTerminalNode]
+      # @param children [Array] array of children nodes
       def before_subnodes(parent, children)
         rank_of(parent)
         curr_path << parent
@@ -47,7 +47,7 @@ module Rley # This module is used as a namespace
       # Method called by a ParseTreeVisitor to which the formatter subscribed.
       # Notification of a visit event: the visitor is about to visit
       # a non-terminal node
-      # @param nonterm [NonTerminalNode]
+      # @param aNonTerm [NonTerminalNode]
       def before_non_terminal(aNonTerm)
         emit(aNonTerm)
       end
@@ -56,7 +56,7 @@ module Rley # This module is used as a namespace
       # Method called by a ParseTreeVisitor to which the formatter subscribed.
       # Notification of a visit event: the visitor is about to visit
       # a terminal node
-      # @param _term [TerminalNode]
+      # @param aTerm [TerminalNode]
       def before_terminal(aTerm)
         emit(aTerm, ": '#{aTerm.token.lexeme}'")
       end
