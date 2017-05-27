@@ -37,11 +37,12 @@ END_BANNER
       format_help = <<-END_TEXT
 Select the output format (default: ascii_tree). Available formats:
   ascii_tree  Simple text representation of parse trees
+  minify      Strip all unnecessary whitespace in the input json file
   labelled    Labelled square notation (LBN)
               Use online tools (e.g. http://yohasebe.com/rsyntaxtree/) 
               to visualize parse trees from LBN output.
 END_TEXT
-      formats = %i[ascii_tree labelled]
+      formats = %i[ascii_tree labelled minify]
       opts.on('-f', '--format FORMAT', formats, format_help) do |frm|
         self[:format] = frm
       end

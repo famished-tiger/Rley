@@ -1,8 +1,9 @@
 require_relative 'cli_options'
 require_relative 'json_parser'
+require_relative 'json_minifier'
 
 prog_name = 'json_demo'
-prog_version = '0.1.0'
+prog_version = '0.2.0'
 
 cli_options = CLIOptions.new(prog_name, prog_version, ARGV)
 if ARGV.empty?
@@ -32,6 +33,8 @@ case cli_options[:format]
     renderer = Rley::Formatter::Asciitree.new($stdout)
   when :labelled
     renderer = Rley::Formatter::BracketNotation.new($stdout)
+  when :minify
+    renderer = JSONMinifier.new($stdout)    
 end
 
 # Let's create a parse tree visitor

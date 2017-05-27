@@ -1,16 +1,20 @@
+### 0.4.08 / 2017-0?-?? <= TODO
+* [NEW] File `examples/data_formats/JSON/json_minifier.rb` Added a working JSON minifier to the demo app.
+* [CHANGE] File `.travis.yml`: removal of Rubinius (rbx) in the list of Ruby version.
+
 ### 0.4.07 / 2017-05-25
 * [FIX] To avoid Fixnum deprecation error in Ruby 2.4 abd higher, all explicit references to Fixnum has been removed.
 * [FIX] File `.rubocop.yml`: folder `examples` was excluded from Rubocop control. Now it is in code analysis scope.
-* [NEW] File `spec\.rubocop.yml` to tune the code analysis for Rspec files
+* [NEW] File `spec/.rubocop.yml` to tune the code analysis for Rspec files
 * [NEW] File `examples\.rubocop.yml` to tune the code analysis for example files
 * [CHANGE] Code re-styling to please Rubocop 0.49.0: less than 10 offences remain (from above 200 count!)
 * [CHANGE] Added support for Ruby 2.4.x. Files `.travis.yml` and `README.md` updated.
 
 
 ### 0.4.06 / 2017-05-25
-* [FIX] File `formatter\asciitree.rb` fixed inconsistency in comments that caused Yard warnings.
-* [FIX] File `formatter\bracket_notation.rb` fixed inconsistency in comments that caused Yard warnings.
-* [FIX] File `parser\parse_entry_set.rb` fixed inconsistency in comments that caused Yard warnings.
+* [FIX] File `formatter/asciitree.rb` fixed inconsistency in comments that caused Yard warnings.
+* [FIX] File `formatter/bracket_notation.rb` fixed inconsistency in comments that caused Yard warnings.
+* [FIX] File `parser/parse_entry_set.rb` fixed inconsistency in comments that caused Yard warnings.
 * [NEW] Method `Grammar#diagnose` performs a number of checks on the grammar. It detects whether:  
   there are undefined non-terminals (i.e. non-terminals without a rule that define them)
   there are non-productive non-terminals (i.e. non-terminals that don't derive a sting of terminals)
@@ -20,13 +24,10 @@
 * [NEW] Method `GrmSymbol#generative?` inidcates whether the grammar symbol can produce a sequence of terminals.
 * [CHANGE] Class `GrammarBuilder` Improved the API documentation.
 
-
 ### 0.4.05 / 2017-05-06
 * [CHANGE] File `README.md` Added documentation on how to build parse trees and manipulate them.
-* [CHANGE] File `examples\NLP\mini_en_demo.rb` now emits different parse tree representations.
+* [CHANGE] File `examples/NLP/mini_en_demo.rb` now emits different parse tree representations.
 * [NEW] Directory `www`. Contains a diagram output produced from Rley and fed to online RSyntaxTree tool.
-
-
 
 ### 0.4.04 / 2017-05-01
 * [NEW] `Asciitree` formatter class. Allows parse tree output in simple printable text.
