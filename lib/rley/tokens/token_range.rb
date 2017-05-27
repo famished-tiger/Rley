@@ -21,7 +21,6 @@ module Rley # This module is used as a namespace
         assign_high(aRangeRep)
       end
 
-
       def ==(other)
         return true if object_id == other.object_id
 

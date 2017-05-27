@@ -25,7 +25,6 @@ module Rley # This module is used as a namespace
       :antecedent_index
     )
 
-
     # A factory that creates an enumerator
     #  that itself walks through a given parsing graph.
     # The walker yields visit events.
@@ -84,7 +83,6 @@ module Rley # This module is used as a namespace
         return context
       end
       
-      
       # Initialize the non-terminal to start entry mapping
       def init_nterm2start()
         h = Hash.new do |hsh, defval|
@@ -139,7 +137,6 @@ module Rley # This module is used as a namespace
         return nil unless aContext.curr_entry.dotted_entry?
       end
 
-
       # Given the current entry from context object
       # Go to the parse entry that is one of its antecedent
       # The context object is updated
@@ -168,7 +165,8 @@ module Rley # This module is used as a namespace
           aContext.return_stack << aContext.curr_entry
         elsif traversed_edge.kind_of?(GFG::CallEdge)
           # Pop top of stack
-          fail ScriptError, "Return stack empty!" if aContext.return_stack.empty?
+          err_msg = 'Return stack empty!'
+          raise ScriptError, err_msg if aContext.return_stack.empty?
           aContext.return_stack.pop
           # puts "Pop from return stack matching entry #{new_entry}"
         elsif traversed_edge.kind_of?(GFG::ScanEdge)
@@ -220,7 +218,6 @@ module Rley # This module is used as a namespace
         return bp
       end
 
-
       def use_backtrack_point(aContext)
         bp = aContext.backtrack_points.last
         bp.antecedent_index += 1
@@ -246,7 +243,7 @@ module Rley # This module is used as a namespace
       # Observation: calling parse entry is an parse entry linked
       # to a item vertex
       def select_calling_entry(aContext)
-        fail ScriptError, "Empty return stack" if aContext.return_stack.empty?
+        raise ScriptError, 'Empty return stack' if aContext.return_stack.empty?
         # Retrieve top of stack
         tos = aContext.return_stack.pop
         tos_dotted_item = tos.vertex.dotted_item

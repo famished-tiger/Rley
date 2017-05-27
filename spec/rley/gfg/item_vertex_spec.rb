@@ -114,7 +114,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
         it 'should reject an invalid shortcut edge' do
           err = StandardError
           err_msg = 'Invalid shortcut argument'
-          expect { subject.shortcut = 'invalid'}.to raise_error(err, err_msg)
+          expect { subject.shortcut = 'invalid' }.to raise_error(err, err_msg)
         end        
       end # context
     end # describe

@@ -16,7 +16,7 @@ module Rley # Module used as a namespace
 
       # Returns the result of invoking reason.to_s.
       def message()
-        return self.to_s
+        return to_s
       end
 
       # Return this reason's class name and message
@@ -68,9 +68,7 @@ module Rley # Module used as a namespace
                    end
         return explain
       end
-
     end # class
-
 
     # This parse error occurs when the current token from the input
     # is unexpected according to the grammar rules.
@@ -85,7 +83,6 @@ module Rley # Module used as a namespace
         return err_msg
       end
     end # class
-
 
     # This parse error occurs when all input tokens were consumed
     # but the parser still expected one or more tokens from the input.
@@ -103,4 +100,3 @@ module Rley # Module used as a namespace
 end # module
 
 # End of file
-

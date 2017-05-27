@@ -88,7 +88,7 @@ directory
 The subset of English grammar is based on an example from the NLTK book.
 
 ```ruby  
-    require 'rley'  # Load Rley library
+    require 'rley' # Load Rley library
 
     # Instantiate a builder object that will build the grammar for us
     builder = Rley::Syntax::GrammarBuilder.new do
@@ -134,7 +134,7 @@ The subset of English grammar is based on an example from the NLTK book.
       'on' => 'Preposition',
       'by' => 'Preposition',
       'with' => 'Preposition'
-    }
+    }.freeze
 ```  
 
 
@@ -142,12 +142,10 @@ The subset of English grammar is based on an example from the NLTK book.
 ```ruby
     # A tokenizer reads the input string and converts it into a sequence of tokens
     # Highly simplified tokenizer implementation.
-    def tokenizer(aText, aGrammar)
-      tokens = aText.scan(/\S+/).map do |word|
+    def tokenizer(aTextToParse, aGrammar)
+      tokens = aTextToParse.scan(/\S+/).map do |word|
         term_name = Lexicon[word]
-        if term_name.nil?
-          raise StandardError, "Word '#{word}' not found in lexicon"
-        end
+        raise StandardError, "Word '#{word}' not found in lexicon" if term_name.nil?
         terminal = aGrammar.name2symbol[term_name]
         Rley::Tokens::Token.new(word, terminal)
       end
@@ -441,7 +439,7 @@ The extensive resource list not to miss: [Awesome NLP with Ruby](https://github.
 actively curated by Andrei Beliankou (aka arbox).
 
 ##  Thanks to:
-* Professor Keshav Pingali, one of the creators of the Grammar Flow Graph parsing approach for his encouraging e-mail exchanges.
+* Professor Keshav Pingali, one of the creators of the Grammar Flow Graph parsing approach for his encouraging e-mail exchange.
 
 ## Grammar Flow Graph
 Since the Grammar Flow Graph parsing approach is quite new, it has not yet taken a place in

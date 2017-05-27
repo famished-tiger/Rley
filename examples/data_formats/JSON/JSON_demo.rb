@@ -1,7 +1,7 @@
 require_relative 'cli_options'
-require_relative 'JSON_parser'
+require_relative 'json_parser'
 
-prog_name = 'JSON_demo'
+prog_name = 'json_demo'
 prog_version = '0.1.0'
 
 cli_options = CLIOptions.new(prog_name, prog_version, ARGV)

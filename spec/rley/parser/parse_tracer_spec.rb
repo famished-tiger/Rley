@@ -17,7 +17,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
       let(:output) { StringIO.new('', 'w') }
 
       let(:token_seq) do
-        literals = %w(I saw John with a dog)
+        literals = %w[I saw John with a dog]
         literals.map { |lexeme| Tokens::Token.new(lexeme, nil) }
       end
 

@@ -38,7 +38,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
       end
 
       let(:token_seq) do
-        literals = %w(a a b c c)
+        literals = %w[a a b c c]
         literals.map { |lexeme| Tokens::Token.new(lexeme, nil) }
       end
 

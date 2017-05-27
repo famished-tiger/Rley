@@ -16,7 +16,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
       subject { TerminalNode.new(sample_token, sample_range) }
       
       context 'Initialization:' do
-        it "should be bound to a token" do
+        it 'should be bound to a token' do
           expect(subject.token).to eq(sample_token)
         end
       end # context

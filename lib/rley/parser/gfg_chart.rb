@@ -41,7 +41,7 @@ module Rley # This module is used as a namespace
       end
 
       # Push a parse entry for the chart entry with given index
-      def push_entry(aVertex, anOrigin, anIndex, aReason)
+      def push_entry(aVertex, anOrigin, anIndex, _reason)
         new_entry = ParseEntry.new(aVertex, anOrigin)
         pushed = self[anIndex].push_entry(new_entry)
 

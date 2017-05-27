@@ -1,4 +1,5 @@
 # encoding: utf-8
+
 # File: rley.gemspec
 # Gem specification file for the Rley project.
 
@@ -60,11 +61,11 @@ RLEY_GEMSPEC = Gem::Specification.new do |pkg|
   pkg_documentation(pkg)
 
   # Here we have the external dependencies
+  pkg.add_development_dependency 'coveralls', '~> 0.7', '>= 0.7.0'  
   pkg.add_development_dependency 'rake', '~> 10.0', '>= 10.0.0'
   pkg.add_development_dependency 'rspec', '~> 3.5', '>= 3.5.0'
-  pkg.add_development_dependency 'simplecov', '~> 0.1', '>= 0.1.0'
-  pkg.add_development_dependency 'coveralls', '~> 0.7', '>= 0.7.0'
   pkg.add_development_dependency 'rubygems', '~> 2.0', '>= 2.0.0'
+  pkg.add_development_dependency 'simplecov', '~> 0.1', '>= 0.1.0'  
   pkg.license = 'MIT'
   pkg.required_ruby_version = '>= 2.0.0'
 end

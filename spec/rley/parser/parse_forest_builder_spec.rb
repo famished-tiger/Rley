@@ -24,18 +24,18 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           builder = Syntax::GrammarBuilder.new do
             add_terminals('a', 'b')
             rule 'Phi' => 'S'
-            rule 'S' => %w(A T)
-            rule 'S' => %w(a T)
+            rule 'S' => %w[A T]
+            rule 'S' => %w[a T]
             rule 'A' => 'a'
-            rule 'A' => %w(B A)
+            rule 'A' => %w[B A]
             rule 'B' => []
-            rule 'T' => %w(b b b)
+            rule 'T' => %w[b b b]
           end
           builder.grammar
       end
 
       let(:sample_tokens) do
-        build_token_sequence(%w(a b b b), sample_grammar)
+        build_token_sequence(%w[a b b b], sample_grammar)
       end
 
       let(:sample_result) do

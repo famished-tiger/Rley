@@ -14,7 +14,7 @@ class CalcParser < Rley::Parser::GFGEarleyParser
   end
 
   def parse_expression(aText)
-    lexer = CalcLexer.new(aText, self.grammar)
+    lexer = CalcLexer.new(aText, grammar)
     result = parse(lexer.tokens)
 
     return result

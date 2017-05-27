@@ -61,7 +61,9 @@ module Rley # Re-open the module to get rid of qualified names
 
       context 'Standard creation & initialization:' do
         it 'should be initialized with an IO argument' do
-          expect { BracketNotation.new(StringIO.new('', 'w')) }.not_to raise_error
+          expect do 
+            BracketNotation.new(StringIO.new('', 'w')) 
+          end.not_to raise_error
         end
         
         it 'should know its output destination' do

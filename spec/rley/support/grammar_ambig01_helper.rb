@@ -12,14 +12,13 @@ module GrammarAmbig01Helper
     builder = Rley::Syntax::GrammarBuilder.new do
       add_terminals('integer', '+', '*')
       rule 'P' => 'S'
-      rule 'S' => %w(S + S)
-      rule 'S' => %w(S * S)
+      rule 'S' => %w[S + S]
+      rule 'S' => %w[S * S]
       rule 'S' => 'L'
       rule 'L' => 'integer'
     end
     builder
   end
-
 
   # Highly simplified tokenizer implementation.
   def tokenizer_ambig01(aText, aGrammar)

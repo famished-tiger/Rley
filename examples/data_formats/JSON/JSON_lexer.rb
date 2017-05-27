@@ -1,6 +1,6 @@
 # File: JSON_lexer.rb
 # Lexer for the JSON data format
-require 'rley'  # Load the gem
+require 'rley' # Load the gem
 require 'strscan'
 
 # Lexer for JSON.
@@ -17,20 +17,19 @@ class JSONLexer
     ']' => 'end-array',
     ',' => 'value-separator',
     ':' => 'name-separator'
-  }
+  }.freeze
 
-  class ScanError < StandardError ; end
+  class ScanError < StandardError; end
 
-public
   def initialize(source, aGrammar)
     @scanner = StringScanner.new(source)
     @name2symbol = aGrammar.name2symbol
-    @lineno =  1
+    @lineno = 1
   end
 
   def tokens()
     tok_sequence = []
-    until @scanner.eos? do
+    until @scanner.eos?
       token = _next_token
       tok_sequence << token unless token.nil?
     end
@@ -38,13 +37,14 @@ public
     return tok_sequence
   end
 
-private
+  private
+
   def _next_token()
     token = nil
     skip_whitespaces
     curr_ch = scanner.getch # curr_ch is at start of token or eof reached...
 
-    begin
+    loop do
       break if curr_ch.nil?
 
       case curr_ch
@@ -53,7 +53,7 @@ private
           token_type = name2symbol[type_name]
           token = Rley::Tokens::Token.new(curr_ch, token_type)
 
-        when /[ftn]/  # First letter of keywords
+        when /[ftn]/ # First letter of keywords
           @scanner.pos = scanner.pos - 1 # Simulate putback
           keyw = scanner.scan(/false|true|null/)
           if keyw.nil?
@@ -65,10 +65,11 @@ private
           end
 
         # LITERALS
-        when '"'  # Start string delimiter found
+        when '"' # Start string delimiter found
           value = scanner.scan(/([^"\\]|\\.)*/)
-          end_delimiter = scanner.getch()
-          raise ScanError.new('No closing quotes (") found') if end_delimiter.nil?
+          end_delimiter = scanner.getch
+          err_msg = 'No closing quotes (") found'
+          raise ScanError.new(err_msg) if end_delimiter.nil?
           token_type = name2symbol['string']
           token = Rley::Tokens::Token.new(value, token_type)
 
@@ -83,14 +84,12 @@ private
           sequel = scanner.scan(/.{1,20}/)
           erroneous += sequel unless sequel.nil?
           raise ScanError.new("Unknown token #{erroneous}")
-      end #case
-
-
-    end while (token.nil? && curr_ch = scanner.getch())
+      end # case
+      break unless token.nil? && (curr_ch = scanner.getch)
+    end
 
     return token
   end
-
 
   def skip_whitespaces()
     matched = scanner.scan(/[ \t\f\n\r]+/)
@@ -101,12 +100,8 @@ private
     newline_detected(newline_count)
   end
 
-
   def newline_detected(count)
     @lineno += count
-    @line_start = scanner.pos()
+    @line_start = scanner.pos
   end
-
 end # class
-
-

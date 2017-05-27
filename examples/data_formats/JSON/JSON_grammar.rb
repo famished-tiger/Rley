@@ -1,5 +1,5 @@
 # Grammar for JSON data representation
-require 'rley'  # Load the gem
+require 'rley' # Load the gem
 
 
 ########################################
@@ -21,16 +21,16 @@ builder = Rley::Syntax::GrammarBuilder.new do
   rule 'value' => 'array'
   rule 'value' => 'number'
   rule 'value' => 'string'  
-  rule 'object' => %w(begin-object member-list end-object)
-  rule 'object' => %w(begin-object end-object)
+  rule 'object' => %w[begin-object member-list end-object]
+  rule 'object' => %w[begin-object end-object]
   # Next rule is an example of a left recursive rule
-  rule 'member-list' => %w(member-list value-separator member)
+  rule 'member-list' => %w[member-list value-separator member]
   rule 'member-list' => 'member'
-  rule 'member' => %w(string name-separator value)
-  rule 'array' => %w(begin-array array-items end-array)
-  rule 'array' => %w(begin-array end-array)
-  rule 'array-items' => %w(array-items value-separator value)
-  rule 'array-items' => %w(value)
+  rule 'member' => %w[string name-separator value]
+  rule 'array' => %w[begin-array array-items end-array]
+  rule 'array' => %w[begin-array end-array]
+  rule 'array-items' => %w[array-items value-separator value]
+  rule 'array-items' => %w[value]
 end
 
 # And now build the JSON grammar...

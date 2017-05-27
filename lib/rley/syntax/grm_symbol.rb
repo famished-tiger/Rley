@@ -32,7 +32,6 @@ module Rley # This module is used as a namespace
       def generative?()
         return @generative
       end
-
     end # class
   end # module
 end # module

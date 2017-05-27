@@ -1,4 +1,4 @@
-require 'rley'  # Load Rley library
+require 'rley' # Load Rley library
 
 ########################################
 # Step 1. Define a grammar for a micro English-like language
@@ -10,7 +10,8 @@ require 'rley'  # Load Rley library
 
 # Instantiate a builder object that will build the grammar for us
 builder = Rley::Syntax::GrammarBuilder.new do
-  # Next 2 lines we define the terminal symbols (=word categories in the lexicon)
+  # Next 2 lines we define the terminal symbols 
+  # (= word categories in the lexicon)
   add_terminals('Noun', 'Proper-Noun', 'Verb') 
   add_terminals('Determiner', 'Preposition')
 
@@ -51,7 +52,7 @@ Lexicon = {
   'on' => 'Preposition',
   'by' => 'Preposition',
   'with' => 'Preposition'
-}
+}.freeze
 
 ########################################
 # Step 3. Creating a tokenizer
@@ -60,9 +61,7 @@ Lexicon = {
 def tokenizer(aTextToParse, aGrammar)
   tokens = aTextToParse.scan(/\S+/).map do |word|
     term_name = Lexicon[word]
-    if term_name.nil?
-      raise StandardError, "Word '#{word}' not found in lexicon"
-    end
+    raise StandardError, "Word '#{word}' not found in lexicon" if term_name.nil?
     terminal = aGrammar.name2symbol[term_name]
     Rley::Tokens::Token.new(word, terminal)
   end
@@ -102,7 +101,8 @@ visitor = Rley::ParseTreeVisitor.new(ptree)
 # Let's create a formatter that will render the parse tree with characters
 renderer = Rley::Formatter::Asciitree.new($stdout)
 
-# Let's create a formatter that will render the parse tree in labelled bracket notation
+# Let's create a formatter that will render the parse tree in labelled 
+# bracket notation
 # renderer = Rley::Formatter::BracketNotation.new($stdout)
 
 # Subscribe the formatter to the visitor's event and launch the visit

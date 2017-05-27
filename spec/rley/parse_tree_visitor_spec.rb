@@ -238,8 +238,8 @@ module Rley # Open this namespace to avoid module qualifier prefixes
         expectations = [
           [:before_ptree, [grm_abc_ptree1]],
           # TODO: fix this test
-          #[:before_subnodes, [root, children]],          
-          #[:before_non_terminal, [root]],
+          # [:before_subnodes, [root, children]],          
+          # [:before_non_terminal, [root]],
 
           # [:before_non_terminal, [big_a_1]],
           # [:before_subnodes, [big_a_1, big_a_1_children]],

@@ -25,10 +25,10 @@ module Rley # This module is used as a namespace
       # @example Building a tiny English grammar
       #   builder = Rley::Syntax::GrammarBuilder.new do
       #     add_terminals('n', 'v', 'adj', 'det')
-      #     rule 'S' => %w(NP VP)
-      #     rule 'VP' => %w(v NP)
-      #     rule 'NP' => %w(det n)
-      #     rule 'NP' => %w(adj NP)
+      #     rule 'S' => %w[NP VP]
+      #     rule 'VP' => %w[v NP]
+      #     rule 'NP' => %w[det n]
+      #     rule 'NP' => %w[adj NP]
       #   end
       #   tiny_eng = builder.grammar
       def initialize(&aBlock)
@@ -54,7 +54,6 @@ module Rley # This module is used as a namespace
         symbols.merge!(new_symbs)
       end
 
-
       # Add a production rule in the grammar given one
       # key-value pair of the form: String => Array.
       #   Where the key is the name of the non-terminal appearing in the
@@ -64,10 +63,10 @@ module Rley # This module is used as a namespace
       # @example Equivalent call syntaxes
       #   builder.add_production('A' => ['a', 'A', 'c'])
       #   builder.rule('A' => ['a', 'A', 'c']) # 'rule' is a synonym
-      #   builder.rule('A' => %w(a A  c)) # Use %w syntax for Array of String
-      #   builder.rule 'A' => %w(a A  c)  # Call parentheses are optional
-      # @param aProductionRepr [Hash{String, Array<String>}] A Hash-based representation 
-      #   of a production.
+      #   builder.rule('A' => %w[a A  c]) # Use %w syntax for Array of String
+      #   builder.rule 'A' => %w[a A  c]  # Call parentheses are optional
+      # @param aProductionRepr [Hash{String, Array<String>}] 
+      #   A Hash-based representation of a production.
       # @return [void]      
       def add_production(aProductionRepr)
         aProductionRepr.each_pair do |(lhs_name, rhs_repr)|
@@ -138,7 +137,6 @@ module Rley # This module is used as a namespace
         return symbs
       end
 
-
       # If the argument is already a grammar symbol object then it is
       # returned as is. Otherwise, the argument is treated as a name
       # for a new instance of the given class.
@@ -165,7 +163,6 @@ module Rley # This module is used as a namespace
         end
         return symbols[aSymbolName]
       end
-
     end # class
   end # module
 end # module

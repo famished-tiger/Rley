@@ -54,12 +54,12 @@ module Rley # This module is used as a namespace
         end
 
         def done?
-          self.to_visit.empty?
+          to_visit.empty?
         end
 
         def next_edge
-          next_one = self.to_visit.shift
-          self.visited << next_one.successor unless next_one.nil?
+          next_one = to_visit.shift
+          visited << next_one.successor unless next_one.nil?
 
           return next_one
         end
@@ -67,9 +67,11 @@ module Rley # This module is used as a namespace
 
       # Walk over all the vertices of the graph that are reachable from a given
       # start vertex. This is a depth-first graph traversal.
-      # @param aStartVertex [StartVertex] the depth-first traversal begins from here
-      # @param visitAction [Proc] block code called when a new graph vertex is found
-      def traverse_df(aStartVertex, &visitAction)
+      # @param aStartVertex [StartVertex] the depth-first traversal begins 
+      #   from here
+      # @param visitAction [Proc] block code called when a new graph vertex 
+      #   is found
+      def traverse_df(aStartVertex, &_visitAction)
         visited = Set.new
         stack = []
         visitee = aStartVertex
@@ -77,7 +79,7 @@ module Rley # This module is used as a namespace
         begin
           first_time = !visited.include?(visitee)
           if first_time
-            visitAction.call(visitee)
+            yield(visitee)
             visited << visitee
           end
 
@@ -104,7 +106,7 @@ module Rley # This module is used as a namespace
           visitee = curr_edge.successor unless curr_edge.nil?
         end until stack.empty?
         # Now process the end vertex matching the initial start vertex
-        visitAction.call(end_vertex_for[aStartVertex.non_terminal])
+        yield(end_vertex_for[aStartVertex.non_terminal])
       end
 
       private
@@ -164,7 +166,6 @@ module Rley # This module is used as a namespace
         end_vertex_for[aNonTerminal] = new_end_vertex
         add_vertex(new_end_vertex)
       end
-
 
       def add_single_item(aDottedItem)
         new_vertex = ItemVertex.new(aDottedItem)
@@ -265,7 +266,6 @@ module Rley # This module is used as a namespace
         ShortcutEdge.new(fromVertex, toVertex)
       end
 
-
       # Retrieve the return edge that matches the given
       # call edge.
       def get_matching_return(aCallEdge)
@@ -277,6 +277,7 @@ module Rley # This module is used as a namespace
 
         # Retrieve the return edge with specified key
         return_edge = end_vertex.edges.find { |edge| edge.key == ret_key }
+        return return_edge
       end
 
       # Mark non-terminal symbols that cannot be derived from the start symbol.

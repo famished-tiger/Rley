@@ -1,3 +1,24 @@
+### 0.4.07 / 2017-05-25
+* [FIX] File `.rubocop.yml`: folder `examples` was excluded from Rubocop control. Now it is in code analysis scope.
+* [NEW] File `spec\.rubocop.yml` to tune the code analysis for Rspec files
+* [NEW] File `examples\.rubocop.yml` to tune the code analysis for example files
+* [CHANGE] Code re-styling to please Rubocop 0.49.0: less than 10 offences remain (from above 200 count!)
+
+
+### 0.4.06 / 2017-05-25
+* [FIX] File `formatter\asciitree.rb` fixed inconsistency in comments that caused Yard warnings.
+* [FIX] File `formatter\bracket_notation.rb` fixed inconsistency in comments that caused Yard warnings.
+* [FIX] File `parser\parse_entry_set.rb` fixed inconsistency in comments that caused Yard warnings.
+* [NEW] Method `Grammar#diagnose` performs a number of checks on the grammar. It detects whether:  
+  there are undefined non-terminals (i.e. non-terminals without a rule that define them)
+  there are non-productive non-terminals (i.e. non-terminals that don't derive a sting of terminals)
+  there are nullable productions and non-terminals.
+* [NEW] Method `GrmFlowGraph#traverse_df` performs depth-first traversal of the GFG.
+* [NEW] Method `GrmFlowGraph#diagnose` determines which terminals are reachable from the start symbol.
+* [NEW] Method `GrmSymbol#generative?` inidcates whether the grammar symbol can produce a sequence of terminals.
+* [CHANGE] Class `GrammarBuilder` Improved the API documentation.
+
+
 ### 0.4.05 / 2017-05-06
 * [CHANGE] File `README.md` Added documentation on how to build parse trees and manipulate them.
 * [CHANGE] File `examples\NLP\mini_en_demo.rb` now emits different parse tree representations.

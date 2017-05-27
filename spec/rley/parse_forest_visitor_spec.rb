@@ -27,7 +27,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
     end
 
     let(:sample_tokens) do
-      build_token_sequence(%w(a b b b), grammar_sppf)
+      build_token_sequence(%w[a b b b], grammar_sppf)
     end
 
     # A forest with just a root node

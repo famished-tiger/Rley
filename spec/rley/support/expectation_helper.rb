@@ -27,7 +27,6 @@ module ExpectationHelper
     end
   end
 
-
   def expected_terminals(anEntrySet, termNames)
     terminals = anEntrySet.expected_terminals
     actual_names = terminals.map(&:name)

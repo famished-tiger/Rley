@@ -23,13 +23,13 @@ module Rley # Open this namespace to avoid module qualifier prefixes
         builder = Rley::Syntax::GrammarBuilder.new do
           add_terminals('N', 'V', 'Pro')  # N(oun), V(erb), Pro(noun)
           add_terminals('Det', 'P')       # Det(erminer), P(reposition)
-          rule 'S' => %w(NP VP)
-          rule 'NP' => %w(Det N)
-          rule 'NP' => %w(Det N PP)
+          rule 'S' => %w[NP VP]
+          rule 'NP' => %w[Det N]
+          rule 'NP' => %w[Det N PP]
           rule 'NP' => 'Pro'
-          rule 'VP' => %w(V NP)
-          rule 'VP' => %w(VP PP)
-          rule 'PP' => %w(P NP)
+          rule 'VP' => %w[V NP]
+          rule 'VP' => %w[VP PP]
+          rule 'PP' => %w[P NP]
         end
         builder.grammar
       end
@@ -111,7 +111,6 @@ module Rley # Open this namespace to avoid module qualifier prefixes
       end
 
       context 'Parse ambiguous sentence' do
-
         subject { ParseForestBuilder.new(sentence_tokens) }
 
         it 'should build a parse forest with a correct root node' do

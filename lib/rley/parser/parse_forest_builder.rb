@@ -82,11 +82,6 @@ module Rley # This module is used as a namespace
           when :backtrack
             # Restore path
             @curr_path = entry2path_to_alt[anEntry].dup
-            # puts "Restore path [#{curr_path.map{|e|e.to_string(0)}.join(', ')}]"
-            antecedent_index = curr_parent.subnodes.size
-            # puts "Current parent #{curr_parent.to_string(0)}"
-            # puts "Antecedent index #{antecedent_index}"
-
 
           when :revisit
             # Retrieve the already existing node corresponding
@@ -101,7 +96,6 @@ module Rley # This module is used as a namespace
             raise NotImplementedError
         end
       end
-
 
       def process_item_entry(anEvent, anEntry, anIndex)
         case anEvent
@@ -150,14 +144,9 @@ module Rley # This module is used as a namespace
           when :backtrack
             # Restore path
             @curr_path = entry2path_to_alt[anEntry].dup
-            # puts "Special restore path [#{curr_path.map{|e|e.to_string(0)}.join(', ')}]"
-            antecedent_index = curr_parent.subnodes.size
-            # puts "Current parent #{curr_parent.to_string(0)}"
-            # puts "Antecedent index #{antecedent_index}"
-
             create_alternative_node(anEntry)
 
-        when :revisit
+          when :revisit
             # Retrieve the grammar symbol before the dot (if any)
             prev_symbol = anEntry.prev_symbol
             case prev_symbol
@@ -181,7 +170,6 @@ module Rley # This module is used as a namespace
         return Rley::SPPF::ParseForest.new(aRootNode)
       end
 
-
       # Factory method. Build and return an SPPF non-terminal node.
       def create_non_terminal_node(anEntry, aRange, nonTSymb = nil)
         non_terminal = nonTSymb.nil? ? anEntry.vertex.non_terminal : nonTSymb
@@ -192,7 +180,6 @@ module Rley # This module is used as a namespace
 
         return new_node
       end
-
 
       # Add an alternative node to the forest
       def create_alternative_node(anEntry)
@@ -220,7 +207,6 @@ module Rley # This module is used as a namespace
         return candidate
       end
 
-
       def create_epsilon_node(anEntry, anIndex)
         new_node = SPPF::EpsilonNode.new(anIndex)
         candidate = add_node_to_forest(new_node)
@@ -232,18 +218,17 @@ module Rley # This module is used as a namespace
       # Add the given node if not yet present in parse forest
       def add_node_to_forest(aNode)
         key_node = aNode.key
-          if forest.include?(key_node)
-            new_node = forest.key2node[key_node]
-          else
-            new_node = aNode
-            forest.key2node[key_node] = new_node
-            # puts "FOREST ADD #{key_node}"
-          end
+        if forest.include?(key_node)
+          new_node = forest.key2node[key_node]
+        else
+          new_node = aNode
+          forest.key2node[key_node] = new_node
+          # puts "FOREST ADD #{key_node}"
+        end
         add_subnode(new_node, false)
 
         return new_node
       end
-
 
       # Add the given node as sub-node of current parent node
       # Optionally add the node to the current path

@@ -35,7 +35,6 @@ module Rley # This module is used as a namespace
         return states.select { |s| s.dotted_rule.next_symbol == aSymbol }
       end
 
-
       # The list of complete ParseState that have the given non-terminal
       # symbol as the lhs of their production.
       def states_rewriting(aNonTerm)

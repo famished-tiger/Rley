@@ -1,7 +1,7 @@
 # File: calc_lexer.rb
 # Lexer for a basic arithmetical expression parser
 require 'strscan'
-require 'rley'  # Load the gem
+require 'rley' # Load the gem
 
 
 class CalcLexer
@@ -16,21 +16,20 @@ class CalcLexer
     '+' => 'PLUS',
     '-' => 'MINUS',
     '*' => 'STAR',
-    '/' => 'DIVIDE',
-  }
+    '/' => 'DIVIDE'
+  }.freeze
 
-  class ScanError < StandardError ; end
+  class ScanError < StandardError; end
 
-public
   def initialize(source, aGrammar)
     @scanner = StringScanner.new(source)
     @name2symbol = aGrammar.name2symbol
-    @lineno =  1
+    @lineno = 1
   end
 
   def tokens()
     tok_sequence = []
-    until @scanner.eos? do
+    until @scanner.eos?
       token = _next_token
       tok_sequence << token unless token.nil?
     end
@@ -38,13 +37,14 @@ public
     return tok_sequence
   end
 
-private
+  private
+
   def _next_token()
     token = nil
     skip_whitespaces
     curr_ch = scanner.getch # curr_ch is at start of token or eof reached...
 
-    begin
+    loop do
       break if curr_ch.nil?
 
       case curr_ch
@@ -66,14 +66,13 @@ private
           sequel = scanner.scan(/.{1,20}/)
           erroneous += sequel unless sequel.nil?
           raise ScanError.new("Unknown token #{erroneous}")
-      end #case
+      end # case
 
-
-    end while (token.nil? && curr_ch = scanner.getch())
+      break unless token.nil? && (curr_ch = scanner.getch)
+    end 
 
     return token
   end
-
 
   def skip_whitespaces()
     matched = scanner.scan(/[ \t\f\n\r]+/)
@@ -84,10 +83,8 @@ private
     newline_detected(newline_count)
   end
 
-
   def newline_detected(count)
     @lineno += count
-    @line_start = scanner.pos()
+    @line_start = scanner.pos
   end
-
 end # class

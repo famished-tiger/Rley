@@ -81,7 +81,6 @@ module Rley # This module is used as a namespace
         output_event(__method__, indentation)
       end
 
-
       # Method called by a ParseTreeVisitor to which the formatter subscribed.
       # Notification of a visit event: the visitor completed the visit
       # of the given parse tree

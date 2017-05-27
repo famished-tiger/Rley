@@ -88,8 +88,6 @@ module Rley # This module is used as a namespace
         undefined.each { |n_term| n_term.undefined = true }
       end
 
-
-
       # Mark all non-terminals and production rules as
       # generative or not.
       # A production is generative when it can derive a string of terminals.
@@ -101,7 +99,7 @@ module Rley # This module is used as a namespace
         curr_marked = []
 
         # Iterate until no new rule can be marked.
-        begin
+        loop do
           prev_marked = curr_marked.dup
 
           rules.each do |a_rule|
@@ -123,7 +121,8 @@ module Rley # This module is used as a namespace
             curr_marked << a_rule
             could_mark_nterm_generative(a_rule)
           end
-        end until prev_marked.size == curr_marked.size
+          break if prev_marked.size == curr_marked.size
+        end 
 
         # The nonterminals that are not marked yet are non-generative
         non_terminals.each do |nterm|
@@ -151,13 +150,12 @@ module Rley # This module is used as a namespace
             nterm.generative = true
             all_false = false
             break
-          else
-            all_false = false if prod.generative?.nil?
+          elsif prod.generative?.nil?
+            all_false = false
           end
         end
         nterm.generative = false if all_false
       end
-
 
       # For each non-terminal determine whether it is nullable or not.
       # A nullable nonterminal is a nonterminal that can match an empty string.
@@ -189,7 +187,6 @@ module Rley # This module is used as a namespace
         end
       end
 
-
       # Return the set of nonterminals which have one of their
       # production rules empty
       def direct_nullable()
@@ -216,7 +213,6 @@ module Rley # This module is used as a namespace
       def rules_for(aNonTerm)
         rules.select { |a_rule| a_rule.lhs == aNonTerm }
       end
-
     end # class
   end # module
 end # module

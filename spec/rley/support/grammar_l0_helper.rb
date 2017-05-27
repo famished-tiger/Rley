@@ -13,17 +13,17 @@ module GrammarL0Helper
     builder = Rley::Syntax::GrammarBuilder.new do
       add_terminals('Noun', 'Verb', 'Pronoun', 'Proper-Noun')
       add_terminals('Determiner', 'Preposition')
-      rule 'S' => %w(NP VP)
+      rule 'S' => %w[NP VP]
       rule 'NP' => 'Pronoun'
       rule 'NP' => 'Proper-Noun'
-      rule 'NP' => %w(Determiner Nominal)
-      rule 'Nominal' => %w(Nominal Noun)
+      rule 'NP' => %w[Determiner Nominal]
+      rule 'Nominal' => %w[Nominal Noun]
       rule 'Nominal' => 'Noun'
       rule 'VP' => 'Verb'
-      rule 'VP' => %w(Verb NP)
-      rule 'VP' => %w(Verb NP PP)
-      rule 'VP' => %w(Verb PP)
-      rule 'PP' => %w(Preposition PP)
+      rule 'VP' => %w[Verb NP]
+      rule 'VP' => %w[Verb NP PP]
+      rule 'VP' => %w[Verb PP]
+      rule 'PP' => %w[Preposition PP]
     end
     builder
   end
@@ -64,7 +64,6 @@ module GrammarL0Helper
       'near' => 'Preposition'
     }
   end
-
 
   # Highly simplified tokenizer implementation.
   def tokenizer_l0(aText, aGrammar)

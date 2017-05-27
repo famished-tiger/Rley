@@ -21,7 +21,7 @@ module Rley # This module is used as a namespace
       def parse(aTokenSequence)
         result = GFGParsing.new(gf_graph, aTokenSequence)
         last_token_index = aTokenSequence.size
-        if last_token_index == 0 && !grammar.start_symbol.nullable?
+        if last_token_index.zero? && !grammar.start_symbol.nullable?
           return unexpected_empty_input(result)
         end
 
@@ -104,7 +104,6 @@ module Rley # This module is used as a namespace
         aParsing.faulty(NoInput.new)
         return aParsing
       end 
-
     end # class
   end # module
 end # module

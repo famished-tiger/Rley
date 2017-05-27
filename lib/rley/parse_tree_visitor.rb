@@ -37,13 +37,11 @@ module Rley # This module is used as a namespace
       ptree.accept(self)
     end
 
-
     # Visit event. The visitor is about to visit the ptree.
     # @param aParseTree [ParseTree] the ptree to visit.
     def start_visit_ptree(aParseTree)
       broadcast(:before_ptree, aParseTree)
     end
-
 
     # Visit event. The visitor is about to visit the given non terminal node.
     # @param aNonTerminalNode [NonTerminalNode] the node to visit.
@@ -65,7 +63,6 @@ module Rley # This module is used as a namespace
       broadcast(:before_terminal, aTerminalNode)
       broadcast(:after_terminal, aTerminalNode)
     end
-
 
     # Visit event. The visitor has completed its visit of the given
     # non-terminal node.

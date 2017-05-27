@@ -77,7 +77,6 @@ module Rley # This module is used as a namespace
         end
       end
 
-
       def process_item_entry(anEvent, anEntry, anIndex)
         case anEvent
           when :visit
@@ -117,32 +116,8 @@ module Rley # This module is used as a namespace
                 curr_path.pop if curr_parent.kind_of?(SPPF::AlternativeNode)
             end
 
-          when :backtrack
-            # # Restore path
-            # @curr_path = entry2path_to_alt[anEntry].dup
-            # # puts "Special restore path [#{curr_path.map{|e|e.to_string(0)}.join(', ')}]"
-            # antecedent_index = curr_parent.subnodes.size
-            # # puts "Current parent #{curr_parent.to_string(0)}"
-            # # puts "Antecedent index #{antecedent_index}"
-
-            # create_alternative_node(anEntry)
-
-        when :revisit
-            # # Retrieve the grammar symbol before the dot (if any)
-            # prev_symbol = anEntry.prev_symbol
-            # case prev_symbol
-              # when Syntax::Terminal
-                # # Add node without changing current path
-                # create_token_node(anEntry, anIndex)
-
-              # when NilClass # Dot at the beginning of production
-                # if anEntry.vertex.dotted_item.production.empty?
-                  # # Empty rhs => create an epsilon node ...
-                  # # ... without changing current path
-                  # create_epsilon_node(anEntry, anIndex)
-                # end
-                # curr_path.pop if curr_parent.kind_of?(PTree::AlternativeNode)
-            # end
+          # when :backtrack
+          # when :revisit
         end
       end
 
@@ -150,7 +125,6 @@ module Rley # This module is used as a namespace
       def create_tree(aRootNode)
         return Rley::PTree::ParseTree.new(aRootNode)
       end
-
 
       # Factory method. Build and return an PTree non-terminal node.
       def create_non_terminal_node(anEntry, aRange, nonTSymb = nil)
@@ -162,7 +136,6 @@ module Rley # This module is used as a namespace
 
         return new_node
       end
-
 
       # Add an alternative node to the tree
       def create_alternative_node(anEntry)
@@ -198,7 +171,6 @@ module Rley # This module is used as a namespace
 
         return new_node
       end
-
 
       # Add the given node as sub-node of current parent node
       # Optionally add the node to the current path

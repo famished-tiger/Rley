@@ -20,7 +20,6 @@ module Rley # This module is used as a namespace
         @root = theRootNode
       end
 
-
       # Part of the 'visitee' role in the Visitor design pattern.
       #   A visitee is expected to accept the visit from a visitor object
       # @param aVisitor [ParseTreeVisitor] the visitor object

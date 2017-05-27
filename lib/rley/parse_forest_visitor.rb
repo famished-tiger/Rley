@@ -40,13 +40,11 @@ module Rley # This module is used as a namespace
       pforest.accept(self)
     end
 
-
     # Visit event. The visitor is about to visit the pforest.
     # @param aParseForest [ParseForest] the pforest to visit.
     def start_visit_pforest(aParseForest)
       broadcast(:before_pforest, aParseForest)
     end
-
 
     # Visit event. The visitor is about to visit the given non terminal node.
     # @param aNonTerminalNode [NonTerminalNode] the node to visit.
@@ -68,7 +66,6 @@ module Rley # This module is used as a namespace
       broadcast(:before_terminal, aTerminalNode)
       broadcast(:after_terminal, aTerminalNode)
     end
-
 
     # Visit event. The visitor has completed its visit of the given
     # non-terminal node.

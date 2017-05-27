@@ -33,7 +33,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
       end
 
       let(:grm1_tokens) do
-        build_token_sequence(%w(a a b c c), grammar_abc)
+        build_token_sequence(%w[a a b c c], grammar_abc)
       end
 
 
@@ -116,7 +116,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
             'A => . b | 0'          # start rule
           ]
           compare_entry_texts(parse_result.chart[0], expected)
-          expected_terminals(parse_result.chart[0], %w(a b))
+          expected_terminals(parse_result.chart[0], %w[a b])
 
           ######################
           # Expectation chart[1]:
@@ -129,7 +129,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           entry_set_1 = parse_result.chart[1]
           expect(entry_set_1.entries.size).to eq(4)
           compare_entry_texts(entry_set_1, expected)
-          expected_terminals(parse_result.chart[1], %w(a b))
+          expected_terminals(parse_result.chart[1], %w[a b])
 
           ######################
           # Expectation chart[2]:
@@ -142,7 +142,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           entry_set_2 = parse_result.chart[2]
           expect(entry_set_2.entries.size).to eq(4)
           compare_entry_texts(entry_set_2, expected)
-          expected_terminals(parse_result.chart[2], %w(a b))
+          expected_terminals(parse_result.chart[2], %w[a b])
 
           ######################
           # Expectation chart[3]:
@@ -154,7 +154,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           entry_set_3 = parse_result.chart[3]
           expect(entry_set_3.entries.size).to eq(3)
           compare_entry_texts(entry_set_3, expected)
-          expected_terminals(parse_result.chart[3], %w(c))
+          expected_terminals(parse_result.chart[3], ['c'])
 
 
           ######################
@@ -167,7 +167,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           entry_set_4 = parse_result.chart[4]
           expect(entry_set_4.entries.size).to eq(3)
           compare_entry_texts(entry_set_4, expected)
-          expected_terminals(parse_result.chart[4], %w(c))
+          expected_terminals(parse_result.chart[4], ['c'])
 
           ######################
           # Expectation chart[5]:
@@ -286,7 +286,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
 
           builder = Syntax::GrammarBuilder.new
           builder.add_terminals(t_x)
-          builder.add_production('Ss' => %w(A A x))
+          builder.add_production('Ss' => %w[A A x])
           builder.add_production('A' => [])
           tokens = [ Tokens::Token.new('x', t_x) ]
 
@@ -331,8 +331,8 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           builder = Syntax::GrammarBuilder.new do
             add_terminals(t_int, t_plus, t_star)
             rule 'P' => 'S'
-            rule 'S' => %w(S + S)
-            rule 'S' => %w(S * S)
+            rule 'S' => %w[S + S]
+            rule 'S' => %w[S * S]
             rule 'S' => 'L'
             rule 'L' => 'integer'
           end
@@ -555,14 +555,14 @@ module Rley # Open this namespace to avoid module qualifier prefixes
 
         it 'should parse an invalid simple input' do
           # Parse an erroneous input (b is missing)
-          wrong = build_token_sequence(%w(a a c c), grammar_abc)
+          wrong = build_token_sequence(%w[a a c c], grammar_abc)
           parse_result = subject.parse(wrong)
           expect(parse_result.success?).to eq(false)
           err_msg = <<-MSG
 Syntax error at or near token 3 >>>c<<<
 Expected one of: ['a', 'b'], found a 'c' instead.
 MSG
-          expect(parse_result.failure_reason.message).to eq(err_msg.chomp)            
+          expect(parse_result.failure_reason.message).to eq(err_msg.chomp)
         end
 
         it 'should report error when no input provided but was required' do
@@ -729,7 +729,7 @@ MSG
           builder = Syntax::GrammarBuilder.new do
             add_terminals(t_a, t_star, t_slash)
             rule 'Z' => 'E'
-            rule 'E' => %w(E Q F)
+            rule 'E' => %w[E Q F]
             rule 'E' => 'F'
             rule 'F' => t_a
             rule 'Q' => t_star
@@ -737,7 +737,7 @@ MSG
             rule 'Q' => [] # Empty production
           end
 
-          tokens = build_token_sequence(%w(a a / a), builder.grammar)
+          tokens = build_token_sequence(%w[a a / a], builder.grammar)
           instance = GFGEarleyParser.new(builder.grammar)
           expect { instance.parse(tokens) }.not_to raise_error
           parse_result = instance.parse(tokens)
@@ -843,10 +843,10 @@ MSG
           # input tokens
           builder = Syntax::GrammarBuilder.new
           builder.add_terminals('a')
-          builder.add_production('S' => %w(a S))
+          builder.add_production('S' => %w[a S])
           builder.add_production('S' => [])
           grammar = builder.grammar
-          tokens = build_token_sequence(%w(a a a a), grammar)
+          tokens = build_token_sequence(%w[a a a a], grammar)
 
           instance = GFGEarleyParser.new(grammar)
           parse_result = instance.parse(tokens)

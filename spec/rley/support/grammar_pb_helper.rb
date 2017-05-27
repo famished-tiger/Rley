@@ -5,7 +5,6 @@ require_relative '../../../lib/rley/tokens/token'
 
 # Utility class.
 class GrammarPBHelper
-
   # Factory method. Creates a grammar for a basic arithmetic
   # expression based on example found in paper of
   # K. Pingali and G. Bilardi:
@@ -20,8 +19,8 @@ class GrammarPBHelper
         add_terminals(t_int, t_plus, t_lparen, t_rparen)
         rule 'S' => 'E'
         rule 'E' => 'int'
-        rule 'E' => %w(( E + E ))
-        rule 'E' => %w(E + E)
+        rule 'E' => %w[( E + E )]
+        rule 'E' => %w[E + E]
       end
       builder.grammar
     end

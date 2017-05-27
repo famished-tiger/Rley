@@ -79,7 +79,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
       let(:prod_S) { Production.new(nt_S, [nt_A]) }
       let(:prod_A1) { Production.new(nt_A, [a_, nt_A, c_]) }
       let(:prod_A2) { Production.new(nt_A, [b_]) }
-      let(:prod_A3) {Production.new(nt_A, [c_, nt_C] ) }
+      let(:prod_A3) { Production.new(nt_A, [c_, nt_C]) }
 
 =begin
       # Non-terminals that specify the lexicon of the language
@@ -170,7 +170,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           prod_S1 = Rley::Syntax::Production.new(nt_S, [nt_A])
           prod_S2 = Rley::Syntax::Production.new(nt_S, [nt_B])
           prod_A = Rley::Syntax::Production.new(nt_A, [a_])
-          prod_B = Rley::Syntax::Production.new(nt_B, [nt_C, b_]) # C is undefined
+          prod_B = Rley::Syntax::Production.new(nt_B, [nt_C, b_]) # C undefined
           instance = Grammar.new([prod_S1, prod_S2, prod_A, prod_B])
           undefineds = instance.non_terminals.select(&:undefined?)
           expect(undefineds.size).to eq(1)
@@ -185,7 +185,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           prod_S1 = Rley::Syntax::Production.new(nt_S, [nt_A])
           prod_S2 = Rley::Syntax::Production.new(nt_S, [nt_B])
           prod_A = Rley::Syntax::Production.new(nt_A, [a_])
-          prod_B = Rley::Syntax::Production.new(nt_B, [nt_C, b_]) # C is undefined
+          prod_B = Rley::Syntax::Production.new(nt_B, [nt_C, b_]) # C undefined
           instance = Grammar.new([prod_S1, prod_S2, prod_A, prod_B])
           partitioning = instance.non_terminals.partition(&:generative?)
           expect(partitioning[0].size).to eq(2)
@@ -200,13 +200,13 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           # 'B' => 'C'
           # 'C' => 'D'
           # 'D' => 'B'
-          prod_S1 = Rley::Syntax::Production.new(nt_S, [nt_A])
-          prod_S2 = Rley::Syntax::Production.new(nt_S, [nt_B])
-          prod_A = Rley::Syntax::Production.new(nt_A, [a_])
-          prod_B = Rley::Syntax::Production.new(nt_B, [nt_C])
-          prod_C = Rley::Syntax::Production.new(nt_C, [nt_D])
-          prod_D = Rley::Syntax::Production.new(nt_D, [nt_B])
-          instance = Grammar.new([prod_S1, prod_S2, prod_A, prod_B, prod_C, prod_D])
+          prd_S1 = Rley::Syntax::Production.new(nt_S, [nt_A])
+          prd_S2 = Rley::Syntax::Production.new(nt_S, [nt_B])
+          prd_A = Rley::Syntax::Production.new(nt_A, [a_])
+          prd_B = Rley::Syntax::Production.new(nt_B, [nt_C])
+          prd_C = Rley::Syntax::Production.new(nt_C, [nt_D])
+          prd_D = Rley::Syntax::Production.new(nt_D, [nt_B])
+          instance = Grammar.new([prd_S1, prd_S2, prd_A, prd_B, prd_C, prd_D])
           partitioning = instance.non_terminals.partition(&:generative?)
           expect(partitioning[0].size).to eq(2)
           expect(partitioning[0]).to eq([nt_S, nt_A])
@@ -241,7 +241,6 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           end
         end
       end # context
-
     end # describe
   end # module
 end # module

@@ -11,14 +11,12 @@ module Rley # This module is used as a namespace
     # For Ruby developers, there is RSyntaxTree by Yoichiro Hasebe.
     # (accessible via: http://yohasebe.com/rsyntaxtree/)
     class BracketNotation < BaseFormatter
-
       # Constructor.
       # @param anIO [IO] The output stream to which the rendered grammar
       # is written.
       def initialize(anIO)
         super(anIO)
       end
-
 
       # Method called by a ParseTreeVisitor to which the formatter subscribed.
       # Notification of a visit event: the visitor is about to visit
@@ -27,7 +25,6 @@ module Rley # This module is used as a namespace
       def before_non_terminal(aNonTerm)
         write("[#{aNonTerm.symbol.name} ")
       end
-
 
       # Method called by a ParseTreeVisitor to which the formatter subscribed.
       # Notification of a visit event: the visitor is about to visit
@@ -43,8 +40,8 @@ module Rley # This module is used as a namespace
       # @param aTerm [TerminalNode]
       def after_terminal(aTerm)
         # Escape all opening and closing square brackets
-        escape_lbrackets = aTerm.token.lexeme.gsub(/\[/, "\\[")
-        escaped = escape_lbrackets.gsub(/\]/, "\\]")
+        escape_lbrackets = aTerm.token.lexeme.gsub(/\[/, '\[')
+        escaped = escape_lbrackets.gsub(/\]/, '\]')
         write(escaped + ']')
       end
 

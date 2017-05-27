@@ -1,5 +1,5 @@
 # Grammar for simple arithmetical expressions
-require 'rley'  # Load the gem
+require 'rley' # Load the gem
 
 ########################################
 # Define a grammar for basic arithmetical expressions
@@ -8,13 +8,13 @@ builder = Rley::Syntax::GrammarBuilder.new do
   add_terminals('LPAREN', 'RPAREN') # For '(', ')' delimiters
   add_terminals('PLUS', 'MINUS') # For '+', '-' operators or sign
   add_terminals('STAR', 'DIVIDE') # For '*', '/' operators
-  rule 'expression' => %w(sign simple_expression)
+  rule 'expression' => %w[sign simple_expression]
   rule 'simple_expression' => 'term'
-  rule 'simple_expression' => %w(simple_expression add_operator term)
+  rule 'simple_expression' => %w[simple_expression add_operator term]
   rule 'term' => 'factor'
-  rule 'term' => %w(term mul_operator factor)
+  rule 'term' => %w[term mul_operator factor]
   rule 'factor' => 'NUMBER'
-  rule 'factor' => %w(LPAREN expression RPAREN)
+  rule 'factor' => %w[LPAREN expression RPAREN]
   rule 'sign' => 'PLUS'
   rule 'sign' => 'MINUS'
   rule 'sign' => []

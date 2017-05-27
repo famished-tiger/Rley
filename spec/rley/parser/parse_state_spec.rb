@@ -74,6 +74,14 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           diff_rule = ParseState.new(other_dotted_rule, 3)
           expect(subject == diff_rule).to eq(false)
         end
+        
+        it 'should know if the parsing is at the start of the production' do
+          expect(subject).not_to be_predicted
+          at_start = DottedItem.new(sample_prod, 0)
+
+          instance = ParseState.new(at_start, 0)
+          expect(instance).to be_predicted
+        end        
 
         it 'should know if the parsing reached the end of the production' do
           expect(subject).not_to be_complete

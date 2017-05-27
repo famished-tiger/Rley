@@ -42,10 +42,10 @@ module Rley # Open this namespace to avoid module qualifier prefixes
       end
 
       let(:grm1_tokens) do
-        build_token_sequence(%w(a a b c c), grm1)
+        build_token_sequence(%w[a a b c c], grm1)
       end
 
-      let(:grm1_token_b) { build_token_sequence(%w(b), grm1) }
+      let(:grm1_token_b) { build_token_sequence(['b'], grm1) }
 
       # Helper method. Create an array of dotted items
       # from the abc grammar
@@ -297,7 +297,7 @@ SNIPPET
         end
 
         let(:token_seq1) do
-          %w(a a b c c).map do |letter|
+          %w[a a b c c].map do |letter|
             Tokens::Token.new(letter, sample_grammar1.name2symbol[letter])
           end
         end

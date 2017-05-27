@@ -40,7 +40,7 @@ module Rley # This module is used as a namespace
 
       # Does this parse state have the 'other' as successor?
       def precedes?(other)
-        return false if self == other
+        return false if other == self
 
         return false unless origin == other.origin
         other_production = other.dotted_rule.production

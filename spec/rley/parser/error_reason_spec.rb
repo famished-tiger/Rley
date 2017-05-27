@@ -36,15 +36,17 @@ module Rley # Open this namespace to avoid module qualifier prefixes
     describe ExpectationNotMet do
       let(:err_token) { double('fake-token') }
       let(:terminals) do
-        ['PLUS', 'LPAREN'].map { |name| Syntax::Terminal.new(name) }
+        %w[PLUS LPAREN].map { |name| Syntax::Terminal.new(name) }
       end
 
       # Default instantiation rule
-      subject { ExpectationNotMet.new(3, err_token, terminals)  }
+      subject { ExpectationNotMet.new(3, err_token, terminals) }
 
       context 'Initialization:' do
         it 'should be created with arguments' do
-          expect { ExpectationNotMet.new(3, err_token, terminals) }.not_to raise_error
+          expect do 
+            ExpectationNotMet.new(3, err_token, terminals) 
+          end.not_to raise_error
         end
 
         it 'should know the error position' do
@@ -57,21 +59,22 @@ module Rley # Open this namespace to avoid module qualifier prefixes
       end # context
     end # describe
 
-
     describe UnexpectedToken do
-      let(:err_lexeme) { '-'}
+      let(:err_lexeme) { '-' }
       let(:err_terminal) { Syntax::Terminal.new('MINUS') }
       let(:err_token) { Tokens::Token.new(err_lexeme, err_terminal) }
       let(:terminals) do
-        ['PLUS', 'LPAREN'].map { |name| Syntax::Terminal.new(name) }
+        %w[PLUS LPAREN].map { |name| Syntax::Terminal.new(name) }
       end
 
       # Default instantiation rule
-      subject { UnexpectedToken.new(3, err_token, terminals)  }
+      subject { UnexpectedToken.new(3, err_token, terminals) }
 
       context 'Initialization:' do
         it 'should be created with arguments' do
-          expect { UnexpectedToken.new(3, err_token, terminals) }.not_to raise_error
+          expect do 
+            UnexpectedToken.new(3, err_token, terminals) 
+          end.not_to raise_error
         end
       end # context
 
@@ -85,22 +88,24 @@ MSG_END
           expect(subject.message).to eq(text.chomp)
         end
       end # context
-    end #describe
+    end # describe
 
     describe PrematureInputEnd do
-      let(:err_lexeme) { '+'}
+      let(:err_lexeme) { '+' }
       let(:err_terminal) { Syntax::Terminal.new('PLUS') }
       let(:err_token) { Tokens::Token.new(err_lexeme, err_terminal) }
       let(:terminals) do
-        ['INT', 'LPAREN'].map { |name| Syntax::Terminal.new(name) }
+        %w[INT LPAREN].map { |name| Syntax::Terminal.new(name) }
       end
 
       # Default instantiation rule
-      subject { PrematureInputEnd.new(3, err_token, terminals)  }
+      subject { PrematureInputEnd.new(3, err_token, terminals) }
 
       context 'Initialization:' do
         it 'should be created with arguments' do
-          expect { PrematureInputEnd.new(3, err_token, terminals) }.not_to raise_error
+          expect do 
+            PrematureInputEnd.new(3, err_token, terminals) 
+          end.not_to raise_error
         end
       end # context
 

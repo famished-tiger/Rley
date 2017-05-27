@@ -10,14 +10,15 @@ module Rley # This module is used as a namespace
     # in other words every occurrence of the LHS can be substituted to
     # corresponding RHS.
     class Production
-      # The right-hand side (rhs) consists of a sequence of grammar symbols
+      # @return [SymbolSeq] The right-hand side (rhs).
       attr_reader(:rhs)
 
-      # The left-hand side of the rule. It must be a non-terminal symbol
+      # @return [NonTerminal] The left-hand side of the rule.
       attr_reader(:lhs)
       
-      # A production is generative when all of its rhs members are generative (that as, they
-      # can each generate/derive a non-empty string of terminals).
+      # @return [Boolean ]A production is generative when all of its 
+      # rhs members are generative (that is, they can each generate/derive
+      # a non-empty string of terminals).
       attr_writer(:generative)      
 
       # Provide common alternate names to lhs and rhs accessors

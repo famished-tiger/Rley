@@ -13,7 +13,6 @@ module Rley # This module is used as a namespace
         @subnodes = []
       end
 
-
       def add_subnode(aSubnode)
         subnodes.unshift(aSubnode)
       end

@@ -22,7 +22,8 @@ module Rley # Open this namespace to avoid module qualifier prefixes
 
       context 'Initialization with argument:' do
         it 'could be created with a block argument' do
-          expect do GrammarBuilder.new { nil }
+          expect do 
+            GrammarBuilder.new { nil }
           end.not_to raise_error
         end
 
@@ -90,7 +91,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           expect(new_prod.lhs).to eq(subject['S'])
           expect(new_prod.rhs[0]).to eq(subject['A'])
 
-          subject.add_production('A' => %w(a A c))
+          subject.add_production('A' => %w[a A c])
           expect(subject.productions.size).to eq(2)
           new_prod = subject.productions.last
           expect(new_prod.lhs).to eq(subject['A'])
@@ -111,7 +112,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           instance = GrammarBuilder.new do
             add_terminals('a', 'b', 'c')
             add_production('S' => ['A'])
-            add_production('A' => %w(a A c))
+            add_production('A' => %w[a A c])
             add_production('A' => ['b'])
           end
 
@@ -175,7 +176,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           builder = GrammarBuilder.new
           builder.add_terminals(t_a, t_star, t_slash)
           builder.add_production('S' => 'E')
-          builder.add_production('E' => %w(E Q F))
+          builder.add_production('E' => %w[E Q F])
           builder.add_production('E' => 'F')
           builder.add_production('F' => t_a)
           builder.add_production('Q' => t_star)

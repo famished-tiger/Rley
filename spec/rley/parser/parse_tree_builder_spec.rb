@@ -16,7 +16,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
       include GrammarBExprHelper # Mix-in for basic arithmetic language
 
       let(:sample_grammar) do
-          builder = grammar_expr_builder()
+          builder = grammar_expr_builder
           builder.grammar
       end
 
@@ -33,9 +33,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
 
       # Emit a text representation of the current path.
       def path_to_s()
-        text_parts = subject.curr_path.map do |path_element|
-          path_element.to_s
-        end
+        text_parts = subject.curr_path.map(&:to_s)
         return text_parts.join('/')
       end
 
@@ -94,7 +92,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           next_event(:visit, 'P => S . | 0') # Event 2
           next_event(:visit, 'S. | 0') # Event 3
           next_event(:visit, 'S => S + M . | 0') # Event 4
-          expected_curr_path('P[0, 5]/S[0, 5]')          
+          expected_curr_path('P[0, 5]/S[0, 5]')
           next_event(:visit, 'M. | 2') # Event 5
           expected_curr_path('P[0, 5]/S[0, 5]/M[2, 5]')
           next_event(:visit, 'M => M * T . | 2') # Event 6
@@ -112,7 +110,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           next_event(:visit, 'T => . integer | 4') # Event 9
           expected_curr_path('P[0, 5]/S[0, 5]/M[2, 5]/T[4, 5]')
           expected_first_child("integer[4, 5]: '4'")
-          expect(subject.curr_parent.subnodes.size).to eq(1)          
+          expect(subject.curr_parent.subnodes.size).to eq(1)
         end
 
         it 'should handle the remaining events' do
@@ -125,8 +123,8 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           expected_curr_path('P[0, 5]/S[0, 5]/M[2, 5]')
 
           next_event(:visit, 'M => M * . T | 2') # Event 11
-          
-          next_event(:visit, 'M => M . * T | 2') # Event 12          
+
+          next_event(:visit, 'M => M . * T | 2') # Event 12
           expected_curr_path('P[0, 5]/S[0, 5]/M[2, 5]')
           expect(subject.curr_parent.subnodes.size).to eq(2)
           expected_first_child("*[3, 4]: '*'")
@@ -146,44 +144,44 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           expected_first_child("integer[2, 3]: '3'")
 
           next_event(:visit, 'T => . integer | 2') # Event 17
-          
+
           next_event(:visit, '.T | 2') # Event 18
-          expected_curr_path('P[0, 5]/S[0, 5]/M[2, 5]/M[2, 3]')          
+          expected_curr_path('P[0, 5]/S[0, 5]/M[2, 5]/M[2, 3]')
 
           next_event(:visit, 'M => . T | 2') # Event 19
           expected_curr_path('P[0, 5]/S[0, 5]/M[2, 5]/M[2, 3]')
 
           next_event(:visit, '.M | 2') # Event 20
           expected_curr_path('P[0, 5]/S[0, 5]/M[2, 5]')
- 
+
           next_event(:visit, 'M => . M * T | 2') # Event 21
-          expected_curr_path('P[0, 5]/S[0, 5]/M[2, 5]') 
+          expected_curr_path('P[0, 5]/S[0, 5]/M[2, 5]')
 
           next_event(:revisit, '.M | 2') # Revisit Event 22
-          expected_curr_path('P[0, 5]/S[0, 5]')          
- 
+          expected_curr_path('P[0, 5]/S[0, 5]')
+
           next_event(:visit, 'S => S + . M | 0') # Event 23
           expected_curr_path('P[0, 5]/S[0, 5]')
 
           next_event(:visit, 'S => S . + M | 0') # Event 24
           expected_curr_path('P[0, 5]/S[0, 5]')
           expect(subject.curr_parent.subnodes.size).to eq(2)
-          expected_first_child("+[1, 2]: '+'")          
-          
+          expected_first_child("+[1, 2]: '+'")
+
           next_event(:visit, 'S. | 0') # Event 25
-          expected_curr_path('P[0, 5]/S[0, 5]/S[0, 1]')          
+          expected_curr_path('P[0, 5]/S[0, 5]/S[0, 1]')
 
           next_event(:visit, 'S => M . | 0') # Event 26
           expected_curr_path('P[0, 5]/S[0, 5]/S[0, 1]')
-          
+
           next_event(:visit, 'M. | 0') # Event 27
           expected_curr_path('P[0, 5]/S[0, 5]/S[0, 1]/M[0, 1]')
 
           next_event(:visit, 'M => T . | 0') # Event 28
-          expected_curr_path('P[0, 5]/S[0, 5]/S[0, 1]/M[0, 1]') 
+          expected_curr_path('P[0, 5]/S[0, 5]/S[0, 1]/M[0, 1]')
 
           next_event(:visit, 'T. | 0') # Event 29
-          expected_curr_path('P[0, 5]/S[0, 5]/S[0, 1]/M[0, 1]/T[0, 1]')           
+          expected_curr_path('P[0, 5]/S[0, 5]/S[0, 1]/M[0, 1]/T[0, 1]')
 
           next_event(:visit, 'T => integer . | 0') # Event 30
           expected_curr_path('P[0, 5]/S[0, 5]/S[0, 1]/M[0, 1]/T[0, 1]')
@@ -194,17 +192,17 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           expected_first_child("integer[0, 1]: '2'")
 
           next_event(:visit, '.T | 0') # Event 32
-          expected_curr_path('P[0, 5]/S[0, 5]/S[0, 1]/M[0, 1]')  
+          expected_curr_path('P[0, 5]/S[0, 5]/S[0, 1]/M[0, 1]')
 
           next_event(:visit, 'M => . T | 0') # Event 33
-          expected_curr_path('P[0, 5]/S[0, 5]/S[0, 1]/M[0, 1]')           
+          expected_curr_path('P[0, 5]/S[0, 5]/S[0, 1]/M[0, 1]')
 
           next_event(:visit, '.M | 0') # Event 34
-          expected_curr_path('P[0, 5]/S[0, 5]/S[0, 1]') 
+          expected_curr_path('P[0, 5]/S[0, 5]/S[0, 1]')
 
           next_event(:visit, 'S => . M | 0') # Event 35
           expected_curr_path('P[0, 5]/S[0, 5]/S[0, 1]')
-          
+
           next_event(:visit, '.S | 0') # Event 36
           expected_curr_path('P[0, 5]/S[0, 5]')
 
@@ -215,12 +213,12 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           expected_curr_path('P[0, 5]')
 
           next_event(:visit, 'P => . S | 0') # Event 39
-          expected_curr_path('P[0, 5]')            
+          expected_curr_path('P[0, 5]')
 
-          next_event(:visit, '.P | 0') # Event 39         
+          next_event(:visit, '.P | 0') # Event 39
           expect(path_to_s).to be_empty
         end
-        
+
         it 'should build parse trees' do
           loop do
             event = @walker.next
@@ -241,10 +239,9 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           second_grandchild = child_node.subnodes[1]
           expect(second_grandchild.to_s).to eq("+[1, 2]: '+'")
           third_grandchild = child_node.subnodes[2]
-          expect(third_grandchild.to_s).to eq('M[2, 5]')           
+          expect(third_grandchild.to_s).to eq('M[2, 5]')
         end
       end # context
-
     end # describe
   end # module
 end # module

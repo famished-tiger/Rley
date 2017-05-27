@@ -11,9 +11,9 @@ module GrammarBExprHelper
     builder = Rley::Syntax::GrammarBuilder.new do
       add_terminals('+', '*', 'integer')
       rule 'P' => 'S'
-      rule 'S' => %w(S + M)
+      rule 'S' => %w[S + M]
       rule 'S' => 'M'
-      rule 'M' => %w(M * T)
+      rule 'M' => %w[M * T]
       rule 'M' => 'T'
       rule 'T' => 'integer'
     end

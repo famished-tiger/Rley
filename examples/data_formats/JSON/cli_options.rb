@@ -2,10 +2,9 @@ require 'optparse'
 
 # A Hash specialization that collects the command-line options
 class CLIOptions < Hash
-#labelled square notation (LBN).
-#Use online tools (e.g. http://yohasebe.com/rsyntaxtree/) to visualize
-#parse trees from LBN output.
-
+  # labelled square notation (LBN).
+  # Use online tools (e.g. http://yohasebe.com/rsyntaxtree/) to visualize
+  # parse trees from LBN output.
   def initialize(progName, progVersion, args)
     super()
     
@@ -42,7 +41,7 @@ Select the output format (default: ascii_tree). Available formats:
               Use online tools (e.g. http://yohasebe.com/rsyntaxtree/) 
               to visualize parse trees from LBN output.
 END_TEXT
-      formats = %i(ascii_tree labelled)
+      formats = %i[ascii_tree labelled]
       opts.on('-f', '--format FORMAT', formats, format_help) do |frm|
         self[:format] = frm
       end

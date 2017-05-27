@@ -66,7 +66,6 @@ module Rley # This module is used as a namespace
         return vertex.kind_of?(GFG::EndVertex)
       end
 
-
       # Return the symbol before the dot (if any)
       def prev_symbol()
         return vertex.prev_symbol

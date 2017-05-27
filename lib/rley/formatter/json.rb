@@ -68,7 +68,6 @@ module Rley # This module is used as a namespace
         sibling_flags[-1] = true
       end
 
-
       # Method called by a ParseTreeVisitor to which the formatter subscribed.
       # Notification of a visit event: the visitor completed the visit of
       # the children of a non-terminal node.

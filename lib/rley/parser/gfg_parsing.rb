@@ -128,7 +128,6 @@ module Rley # This module is used as a namespace
         return true
       end
 
-
       # Return true if the parse was successful (= input tokens
       # followed the syntax specified by the grammar)
       def success?()
@@ -180,11 +179,9 @@ module Rley # This module is used as a namespace
 
       # A notification that the parsing reached an end
       def done
-        unless self.success? || self.failure_reason
-          # Parse not successful and no reason identified
-          # Assuming that parse failed because of a premature end
-          premature_end
-        end
+        # Parse not successful and no reason identified
+        # Assuming that parse failed because of a premature end      
+        premature_end unless success? || failure_reason
       end
 
       private
@@ -231,7 +228,6 @@ module Rley # This module is used as a namespace
         start_production = chart.start_dotted_rule.production
         return ParseForestBuilder.new(start_production, full_range)
       end
-
 
       # Factory method. Creates and initializes a ParseEntryTracker instance.
       def new_entry_tracker()

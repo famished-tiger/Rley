@@ -11,7 +11,7 @@ module AmbiguousGrammarHelper
     builder = Rley::Syntax::GrammarBuilder.new do
       add_terminals('+', 'id')
       rule 'S' => 'E'
-      rule 'E' => %w(E + E)
+      rule 'E' => %w[E + E]
       rule 'E' => 'id'
     end
     builder

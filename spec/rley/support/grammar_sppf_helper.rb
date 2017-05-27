@@ -12,12 +12,12 @@ module GrammarSPPFHelper
     builder = Rley::Syntax::GrammarBuilder.new do
       add_terminals('a', 'b')
       rule 'Phi' => 'S'
-      rule 'S' => %w(A T)
-      rule 'S' => %w(a T)
+      rule 'S' => %w[A T]
+      rule 'S' => %w[a T]
       rule 'A' => 'a'
-      rule 'A' => %w(B A)
+      rule 'A' => %w[B A]
       rule 'B' => []
-      rule 'T' => %w(b b b)
+      rule 'T' => %w[b b b]
     end
 
     return builder
