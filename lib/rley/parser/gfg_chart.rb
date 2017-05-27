@@ -12,7 +12,7 @@ module Rley # This module is used as a namespace
       # An array of entry sets (one per input token + 1)
       attr_reader(:sets)
 
-      # @param tokenCount [Fixnum] The number of lexemes in the input to parse.
+      # @param tokenCount [Integer] The number of lexemes in the input to parse.
       def initialize(tokenCount, aGFGraph)
         @sets = Array.new(tokenCount + 1) { |_| ParseEntrySet.new }
         push_entry(aGFGraph.start_vertex, 0, 0, :start_rule)

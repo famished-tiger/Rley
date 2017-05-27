@@ -1,4 +1,5 @@
 ### 0.4.07 / 2017-05-25
+* [FIX] To avoid Fixnum deprecation error in Ruby 2.4 abd higher, all explicit references to Fixnum has been removed.
 * [FIX] File `.rubocop.yml`: folder `examples` was excluded from Rubocop control. Now it is in code analysis scope.
 * [NEW] File `spec\.rubocop.yml` to tune the code analysis for Rspec files
 * [NEW] File `examples\.rubocop.yml` to tune the code analysis for example files

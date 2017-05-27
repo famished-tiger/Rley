@@ -58,8 +58,8 @@ module Rley # Open this namespace to avoid module qualifier prefixes
         
         it 'should complain when unable to compare' do
           err = StandardError
-          msg = 'Cannot compare a SymbolSeq with a Fixnum'
-          expect { subject == 1 }.to raise_error(err, msg)
+          msg = "Cannot compare a SymbolSeq with a String"
+          expect { subject == 'dummy-text' }.to raise_error(err, msg)
         end
       end # context
     end # describe
