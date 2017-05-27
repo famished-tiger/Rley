@@ -3,6 +3,7 @@
 * [NEW] File `spec\.rubocop.yml` to tune the code analysis for Rspec files
 * [NEW] File `examples\.rubocop.yml` to tune the code analysis for example files
 * [CHANGE] Code re-styling to please Rubocop 0.49.0: less than 10 offences remain (from above 200 count!)
+* [CHANGE] Added support for Ruby 2.4.x. Files `.travis.yml` and `README.md` updated.
 
 
 ### 0.4.06 / 2017-05-25

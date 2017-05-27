@@ -1,23 +1,24 @@
 language: ruby
 rvm:
+  - 2.0.0-p648
+  - 2.1.10
+  - 2.2.7
+  - 2.3.4
+  - 2.4.1
   - ruby-head
-  - jruby-head
-  - 2.3.3
-  - 2.2.6
-  - 2.1.9
-  - 2.0.0
-  - jruby
-
-# Workaround issue of jruby-head configuration on Travis CI
+  - rbx-2.7
+  - jruby-9.1.9.0    
+  - jruby-head 
 matrix:
   allow_failures:
     - rvm: ruby-head
+    - rvm: rbx-2.7
     - rvm: jruby-head
 
 gemfile:
   - Gemfile
-
+  
 # whitelist
-branches:
+branches:  
   only:
     - master
