@@ -110,7 +110,7 @@ The subset of English grammar is based on an example from the NLTK book.
     grammar = builder.grammar
 ```  
 
-## Creating a lexicon
+### Creating a lexicon
 
 ```ruby
     # To simplify things, lexicon is implemented as a Hash with pairs of the form:
@@ -139,7 +139,7 @@ The subset of English grammar is based on an example from the NLTK book.
 ```  
 
 
-## Creating a tokenizer
+### Creating a tokenizer
 ```ruby
     # A tokenizer reads the input string and converts it into a sequence of tokens
     # Highly simplified tokenizer implementation.
@@ -162,14 +162,14 @@ creating a lexicon and tokenizer from scratch. Here are a few Ruby Part-of-Speec
 
 
 
-## Building the parser
+### Building the parser
 ```ruby
   # Easy with Rley...
   parser = Rley::Parser::GFGEarleyParser.new(grammar)
 ```
 
 
-## Parsing some input
+### Parsing some input
 ```ruby
     input_to_parse = 'John saw Mary with a telescope'
     # Convert input text into a sequence of token objects...
@@ -191,7 +191,7 @@ representing the parse outcome:
 
 For our whirlwind tour, we will opt for parse trees.
 
-## Generating the parse tree
+### Generating the parse tree
 
 ```ruby
     ptree = result.parse_tree
@@ -210,7 +210,7 @@ Let's do it by:
 - Using one of the built-in visit subscribers specifically created to render the
  parse tree in a given output format.  
 
-### Creating a parse tree visitor  
+#### Creating a parse tree visitor  
 Good news: creating a parse tree visitor for the parse tree `ptree` is just
 an one-liner:
 
@@ -219,7 +219,7 @@ an one-liner:
     visitor = Rley::ParseTreeVisitor.new(ptree)
 ```
 
-### Visiting the parse tree
+#### Visiting the parse tree
 
 Unsurprisingly, to start the parse tree visit, one calls the `#start` method:
 
@@ -293,7 +293,7 @@ the tree node being visited.
 
 Not really impressive? So let's use another formatter...
 
-### Visualizing the parse tree structure
+#### Visualizing the parse tree structure
 If one replaces the previous formatter by an instance of
 `Rley::Formatter::Asciitree` the output now shows the parse tree structure.
 
@@ -343,7 +343,6 @@ The next diagram was created by copy-pasting the output above in the online tool
 By the way, this tool is also a Ruby gem, [rsyntaxtree](https://rubygems.org/gems/rsyntaxtree).
 
 ![Sample parse tree diagram](www/sample_parse_tree.png)
-
 
 
 ## Error reporting

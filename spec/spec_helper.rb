@@ -6,14 +6,14 @@ require 'coveralls'
 
 Coveralls.wear!
 
-SimpleCov.formatter = SimpleCov::Formatter::MultiFormatter[
+SimpleCov.formatter = SimpleCov::Formatter::MultiFormatter.new([
   SimpleCov::Formatter::HTMLFormatter,
   Coveralls::SimpleCov::Formatter
-]
+])
 
-
-require 'rspec' # Use the RSpec framework
 require 'pp'    # Use pretty-print for debugging purposes
+require 'rspec' # Use the RSpec framework
+
 
 RSpec.configure do |config|
   config.expect_with :rspec do |c|

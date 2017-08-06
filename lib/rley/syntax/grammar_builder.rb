@@ -67,7 +67,7 @@ module Rley # This module is used as a namespace
       #   builder.rule 'A' => %w[a A  c]  # Call parentheses are optional
       # @param aProductionRepr [Hash{String, Array<String>}] 
       #   A Hash-based representation of a production.
-      # @return [void]      
+      # @return [Production] The created Production instance
       def add_production(aProductionRepr)
         aProductionRepr.each_pair do |(lhs_name, rhs_repr)|
           lhs = get_nonterminal(lhs_name)
@@ -82,6 +82,8 @@ module Rley # This module is used as a namespace
           new_prod = Production.new(lhs, rhs_constituents)
           productions << new_prod
         end
+        
+        return productions.last
       end
 
       # Given the grammar symbols and productions added to the builder,

@@ -8,15 +8,19 @@ require_relative '../gfg/start_vertex'
 
 module Rley # This module is used as a namespace
   module Parser # This module is used as a namespace
+    # Utility class used internally by the Enumerator created
+    # with a ParseWalkerContext object. It holds the state of
+    # the walk over a GFGParsing object.
     ParseWalkerContext = Struct.new(
-      :curr_entry, # Parse entry currently being visited
-      :entry_set_index, # Sigma set index of current parse entry
-      :visitees, # The set of already visited parse entries
+      :curr_entry, # @return [ParseEntry] entry being visited
+      :entry_set_index, # @return [Integer] Set index of current parse entry
+      :visitees, # @return [Set<ParseEntry>] The set of already visited entries
       :nterm2start, # Nested hashes. Pairs of first level are of the form:
       # non-terminal symbol => { index(=origin) => start entry }
-      :return_stack, # A stack of parse entries
+      :return_stack, # @return [Array<ParseEntry>] A stack of parse entries
       :backtrack_points
     )
+
 
     WalkerBacktrackpoint = Struct.new(
       :entry_set_index, # Sigma set index of current parse entry
@@ -25,12 +29,11 @@ module Rley # This module is used as a namespace
       :antecedent_index
     )
 
-    # A factory that creates an enumerator
-    #  that itself walks through a given parsing graph.
-    # The walker yields visit events.
-    # Terminology warning: this class implements an external iterator
-    # for a given GFGParsing object. In other words, its instances are objects
-    # distinct for the GFGParsing.
+    # A factory that creates an Enumerator object
+    # that itself walks through a GFGParsing object.
+    # The walker (= Enumerator) yields visit events.  
+    # This class implements an external iterator
+    # for a given GFGParsing object.
     # This is different from the internal iterators, usually implemented 
     # in Ruby with an :each method.
     # Allows to perform a backwards traversal over the relevant parse entries.
@@ -40,7 +43,12 @@ module Rley # This module is used as a namespace
     # (i.e. they belong to a path that leads to the accepting parse entry)
     class ParseWalkerFactory
       # Build an Enumerator that will yield the parse entries as it
-      # walks backwards on the parse graph
+      # walks backwards on the parse graph.
+      # @param acceptingEntry [ParseEntry] the final ParseEntry of a 
+      #    successful parse.
+      # @param maxIndex [Integer] the index of the last input token.
+      # @return [Enumerator] yields visit events when walking over the 
+      #   parse result
       def build_walker(acceptingEntry, maxIndex)
         # Local context for the enumerator
         ctx = init_context(acceptingEntry, maxIndex)

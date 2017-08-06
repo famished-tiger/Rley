@@ -31,7 +31,10 @@ module Rley # This module is used as a namespace
         @symbols = []
         @name2symbol = {}
         valid_productions = validate_productions(theProductions)
-        valid_productions.each { |prod| add_production(prod) }
+        valid_productions.each do |prod| 
+          add_production(prod)
+          name_production(prod)
+        end
         diagnose
 
         # TODO: use topological sorting
@@ -64,6 +67,22 @@ module Rley # This module is used as a namespace
         add_symbol(the_lhs)
 
         aProduction.rhs.each { |symb| add_symbol(symb) }
+      end
+      
+      def name_production(aProduction)
+        if aProduction.name.nil?
+          index = rules.find_index(aProduction)
+          prefix = aProduction.lhs.name.dup
+          previous = index.zero? ? nil : rules[index - 1]
+          if previous.nil? || previous.lhs != aProduction.lhs
+            suffix = '[0]'
+          else
+            prev_serial = previous.name.match(/\[(\d+)\]$/)
+            suffix = "[#{prev_serial[1].to_i + 1}]"   
+          end
+          
+          aProduction.name = prefix + suffix
+        end
       end
 
       # Perform some check of the grammar.

@@ -16,6 +16,9 @@ module Rley # This module is used as a namespace
       # @return [NonTerminal] The left-hand side of the rule.
       attr_reader(:lhs)
       
+      # @return [String] The unique name of the production rule.
+      attr_accessor(:name)
+      
       # @return [Boolean ]A production is generative when all of its 
       # rhs members are generative (that is, they can each generate/derive
       # a non-empty string of terminals).
@@ -26,9 +29,12 @@ module Rley # This module is used as a namespace
       alias body rhs
       alias head lhs
 
+      # Create a Production instance.
+      # @param aNonTerminal [NonTerminal] The left-hand side of the rule.
+      # @param theSymbols [list<Terminal | NonTerminal>] symbols of rhs.      
       def initialize(aNonTerminal, theSymbols)
         @lhs = valid_lhs(aNonTerminal)
-        @rhs = SymbolSeq.new(theSymbols)
+        @rhs = SymbolSeq.new(theSymbols)       
       end
 
       # Is the rhs empty?

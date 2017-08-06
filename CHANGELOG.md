@@ -1,9 +1,13 @@
-### 0.4.08 / 2017-0?-?? <= TODO
+### 0.4.08 / 2017-08-06
+* [FIX] File `/spec/spec_helper.rb` replaced deprecated syntax for `SimpleCov::Formatter::MultiFormatter` construction
 * [NEW] File `examples/data_formats/JSON/json_minifier.rb` Added a working JSON minifier to the demo app.
-* [CHANGE] File `.travis.yml`: removal of Rubinius (rbx) in the list of Ruby version.
+* [NEW] Class `Syntax::Production` Each production can have a name.
+* [CHANGE] File `.travis.yml`: removal of Rubinius (rbx) in the list of Ruby versions.
+* [CHANGE] DRYing the classes `ParseTreeFactory` and `ParseForestFactory` by inheriting from  `ParseRepCreator`
+* [CHANGE] Minor documentation updates.
 
 ### 0.4.07 / 2017-05-25
-* [FIX] To avoid Fixnum deprecation error in Ruby 2.4 abd higher, all explicit references to Fixnum has been removed.
+* [FIX] To avoid Fixnum deprecation error in Ruby 2.4 and higher, all explicit references to Fixnum has been removed.
 * [FIX] File `.rubocop.yml`: folder `examples` was excluded from Rubocop control. Now it is in code analysis scope.
 * [NEW] File `spec/.rubocop.yml` to tune the code analysis for Rspec files
 * [NEW] File `examples\.rubocop.yml` to tune the code analysis for example files

@@ -26,12 +26,12 @@ class JSONMinifier
   # Method called by a ParseTreeVisitor to which the formatter subscribed.
   # Notification of a visit event: the visitor is about to visit
   # a terminal node. The only thing the JSON minifier has to do is
-  # render the input tokens almost as they appear initially.
+  # to render the input tokens almost as they appear initially.
   # @param aTerm [TerminalNode]
   def before_terminal(aTerm)
     # Lexeme is the original text representation of the token
     lexeme = aTerm.token.lexeme
-    literal = if aTerm.symbol.name == string
+    literal = if aTerm.symbol.name == 'string'
                 # String values are delimited by double quotes
                 '"' + lexeme + '"'
               else

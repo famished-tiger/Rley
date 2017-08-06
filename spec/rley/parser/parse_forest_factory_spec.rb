@@ -68,7 +68,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
 
       context 'Parse forest construction' do
         it 'should build a parse forest' do
-          forest = subject.build_parse_forest
+          forest = subject.create
           expect(forest).to be_kind_of(SPPF::ParseForest)
 =begin
           require 'yaml'

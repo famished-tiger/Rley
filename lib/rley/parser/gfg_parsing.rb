@@ -146,7 +146,7 @@ module Rley # This module is used as a namespace
       def parse_forest()
         factory = ParseForestFactory.new(self)
 
-        return factory.build_parse_forest
+        return factory.create
       end
       
       # Factory method. Builds a ParseTree from the parse result.
@@ -154,7 +154,7 @@ module Rley # This module is used as a namespace
       def parse_tree()
         factory = ParseTreeFactory.new(self)
 
-        return factory.build_parse_tree
+        return factory.create
       end      
 
       # Retrieve the very first parse entry added to the chart.

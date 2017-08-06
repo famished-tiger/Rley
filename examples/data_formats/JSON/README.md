@@ -5,6 +5,8 @@ This small project shows how to:
 - Output the resulting parse tree in different representations
 - Create a JSON minifier in less than 50 lines that comptacts JSON text.
 
+To try the command-line, do:  
+ruby json_demo.rb --help
 
 
 ### Source files
@@ -14,7 +16,7 @@ This sample project consists of the following files:
 
 - **json_demo.rb** a demo command-line program.  
   It parses the JSON file specified in the command-line and outputs the parse tree
-  into different formats. For more details, run the command-line: `JSON_demo --help`
+  into different formats. For more details, run the command-line: `json_demo --help`
 
 - **json_grammar.rb** implementing the class `JSONGrammar`.  
   The grammar is a list of (production) rules that specifies the syntax of JSON data.  

@@ -81,7 +81,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
 
         it 'should initialize the root node' do
           next_event(:visit, 'P. | 0')
-          tree = subject.tree
+          tree = subject.result
 
           expect(tree.root.to_string(0)).to eq('P[0, 5]')
           expected_curr_path('P[0, 5]')
@@ -227,12 +227,13 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           end
 
           # Lightweight sanity check
-          expect(subject.tree).not_to be_nil
-          expect(subject.tree).to be_kind_of(PTree::ParseTree)
-          expect(subject.tree.root.to_s).to eq('P[0, 5]')
-          expect(subject.tree.root.subnodes.size).to eq(1)
-          child_node = subject.tree.root.subnodes[0]
+          expect(subject.result).not_to be_nil
+          expect(subject.result).to be_kind_of(PTree::ParseTree)
+          expect(subject.result.root.to_s).to eq('P[0, 5]')
+          expect(subject.result.root.subnodes.size).to eq(1)
+          child_node = subject.result.root.subnodes[0]
           expect(child_node.to_s).to eq('S[0, 5]')
+          
           expect(child_node.subnodes.size).to eq(3)
           first_grandchild = child_node.subnodes[0]
           expect(first_grandchild.to_s).to eq('S[0, 1]')

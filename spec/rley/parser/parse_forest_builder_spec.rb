@@ -97,7 +97,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
 
         it 'should initialize the root node' do
           next_event(:visit, 'Phi. | 0')
-          forest = subject.forest
+          forest = subject.result
 
           expect(forest.root.to_string(0)).to eq('Phi[0, 4]')
           expected_curr_path('Phi[0, 4]')

@@ -67,10 +67,9 @@ module Rley # This module is used as a namespace
 
       # Walk over all the vertices of the graph that are reachable from a given
       # start vertex. This is a depth-first graph traversal.
-      # @param aStartVertex [StartVertex] the depth-first traversal begins 
+      # @param aStartVertex [StartVertex] the depth-first traversal begins
       #   from here
-      # @param visitAction [Proc] block code called when a new graph vertex 
-      #   is found
+      # @param _visitAction [Proc] block called when a new graph vertex is found
       def traverse_df(aStartVertex, &_visitAction)
         visited = Set.new
         stack = []

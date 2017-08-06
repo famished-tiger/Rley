@@ -159,6 +159,12 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           expect(subject.name2symbol['b']).to eq(b_)
           expect(subject.name2symbol['c']).to eq(c_)
         end
+        
+        it 'should ensure that each production has a name' do
+          subject.rules.each do |prod|
+            expect(prod.name).to match(Regexp.new("#{prod.lhs.name}\\[\\d\\]"))
+          end
+        end
       end # context
 
       context 'Grammar diagnosis:' do

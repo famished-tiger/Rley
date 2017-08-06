@@ -8,7 +8,7 @@ module Rley # This module is used as a namespace
 
       # aPosition is the position of the token in the input stream.      
       def initialize(aToken, aPos)
-        (major, minor) =  
+        # (major, minor) =  
         
         # Use '1.class' trick to support both Integer and Fixnum classes
         range = aPos.kind_of?(1.class) ? { low: aPos, high: aPos + 1 } : aPos

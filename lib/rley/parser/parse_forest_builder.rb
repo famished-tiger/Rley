@@ -17,8 +17,8 @@ module Rley # This module is used as a namespace
       # The sequence of input tokens
       attr_reader(:tokens)
 
-      # Link to forest object
-      attr_reader(:forest)
+      # Link to forest object (being) built
+      attr_reader(:result)
 
       # Link to current path
       attr_reader(:curr_path)
@@ -77,7 +77,7 @@ module Rley # This module is used as a namespace
             range = { low: anEntry.origin, high: anIndex }
             non_terminal = anEntry.vertex.non_terminal
             create_non_terminal_node(anEntry, range, non_terminal)
-            @forest = create_forest(curr_parent) unless @last_visitee
+            @result = create_forest(curr_parent) unless @last_visitee
 
           when :backtrack
             # Restore path
@@ -187,7 +187,7 @@ module Rley # This module is used as a namespace
         range = curr_parent.range
         alternative = Rley::SPPF::AlternativeNode.new(vertex, range)
         add_subnode(alternative)
-        forest.is_ambiguous = true
+        result.is_ambiguous = true
         # puts "FOREST ADD #{alternative.key}"
 
         return alternative
@@ -218,11 +218,11 @@ module Rley # This module is used as a namespace
       # Add the given node if not yet present in parse forest
       def add_node_to_forest(aNode)
         key_node = aNode.key
-        if forest.include?(key_node)
-          new_node = forest.key2node[key_node]
+        if result.include?(key_node)
+          new_node = result.key2node[key_node]
         else
           new_node = aNode
-          forest.key2node[key_node] = new_node
+          result.key2node[key_node] = new_node
           # puts "FOREST ADD #{key_node}"
         end
         add_subnode(new_node, false)

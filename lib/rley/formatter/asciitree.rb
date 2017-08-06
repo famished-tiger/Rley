@@ -41,7 +41,7 @@ module Rley # This module is used as a namespace
       # Notification of a visit event: the visitor is about to visit
       # the children of a non-terminal node
       # @param parent [NonTerminalNode]
-      # @param children [Array<ParseTreeNode>] array of children nodes
+      # @param _children [Array<ParseTreeNode>] array of children nodes
       def before_subnodes(parent, _children)
         rank_of(parent)
         curr_path << parent

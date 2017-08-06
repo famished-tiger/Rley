@@ -12,7 +12,7 @@ module Rley # This module is used as a namespace
     # during the parse. 
     # The root node corresponds to the main/start symbol of the grammar.
     class ParseTree
-      # The root node of the tree
+      # @return [ParseTreeNode] The root node of the tree.
       attr_reader(:root)
 
       # @param theRootNode [ParseTreeNode] The root node of the parse tree.

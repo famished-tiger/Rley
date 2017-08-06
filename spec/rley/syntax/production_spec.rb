@@ -40,12 +40,24 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           expect(instance).to be_empty
         end
         
+        it 'should be anonymous at creation' do
+          expect(subject.name).to be_nil
+        end
+        
         it 'should complain if its lhs is not a non-terminal' do
           err = StandardError
           msg_prefix = 'Left side of production must be a non-terminal symbol'
           msg_suffix = ", found a #{String} instead."  
           msg = msg_prefix + msg_suffix
           expect { Production.new('wrong', sequence) }.to raise_error(err, msg)
+        end
+      end # context
+      
+      context 'Provided services:' do
+        it 'should accept a name' do
+          a_name = 'nominem'
+          subject.name = a_name
+          expect(subject.name).to eq(a_name)
         end
       end # context
     end # describe

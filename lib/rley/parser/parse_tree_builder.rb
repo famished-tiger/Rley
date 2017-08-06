@@ -9,15 +9,16 @@ require_relative '../ptree/parse_tree'
 
 module Rley # This module is used as a namespace
   module Parser # This module is used as a namespace
-    # Builder GoF pattern. Builder pattern builds a complex object
+    # Builder GoF pattern.  
+    # The Builder pattern creates a complex object
     # (say, a parse tree) from simpler objects (terminal and non-terminal
     # nodes) and using a step by step approach.
     class ParseTreeBuilder
-      # The sequence of input tokens
+      # @return [Array<Token>] The sequence of input tokens
       attr_reader(:tokens)
 
-      # Link to tree object
-      attr_reader(:tree)
+      # Link to tree object (being) built
+      attr_reader(:result)
 
       # Link to current path
       attr_reader(:curr_path)
@@ -28,7 +29,8 @@ module Rley # This module is used as a namespace
       # A hash with pairs of the form: visited parse entry => tree node
       attr_reader(:entry2node)
 
-
+      # Create a new builder instance.
+      # @param theTokens [Array<Token>] The sequence of input tokens.
       def initialize(theTokens)
         @tokens = theTokens
         @curr_path = []
@@ -71,7 +73,7 @@ module Rley # This module is used as a namespace
             range = { low: anEntry.origin, high: anIndex }
             non_terminal = anEntry.vertex.non_terminal
             create_non_terminal_node(anEntry, range, non_terminal)
-            @tree = create_tree(curr_parent) unless @last_visitee
+            @result = create_tree(curr_parent) unless @last_visitee
           else
             raise NotImplementedError
         end
@@ -143,7 +145,7 @@ module Rley # This module is used as a namespace
         range = curr_parent.range
         alternative = Rley::PTree::AlternativeNode.new(vertex, range)
         add_subnode(alternative)
-        tree.is_ambiguous = true
+        result.is_ambiguous = true
         # puts "FOREST ADD #{alternative.key}"
 
         return alternative

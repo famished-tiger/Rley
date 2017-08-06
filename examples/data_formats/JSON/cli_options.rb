@@ -26,10 +26,10 @@ class CLIOptions < Hash
 and renders its parse tree to the standard output 
 in the format specified in the command-line.
 
-Usage: JSON_demo.rb [options] FILE
+Usage: json_demo.rb [options] FILE
 
 Examples:
-JSON_demo --format ascii_tree sample01.jon
+json_demo --format ascii_tree sample01.json
 END_BANNER
 
       opts.separator ''

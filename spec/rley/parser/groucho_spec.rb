@@ -99,7 +99,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
       end
       
       def root_children
-          subject.forest.root.subnodes    
+          subject.result.root.subnodes    
       end      
 
 
