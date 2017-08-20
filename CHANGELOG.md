@@ -1,3 +1,7 @@
+### 0.5.01 / 2017-08-20
+* [CHANGE] File `appveyor.yml`: Added Ruby 2.4 build environment in Appveyor CI
+
+
 ### 0.5.00 / 2017-08-20
 * [CHANGE] Concrete Syntax tree generation re-designed in prevision of customized tree generation.
 * [NEW] Class `Parser::CSTBuilder` Builder class that creates Concrete Syntax (parse) Tree.

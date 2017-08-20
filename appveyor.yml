@@ -10,6 +10,8 @@ environment:
   - Ruby_version: 22-x64
   - Ruby_version: 23
   - Ruby_version: 23-x64
+  - Ruby_version: 24  
+  - Ruby_version: 24-x64  
 install:
 - cmd: >-
     SET PATH=C:\Ruby%Ruby_version%\bin;%PATH%
