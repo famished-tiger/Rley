@@ -1,3 +1,8 @@
+### 0.5.00 / 2017-08-20
+* [CHANGE] Concrete Syntax tree generation re-designed in prevision of customized tree generation.
+* [NEW] Class `Parser::CSTBuilder` Builder class that creates Concrete Syntax (parse) Tree.
+
+
 ### 0.4.08 / 2017-08-06
 * [FIX] File `/spec/spec_helper.rb` replaced deprecated syntax for `SimpleCov::Formatter::MultiFormatter` construction
 * [NEW] File `examples/data_formats/JSON/json_minifier.rb` Added a working JSON minifier to the demo app.

@@ -124,9 +124,13 @@ module Rley # This module is used as a namespace
               event = [:revisit, anEntry, index]
 
             when GFG::StartVertex
+              # Even for non-ambiguous parse, can be caused by
+              # left recursive rule e.g. (S => S A)
               event = [:revisit, anEntry, index]
 
             when GFG::ItemVertex
+              # Even for non-ambiguous parse, can be caused by
+              # left recursive rule e.g. (S => S A)            
               # Skip item entries while revisiting
               event = [:revisit, anEntry, index]
             else

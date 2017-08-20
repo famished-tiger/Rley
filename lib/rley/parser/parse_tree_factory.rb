@@ -1,5 +1,6 @@
 require_relative 'parse_rep_creator'
-require_relative 'parse_tree_builder'
+# require_relative 'parse_tree_builder' # TODO remove this line
+require_relative 'cst_builder'
 
 module Rley # This module is used as a namespace
   module Parser # This module is used as a namespace
@@ -12,7 +13,7 @@ module Rley # This module is used as a namespace
       # Create a Builder, that is, an object
       # that will create piece by piece the forest
       def builder(aParseResult)
-        ParseTreeBuilder.new(aParseResult.tokens)
+        CSTBuilder.new(aParseResult.tokens)
       end
     end # class
   end # module

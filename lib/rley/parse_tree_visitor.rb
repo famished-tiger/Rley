@@ -14,6 +14,7 @@ module Rley # This module is used as a namespace
     # Build a visitor for the given ptree.
     # @param aParseTree [ParseTree] the parse tree to visit.
     def initialize(aParseTree, aTraversalStrategy = :post_order)
+      raise StandardError if aParseTree.nil?
       @ptree = aParseTree
       @subscribers = []
       @traversal = aTraversalStrategy
