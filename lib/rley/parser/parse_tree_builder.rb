@@ -1,3 +1,4 @@
+require_relative '../tokens/token_range'
 require_relative '../syntax/terminal'
 require_relative '../syntax/non_terminal'
 require_relative '../gfg/end_vertex'
@@ -9,7 +10,21 @@ require_relative '../ptree/parse_tree'
 
 module Rley # This module is used as a namespace
   module Parser # This module is used as a namespace
-    # Builder GoF pattern.  
+    # Structure used internally by ParseTreeBuilder class.
+    CSTRawNode = Struct.new(:range, :symbol, :children) do
+      def initialize(aRange, aSymbol)
+        super
+        self.range = aRange
+        self.symbol = aSymbol
+        self.children = nil
+      end
+    end # Struct
+
+
+    # The purpose of a ParseTreeBuilder is to build piece by piece a CST
+    # (Concrete Syntax Tree) from a sequence of input tokens and
+    # visit events produced by walking over a GFGParsing object.
+    # Uses the Builder GoF pattern.
     # The Builder pattern creates a complex object
     # (say, a parse tree) from simpler objects (terminal and non-terminal
     # nodes) and using a step by step approach.
@@ -17,33 +32,30 @@ module Rley # This module is used as a namespace
       # @return [Array<Token>] The sequence of input tokens
       attr_reader(:tokens)
 
-      # Link to tree object (being) built
+      # Link to CST object (being) built.
       attr_reader(:result)
 
-      # Link to current path
-      attr_reader(:curr_path)
-
-      # The last parse entry visited
-      attr_reader(:last_visitee)
-
-      # A hash with pairs of the form: visited parse entry => tree node
-      attr_reader(:entry2node)
 
       # Create a new builder instance.
       # @param theTokens [Array<Token>] The sequence of input tokens.
       def initialize(theTokens)
         @tokens = theTokens
-        @curr_path = []
-        @entry2node = {}
+        @stack = []
       end
 
+      # Receive events resulting from a visit of GFGParsing object.
+      # These events are produced by a specialized Enumerator created
+      # with a ParseWalkerFactory instance.
+      # @param anEvent [Symbol] Kind of visit event. Should be: :visit
+      # @param anEntry [ParseEntry] The entry being visited
+      # @param anIndex [anIndex] The token index associated with anEntry
       def receive_event(anEvent, anEntry, anIndex)
         # puts "Event: #{anEvent} #{anEntry} #{anIndex}"
-        if anEntry.dotted_entry?
+        if anEntry.dotted_entry? # A N => alpha . beta pattern?
           process_item_entry(anEvent, anEntry, anIndex)
-        elsif anEntry.start_entry?
+        elsif anEntry.start_entry? # A .N pattern?
           process_start_entry(anEvent, anEntry, anIndex)
-        elsif anEntry.end_entry?
+        elsif anEntry.end_entry? # A N. pattern?
           process_end_entry(anEvent, anEntry, anIndex)
         else
           raise NotImplementedError
@@ -52,133 +64,178 @@ module Rley # This module is used as a namespace
         @last_visitee = anEntry
       end
 
-      # Return the current_parent node
-      def curr_parent()
-        return curr_path.last
+      protected
+
+      # Return the stack
+      def stack()
+        return @stack
       end
 
       private
 
-      def process_start_entry(_anEvent, _anEntry, _anIndex)
-        curr_path.pop
+      # Return the top of stack element.
+      def tos()
+        return @stack.last
       end
 
+      # Handler for visit events for ParseEntry matching N. pattern
+      # @param anEvent [Symbol] Kind of visit event. Should be: :visit
+      # @param anEntry [ParseEntry] The entry being visited
+      # @param anIndex [anIndex] The token index at end of anEntry
       def process_end_entry(anEvent, anEntry, anIndex)
         case anEvent
           when :visit
-            # create a node with the non-terminal
-            #   with same right extent as curr_entry_set_index
-            # add the new node as first child of current_parent
-            # append the new node to the curr_path
             range = { low: anEntry.origin, high: anIndex }
-            non_terminal = anEntry.vertex.non_terminal
-            create_non_terminal_node(anEntry, range, non_terminal)
-            @result = create_tree(curr_parent) unless @last_visitee
+            non_terminal = entry2nonterm(anEntry)
+            # Create raw node and push onto stack
+            push_raw_node(range, non_terminal)
           else
             raise NotImplementedError
         end
       end
 
+      # Handler for visit events for ParseEntry matching .N pattern
+      # @param anEvent [Symbol] Kind of visit event. Should be: :visit
+      # @param anEntry [ParseEntry] The entry being visited
+      # @param anIndex [anIndex] The token index at end of anEntry
+      def process_start_entry(anEvent, anEntry, anIndex)
+        raise NotImplementedError unless [:visit, :revisit].include?(anEvent)
+      end
+
+      # Handler for visit events for ParseEntry matching N => alpha* . beta*
+      # @param anEvent [Symbol] Kind of visit event. Should be: :visit
+      # @param anEntry [ParseEntry] The entry being visited
+      # @param anIndex [anIndex] The token index at end of anEntry
       def process_item_entry(anEvent, anEntry, anIndex)
+        # TODO: what if rhs is empty?
         case anEvent
-          when :visit
-            if anEntry.exit_entry?
-              # Previous entry was an end entry (X. pattern)
-              # Does the previous entry have multiple antecedent?
-              if last_visitee.end_entry? && last_visitee.antecedents.size > 1
-                # Store current path for later backtracking
-                # puts "Store backtrack context #{last_visitee}"
-                # puts "path [#{curr_path.map{|e|e.to_string(0)}.join(', ')}]"
-                entry2path_to_alt[last_visitee] = curr_path.dup
-                curr_parent.refinement = :or
+          when :visit, :revisit
+            dot_pos = anEntry.vertex.dotted_item.position
+            if dot_pos.zero? || dot_pos < 0
+              # Check for pattern: N => alpha* .
+              process_exit_entry(anEntry, anIndex) if anEntry.exit_entry?
 
-                create_alternative_node(anEntry)
-              end
+              # Check for pattern: N => . alpha*
+              process_entry_entry(anEntry, anIndex) if anEntry.entry_entry?
+            else
+              # (pattern: N => alpha+ . beta+)
+              process_middle_entry(anEntry, anIndex)
             end
-
-            # Does this entry have multiple antecedent?
-            if anEntry.antecedents.size > 1
-              # Store current path for later backtracking
-              # puts "Store backtrack context #{anEntry}"
-              # puts "path [#{curr_path.map{|e|e.to_string(0)}.join(', ')}]"
-              entry2path_to_alt[anEntry] = curr_path.dup
-              # curr_parent.refinement = :or
-
-              create_alternative_node(anEntry)
-            end
-
-            # Retrieve the grammar symbol before the dot (if any)
-            prev_symbol = anEntry.prev_symbol
-            case prev_symbol
-              when Syntax::Terminal
-                # Add node without changing current path
-                create_token_node(anEntry, anIndex)
-
-              when NilClass # Dot at the beginning of production
-                curr_path.pop if curr_parent.kind_of?(SPPF::AlternativeNode)
-            end
-
-          # when :backtrack
-          # when :revisit
+          else
+            $stderr.puts "waiko '#{anEvent}'"
+            raise NotImplementedError
         end
       end
 
-      # Create an empty parse tree
-      def create_tree(aRootNode)
-        return Rley::PTree::ParseTree.new(aRootNode)
+      # @param anEntry [ParseEntry] Entry matching (pattern: N => alpha* .)
+      # @param anIndex [anIndex] The token index at end of anEntry
+      def process_exit_entry(anEntry, anIndex)
+        production =  anEntry.vertex.dotted_item.production
+        count_rhs = production.rhs.members.size
+        init_TOS_children(count_rhs) # Create placeholders for children
+        build_terminal(anEntry, anIndex) if terminal_before_dot?(anEntry)
       end
 
-      # Factory method. Build and return an PTree non-terminal node.
-      def create_non_terminal_node(anEntry, aRange, nonTSymb = nil)
-        non_terminal = nonTSymb.nil? ? anEntry.vertex.non_terminal : nonTSymb
-        new_node = Rley::PTree::NonTerminalNode.new(non_terminal, aRange)
-        entry2node[anEntry] = new_node
-        add_subnode(new_node)
-        # puts "FOREST ADD #{curr_parent.key if curr_parent}/#{new_node.key}"
-
-        return new_node
+      # @param anEntry [ParseEntry] Entry matching pattern: N => alpha+ . beta+
+      # @param anIndex [anIndex] The token index at end of anEntry
+      def process_middle_entry(anEntry, anIndex)
+        build_terminal(anEntry, anIndex) if terminal_before_dot?(anEntry)
       end
 
-      # Add an alternative node to the tree
-      def create_alternative_node(anEntry)
-        vertex = anEntry.vertex
-        range = curr_parent.range
-        alternative = Rley::PTree::AlternativeNode.new(vertex, range)
-        add_subnode(alternative)
-        result.is_ambiguous = true
-        # puts "FOREST ADD #{alternative.key}"
 
-        return alternative
+
+      # @param anEntry [ParseEntry] Entry matching (pattern: N => . alpha)
+      # @param anIndex [anIndex] The token index at end of anEntry
+      def process_entry_entry(anEntry, anIndex)
+        dotted_item = anEntry.vertex.dotted_item
+        rule = dotted_item.production
+        previous_tos = stack.pop
+        non_terminal = entry2nonterm(anEntry)
+        # For debugging purposes
+        raise StandardError if previous_tos.symbol != non_terminal
+        
+        new_node = new_parent_node(rule, previous_tos.range,
+                                     tokens, previous_tos.children)
+        if stack.empty?
+          @result = create_tree(new_node)
+        else
+          place_TOS_child(new_node, nil)
+        end
       end
 
-      # create a token node,
-      #   with same origin as token,
-      #   with same right extent = origin + 1
-      # add the new node as first child of current_parent
-      def create_token_node(anEntry, anIndex)
+      # Create a raw node with given range
+      # and push it on top of stack.
+      def push_raw_node(aRange, aSymbol)
+        raw_node = CSTRawNode.new(Tokens::TokenRange.new(aRange), aSymbol)
+        stack.push(raw_node)
+      end
+
+      # Initialize children array of TOS with nil placeholders.
+      # The number of elements equals the number of symbols at rhs.
+      def init_TOS_children(aCount)
+        tos.children = Array.new(aCount)
+      end
+
+      # Does the position on the left side of the dot correspond
+      # a terminal symbol?
+      # @param anEntry [ParseEntry] The entry being visited
+      def terminal_before_dot?(anEntry)
+        prev_symbol = anEntry.prev_symbol
+        return prev_symbol && prev_symbol.terminal?
+      end
+
+      # A terminal symbol was detected at left of dot.
+      # Build a raw node for that terminal and make it
+      # a child of TOS.
+      # @param anEntry [ParseEntry] The entry being visited
+      # @param anIndex [anIndex] The token index at end of anEntry
+      def build_terminal(anEntry, anIndex)
+        # First, build node for terminal...
+        term_symbol = anEntry.prev_symbol
         token_position = anIndex - 1
-        curr_token = tokens[token_position]
-        new_node = PTree::TerminalNode.new(curr_token, token_position)
-        candidate = add_node_to_tree(new_node)
-        entry2node[anEntry] = candidate
-
-        return candidate
+        token = tokens[token_position]
+        prod = anEntry.vertex.dotted_item.production
+        term_node = new_leaf_node(prod, term_symbol, token_position, token)
+        
+        # Second make it a child of TOS...
+        pos = anEntry.vertex.dotted_item.prev_position # pos. in rhs of rule
+        place_TOS_child(term_node, pos)
       end
 
-      # Add the given node if not yet present in parse tree
-      def add_node_to_tree(aNode)
-        new_node = aNode
-        # puts "FOREST ADD #{key_node}"
-        add_subnode(new_node, false)
 
-        return new_node
+      # Place the given node object as one of the children of the TOS
+      # (TOS = Top Of Stack).
+      # Each child has a position that is dictated by the position of the
+      # related grammar symbol in the right-handed side (RHS) of the grammar
+      # rule.
+      # @param aNode [TerminalNode, NonTerminalNode] Node object to be placed
+      # @param aRHSPos [Integer, NilClass] Position in RHS of rule.
+      # If the position is provided, then the node will placed in the children
+      # array at that position.
+      # If the position is nil, then the node will be placed at the position of
+      # the rightmost nil element in children array.
+      def place_TOS_child(aNode, aRHSPos)
+        if aRHSPos.nil?
+          # Retrieve index of most rightmost nil child...
+          pos = tos.children.rindex { |child| child.nil? }
+          raise StandardError, 'Internal error' if pos.nil?
+        else
+          pos = aRHSPos
+        end
+
+        tos.children[pos] = aNode
       end
+      
+      # Retrieve non-terminal symbol of given parse entry
+      def entry2nonterm(anEntry)
+        case anEntry.vertex
+        when GFG::StartVertex, GFG::EndVertex
+          non_terminal = anEntry.vertex.non_terminal
+        when GFG::ItemVertex
+          non_terminal = anEntry.vertex.lhs
+        end
 
-      # Add the given node as sub-node of current parent node
-      # Optionally add the node to the current path
-      def add_subnode(aNode, addToPath = true)
-        curr_parent.add_subnode(aNode) unless curr_path.empty?
-        curr_path << aNode if addToPath
+        return non_terminal
       end
     end # class
   end # module

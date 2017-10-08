@@ -12,8 +12,12 @@ module Rley # This module is used as a namespace
 
       # Create a Builder, that is, an object
       # that will create piece by piece the forest
-      def builder(aParseResult)
-        CSTBuilder.new(aParseResult.tokens)
+      def builder(aParseResult, aBuilder = nil)
+        if aBuilder
+          aBuilder.new(aParseResult.tokens)
+        else
+          CSTBuilder.new(aParseResult.tokens)
+        end
       end
     end # class
   end # module

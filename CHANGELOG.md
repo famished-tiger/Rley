@@ -1,3 +1,8 @@
+### 0.5.02 / 2017-10-08
+* [NEW] Addedsupport for ASTs (Abstract Syntax Tree)
+* [CHANGE] File `examples/data_formats/JSON/JSON_demo.rb` Added New command-line switches for details use --help option
+* [CHANGE] File `examples/general/calc_iter1/calc_demo.rb` Calculator now computes the value of a parsed expression
+
 ### 0.5.01 / 2017-08-20
 * [CHANGE] File `appveyor.yml`: Added Ruby 2.4 build environment in Appveyor CI
 

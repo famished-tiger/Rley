@@ -1,3 +1,5 @@
+require 'strscan'
+
 # Load the builder class
 require_relative '../../../lib/rley/syntax/grammar_builder'
 require_relative '../../../lib/rley/tokens/token'
@@ -14,7 +16,7 @@ module GrammarArrIntHelper
       rule 'arr' => %w( [ sequence ] )
       rule 'sequence' => ['list']
       rule 'sequence' => []
-      rule 'list' => %w[list , integer]
+      rule 'list' => %w[list , integer]   # Right-recursive rule
       rule 'list' => 'integer'
     end
     builder
@@ -22,17 +24,25 @@ module GrammarArrIntHelper
 
   # Basic tokenizer for array of integers
   def arr_int_tokenizer(aText, aGrammar)
-    tokens = aText.scan(/\S+/).map do |lexeme|
-      case lexeme
-        when '[', ']', ','
-          terminal = aGrammar.name2symbol[lexeme]
-        when /^[-+]?\d+$/
-          terminal = aGrammar.name2symbol['integer']
-        else
-          msg = "Unknown input text '#{lexeme}'"
-          raise StandardError, msg
+    tokens = []
+    scanner = StringScanner.new(aText)
+
+    until scanner.eos? do
+      scanner.skip(/\s+/)
+      lexeme = scanner.scan(/[\[,\]]/)
+      if lexeme
+        terminal = aGrammar.name2symbol[lexeme]
+        tokens << Rley::Tokens::Token.new(lexeme, terminal)
+        next
       end
-      Rley::Tokens::Token.new(lexeme, terminal)
+      lexeme = scanner.scan(/^[-+]?\d+/)
+      if lexeme
+        terminal = aGrammar.name2symbol['integer']
+        tokens << Rley::Tokens::Token.new(lexeme, terminal)
+      else
+        msg = "Unknown input text '#{lexeme}'"
+        raise StandardError, msg
+      end
     end
 
     return tokens

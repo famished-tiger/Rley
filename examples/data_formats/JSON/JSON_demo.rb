@@ -1,9 +1,10 @@
 require_relative 'cli_options'
 require_relative 'json_parser'
 require_relative 'json_minifier'
+require_relative 'json_ast_builder'
 
 prog_name = 'json_demo'
-prog_version = '0.2.0'
+prog_version = '0.3.0'
 
 cli_options = CLIOptions.new(prog_name, prog_version, ARGV)
 if ARGV.empty?
@@ -24,8 +25,8 @@ unless result.success?
   exit(1)
 end
 
-# Generate a parse tree from the parse result
-ptree = result.parse_tree
+tree_rep = cli_options[:rep]
+renderer = nil
 
 # Select the output format
 case cli_options[:format]
@@ -34,12 +35,27 @@ case cli_options[:format]
   when :labelled
     renderer = Rley::Formatter::BracketNotation.new($stdout)
   when :minify
-    renderer = JSONMinifier.new($stdout)    
+    msg = "minify format works for 'cst' representation only"
+    raise StandardError, msg if tree_rep == :ast
+    renderer = JSONMinifier.new($stdout)
+  when :ruby
+    msg = "ruby format works for 'ast' representation only"
+    raise StandardError, msg if tree_rep == :cst
 end
 
-# Let's create a parse tree visitor
-visitor = Rley::ParseTreeVisitor.new(ptree)
+tree_builder = (tree_rep == :ast)? JSONASTBuilder : nil
 
-# Now output formatted parse tree
-renderer.render(visitor)
+# Generate a parse tree from the parse result
+ptree = result.parse_tree(tree_builder)
+
+if renderer
+  # Let's create a parse tree visitor
+  visitor = Rley::ParseTreeVisitor.new(ptree)
+
+  # Now output formatted parse tree
+  renderer.render(visitor)
+else
+  root = ptree.root
+  p(root.to_ruby) # Output the Ruby representation of the JSON input
+end
 # End of file

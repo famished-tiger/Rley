@@ -16,9 +16,9 @@ module Rley # This module is used as a namespace
       
       # Factory method that produces the representation of the parse.
       # @return [ParseTree] The parse representation.
-      def create()
+      def create(aBuilder = nil)
         a_walker = walker(parsing)
-        a_builder = builder(parsing)
+        a_builder = builder(parsing, aBuilder)
 
         begin
           loop do

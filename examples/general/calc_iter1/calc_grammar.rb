@@ -6,18 +6,15 @@ require 'rley' # Load the gem
 builder = Rley::Syntax::GrammarBuilder.new do
   add_terminals('NUMBER')
   add_terminals('LPAREN', 'RPAREN') # For '(', ')' delimiters
-  add_terminals('PLUS', 'MINUS') # For '+', '-' operators or sign
+  add_terminals('PLUS', 'MINUS') # For '+', '-' operators
   add_terminals('STAR', 'DIVIDE') # For '*', '/' operators
-  rule 'expression' => %w[sign simple_expression]
+  rule 'expression' => 'simple_expression'
   rule 'simple_expression' => 'term'
   rule 'simple_expression' => %w[simple_expression add_operator term]
   rule 'term' => 'factor'
   rule 'term' => %w[term mul_operator factor]
   rule 'factor' => 'NUMBER'
   rule 'factor' => %w[LPAREN expression RPAREN]
-  rule 'sign' => 'PLUS'
-  rule 'sign' => 'MINUS'
-  rule 'sign' => []
   rule 'add_operator' => 'PLUS'
   rule 'add_operator' => 'MINUS'  
   rule 'mul_operator' => 'STAR'
