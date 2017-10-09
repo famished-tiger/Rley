@@ -80,10 +80,10 @@ module Rley # Open this namespace to avoid module qualifier prefixes
 
       context 'Provided services:' do
         it 'should emit a message' do
-          text = <<MSG_END
+          text = <<MESSAGE_END
 Syntax error at or near token 4 >>>-<<<
 Expected one of: ['PLUS', 'LPAREN'], found a 'MINUS' instead.
-MSG_END
+MESSAGE_END
           expect(subject.to_s).to eq(text.chomp)
           expect(subject.message).to eq(text.chomp)
         end
@@ -111,10 +111,10 @@ MSG_END
 
       context 'Provided services:' do
         it 'should emit a message' do
-          text = <<MSG_END
+          text = <<MESSAGE_END
 Premature end of input after '+' at position 4
 Expected one of: ['INT', 'LPAREN'].
-MSG_END
+MESSAGE_END
           expect(subject.to_s).to eq(text.chomp)
           expect(subject.message).to eq(text.chomp)
         end

@@ -31,7 +31,7 @@ module Rley # This module is used as a namespace
         @symbols = []
         @name2symbol = {}
         valid_productions = validate_productions(theProductions)
-        valid_productions.each do |prod| 
+        valid_productions.each do |prod|
           add_production(prod)
           name_production(prod)
         end
@@ -68,21 +68,23 @@ module Rley # This module is used as a namespace
 
         aProduction.rhs.each { |symb| add_symbol(symb) }
       end
-      
+
+      # If the production is anonymous, then assign it
+      # a default name
       def name_production(aProduction)
-        if aProduction.name.nil?
-          index = rules.find_index(aProduction)
-          prefix = aProduction.lhs.name.dup
-          previous = index.zero? ? nil : rules[index - 1]
-          if previous.nil? || previous.lhs != aProduction.lhs
-            suffix = '[0]'
-          else
-            prev_serial = previous.name.match(/\[(\d+)\]$/)
-            suffix = "[#{prev_serial[1].to_i + 1}]"   
-          end
-          
-          aProduction.name = prefix + suffix
+        return unless aProduction.name.nil?
+
+        index = rules.find_index(aProduction)
+        prefix = aProduction.lhs.name.dup
+        previous = index.zero? ? nil : rules[index - 1]
+        if previous.nil? || previous.lhs != aProduction.lhs
+          suffix = '[0]'
+        else
+          prev_serial = previous.name.match(/\[(\d+)\]$/)
+          suffix = "[#{prev_serial[1].to_i + 1}]"
         end
+
+        aProduction.name = prefix + suffix
       end
 
       # Perform some check of the grammar.
@@ -141,7 +143,7 @@ module Rley # This module is used as a namespace
             could_mark_nterm_generative(a_rule)
           end
           break if prev_marked.size == curr_marked.size
-        end 
+        end
 
         # The nonterminals that are not marked yet are non-generative
         non_terminals.each do |nterm|

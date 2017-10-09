@@ -1,3 +1,8 @@
+### 0.5.03 / 2017-10-09
+* [CHANGE] Refactoring code style to please Rubocop 0.50.0
+* [CHANGE] File `.rubocop.yml`: Disabling heredoc cop because it produces false negatives
+* [FIX] File `examples/general/calc_iter1/calc_ast_builder.rb`. Method CalcASTBuilder#new_leaf_node used old signature. Fixed
+
 ### 0.5.02 / 2017-10-08
 * [NEW] Addedsupport for ASTs (Abstract Syntax Tree)
 * [CHANGE] File `examples/data_formats/JSON/JSON_demo.rb` Added New command-line switches for details use --help option

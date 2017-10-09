@@ -1,8 +1,3 @@
-require_relative '../syntax/terminal'
-require_relative '../syntax/non_terminal'
-require_relative '../gfg/end_vertex'
-require_relative '../gfg/item_vertex'
-require_relative '../gfg/start_vertex'
 require_relative 'parse_tree_builder'
 require_relative '../ptree/non_terminal_node'
 require_relative '../ptree/terminal_node'
@@ -18,7 +13,6 @@ module Rley # This module is used as a namespace
     # (say, a parse tree) from simpler objects (terminal and non-terminal
     # nodes) and using a step by step approach.
     class CSTBuilder < ParseTreeBuilder
-
       protected
       
       # Method to override
@@ -42,9 +36,9 @@ module Rley # This module is used as a namespace
       # Factory method for creating a parent node object.
       # @param aProduction [Production] Production rule
       # @param aRange [Range] Range of tokens matched by the rule
-      # @param theTokens [Array] The input tokens
+      # @param _tokens [Array] The input tokens
       # @param theChildren [Array] Children nodes (one per rhs symbol)
-      def new_parent_node(aProduction, aRange, theTokens, theChildren)
+      def new_parent_node(aProduction, aRange, _tokens, theChildren)
         node = Rley::PTree::NonTerminalNode.new(aProduction.lhs, aRange)
         theChildren.reverse_each { |child| node.add_subnode(child) }
         return node

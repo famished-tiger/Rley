@@ -80,7 +80,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
         end
 
         it 'should have one or more entry edges per start vertex' do
-          subject.start_vertex_for.values.each do |a_start|
+          subject.start_vertex_for.each_value do |a_start|
             expect(a_start.edges.size >= 1).to be_truthy
             a_start.edges.each do |edge|
               expect(edge.successor.dotted_item.at_start?).to be_truthy

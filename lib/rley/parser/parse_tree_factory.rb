@@ -7,7 +7,6 @@ module Rley # This module is used as a namespace
     # Utility class that helps to create a ParseTree from
     # a given Parsing object.
     class ParseTreeFactory < ParseRepCreator
-
       protected
 
       # Create a Builder, that is, an object

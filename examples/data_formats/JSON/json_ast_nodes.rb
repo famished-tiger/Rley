@@ -15,18 +15,18 @@ JSONTerminalNode = Struct.new(:token, :value, :position) do
   end
 
   def symbol()
-    self.token.terminal
+    token.terminal
   end
 
   def to_ruby()
-    return value
+    value
   end
-  
+
   # Part of the 'visitee' role in Visitor design pattern.
   # @param aVisitor[ParseTreeVisitor] the visitor
   def accept(aVisitor)
     aVisitor.visit_terminal(self)
-  end  
+  end
 end
 
 
@@ -45,7 +45,7 @@ end
 class JSONStringNode < JSONTerminalNode
 end
 
-class JSONNumberNode  < JSONTerminalNode
+class JSONNumberNode < JSONTerminalNode
   def init_value(aLiteral)
     case aLiteral
       when /^[+-]?\d+$/
@@ -63,7 +63,7 @@ class JSONCompositeNode
 
   def initialize(aSymbol)
     @symbol = aSymbol
-    @children = []    
+    @children = []
   end
 
   # Part of the 'visitee' role in Visitor design pattern.
@@ -71,9 +71,8 @@ class JSONCompositeNode
   def accept(aVisitor)
     aVisitor.visit_nonterminal(self)
   end
-  
-  alias subnodes children
 
+  alias subnodes children
 end # class
 
 
@@ -108,7 +107,7 @@ class JSONPair
   def children()
     return [name, value]
   end
-  
+
   alias subnodes children
 
   # Part of the 'visitee' role in Visitor design pattern.
@@ -116,7 +115,6 @@ class JSONPair
   def accept(aVisitor)
     aVisitor.visit_nonterminal(self)
   end
-
 end # class
 
 class JSONObjectNode < JSONCompositeNode
@@ -137,5 +135,4 @@ class JSONObjectNode < JSONCompositeNode
 
   alias members children
 end # class
-
-
+# End of file

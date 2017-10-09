@@ -96,10 +96,10 @@ module Rley # This module is used as a namespace
 
       # Handler for visit events for ParseEntry matching .N pattern
       # @param anEvent [Symbol] Kind of visit event. Should be: :visit
-      # @param anEntry [ParseEntry] The entry being visited
-      # @param anIndex [anIndex] The token index at end of anEntry
-      def process_start_entry(anEvent, anEntry, anIndex)
-        raise NotImplementedError unless [:visit, :revisit].include?(anEvent)
+      # @param _entry [ParseEntry] The entry being visited
+      # @param _index [Integer] The token index at end of anEntry
+      def process_start_entry(anEvent, _entry, _index)
+        raise NotImplementedError unless %I[visit revisit].include?(anEvent)
       end
 
       # Handler for visit events for ParseEntry matching N => alpha* . beta*
@@ -130,7 +130,7 @@ module Rley # This module is used as a namespace
       # @param anEntry [ParseEntry] Entry matching (pattern: N => alpha* .)
       # @param anIndex [anIndex] The token index at end of anEntry
       def process_exit_entry(anEntry, anIndex)
-        production =  anEntry.vertex.dotted_item.production
+        production = anEntry.vertex.dotted_item.production
         count_rhs = production.rhs.members.size
         init_TOS_children(count_rhs) # Create placeholders for children
         build_terminal(anEntry, anIndex) if terminal_before_dot?(anEntry)
@@ -142,20 +142,18 @@ module Rley # This module is used as a namespace
         build_terminal(anEntry, anIndex) if terminal_before_dot?(anEntry)
       end
 
-
-
       # @param anEntry [ParseEntry] Entry matching (pattern: N => . alpha)
-      # @param anIndex [anIndex] The token index at end of anEntry
-      def process_entry_entry(anEntry, anIndex)
+      # @param anIndex [_index] The token index at end of anEntry
+      def process_entry_entry(anEntry, _index)
         dotted_item = anEntry.vertex.dotted_item
         rule = dotted_item.production
         previous_tos = stack.pop
         non_terminal = entry2nonterm(anEntry)
         # For debugging purposes
         raise StandardError if previous_tos.symbol != non_terminal
-        
+
         new_node = new_parent_node(rule, previous_tos.range,
-                                     tokens, previous_tos.children)
+                                   tokens, previous_tos.children)
         if stack.empty?
           @result = create_tree(new_node)
         else
@@ -196,12 +194,11 @@ module Rley # This module is used as a namespace
         token = tokens[token_position]
         prod = anEntry.vertex.dotted_item.production
         term_node = new_leaf_node(prod, term_symbol, token_position, token)
-        
+
         # Second make it a child of TOS...
         pos = anEntry.vertex.dotted_item.prev_position # pos. in rhs of rule
         place_TOS_child(term_node, pos)
       end
-
 
       # Place the given node object as one of the children of the TOS
       # (TOS = Top Of Stack).
@@ -217,7 +214,7 @@ module Rley # This module is used as a namespace
       def place_TOS_child(aNode, aRHSPos)
         if aRHSPos.nil?
           # Retrieve index of most rightmost nil child...
-          pos = tos.children.rindex { |child| child.nil? }
+          pos = tos.children.rindex(&:nil?)
           raise StandardError, 'Internal error' if pos.nil?
         else
           pos = aRHSPos
@@ -225,14 +222,14 @@ module Rley # This module is used as a namespace
 
         tos.children[pos] = aNode
       end
-      
+
       # Retrieve non-terminal symbol of given parse entry
       def entry2nonterm(anEntry)
         case anEntry.vertex
-        when GFG::StartVertex, GFG::EndVertex
-          non_terminal = anEntry.vertex.non_terminal
-        when GFG::ItemVertex
-          non_terminal = anEntry.vertex.lhs
+          when GFG::StartVertex, GFG::EndVertex
+            non_terminal = anEntry.vertex.non_terminal
+          when GFG::ItemVertex
+            non_terminal = anEntry.vertex.lhs
         end
 
         return non_terminal

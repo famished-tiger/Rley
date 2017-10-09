@@ -10,7 +10,7 @@ require_relative 'calc_ast_nodes'
 class CalcASTBuilder < Rley::Parser::ParseTreeBuilder
   Terminal2NodeClass = {
     'NUMBER' => CalcNumberNode
-  }
+  }.freeze
 
   protected
 
@@ -39,17 +39,16 @@ class CalcASTBuilder < Rley::Parser::ParseTreeBuilder
   # @param aTerminal [Terminal] Terminal symbol associated with the token
   # @param aTokenPosition [Integer] Position of token in the input stream
   # @param aToken [Token] The input token
-  def new_leaf_node(aProduction, aTerminal, aTokenPosition, aToken)
+  def new_leaf_node(_production, aTerminal, aTokenPosition, aToken)
     klass = Terminal2NodeClass.fetch(aTerminal.name, CalcTerminalNode)
-    if klass
-      node = klass.new(aToken, aTokenPosition)
-    else
-      node = PTree::TerminalNode.new(aToken, aTokenPosition)
-    end
-    
+    node = if klass
+             klass.new(aToken, aTokenPosition)
+           else
+             PTree::TerminalNode.new(aToken, aTokenPosition)
+           end
+
     return node
   end
-
 
   # Method to override.
   # Factory method for creating a parent node object.
@@ -83,15 +82,15 @@ class CalcASTBuilder < Rley::Parser::ParseTreeBuilder
 
       when 'add_operator[0]' # rule 'add_operator' => 'PLUS'
         reduce_add_operator_0(aProduction, aRange, theTokens, theChildren)
-        
+
       when 'add_operator[1]' # rule 'add_operator' => 'MINUS'
-        reduce_add_operator_1(aProduction, aRange, theTokens, theChildren)        
+        reduce_add_operator_1(aProduction, aRange, theTokens, theChildren)
 
       when 'mul_operator[0]' # rule 'mul_operator' => 'STAR'
          reduce_mul_operator_0(aProduction, aRange, theTokens, theChildren)
-         
+
       when 'mul_operator[1]' # rule 'mul_operator' =>  'DIVIDE'
-         reduce_mul_operator_1(aProduction, aRange, theTokens, theChildren)         
+         reduce_mul_operator_1(aProduction, aRange, theTokens, theChildren)
 
       else
         raise StandardError, "Don't know production #{aProduction.name}"
@@ -99,44 +98,42 @@ class CalcASTBuilder < Rley::Parser::ParseTreeBuilder
 
     return node
   end
-  
+
   def reduce_binary_operator(theChildren)
     operator_node = theChildren[1]
     operator_node.children << theChildren[0]
     operator_node.children << theChildren[2]
-    return operator_node  
+    return operator_node
   end
 
   # rule 'simple_expression' => %w[simple_expression add_operator term]
-  def reduce_simple_expression_1(aProduction, aRange, theTokens, theChildren)
+  def reduce_simple_expression_1(_production, _range, _tokens, theChildren)
     reduce_binary_operator(theChildren)
   end
-
 
   # rule 'term' => %w[term mul_operator factor]
-  def reduce_term_1(aProduction, aRange, theTokens, theChildren)
+  def reduce_term_1(_production, _range, _tokens, theChildren)
     reduce_binary_operator(theChildren)
   end
-  
+
   # rule 'add_operator' => 'PLUS'
-  def reduce_add_operator_0(aProduction, aRange, theTokens, theChildren)
+  def reduce_add_operator_0(_production, _range, _tokens, theChildren)
     return CalcAddNode.new(theChildren[0].symbol)
   end
-  
+
   # rule 'add_operator' => 'MINUS'
-  def reduce_add_operator_1(aProduction, aRange, theTokens, theChildren)
+  def reduce_add_operator_1(_production, _range, _tokens, theChildren)
     return CalcSubtractNode.new(theChildren[0].symbol)
   end
-  
+
   # rule 'mul_operator' => 'STAR'
-  def reduce_mul_operator_0(aProduction, aRange, theTokens, theChildren)
+  def reduce_mul_operator_0(_production, _range, _tokens, theChildren)
     return CalcMultiplyNode.new(theChildren[0].symbol)
   end
-  
-  # rule 'mul_operator' => 'DIVIDE'
-  def reduce_mul_operator_1(aProduction, aRange, theTokens, theChildren)
-    return CalcDivideNode.new(theChildren[0].symbol)
-  end  
-  
 
+  # rule 'mul_operator' => 'DIVIDE'
+  def reduce_mul_operator_1(_production, _range, _tokens, theChildren)
+    return CalcDivideNode.new(theChildren[0].symbol)
+  end
 end # class
+# End of file

@@ -15,7 +15,7 @@ CalcTerminalNode = Struct.new(:token, :value, :position) do
   end
 
   def symbol()
-    self.token.terminal
+    token.terminal
   end
 
   def interpret()
@@ -29,7 +29,7 @@ CalcTerminalNode = Struct.new(:token, :value, :position) do
   end  
 end
 
-class CalcNumberNode  < CalcTerminalNode
+class CalcNumberNode < CalcTerminalNode
   def init_value(aLiteral)
     case aLiteral
       when /^[+-]?\d+$/
@@ -57,7 +57,6 @@ class CalcCompositeNode
   end
   
   alias subnodes children
-
 end # class
 
 class CalcUnaryOpNode < CalcCompositeNode
@@ -89,7 +88,7 @@ class CalcBinaryOpNode < CalcCompositeNode
   
   protected
   
-  def get_operands()
+  def retrieve_operands()
     operands = []
     children.each do |child|
       oper = child.respond_to?(:interpret) ? child.interpret : child
@@ -98,14 +97,12 @@ class CalcBinaryOpNode < CalcCompositeNode
 
     return operands
   end
-
 end # class
 
 class CalcAddNode < CalcBinaryOpNode
-
   # TODO
   def interpret()
-    operands = get_operands
+    operands = retrieve_operands
 
     sum = operands[0] + operands[1]
     return sum
@@ -114,10 +111,9 @@ end # class
 
 
 class CalcSubtractNode < CalcBinaryOpNode
-
   # TODO
   def interpret()
-    operands = get_operands
+    operands = retrieve_operands
 
     substraction = operands[0] - operands[1]
     return substraction
@@ -125,27 +121,22 @@ class CalcSubtractNode < CalcBinaryOpNode
 end # class
 
 class CalcMultiplyNode < CalcBinaryOpNode
-
   # TODO
   def interpret()
-    operands = get_operands
+    operands = retrieve_operands
     multiplication = operands[0] * operands[1]
     return multiplication
   end
 end # class
 
 class CalcDivideNode < CalcBinaryOpNode
-
   # TODO
   def interpret()
-    operands = get_operands
+    operands = retrieve_operands
     numerator = operands[0].to_f
     denominator = operands[1]
     division =  numerator / denominator
     return division    
   end
 end # class
-
-
-
-
+# End of file

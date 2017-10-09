@@ -13,10 +13,10 @@ module GrammarArrIntHelper
     builder = Rley::Syntax::GrammarBuilder.new do
       add_terminals('[', ']', ',', 'integer')
       rule 'P' => 'arr'
-      rule 'arr' => %w( [ sequence ] )
+      rule 'arr' => %w([ sequence ])
       rule 'sequence' => ['list']
       rule 'sequence' => []
-      rule 'list' => %w[list , integer]   # Right-recursive rule
+      rule 'list' => %w[list , integer] # Right-recursive rule
       rule 'list' => 'integer'
     end
     builder
@@ -27,7 +27,7 @@ module GrammarArrIntHelper
     tokens = []
     scanner = StringScanner.new(aText)
 
-    until scanner.eos? do
+    until scanner.eos?
       scanner.skip(/\s+/)
       lexeme = scanner.scan(/[\[,\]]/)
       if lexeme

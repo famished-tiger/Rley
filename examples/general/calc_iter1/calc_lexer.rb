@@ -51,13 +51,13 @@ class CalcLexer
       # Single character token
       token = build_token(@@lexeme2name[curr_ch], scanner.getch)
       
-    elsif lexeme = scanner.scan(/\*\*/)
+    elsif (lexeme = scanner.scan(/\*\*/))
       token = build_token(@@lexeme2name[lexeme], lexeme)
-    elsif lexeme = scanner.scan(/\*/)
+    elsif (lexeme = scanner.scan(/\*/))
       token = build_token(@@lexeme2name[lexeme], lexeme)
-    elsif lexeme = scanner.scan(/-?[0-9]+(\.[0-9]+)?([eE][-+]?[0-9])?/)
+    elsif (lexeme = scanner.scan(/-?[0-9]+(\.[0-9]+)?([eE][-+]?[0-9])?/))
       token = build_token('NUMBER', lexeme)
-    elsif lexeme = scanner.scan(/-/)
+    elsif (lexeme = scanner.scan(/-/))
       token = build_token(@@lexeme2name[curr_ch], lexeme)
     else # Unknown token
       erroneous = curr_ch.nil? ? '' : curr_ch
@@ -77,5 +77,4 @@ class CalcLexer
   def skip_whitespaces()
     scanner.scan(/[ \t\f\n\r]+/)
   end
-
 end # class

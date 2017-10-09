@@ -43,7 +43,7 @@ case cli_options[:format]
     raise StandardError, msg if tree_rep == :cst
 end
 
-tree_builder = (tree_rep == :ast)? JSONASTBuilder : nil
+tree_builder = tree_rep == :ast ? JSONASTBuilder : nil
 
 # Generate a parse tree from the parse result
 ptree = result.parse_tree(tree_builder)

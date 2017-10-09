@@ -12,7 +12,6 @@ require_relative '../support/grammar_arr_int_helper'
 
 module Rley # This module is used as a namespace
   module Parser # This module is used as a namespace
-
     ArrayNode = Struct.new(:children) do
       def initialize()
         super
@@ -32,7 +31,7 @@ module Rley # This module is used as a namespace
       end
 
       def interpret()
-        self.value
+        value
       end
     end
 
@@ -44,7 +43,6 @@ module Rley # This module is used as a namespace
     # (say, a parse tree) from simpler objects (terminal and non-terminal
     # nodes) and using a step by step approach.
     class ASTBuilder < ParseTreeBuilder
-
       protected
 
       # Method to override
@@ -76,53 +74,54 @@ module Rley # This module is used as a namespace
       # @param theChildren [Array] Children nodes (one per rhs symbol)
       def new_parent_node(aProduction, aRange, theTokens, theChildren)
         node = case aProduction.name
-          when 'P[0]'
-            reduce_P_0(aRange, theTokens, theChildren)
+                 when 'P[0]'
+                   reduce_P_0(aRange, theTokens, theChildren)
 
-          when 'arr[0]'
-            reduce_arr_0(aRange, theTokens, theChildren)
+                 when 'arr[0]'
+                   reduce_arr_0(aRange, theTokens, theChildren)
 
-          when 'sequence[0]'
-            reduce_sequence_0(aRange, theTokens, theChildren)
+                 when 'sequence[0]'
+                   reduce_sequence_0(aRange, theTokens, theChildren)
 
-          when 'sequence[1]'
-            reduce_sequence_1(aRange, theTokens, theChildren)
+                 when 'sequence[1]'
+                   reduce_sequence_1(aRange, theTokens, theChildren)
 
-          when 'list[0]'
-            reduce_list_0(aRange, theTokens, theChildren)
+                 when 'list[0]'
+                   reduce_list_0(aRange, theTokens, theChildren)
 
-          when 'list[1]'
-            reduce_list_1(aRange, theTokens, theChildren)
-          else
-            raise StandardError, "Don't know production #{aProduction.name}"
-        end
+                 when 'list[1]'
+                   reduce_list_1(aRange, theTokens, theChildren)
+                 else
+                  err_msg = "Don't know production #{aProduction.name}"
+                  raise StandardError, err_msg
+               end
 
         return node
       end
 
-      def reduce_P_0(aRange, theTokens, theChildren)
+      def reduce_P_0(_range, _tokens, theChildren)
         return theChildren[0]
       end
 
-      def reduce_arr_0(aRange, theTokens, theChildren)
+      def reduce_arr_0(_range, _tokens, theChildren)
         return theChildren[1]
       end
 
-      def reduce_sequence_0(aRange, theTokens, theChildren)
+      def reduce_sequence_0(_range, _tokens, theChildren)
         return theChildren[0]
       end
 
-      def reduce_sequence_1(aRange, theTokens, theChildren)
+      def reduce_sequence_1(_range, _tokens, _children)
         return ArrayNode.new
       end
 
-      def reduce_list_0(aRange, theTokens, theChildren)
+      def reduce_list_0(_range, _tokens, theChildren)
         node = theChildren[0]
         node.children << theChildren[2]
         return node
       end
 
-      def reduce_list_1(aRange, theTokens, theChildren)
+      def reduce_list_1(_range, _tokens, theChildren)
         node = ArrayNode.new
         node.children << theChildren[0]
         return node
@@ -163,12 +162,13 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           subject.receive_event(*event)
         end
       end
+
       def get_stack(aBuilder)
         return aBuilder.send(:stack)
       end
 
       def create_range(low, high)
-        return Tokens::TokenRange.new({low: low, high: high })
+        return Tokens::TokenRange.new(low: low, high: high)
       end
 
       context 'Initialization:' do
@@ -190,7 +190,6 @@ module Rley # Open this namespace to avoid module qualifier prefixes
       end # context
 
       context 'Parse tree construction (no null symbol):' do
-
         def next_event(expectation)
           event = @walker.next
           (ev_type, entry, index) = event
@@ -244,9 +243,9 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           expect(stack.size).to eq(1)
           # stack: [P[0, 7]]
           expect(stack.last.range).to eq(create_range(0, 7))
-          expect(stack.last.children).to be_nil        
+          expect(stack.last.children).to be_nil
         end
-        
+
         it 'should build a tree for an empty array' do
           stack = get_stack(subject)
 
@@ -317,7 +316,8 @@ module Rley # Open this namespace to avoid module qualifier prefixes
 
           next_event('visit list. | 1 2')
           expect(stack.size).to eq(6)
-          # stack: [P[0, 7], arr[0, 7], sequence[1, 6], list[1, 6], list[1, 4], list[1, 2]
+          # stack: [P[0, 7], arr[0, 7], sequence[1, 6], list[1, 6],
+          #        list[1, 4], list[1, 2]
           expect(stack.last.range).to eq(create_range(1, 2))
           expect(stack.last.children).to be_nil
 

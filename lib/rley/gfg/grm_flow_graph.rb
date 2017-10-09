@@ -284,7 +284,7 @@ module Rley # This module is used as a namespace
       # from the start symbol to the start node .N
       def mark_unreachable_symbols()
         # Mark all non-terminals as unreachable
-        start_vertex_for.values.each do |a_vertex|
+        start_vertex_for.each_value do |a_vertex|
           a_vertex.non_terminal.unreachable = true
         end
 

@@ -54,6 +54,10 @@ EndOfLine:
 IndentationWidth :
   Enabled: false
   
+# Disable this because it produces false negatives
+Naming/HeredocDelimiterNaming:
+  Enabled: false
+  
 # Enabled after end of support of Rubies < 2.3
 Layout/IndentHeredoc:
   Enabled: false

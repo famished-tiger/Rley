@@ -266,7 +266,7 @@ module Rley # This module is used as a namespace
           (antecd.origin == tos.origin) && tos_dotted_item.successor_of?(item)
         end
 
-        new_entry = aContext.curr_entry unless new_entry
+        new_entry ||= aContext.curr_entry
 
         # puts "Pop from return stack matching entry #{new_entry}"
         return new_entry

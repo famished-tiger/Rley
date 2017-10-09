@@ -48,7 +48,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
       end
 
       def create_range(low, high)
-        return Tokens::TokenRange.new({low: low, high: high })
+        return Tokens::TokenRange.new(low: low, high: high)
       end
 
       context 'Initialization:' do
@@ -340,8 +340,8 @@ module Rley # Open this namespace to avoid module qualifier prefixes
 
         # The visit events were generated with the following snippets:
         # 13.times do
-          # event = @walker.next
-          # subject.receive_event(*event)
+        #   event = @walker.next
+        #   subject.receive_event(*event)
         # end
         # The events are:
         # Event: visit P. | 0 2

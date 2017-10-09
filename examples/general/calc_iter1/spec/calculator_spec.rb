@@ -67,7 +67,5 @@ describe 'Calculator' do
   it 'should evaluate multiple levels of parentheses' do
     expect_expr('2*(1/(1+3))').to eq(0.5)
   end  
-
 end # describe
 # End of file
-

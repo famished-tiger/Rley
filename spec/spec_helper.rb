@@ -6,10 +6,12 @@ require 'coveralls'
 
 Coveralls.wear!
 
-SimpleCov.formatter = SimpleCov::Formatter::MultiFormatter.new([
-  SimpleCov::Formatter::HTMLFormatter,
-  Coveralls::SimpleCov::Formatter
-])
+SimpleCov.formatter = SimpleCov::Formatter::MultiFormatter.new(
+  [
+    SimpleCov::Formatter::HTMLFormatter,
+    Coveralls::SimpleCov::Formatter
+  ]
+)
 
 require 'pp'    # Use pretty-print for debugging purposes
 require 'rspec' # Use the RSpec framework
@@ -24,6 +26,5 @@ RSpec.configure do |config|
   # Display stack trace in case of failure
   config.full_backtrace = true
 end
-
 
 # End of file

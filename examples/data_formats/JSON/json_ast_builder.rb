@@ -9,12 +9,12 @@ require_relative 'json_ast_nodes'
 # nodes) and using a step by step approach.
 class JSONASTBuilder < Rley::Parser::ParseTreeBuilder 
   Terminal2NodeClass = {
-  'false' => JSONBooleanNode,
-  'true' => JSONBooleanNode,
-  'null' => JSONNullNode,
-  'string' => JSONStringNode,
-  'number' => JSONNumberNode,
-  }
+                         'false' => JSONBooleanNode,
+                         'true' => JSONBooleanNode,
+                         'null' => JSONNullNode,
+                         'string' => JSONStringNode,
+                         'number' => JSONNumberNode
+                       }.freeze
 
   protected
   
@@ -39,11 +39,10 @@ class JSONASTBuilder < Rley::Parser::ParseTreeBuilder
   # @param terminal [Terminal] Terminal symbol associated with the token
   # @param aTokenPosition [Integer] Position of token in the input stream
   # @param aToken [Token] The input token
-  def new_leaf_node(terminal, aTokenPosition, aToken)
+  def new_leaf_node(_production, terminal, aTokenPosition, aToken)
     klass = Terminal2NodeClass.fetch(terminal.name, JSONTerminalNode)
     return klass.new(aToken, aTokenPosition)
   end
-
 
   # Method to override.
   # Factory method for creating a parent node object.
@@ -93,60 +92,60 @@ class JSONASTBuilder < Rley::Parser::ParseTreeBuilder
   end
   
   # rule 'object' => %w[begin-object member-list end-object]
-  def reduce_object_0(aProduction, aRange, theTokens, theChildren)
+  def reduce_object_0(aProduction, _range, _tokens, theChildren)
     second_child = theChildren[1]
     second_child.symbol = aProduction.lhs
     return second_child
   end
 
   # rule 'object' => %w[begin-object end-object]
-  def reduce_object_1(aRange, theTokens, theChildren)
+  def reduce_object_1(aProduction, _range, _tokens, _children)
     return JSONObjectNode.new(aProduction.lhs)
   end
 
   # rule 'member-list' => %w[member-list value-separator member]
-  def reduce_member_list_0(aRange, theTokens, theChildren)
+  def reduce_member_list_0(_range, _tokens, theChildren)
     node = theChildren[0]
     node.members << theChildren.last
     return node
   end
 
   # rule 'member-list' => 'member'
-  def reduce_member_list_1(aProduction, aRange, theTokens, theChildren)
+  def reduce_member_list_1(aProduction, _range, _tokens, theChildren)
     node = JSONObjectNode.new(aProduction.lhs)
     node.members << theChildren[0]
     return node
   end
 
   # rule 'member' => %w[string name-separator value]
-  def reduce_member_0(aProduction, aRange, theTokens, theChildren)
+  def reduce_member_0(aProduction, _range, _tokens, theChildren)
     return JSONPair.new(theChildren[0], theChildren[2], aProduction.lhs)
   end
 
   # rule 'object' => %w[begin-object member-list end-object]
-  def reduce_array_0(aProduction, aRange, theTokens, theChildren)
+  def reduce_array_0(aProduction, _range, _tokens, theChildren)
     second_child = theChildren[1]
     second_child.symbol = aProduction.lhs
     return second_child  
   end
 
-
   # rule 'array' => %w[begin-array end-array]
-  def reduce_array_1(aRange, theTokens, theChildren)
+  def reduce_array_1(_range, _tokens, _children)
     return JSONArrayNode.new
   end
 
   # rule 'array-items' => %w[array-items value-separator value]
-  def reduce_array_items_0(aRange, theTokens, theChildren)
+  def reduce_array_items_0(_range, _tokens, theChildren)
     node = theChildren[0]
     node.children << theChildren[2]
     return node
   end
   
   #   rule 'array-items' => %w[value]
-  def reduce_array_items_1(aProduction, aRange, theTokens, theChildren)
+  def reduce_array_items_1(aProduction, _range, _tokens, theChildren)
     node = JSONArrayNode.new(aProduction.lhs)
     node.children << theChildren[0]
     return node
   end
 end # class
+# End of file
