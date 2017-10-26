@@ -162,7 +162,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
         
         it 'should ensure that each production has a name' do
           subject.rules.each do |prod|
-            expect(prod.name).to match(Regexp.new("#{prod.lhs.name}\\[\\d\\]"))
+            expect(prod.name).to match(Regexp.new("#{prod.lhs.name}_\\d$"))
           end
         end
       end # context

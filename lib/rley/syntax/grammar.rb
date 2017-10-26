@@ -78,10 +78,10 @@ module Rley # This module is used as a namespace
         prefix = aProduction.lhs.name.dup
         previous = index.zero? ? nil : rules[index - 1]
         if previous.nil? || previous.lhs != aProduction.lhs
-          suffix = '[0]'
+          suffix = '_0'
         else
-          prev_serial = previous.name.match(/\[(\d+)\]$/)
-          suffix = "[#{prev_serial[1].to_i + 1}]"
+          prev_serial = previous.name.match(/_(\d+)$/)
+          suffix = "_#{prev_serial[1].to_i + 1}"
         end
 
         aProduction.name = prefix + suffix

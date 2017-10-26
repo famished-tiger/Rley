@@ -46,9 +46,10 @@ module Rley # This module is used as a namespace
         mark_unreachable_symbols
       end
 
-      Branching = Struct.new(:vertex, :to_visit, :visited) do
-        def initialize(aVertex)
+      Branching = Struct.new(:vertex, :in_edge, :to_visit, :visited) do
+        def initialize(aVertex, aCallEdge)
           super(aVertex)
+          self.in_edge = aCallEdge
           self.to_visit = aVertex.edges.dup
           self.visited = []
         end
@@ -64,6 +65,15 @@ module Rley # This module is used as a namespace
           return next_one
         end
       end
+      
+      def print_vertex(aText, aVertex)
+        print aText + ' '
+        if aVertex.kind_of?(NonTerminalVertex)
+          puts "#{aVertex.class} #{aVertex.non_terminal.name}"
+        else
+          p(aVertex.label)
+        end       
+      end
 
       # Walk over all the vertices of the graph that are reachable from a given
       # start vertex. This is a depth-first graph traversal.
@@ -74,29 +84,38 @@ module Rley # This module is used as a namespace
         visited = Set.new
         stack = []
         visitee = aStartVertex
+        curr_edge = nil
 
         begin
+          print_vertex( 'Traversing', visitee)
+          
           first_time = !visited.include?(visitee)
           if first_time
             yield(visitee)
             visited << visitee
-          end
-
+          end         
+                      
           case visitee
             when Rley::GFG::StartVertex
               if first_time
-                stack.push(Branching.new(visitee))
+                stack.push(Branching.new(visitee, curr_edge))
                 curr_edge = stack.last.next_edge
               else
-                # Skip start and end vertices
+                # Skip both start and end vertices
                 # Retrieve the corresponding return edge
                 curr_edge = get_matching_return(curr_edge)
               end
 
             when Rley::GFG::EndVertex
-              stack.pop if stack.last.done?
-              break if stack.empty?
-              curr_edge = stack.last.next_edge
+              if stack.last.done?
+                popped = stack.pop
+                break if stack.empty?
+                puts "Popped!"
+                return_key = popped.in_edge.key.sub(/^CALL/, 'RET')
+                curr_edge = visitee.edges.find { |e| e.key == return_key }
+              else
+                curr_edge = stack.last.next_edge          
+              end
 
             else
               # All other vertex types have only one successor
@@ -105,7 +124,8 @@ module Rley # This module is used as a namespace
           visitee = curr_edge.successor unless curr_edge.nil?
         end until stack.empty?
         # Now process the end vertex matching the initial start vertex
-        yield(end_vertex_for[aStartVertex.non_terminal])
+        last_one = end_vertex_for[aStartVertex.non_terminal]
+        yield(last_one) unless visited.include?(last_one)
       end
 
       private
@@ -288,11 +308,18 @@ module Rley # This module is used as a namespace
           a_vertex.non_terminal.unreachable = true
         end
 
-        # Now traverse graph from start vertex
-        # and make all visited non-terminals as reachable
+        # Now traverse graph from start vertex of graph
+        # and mark all visited non-terminals as reachable
         traverse_df(start_vertex) do |a_vertex|
-          next unless a_vertex.kind_of?(StartVertex)
-          a_vertex.non_terminal.unreachable = false
+          print "  Visiting "
+          if a_vertex.kind_of?(NonTerminalVertex)
+            puts "#{a_vertex.class} #{a_vertex.non_terminal.name}"
+          else
+            p(a_vertex.label)
+          end
+          if a_vertex.kind_of?(StartVertex)
+            a_vertex.non_terminal.unreachable = false
+          end
         end
       end
     end # class

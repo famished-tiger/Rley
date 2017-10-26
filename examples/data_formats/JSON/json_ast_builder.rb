@@ -52,37 +52,37 @@ class JSONASTBuilder < Rley::Parser::ParseTreeBuilder
   # @param theChildren [Array] Children nodes (one per rhs symbol)
   def new_parent_node(aProduction, aRange, theTokens, theChildren)
     node = case aProduction.name
-      when 'JSON-text[0]' # rule 'JSON-text' => 'value'
+      when 'JSON-text_0' # rule 'JSON-text' => 'value'
         return_first_child(aRange, theTokens, theChildren)
 
-      when /value\[\d\]/
+      when /value_\d/
         return_first_child(aRange, theTokens, theChildren)
 
-      when 'object[0]'
+      when 'object_0'
         reduce_object_0(aProduction, aRange, theTokens, theChildren)
 
-      when 'object[1]'
+      when 'object_1'
         reduce_object_1(aRange, theTokens, theChildren)
 
-      when 'member-list[0]'
+      when 'member-list_0'
         reduce_member_list_0(aRange, theTokens, theChildren)
 
-      when 'member-list[1]'
+      when 'member-list_1'
         reduce_member_list_1(aProduction, aRange, theTokens, theChildren)
 
-      when 'member[0]'
+      when 'member_0'
         reduce_member_0(aProduction, aRange, theTokens, theChildren)
 
-      when 'array[0]'
+      when 'array_0'
         reduce_array_0(aProduction, aRange, theTokens, theChildren)
 
-      when 'array[1]'
+      when 'array_1'
         reduce_array_1(aRange, theTokens, theChildren)
 
-      when 'array-items[0]'
+      when 'array-items_0'
         reduce_array_items_0(aRange, theTokens, theChildren)
 
-      when 'array-items[1]'
+      when 'array-items_1'
         reduce_array_items_1(aProduction, aRange, theTokens, theChildren)
       else
         raise StandardError, "Don't know production #{aProduction.name}"

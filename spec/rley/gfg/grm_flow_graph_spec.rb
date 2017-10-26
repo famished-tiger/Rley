@@ -191,6 +191,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
             'A.',
             'A => . b',
             'A => b .',
+            'S => A .',
             'S.'
           ]
           expect(result).to eq(expected)

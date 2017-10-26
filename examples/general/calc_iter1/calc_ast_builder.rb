@@ -58,38 +58,38 @@ class CalcASTBuilder < Rley::Parser::ParseTreeBuilder
   # @param theChildren [Array] Children nodes (one per rhs symbol)
   def new_parent_node(aProduction, aRange, theTokens, theChildren)
     node = case aProduction.name
-      when 'expression[0]' # rule 'expression' => 'simple_expression'
+      when 'expression_0' # rule 'expression' => 'simple_expression'
         return_first_child(aRange, theTokens, theChildren)
 
-      when 'simple_expression[0]' # rule 'simple_expression' => 'term'
+      when 'simple_expression_0' # rule 'simple_expression' => 'term'
         return_first_child(aRange, theTokens, theChildren)
 
-      when 'simple_expression[1]'
+      when 'simple_expression_1'
         # rule 'simple_expression' => %w[simple_expression add_operator term]
         reduce_simple_expression_1(aProduction, aRange, theTokens, theChildren)
 
-      when 'term[0]' # rule 'term' => 'factor'
+      when 'term_0' # rule 'term' => 'factor'
         return_first_child(aRange, theTokens, theChildren)
 
-      when 'term[1]' # rule 'term' => %w[term mul_operator factor]
+      when 'term_1' # rule 'term' => %w[term mul_operator factor]
         reduce_term_1(aProduction, aRange, theTokens, theChildren)
 
-      when 'factor[0]' # rule 'factor' => 'NUMBER'
+      when 'factor_0' # rule 'factor' => 'NUMBER'
         return_first_child(aRange, theTokens, theChildren)
 
-      when 'factor[1]' # rule 'factor' => %w[LPAREN expression RPAREN]
+      when 'factor_1' # rule 'factor' => %w[LPAREN expression RPAREN]
         return_second_child(aRange, theTokens, theChildren)
 
-      when 'add_operator[0]' # rule 'add_operator' => 'PLUS'
+      when 'add_operator_0' # rule 'add_operator' => 'PLUS'
         reduce_add_operator_0(aProduction, aRange, theTokens, theChildren)
 
-      when 'add_operator[1]' # rule 'add_operator' => 'MINUS'
+      when 'add_operator_1' # rule 'add_operator' => 'MINUS'
         reduce_add_operator_1(aProduction, aRange, theTokens, theChildren)
 
-      when 'mul_operator[0]' # rule 'mul_operator' => 'STAR'
+      when 'mul_operator_0' # rule 'mul_operator' => 'STAR'
          reduce_mul_operator_0(aProduction, aRange, theTokens, theChildren)
 
-      when 'mul_operator[1]' # rule 'mul_operator' =>  'DIVIDE'
+      when 'mul_operator_1' # rule 'mul_operator' =>  'DIVIDE'
          reduce_mul_operator_1(aProduction, aRange, theTokens, theChildren)
 
       else

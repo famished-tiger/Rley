@@ -1,3 +1,7 @@
+### 0.5.04 / 2017-10-26
+* [Fix] Method GrmFlowGraph#traverse_df code terminated prematurely with nested call edges.
+* [CHANGE] Method Grammar#name_production: suffix in default production name is changed (e.g. 'expression[3]' changed to expression_3)
+
 ### 0.5.03 / 2017-10-09
 * [CHANGE] Refactoring code style to please Rubocop 0.50.0
 * [CHANGE] File `.rubocop.yml`: Disabling heredoc cop because it produces false negatives

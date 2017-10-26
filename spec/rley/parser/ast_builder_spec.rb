@@ -74,22 +74,22 @@ module Rley # This module is used as a namespace
       # @param theChildren [Array] Children nodes (one per rhs symbol)
       def new_parent_node(aProduction, aRange, theTokens, theChildren)
         node = case aProduction.name
-                 when 'P[0]'
+                 when 'P_0'
                    reduce_P_0(aRange, theTokens, theChildren)
 
-                 when 'arr[0]'
+                 when 'arr_0'
                    reduce_arr_0(aRange, theTokens, theChildren)
 
-                 when 'sequence[0]'
+                 when 'sequence_0'
                    reduce_sequence_0(aRange, theTokens, theChildren)
 
-                 when 'sequence[1]'
+                 when 'sequence_1'
                    reduce_sequence_1(aRange, theTokens, theChildren)
 
-                 when 'list[0]'
+                 when 'list_0'
                    reduce_list_0(aRange, theTokens, theChildren)
 
-                 when 'list[1]'
+                 when 'list_1'
                    reduce_list_1(aRange, theTokens, theChildren)
                  else
                   err_msg = "Don't know production #{aProduction.name}"
