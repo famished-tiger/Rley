@@ -107,7 +107,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
         factory = ParseWalkerFactory.new
         accept_entry = sentence_result.accepting_entry
         accept_index = sentence_result.chart.last_index
-        @walker = factory.build_walker(accept_entry, accept_index)
+        @walker = factory.build_walker(accept_entry, accept_index, true)
       end
 
       context 'Parse ambiguous sentence' do

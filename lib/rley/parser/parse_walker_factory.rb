@@ -18,7 +18,8 @@ module Rley # This module is used as a namespace
       :nterm2start, # Nested hashes. Pairs of first level are of the form:
       # non-terminal symbol => { index(=origin) => start entry }
       :return_stack, # @return [Array<ParseEntry>] A stack of parse entries
-      :backtrack_points
+      :backtrack_points,
+      :lazy_walk # If true and revisit end vertex then jump to start vertex      
     )
 
 
@@ -26,7 +27,7 @@ module Rley # This module is used as a namespace
       :entry_set_index, # Sigma set index of current parse entry
       :return_stack, # A stack of parse entries
       :visitee, # The parse entry being visited
-      :antecedent_index
+      :antecedent_index,
     )
 
     # A factory that creates an Enumerator object
@@ -47,11 +48,12 @@ module Rley # This module is used as a namespace
       # @param acceptingEntry [ParseEntry] the final ParseEntry of a 
       #    successful parse.
       # @param maxIndex [Integer] the index of the last input token.
+      # @param lazyWalk [Boolean] if true then take some shortcut in re-visits.
       # @return [Enumerator] yields visit events when walking over the 
       #   parse result
-      def build_walker(acceptingEntry, maxIndex)
+      def build_walker(acceptingEntry, maxIndex, lazyWalk = false)
         # Local context for the enumerator
-        ctx = init_context(acceptingEntry, maxIndex)
+        ctx = init_context(acceptingEntry, maxIndex, lazyWalk)
 
         walker = Enumerator.new do |receiver| # 'receiver' is a Yielder
           # At this point: current entry == accepting entry
@@ -79,7 +81,7 @@ module Rley # This module is used as a namespace
       private
 
       # Context factory method
-      def init_context(acceptingEntry, maxIndex)
+      def init_context(acceptingEntry, maxIndex, lazyWalk)
         context = ParseWalkerContext.new
         context.entry_set_index = maxIndex
         context.curr_entry = acceptingEntry
@@ -87,6 +89,7 @@ module Rley # This module is used as a namespace
         context.nterm2start = init_nterm2start
         context.return_stack = []
         context.backtrack_points = []
+        context.lazy_walk = lazyWalk
 
         return context
       end
@@ -116,11 +119,13 @@ module Rley # This module is used as a namespace
         if aContext.visitees.include?(anEntry) # Already visited?...
           case anEntry.vertex
             when GFG::EndVertex
-              # Jump to related start entry...
-              pairs = aContext.nterm2start[anEntry.vertex.non_terminal]
-              new_entry = pairs[anEntry.origin]
-              aContext.curr_entry = new_entry
-              aContext.entry_set_index = new_entry.origin
+              if aContext.lazy_walk
+                # Jump to related start entry...
+                pairs = aContext.nterm2start[anEntry.vertex.non_terminal]
+                new_entry = pairs[anEntry.origin]
+                aContext.curr_entry = new_entry
+                aContext.entry_set_index = new_entry.origin
+              end
               event = [:revisit, anEntry, index]
 
             when GFG::StartVertex

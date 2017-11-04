@@ -17,7 +17,7 @@ module Rley # This module is used as a namespace
         else
           CSTBuilder.new(aParseResult.tokens)
         end
-      end
+      end     
     end # class
   end # module
 end # module

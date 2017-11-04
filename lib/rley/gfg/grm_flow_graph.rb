@@ -10,7 +10,30 @@ require_relative 'shortcut_edge'
 
 module Rley # This module is used as a namespace
   module GFG # This module is used as a namespace
-    # TODO: add definition
+    # A Grammar Flow Graph (GFG) represents the parsing states of productions
+    # rules from a context-free grammar. This representation is based on a 
+    # directed graph structure. The parsing process can then be re-formulated 
+    # as a path problem in the graph. The theory behind GFGs can be found in
+    # papers. The first article on GFG can be found here:
+    # https://apps.cs.utexas.edu/tech_reports/reports/tr/TR-2102.pdf
+    # There are three types of vertex in a GFG: 
+    # start vertex, end vertex and item vertex.
+    # For each non-terminal symbol N of the grammar, there is:
+    # a start vertex with label '.N'
+    # an end vertex with label 'N.'
+    # For each production rule of the grammar:
+    # N => s1 s2 s3 (...) sk
+    # I.e. a rule with k grammar symbols in its right-handed side. 
+    # For such a rule there will be k + 1 item vertices. By convention,
+    # the first item vertex is labelled as 'N => . s1 s2 s3 (...) sk'
+    # the second item vertex is labelled as 'N => s1 . s2 s3 (...) sk'
+    # the third item vertex is labelled as 'N => s1 s2 . s3 (...) sk'
+    # and so on. In other words, the labels are obtained by moving a dot
+    # in successive positions in the rhs. The dot represents the 
+    # parse progress for the production rule. Symbols on the left of the 
+    # dot represent the symbols that were successfully matched in the input.
+    # A GFG has three types of directed edges linking the vertices.
+    # call edge, return edge and scan edge.
     class GrmFlowGraph
       # The set of all vertices in the graph
       attr_reader :vertices
@@ -24,6 +47,9 @@ module Rley # This module is used as a namespace
       # A Hash with pairs of the form: non-terminal symbol => end node
       attr_reader :end_vertex_for
 
+      # Constructor.
+      # @param theDottedItems [Array<DottedItem>] an array of the dotted items
+      # of the grammar.
       def initialize(theDottedItems)
         @vertices = []
         @start_vertex_for = {}
@@ -32,7 +58,9 @@ module Rley # This module is used as a namespace
         build_graph(theDottedItems)
       end
 
-      # Return the vertex with given vertex label.
+      # Retrieve the vertex with given vertex label.
+      # @param aVertexLabel [String] the label of a vertex from the graph
+      # @return [Vertex] the vertex with the given label, otherwise nil.
       def find_vertex(aVertexLabel)
         vertices.find { |a_vertex| a_vertex.label == aVertexLabel }
       end
@@ -42,7 +70,7 @@ module Rley # This module is used as a namespace
       # If one wants to remove useless rules, then do first:
       # elimination of non-generating symbols
       # then elimination of unreachable symbols
-      def diagnose
+      def diagnose()
         mark_unreachable_symbols
       end
 
@@ -65,15 +93,6 @@ module Rley # This module is used as a namespace
           return next_one
         end
       end
-      
-      def print_vertex(aText, aVertex)
-        print aText + ' '
-        if aVertex.kind_of?(NonTerminalVertex)
-          puts "#{aVertex.class} #{aVertex.non_terminal.name}"
-        else
-          p(aVertex.label)
-        end       
-      end
 
       # Walk over all the vertices of the graph that are reachable from a given
       # start vertex. This is a depth-first graph traversal.
@@ -87,7 +106,7 @@ module Rley # This module is used as a namespace
         curr_edge = nil
 
         begin
-          print_vertex( 'Traversing', visitee)
+          # print_vertex( 'Traversing', visitee)
           
           first_time = !visited.include?(visitee)
           if first_time
@@ -110,7 +129,7 @@ module Rley # This module is used as a namespace
               if stack.last.done?
                 popped = stack.pop
                 break if stack.empty?
-                puts "Popped!"
+                # puts "Popped!"
                 return_key = popped.in_edge.key.sub(/^CALL/, 'RET')
                 curr_edge = visitee.edges.find { |e| e.key == return_key }
               else
@@ -137,6 +156,16 @@ module Rley # This module is used as a namespace
         @start_vertex = aVertex if vertices.empty?
         vertices << aVertex
       end
+      
+      # For debugging purposes
+      def print_vertex(aText, aVertex)
+        print aText + ' '
+        if aVertex.kind_of?(NonTerminalVertex)
+          puts "#{aVertex.class} #{aVertex.non_terminal.name}"
+        else
+          p(aVertex.label)
+        end       
+      end      
 
       def build_graph(theDottedItems)
         build_all_starts_ends(theDottedItems)
@@ -311,12 +340,7 @@ module Rley # This module is used as a namespace
         # Now traverse graph from start vertex of graph
         # and mark all visited non-terminals as reachable
         traverse_df(start_vertex) do |a_vertex|
-          print "  Visiting "
-          if a_vertex.kind_of?(NonTerminalVertex)
-            puts "#{a_vertex.class} #{a_vertex.non_terminal.name}"
-          else
-            p(a_vertex.label)
-          end
+          # print_vertex('  Visiting', a_vertex)
           if a_vertex.kind_of?(StartVertex)
             a_vertex.non_terminal.unreachable = false
           end

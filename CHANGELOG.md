@@ -1,3 +1,13 @@
+### 0.5.05 / 2017-11-04
+* [FIX] Method `GFGParsing#call_rule` didn't handle properly the case of nullable symbols appearing in more than one production rule.
+* [New] New calculator example. In addition to the basic arithmetic operators (+, -, *, /) it accepts the unary minus
+  and the exponentiation operator. As a convenience it displays both CST and AST parse representations.
+* [CHANGE] Method `ParseWalkerFactory#build_walker` added one argument that controls the way the visit when reaching anew an end vertex.
+* [CHANGE] Method `ParseWalkerFactory#visit_entry` when re-visit an end vertex, the jump to related start vertex is now conditional.
+* [CHANGE] File `parse_walker_factory_spec.rb` Added test to validate the different ways to walk over the parse entries.
+* [CHANGE] Class `GrmFlowGraph`: Added more documentation.
+* [CHANGE] Class `Vertex`: Documentation refined.
+
 ### 0.5.04 / 2017-10-26
 * [Fix] Method GrmFlowGraph#traverse_df code terminated prematurely with nested call edges.
 * [CHANGE] Method Grammar#name_production: suffix in default production name is changed (e.g. 'expression[3]' changed to expression_3)

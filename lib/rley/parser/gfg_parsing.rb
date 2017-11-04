@@ -27,7 +27,9 @@ module Rley # This module is used as a namespace
       # The reason of a parse failure
       attr_reader(:failure_reason)
 
-
+      # Constructor
+      # @param theGFG [GrmFlowGraph] the Grammar Flow Graph
+      # @param theTokens [Array<Token>] the array of input tokens
       def initialize(theGFG, theTokens)
         @gf_graph = theGFG
         @tokens = theTokens.dup
@@ -46,8 +48,34 @@ module Rley # This module is used as a namespace
         next_symbol = anEntry.next_symbol
         start_vertex = gf_graph.start_vertex_for[next_symbol]
         pos = aPosition
+        size_before = chart[pos].size
         apply_rule(anEntry, start_vertex, pos, pos, :call_rule)
+        
+        if next_symbol.nullable? && anEntry.dotted_entry?
+          size_after = chart[pos].size
+          # ...apply the Nullable rule
+          nullable_rule(anEntry, aPosition) if size_after == size_before
+        end        
       end
+      
+      # Let the current sigma set be the ith parse entry set.
+      # This method is invoked when a dotted entry is added 
+      # to the parse entry set of the from [A => alpha . B beta, k]
+      # and B is nullable
+      # Then the entry [A => alpha B . beta, k] is added to the current
+      # sigma set.
+      def nullable_rule(anEntry, aPosition)
+        next_symbol = anEntry.next_symbol
+        end_vertex = gf_graph.end_vertex_for[next_symbol]
+        pos = aPosition
+        end_entry = push_entry(end_vertex, anEntry.origin, pos, :nullable_rule)
+        curr_vertex = anEntry.vertex
+        next_vertex = curr_vertex.shortcut.successor
+
+        # first pos == origin
+        # second pos == position
+        apply_rule(end_entry, next_vertex, anEntry.origin, pos, :nullable_rule)        
+      end      
 
       # Let the current sigma set be the ith parse entry set.
       # This method is invoked when an entry is added to a parse entry set

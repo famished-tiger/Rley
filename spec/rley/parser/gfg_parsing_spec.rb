@@ -60,7 +60,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
       end
 
       context 'Initialization:' do
-        it 'should be created with a GFG, tokens, trace' do
+        it 'should be created with a GFG, tokens' do
           expect { GFGParsing.new(sample_gfg, grm1_tokens) }
             .not_to raise_error
         end

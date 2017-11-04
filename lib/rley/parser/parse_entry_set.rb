@@ -40,8 +40,9 @@ module Rley # This module is used as a namespace
       # Append the given entry (if it isn't yet in the set)
       # to the list of parse entries
       # @param anEntry [ParseEntry] the parse entry to push.
-      # @return [ParseEntry] the passed parse entry it doesn't   added
+      # @return [ParseEntry] the passed parse entry if it pushes it
       def push_entry(anEntry)
+        # TODO: control overhead next line
         match = entries.find { |entry| entry == anEntry }
         if match
           result = match

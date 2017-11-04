@@ -84,14 +84,14 @@ module Rley # Open this namespace to avoid module qualifier prefixes
         end
 
         it 'should return the accepting parse entry in the first place' do
-          walker = subject.build_walker(accept_entry, accept_index)
+          walker = subject.build_walker(accept_entry, accept_index, false)
           first_event = walker.next
           expectations = [:visit, sample_result.accepting_entry, 4]
           event_expectations(first_event, expectations)
         end
 
-        it 'should traverse the parse graph backwards' do
-          walker = subject.build_walker(accept_entry, accept_index)
+        it 'could traverse the parse graph backwards' do
+          walker = subject.build_walker(accept_entry, accept_index, false)
           event1 = walker.next
           expectations = [:visit, 'Phi. | 0', 4]
           event_expectations(event1, expectations)
@@ -163,9 +163,146 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           event_expectations(event17, expectations)
 
           event18 = walker.next
-          expectations = [:revisit, 'T. | 1', 4]
+          expectations = [:revisit, 'T. | 1', 4]  # Re-visiting end vertex
           event_expectations(event18, expectations)
 
+          # No lazy walk: don't jump directly after corresponding start vertex
+          event19 = walker.next
+          expectations = [:revisit, 'T => b b b . | 1', 4]
+          event_expectations(event19, expectations)
+
+          event20 = walker.next
+          expectations = [:revisit, 'T => b b . b | 1', 3]
+          event_expectations(event20, expectations)
+
+          event21 = walker.next
+          expectations = [:revisit, 'T => b . b b | 1', 2]
+          event_expectations(event21, expectations)
+
+          event22 = walker.next
+          expectations = [:revisit, 'T => . b b b | 1', 1]
+          event_expectations(event22, expectations)
+
+          event23 = walker.next
+          expectations = [:revisit, '.T | 1', 1]
+          event_expectations(event23, expectations)
+
+          # Multiple visit occurred: jump to antecedent of start entry
+          event24 = walker.next
+          expectations = [:visit, 'S => A . T | 0', 1]
+          event_expectations(event24, expectations)
+
+          event25 = walker.next
+          expectations = [:visit, 'A. | 0', 1]
+          event_expectations(event25, expectations)
+
+          # Backtrack created: first alternative selected
+          event26 = walker.next
+          expectations = [:visit, 'A => a . | 0', 1]
+          event_expectations(event26, expectations)
+
+          event27 = walker.next
+          expectations = [:visit, 'A => . a | 0', 0]
+          event_expectations(event27, expectations)
+
+          event28 = walker.next
+          expectations = [:visit, '.A | 0', 0]
+          event_expectations(event28, expectations)
+
+          event29 = walker.next
+          expectations = [:visit, 'S => . A T | 0', 0]
+          event_expectations(event29, expectations)
+
+          event30 = walker.next
+          expectations = [:revisit, '.S | 0', 0]
+          event_expectations(event30, expectations)
+
+          event31 = walker.next
+          expectations = [:revisit, 'Phi => . S | 0', 0]
+          event_expectations(event31, expectations)
+
+          event32 = walker.next
+          expectations = [:revisit, '.Phi | 0', 0]
+          event_expectations(event32, expectations)
+
+          # Backtracking is occurring
+          event33 = walker.next
+          expectations = [:backtrack, 'A. | 0', 1]
+          event_expectations(event33, expectations)
+
+          event34 = walker.next
+          expectations = [:visit, 'A => B A . | 0', 1]
+          event_expectations(event34, expectations)
+
+          event35 = walker.next
+          expectations = [:revisit, 'A. | 0', 1] # Revisiting end vertex
+          event_expectations(event35, expectations)
+
+          # No lazy walk: don't jump directly after corresponding start vertex
+          event36 = walker.next
+          expectations = [:revisit, 'A => a . | 0', 1]
+          event_expectations(event36, expectations)
+
+          event37 = walker.next
+          expectations = [:revisit, 'A => . a | 0', 0]
+          event_expectations(event37, expectations)
+
+          event38 = walker.next
+          expectations = [:revisit, '.A | 0', 0]
+          event_expectations(event38, expectations)
+
+          event39 = walker.next
+          expectations = [:visit, 'A => B . A | 0', 0]
+          event_expectations(event39, expectations)
+
+          event40 = walker.next
+          expectations = [:visit, 'B. | 0', 0]
+          event_expectations(event40, expectations)
+
+          event41 = walker.next
+          expectations = [:visit, 'B => . | 0', 0]
+          event_expectations(event41, expectations)
+
+          event42 = walker.next
+          expectations = [:visit, '.B | 0', 0]
+          event_expectations(event42, expectations)
+
+          event43 = walker.next
+          expectations = [:visit, 'A => . B A | 0', 0]
+          event_expectations(event43, expectations)
+
+          event44 = walker.next
+          expectations = [:revisit, '.A | 0', 0]
+          event_expectations(event44, expectations)
+
+          event45 = walker.next
+          expectations = [:revisit, 'S => . A T | 0', 0]
+          event_expectations(event45, expectations)
+
+          event46 = walker.next
+          expectations = [:revisit, '.S | 0', 0]
+          event_expectations(event46, expectations)
+
+          event47 = walker.next
+          expectations = [:revisit, 'Phi => . S | 0', 0]
+          event_expectations(event47, expectations)
+
+          event48 = walker.next
+          expectations = [:revisit, '.Phi | 0', 0]
+          event_expectations(event48, expectations)
+        end
+
+
+        it 'could traverse lazily the parse graph backwards' do
+          walker = subject.build_walker(accept_entry, accept_index, true)
+
+          17.times { walker.next }
+
+          event18 = walker.next
+          expectations = [:revisit, 'T. | 1', 4]
+          event_expectations(event18, expectations)
+          
+          # Lazy walk: make start entry .T the current one
           # Multiple visit occurred: jump to antecedent of start entry
           event19 = walker.next
           expectations = [:visit, 'S => A . T | 0', 1]
@@ -195,7 +332,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           event25 = walker.next
           expectations = [:revisit, '.S | 0', 0]
           event_expectations(event25, expectations)
-          
+
           event26 = walker.next
           expectations = [:revisit, 'Phi => . S | 0', 0]
           event_expectations(event26, expectations)
@@ -236,30 +373,30 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           event35 = walker.next
           expectations = [:visit, 'A => . B A | 0', 0]
           event_expectations(event35, expectations)
-          
+
           event36 = walker.next
           expectations = [:revisit, '.A | 0', 0]
           event_expectations(event36, expectations)
 
           event37 = walker.next
           expectations = [:revisit, 'S => . A T | 0', 0]
-          event_expectations(event37, expectations)          
-          
+          event_expectations(event37, expectations)
+
           event38 = walker.next
           expectations = [:revisit, '.S | 0', 0]
           event_expectations(event38, expectations)
-          
+
           event39 = walker.next
           expectations = [:revisit, 'Phi => . S | 0', 0]
           event_expectations(event39, expectations)
 
           event40 = walker.next
           expectations = [:revisit, '.Phi | 0', 0]
-          event_expectations(event40, expectations)                   
+          event_expectations(event40, expectations)
         end
 
         it 'should raise an exception at end of visit' do
-          walker = subject.build_walker(accept_entry, accept_index)
+          walker = subject.build_walker(accept_entry, accept_index, true)
           40.times { walker.next }
 
           expect { walker.next }.to raise_error(StopIteration)

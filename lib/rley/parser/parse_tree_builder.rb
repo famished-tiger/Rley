@@ -84,13 +84,15 @@ module Rley # This module is used as a namespace
       # @param anIndex [anIndex] The token index at end of anEntry
       def process_end_entry(anEvent, anEntry, anIndex)
         case anEvent
-          when :visit
+          when :visit, :revisit
             range = { low: anEntry.origin, high: anIndex }
             non_terminal = entry2nonterm(anEntry)
             # Create raw node and push onto stack
             push_raw_node(range, non_terminal)
+          #when :revisit
+          #  # TODO: design specification
           else
-            raise NotImplementedError
+            raise NotImplementedError, "Cannot handle event #{anEvent}"
         end
       end
 
@@ -143,7 +145,7 @@ module Rley # This module is used as a namespace
       end
 
       # @param anEntry [ParseEntry] Entry matching (pattern: N => . alpha)
-      # @param anIndex [_index] The token index at end of anEntry
+      # @param _index [Integer] The token index at end of anEntry
       def process_entry_entry(anEntry, _index)
         dotted_item = anEntry.vertex.dotted_item
         rule = dotted_item.production

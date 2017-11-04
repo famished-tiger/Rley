@@ -6,30 +6,37 @@ module Rley # This module is used as a namespace
     # - To know its label
     class Vertex
       # The edges linking the successor vertices to this one.
+      # @!attribute [r] edges
+      # @return [Array<Edge>] The edge(s) linking this vertex to successor(s)
       attr_reader :edges
       
+      # Constructor to override.
       def initialize()
         @edges = []
       end
       
-      # Add an graph edge to this vertex
+      # Add an graph edge to this vertex.
+      # @param anEdge [Edge] the edge to be added.
       def add_edge(anEdge)
         arrow = check_add_edge(anEdge)
         edges << arrow
       end
       
-      # Returns true iff the vertex corresponds to an dotted item that has
+      # Determine if the vertex corresponds to an dotted item that has 
       # its dot at the end of a production (i.e. is a reduced item).
+      # @return [Boolean] true iff vertex corresponds to reduced item.
       def complete?()
         return false # Default implementation
       end
       
-      # Return the symbol before the dot else nil.
+      # Retrieve the grammar symbol before the dot.
+      # @return [GrmSymbol, NilClass] The symbol or otherwise nil.
       def prev_symbol()
         return nil # Default implementation
       end      
       
-      # Return the symbol after the dot else nil.
+      # Retrieve the grammar symbol after the dot.
+      # @return [GrmSymbol, NilClass] The symbol or otherwise nil. 
       def next_symbol()
         return nil # Default implementation
       end

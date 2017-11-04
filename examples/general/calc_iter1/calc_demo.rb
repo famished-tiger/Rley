@@ -11,7 +11,7 @@ Command-line symtax:
     the arithmetic expression is enclosed between double quotes (")
 
   Example:
-  ruby #{my_name} "2 * 3 + (4 - 1)"
+  ruby #{my_name} "2 * 3 + (1 + 3 ** 2)"
 END_MSG
   puts msg
   exit(1)

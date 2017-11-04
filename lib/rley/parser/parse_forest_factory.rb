@@ -13,6 +13,13 @@ module Rley # This module is used as a namespace
       def builder(aParseResult, _builder = nil)
         ParseForestBuilder.new(aParseResult.tokens)
       end
+      
+      # When a end vertex is re-visited then jump
+      # its corresponding start vertex. This behaviour
+      # makes sense for sharing nodes.
+      def jump_to_start()
+        true
+      end       
     end # class
   end # module
 end # module

@@ -42,8 +42,14 @@ module Rley # This module is used as a namespace
         walker_factory = ParseWalkerFactory.new
         accept_entry = aParseResult.accepting_entry
         accept_index = aParseResult.chart.last_index
-        walker_factory.build_walker(accept_entry, accept_index)
-      end      
+        walker_factory.build_walker(accept_entry, accept_index, jump_to_start)
+      end
+
+      # By default, when a end vertex is re-visited don't jump
+      # its corresponding start vertex.
+      def jump_to_start()
+        false
+      end
       
     end # class
   end # module

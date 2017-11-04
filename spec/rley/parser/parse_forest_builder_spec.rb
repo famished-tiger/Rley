@@ -92,7 +92,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           factory = ParseWalkerFactory.new
           accept_entry = sample_result.accepting_entry
           accept_index = sample_result.chart.last_index
-          @walker = factory.build_walker(accept_entry, accept_index)
+          @walker = factory.build_walker(accept_entry, accept_index, true)
         end
 
         it 'should initialize the root node' do
