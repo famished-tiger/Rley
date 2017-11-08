@@ -33,8 +33,9 @@ Command-line symtax:
   where:
     the arithmetic expression is enclosed between double quotes (")
 
-  Example:
+  Examples:
   ruby #{my_name} "2 * 3 + (1 + 3 ** 2)"
+  ruby #{my_name} "cos(PI/2) + sqrt(1 + 1)"
 END_MSG
   puts msg
   exit(1)

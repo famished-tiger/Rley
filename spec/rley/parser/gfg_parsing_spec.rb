@@ -5,11 +5,11 @@ require_relative '../../../lib/rley/syntax/non_terminal'
 require_relative '../../../lib/rley/syntax/verbatim_symbol'
 require_relative '../../../lib/rley/syntax/production'
 require_relative '../../../lib/rley/syntax/grammar_builder'
-require_relative '../../../lib/rley/parser/dotted_item'
-require_relative '../../../lib/rley/tokens/token'
+require_relative '../../../lib/rley/base/dotted_item'
+require_relative '../../../lib/rley/lexical/token'
 require_relative '../../../lib/rley/parser/parse_tracer'
 require_relative '../../../lib/rley/gfg/grm_flow_graph'
-require_relative '../../../lib/rley/parser/grm_items_builder'
+require_relative '../../../lib/rley/base/grm_items_builder'
 require_relative '../support/grammar_abc_helper'
 require_relative '../support/grammar_b_expr_helper'
 require_relative '../support/grammar_helper'
@@ -30,7 +30,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
       # from the given grammar
       def build_items_for_grammar(aGrammar)
         helper = Object.new
-        helper.extend(Parser::GrmItemsBuilder)
+        helper.extend(Base::GrmItemsBuilder)
         return helper.build_dotted_items(aGrammar)
       end
 
@@ -298,7 +298,7 @@ SNIPPET
 
         let(:token_seq1) do
           %w[a a b c c].map do |letter|
-            Tokens::Token.new(letter, sample_grammar1.name2symbol[letter])
+            Lexical::Token.new(letter, sample_grammar1.name2symbol[letter])
           end
         end
 

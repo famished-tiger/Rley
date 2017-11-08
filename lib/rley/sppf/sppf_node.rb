@@ -1,4 +1,4 @@
-require_relative '../tokens/token_range'
+require_relative '../lexical/token_range'
 
 module Rley # This module is used as a namespace
   module SPPF # This module is used as a namespace
@@ -10,7 +10,7 @@ module Rley # This module is used as a namespace
       attr_reader(:range)
       
       def initialize(aRange)
-        @range = Tokens::TokenRange.new(aRange)
+        @range = Lexical::TokenRange.new(aRange)
       end
       
       # Return the origin (= lower bound of the range 

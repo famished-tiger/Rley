@@ -29,7 +29,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           case entry
             when Parser::ParseEntry
               expect(entry.to_s).to eq(expectations[1])
-            when Tokens::Token
+            when Lexical::Token
               expect(entry.lexeme).to eq(expectations[1])
           end
         else

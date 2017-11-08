@@ -1,7 +1,12 @@
 ## Demo calculator (iteration 2)
-Compared to the first iteration, this calculator adds:
-- support for the exponentiation operator '**'
-- support the the unary '-' operator (sign change).
+Compared to the first iteration, this calculator supports:
+- the exponentiation operator '**',
+- the unary '-' operator (sign change),
+- the PI and E constants,
+- the trigonometric functions (sin, cos and tan),
+- the inverse trigonometric functions (asin, acos and atan),
+- the sqrt, exp and ln (natural logarithm) functions.
+
 It also prints out:
 - The Concrete Syntax Tree (CST), a complete but verbose parse tree representation
 - The Abstract Syntax Tree (AST), a customized parse tree representation that is more 

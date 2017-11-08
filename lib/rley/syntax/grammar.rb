@@ -14,15 +14,19 @@ module Rley # This module is used as a namespace
     class Grammar
       # A non-terminal symbol that represents all the possible strings
       # in the language.
+      # @return [NonTerminal] Start symbol of the grammar.
       attr_reader(:start_symbol)
 
       # The list of production rules for the language.
+      # @return [Array<Production>] Array of productions for the grammar.
       attr_reader(:rules)
 
       # The list of grammar symbols in the language.
+      # @return [Array<GrmSymbol>] The terminal and non-terminal symbols.
       attr_reader(:symbols)
 
-      # A Hash with pairs of the kind: symbol name => grammar symbol
+      # A Hash that maps symbol names to their grammar symbols
+      # @return [Hash{String => GrmSymbol}] 
       attr_reader(:name2symbol)
 
       # @param theProductions [Array<Production>] productions of the grammar.

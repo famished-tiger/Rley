@@ -2,14 +2,19 @@ require_relative 'vertex'
 
 module Rley # This module is used as a namespace
   module GFG # This module is used as a namespace
+    # Abstract class.
     # Represents a specialized vertex in a grammar flow graph 
     # that is associated to a given non-terminal symbol and
     # that may have in-degree or out-degree > 1
     # Responsibilities (in addition to inherited ones):
     # - Know its related non-terminal symbol
     class NonTerminalVertex < Vertex
+      # The non-terminal symbol associated to the vertex
+      # @return [Syntax::NonTerminal]
       attr_reader :non_terminal
       
+      # Constructor to specialize in subclasses.
+      # @param [Syntax::NonTerminal]
       def initialize(aNonTerminal)
         super()
         @non_terminal = aNonTerminal

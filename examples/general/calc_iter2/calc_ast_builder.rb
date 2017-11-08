@@ -12,10 +12,13 @@ class CalcASTBuilder < Rley::Parser::ParseTreeBuilder
     # Lexical ambiguity: minus sign represents two very concepts:
     # The unary negation operator on one hand, the binary substraction operator
     'MINUS' => { 'add_operator_1' =>  Rley::PTree::TerminalNode,
-                 'factor_2' => CalcNegateNode,
+                 'simple_factor_2' => CalcNegateNode,
                  'sign_1' => CalcNegateNode
                },
-    'NUMBER' => CalcNumberNode
+    'NUMBER' => CalcNumberNode,
+    'PI' => CalcConstantNode,
+    'E' => CalcConstantNode,
+    'RESERVED' => CalcReservedNode
   }.freeze
 
   protected
@@ -87,31 +90,48 @@ class CalcASTBuilder < Rley::Parser::ParseTreeBuilder
 
       when 'term_1' # rule 'term' => %w[term mul_operator factor]
         reduce_term_1(aProduction, aRange, theTokens, theChildren)
-        
+
       when 'factor_0' # rule 'factor' => 'simple_factor'
         return_first_child(aRange, theTokens, theChildren)
-        
-      when 'factor_1' # rule 'factor' => %w[simple_factor POWER simple_factor]
-        reduce_factor_1(aProduction, aRange, theTokens, theChildren)        
 
-      when 'simple_factor_0' # rule 'simple_factor' => %[sign NUMBER]
+      when 'factor_1' # rule 'factor' => %w[factor POWER simple_factor]
+        reduce_factor_1(aProduction, aRange, theTokens, theChildren)
+
+      when 'simple_factor_0' # rule 'simple_factor' => %[sign scalar]
         reduce_simple_factor_0(aProduction, aRange, theTokens, theChildren)
 
-      when 'simple_factor_1' # rule 'simple_factor' => %w[LPAREN expression RPAREN]
-        return_second_child(aRange, theTokens, theChildren)
-        
-      when 'simple_factor_2' # rule 'simple_factor' => %w[MINUS LPAREN expression RPAREN]
+      when 'simple_factor_1'  # rule 'simple_factor' => %w[unary_function in_parenthesis]
+        reduce_simple_factor_1(aProduction, aRange, theTokens, theChildren)
+
+      when 'simple_factor_2' # rule 'simple_factor' => %w[MINUS in_parenthesis]
         reduce_simple_factor_2(aProduction, aRange, theTokens, theChildren)
-      
+
+      when 'simple_factor_3' # rule 'simple_factor' => 'in_parenthesis'
+        return_first_child(aRange, theTokens, theChildren)
 
       when 'sign_0' # rule 'sign' => 'PLUS'
-         return_first_child(aRange, theTokens, theChildren)
+        return_first_child(aRange, theTokens, theChildren)
 
       when 'sign_1' # rule 'sign' => 'MINUS'
-         return_first_child(aRange, theTokens, theChildren)
+        return_first_child(aRange, theTokens, theChildren)
 
-      when 'sign_2'
+      when 'sign_2' # rule 'sign' => []
         return_epsilon(aRange, theTokens, theChildren)
+
+      when 'scalar_0' # rule 'scalar' => 'NUMBER'
+          return_first_child(aRange, theTokens, theChildren)
+
+      when 'scalar_1' # rule 'scalar' => 'PI'
+        return_first_child(aRange, theTokens, theChildren)
+
+      when 'scalar_2' # rule 'scalar' => 'E'
+        return_first_child(aRange, theTokens, theChildren)
+          
+      when 'unary_function_0' # rule 'unary_function' => 'RESERVED'
+        return_first_child(aRange, theTokens, theChildren)
+      
+      when 'in_parenthesis_0' # rule 'in_parenthesis' => %w[LPAREN expression RPAREN]
+        return_second_child(aRange, theTokens, theChildren)      
 
       when 'add_operator_0' # rule 'add_operator' => 'PLUS'
         reduce_add_operator_0(aProduction, aRange, theTokens, theChildren)
@@ -120,7 +140,7 @@ class CalcASTBuilder < Rley::Parser::ParseTreeBuilder
         reduce_add_operator_1(aProduction, aRange, theTokens, theChildren)
 
       when 'mul_operator_0' # rule 'mul_operator' => 'STAR'
-         reduce_mul_operator_0(aProduction, aRange, theTokens, theChildren)
+        reduce_mul_operator_0(aProduction, aRange, theTokens, theChildren)
 
       when 'mul_operator_1' # rule 'mul_operator' =>  'DIVIDE'
          reduce_mul_operator_1(aProduction, aRange, theTokens, theChildren)
@@ -148,17 +168,17 @@ class CalcASTBuilder < Rley::Parser::ParseTreeBuilder
   def reduce_term_1(_production, _range, _tokens, theChildren)
     reduce_binary_operator(theChildren)
   end
-  
+
   # rule 'factor' => %w[simple_factor POWER simple_factor]]
   def reduce_factor_1(aProduction, aRange, theTokens, theChildren)
     result = PowerNode.new(theChildren[1].symbol, aRange)
     result.children << theChildren[0]
     result.children << theChildren[2]
-    
-    return result
-  end  
 
-  # rule 'simple_factor' => %[sign NUMBER]
+    return result
+  end
+
+  # rule 'simple_factor' => %[sign scalar]
   def reduce_simple_factor_0(aProduction, aRange, theTokens, theChildren)
     first_child = theChildren[0]
     result = if first_child.kind_of?(CalcNegateNode)
@@ -169,11 +189,19 @@ class CalcASTBuilder < Rley::Parser::ParseTreeBuilder
 
     return result
   end
-  
-  # rule 'simple_factor' => %w[MINUS LPAREN expression RPAREN] 
+
+  # rule 'simple_factor' => %w[unary_function in_parenthesis]
+  def reduce_simple_factor_1(aProduction, aRange, theTokens, theChildren)
+    func = CalcUnaryFunction.new(theChildren[0].symbol, aRange.low)
+    func.func_name = theChildren[0].value
+    func.children << theChildren[1]
+    return func
+  end
+
+  # rule 'simple_factor' => %w[MINUS in_parenthesis]
   def reduce_simple_factor_2(aProduction, aRange, theTokens, theChildren)
     negation = CalcNegateNode.new(theChildren[0].symbol, aRange.low)
-    negation.children << theChildren[2]
+    negation.children << theChildren[1]
     return negation
   end
 

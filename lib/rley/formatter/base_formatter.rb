@@ -4,6 +4,7 @@ module Rley # This module is used as a namespace
     # Superclass for parse tree formatters.
     class BaseFormatter
       # The IO output stream in which the formatter's result will be sent.
+      # @return [IO] The output stream for the formatter.
       attr_reader(:output)
 
       # Constructor.

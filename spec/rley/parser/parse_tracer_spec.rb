@@ -4,9 +4,9 @@ require 'stringio'
 require_relative '../../../lib/rley/syntax/terminal'
 require_relative '../../../lib/rley/syntax/non_terminal'
 require_relative '../../../lib/rley/syntax/production'
-require_relative '../../../lib/rley/parser/dotted_item'
+require_relative '../../../lib/rley/base/dotted_item'
 require_relative '../../../lib/rley/parser/parse_state'
-require_relative '../../../lib/rley/tokens/token'
+require_relative '../../../lib/rley/lexical/token'
 
 # Load the class under test
 require_relative '../../../lib/rley/parser/parse_tracer'
@@ -18,7 +18,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
 
       let(:token_seq) do
         literals = %w[I saw John with a dog]
-        literals.map { |lexeme| Tokens::Token.new(lexeme, nil) }
+        literals.map { |lexeme| Lexical::Token.new(lexeme, nil) }
       end
 
       subject { ParseTracer.new(1, output, token_seq) }
@@ -68,8 +68,8 @@ SNIPPET
         end
 
         let(:origin_val) { 3 }
-        let(:dotted_rule) { DottedItem.new(sample_prod, 2) }
-        let(:complete_rule) { DottedItem.new(sample_prod, 3) }
+        let(:dotted_rule) { Base::DottedItem.new(sample_prod, 2) }
+        let(:complete_rule) { Base::DottedItem.new(sample_prod, 3) }
         let(:sample_parse_state) { ParseState.new(dotted_rule, origin_val) }
 
         # Factory method.

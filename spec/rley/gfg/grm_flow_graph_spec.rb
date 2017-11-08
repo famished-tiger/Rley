@@ -1,7 +1,7 @@
 require_relative '../../spec_helper'
 
 require_relative '../support/grammar_abc_helper'
-require_relative '../../../lib/rley/parser/grm_items_builder'
+require_relative '../../../lib/rley/base/grm_items_builder'
 
 # Load the module under test
 require_relative '../../../lib/rley/gfg/grm_flow_graph'
@@ -15,7 +15,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
       # from the given grammar
       def build_items_for_grammar(aGrammar)
         helper = Object.new
-        helper.extend(Parser::GrmItemsBuilder)
+        helper.extend(Base::GrmItemsBuilder)
         return helper.build_dotted_items(aGrammar)
       end
 

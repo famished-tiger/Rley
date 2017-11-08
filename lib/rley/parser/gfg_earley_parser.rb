@@ -1,11 +1,11 @@
-require_relative 'base_parser'
+require_relative '../base/base_parser'
 require_relative '../gfg/grm_flow_graph'
 require_relative 'gfg_parsing'
 
 module Rley # This module is used as a namespace
   module Parser # This module is used as a namespace
     # Implementation of a parser that uses the Earley parsing algorithm.
-    class GFGEarleyParser < BaseParser
+    class GFGEarleyParser < Base::BaseParser
       # The Grammar Flow graph for the given grammar
       attr_reader :gf_graph
 

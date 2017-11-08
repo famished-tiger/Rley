@@ -6,11 +6,10 @@ module Rley # This module is used as a namespace
     # - To know its label
     class Vertex
       # The edges linking the successor vertices to this one.
-      # @!attribute [r] edges
       # @return [Array<Edge>] The edge(s) linking this vertex to successor(s)
       attr_reader :edges
       
-      # Constructor to override.
+      # Constructor to extend in subclasses.
       def initialize()
         @edges = []
       end

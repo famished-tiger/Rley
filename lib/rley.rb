@@ -4,7 +4,7 @@
 
 require_relative './rley/constants'
 require_relative './rley/syntax/grammar_builder'
-require_relative './rley/tokens/token'
+require_relative './rley/lexical/token'
 require_relative './rley/parser/gfg_earley_parser'
 require_relative './rley/parser/parse_tree_builder'
 require_relative './rley/parse_tree_visitor'

@@ -10,7 +10,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
     describe NonTerminalNode do
       # Factory method. Generate a range from its boundary values.
       def range(low, high)
-        return Tokens::TokenRange.new(low: low, high: high)
+        return Lexical::TokenRange.new(low: low, high: high)
       end
 
       let(:sample_symbol) do

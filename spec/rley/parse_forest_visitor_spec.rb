@@ -2,7 +2,7 @@ require_relative '../spec_helper'
 
 require_relative './support/grammar_helper'
 require_relative './support/grammar_sppf_helper'
-require_relative '../../lib/rley/tokens/token'
+require_relative '../../lib/rley/lexical/token'
 require_relative '../../lib/rley/parser/gfg_earley_parser'
 require_relative '../../lib/rley/sppf/non_terminal_node'
 require_relative '../../lib/rley/sppf/parse_forest'

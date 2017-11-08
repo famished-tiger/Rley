@@ -1,3 +1,9 @@
+### 0.5.06 / 2017-11-08
+* [CHANGE] Demo calculator in `examples/general/calc_iter2` does much than the basic arithmetic operators, it now  
+support trigonometric functions and their inverse, square root, exponential and natural logarithm functions!.
+* [CHANGE] Internal module re-organization. New module `Base`, module `Tokens` renamed to `Lexical`.
+* [CHANGE] Class `ItemVertex`: Documentation refined.
+
 ### 0.5.05 / 2017-11-04
 * [FIX] Method `GFGParsing#call_rule` didn't handle properly the case of nullable symbols appearing in more than one production rule.
 * [New] New calculator example. In addition to the basic arithmetic operators (+, -, *, /) it accepts the unary minus

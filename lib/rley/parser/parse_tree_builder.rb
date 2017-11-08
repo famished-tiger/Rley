@@ -1,4 +1,4 @@
-require_relative '../tokens/token_range'
+require_relative '../lexical/token_range'
 require_relative '../syntax/terminal'
 require_relative '../syntax/non_terminal'
 require_relative '../gfg/end_vertex'
@@ -166,7 +166,7 @@ module Rley # This module is used as a namespace
       # Create a raw node with given range
       # and push it on top of stack.
       def push_raw_node(aRange, aSymbol)
-        raw_node = CSTRawNode.new(Tokens::TokenRange.new(aRange), aSymbol)
+        raw_node = CSTRawNode.new(Lexical::TokenRange.new(aRange), aSymbol)
         stack.push(raw_node)
       end
 

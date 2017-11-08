@@ -47,10 +47,25 @@ class CalcNumberNode < CalcTerminalNode
   end
 end
 
+class CalcConstantNode < CalcNumberNode
+  @@constants2val = {
+    'PI' => Math::PI,
+    'E' => Math::E
+  }
+
+  def init_value(aConstantName)
+    self.value = @@constants2val[aConstantName]
+  end
+end
+
+class CalcReservedNode < CalcTerminalNode
+
+end
+
 class CalcCompositeNode
   attr_accessor(:children)
   attr_accessor(:symbol)
-  attr_accessor(:aPosition)
+  attr_accessor(:position)
 
   def initialize(aSymbol, aPosition)
     @symbol = aSymbol
@@ -75,15 +90,21 @@ class CalcUnaryOpNode < CalcCompositeNode
   alias members children
 end # class
 
-class CalcNegateNode < CalcUnaryOpNode
-  def initialize(aSymbol, aPosition)
-    super(aSymbol,aPosition)
-  end
-  
+class CalcNegateNode < CalcUnaryOpNode  
   def interpret()
     return -(children[0].interpret)
   end
 end # class
+
+class CalcUnaryFunction < CalcCompositeNode
+  attr_accessor(:func_name)
+  
+  def interpret()
+    argument = children[0].interpret
+    internal_name = @func_name == 'ln' ? 'log' : @func_name
+    return Math.send(internal_name.to_sym, argument)
+  end  
+end
 
 class CalcBinaryOpNode < CalcCompositeNode
   def initialize(aSymbol, aRange)

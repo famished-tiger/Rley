@@ -1,4 +1,4 @@
-require_relative '../tokens/token_range'
+require_relative '../lexical/token_range'
 
 module Rley # This module is used as a namespace
   module PTree # This module is used as a namespace
@@ -11,7 +11,7 @@ module Rley # This module is used as a namespace
 
       def initialize(aSymbol, aRange)
         @symbol = aSymbol
-        @range = Tokens::TokenRange.new(aRange)
+        @range = Lexical::TokenRange.new(aRange)
       end
 
       # Assign a value from given range to each  undefined range bound

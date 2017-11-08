@@ -2,7 +2,7 @@ require 'strscan'
 
 # Load the builder class
 require_relative '../../../lib/rley/syntax/grammar_builder'
-require_relative '../../../lib/rley/tokens/token'
+require_relative '../../../lib/rley/lexical/token'
 
 
 module GrammarArrIntHelper
@@ -32,13 +32,13 @@ module GrammarArrIntHelper
       lexeme = scanner.scan(/[\[,\]]/)
       if lexeme
         terminal = aGrammar.name2symbol[lexeme]
-        tokens << Rley::Tokens::Token.new(lexeme, terminal)
+        tokens << Rley::Lexical::Token.new(lexeme, terminal)
         next
       end
       lexeme = scanner.scan(/^[-+]?\d+/)
       if lexeme
         terminal = aGrammar.name2symbol['integer']
-        tokens << Rley::Tokens::Token.new(lexeme, terminal)
+        tokens << Rley::Lexical::Token.new(lexeme, terminal)
       else
         msg = "Unknown input text '#{lexeme}'"
         raise StandardError, msg

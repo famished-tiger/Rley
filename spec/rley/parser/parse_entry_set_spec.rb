@@ -1,7 +1,7 @@
 require_relative '../../spec_helper'
 
 require_relative '../../../lib/rley/syntax/production'
-require_relative '../../../lib/rley/parser/dotted_item'
+require_relative '../../../lib/rley/base/dotted_item'
 require_relative '../../../lib/rley/gfg/item_vertex'
 require_relative '../../../lib/rley/parser/parse_entry'
 
@@ -25,9 +25,9 @@ module Rley # Open this namespace to avoid module qualifier prefixes
       let(:nt_sentence) { Rley::Syntax::NonTerminal.new('Sentence') }
       let(:sample_prod) { build_prod(nt_sentence, t_a, t_b, t_b, nt_rep_c) }
 
-      let(:sample_item1) { Parser::DottedItem.new(sample_prod, 1) }
-      let(:sample_item2) { Parser::DottedItem.new(sample_prod, 2) }
-      let(:sample_item3) { Parser::DottedItem.new(sample_prod, 3) }
+      let(:sample_item1) { Base::DottedItem.new(sample_prod, 1) }
+      let(:sample_item2) { Base::DottedItem.new(sample_prod, 2) }
+      let(:sample_item3) { Base::DottedItem.new(sample_prod, 3) }
 
       let(:vertex1) { GFG::ItemVertex.new(sample_item1) }
       let(:entry1) { ParseEntry.new(vertex1, 2) }

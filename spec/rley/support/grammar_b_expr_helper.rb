@@ -1,6 +1,6 @@
 # Load the builder class
 require_relative '../../../lib/rley/syntax/grammar_builder'
-require_relative '../../../lib/rley/tokens/token'
+require_relative '../../../lib/rley/lexical/token'
 
 
 module GrammarBExprHelper
@@ -32,7 +32,7 @@ module GrammarBExprHelper
           msg = "Unknown input text '#{lexeme}'"
           raise StandardError, msg
       end
-      Rley::Tokens::Token.new(lexeme, terminal)
+      Rley::Lexical::Token.new(lexeme, terminal)
     end
 
     return tokens

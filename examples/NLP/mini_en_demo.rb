@@ -63,7 +63,7 @@ def tokenizer(aTextToParse, aGrammar)
     term_name = Lexicon[word]
     raise StandardError, "Word '#{word}' not found in lexicon" if term_name.nil?
     terminal = aGrammar.name2symbol[term_name]
-    Rley::Tokens::Token.new(word, terminal)
+    Rley::Lexical::Token.new(word, terminal)
   end
   
   return tokens

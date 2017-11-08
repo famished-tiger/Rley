@@ -3,7 +3,7 @@ require_relative '../../spec_helper'
 require_relative '../../../lib/rley/syntax/terminal'
 require_relative '../../../lib/rley/syntax/non_terminal'
 require_relative '../../../lib/rley/syntax/production'
-require_relative '../../../lib/rley/parser/dotted_item'
+require_relative '../../../lib/rley/base/dotted_item'
 
 # Load the class under test
 require_relative '../../../lib/rley/parser/parse_state'
@@ -29,7 +29,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
       end
 
       let(:origin_val) { 3 }
-      let(:dotted_rule) { DottedItem.new(sample_prod, 2) }
+      let(:dotted_rule) { Base::DottedItem.new(sample_prod, 2) }
       let(:other_dotted_rule) { double('mock-dotted-item') }
 
       # Default instantiation rule
@@ -77,7 +77,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
         
         it 'should know if the parsing is at the start of the production' do
           expect(subject).not_to be_predicted
-          at_start = DottedItem.new(sample_prod, 0)
+          at_start = Base::DottedItem.new(sample_prod, 0)
 
           instance = ParseState.new(at_start, 0)
           expect(instance).to be_predicted
@@ -85,7 +85,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
 
         it 'should know if the parsing reached the end of the production' do
           expect(subject).not_to be_complete
-          at_end = DottedItem.new(sample_prod, 3)
+          at_end = Base::DottedItem.new(sample_prod, 3)
 
           instance = ParseState.new(at_end, 2)
           expect(instance).to be_complete
@@ -97,12 +97,12 @@ module Rley # Open this namespace to avoid module qualifier prefixes
         
         it 'should know whether another instance follows this one' do
           expect(subject.precedes?(subject)).to eq(false)
-          state1 = ParseState.new(DottedItem.new(sample_prod, 1), origin_val)
+          state1 = ParseState.new(Base::DottedItem.new(sample_prod, 1), origin_val)
           expect(state1.precedes?(subject)).to eq(true)
-          state0 = ParseState.new(DottedItem.new(sample_prod, 0), origin_val)
+          state0 = ParseState.new(Base::DottedItem.new(sample_prod, 0), origin_val)
           expect(state0.precedes?(state1)).to eq(true)
           expect(state0.precedes?(subject)).to eq(false)
-          state3 = ParseState.new(DottedItem.new(sample_prod, 3), origin_val)
+          state3 = ParseState.new(Base::DottedItem.new(sample_prod, 3), origin_val)
           expect(state3.precedes?(state0)).to eq(false)
         end
         

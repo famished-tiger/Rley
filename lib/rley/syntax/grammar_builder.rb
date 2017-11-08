@@ -1,8 +1,8 @@
 require 'set'
-require_relative 'verbatim_symbol'
-require_relative 'literal'
 require_relative 'terminal'
 require_relative 'non_terminal'
+require_relative 'literal'
+require_relative 'verbatim_symbol'
 require_relative 'production'
 require_relative 'grammar'
 

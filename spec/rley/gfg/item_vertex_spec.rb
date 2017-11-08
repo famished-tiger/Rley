@@ -2,7 +2,7 @@ require_relative '../../spec_helper'
 require_relative '../../../lib/rley/syntax/terminal'
 require_relative '../../../lib/rley/syntax/non_terminal'
 require_relative '../../../lib/rley/syntax/production'
-require_relative '../../../lib/rley/parser/dotted_item'
+require_relative '../../../lib/rley/base/dotted_item'
 require_relative '../../../lib/rley/gfg/shortcut_edge'
 
 # Load the class under test
@@ -27,8 +27,8 @@ module Rley # Open this namespace to avoid module qualifier prefixes
       let(:recursive_prod) { build_prod(nt_b_sequence, nt_b_sequence, t_b) }
       let(:b_prod) { build_prod(nt_b_sequence, t_b) }
       let(:empty_prod) { build_prod(nt_sentence) }
-      let(:sample_item) { Parser::DottedItem.new(sample_prod, 1) }
-      let(:next_item) { Parser::DottedItem.new(sample_prod, 2) }
+      let(:sample_item) { Base::DottedItem.new(sample_prod, 1) }
+      let(:next_item) { Base::DottedItem.new(sample_prod, 2) }
       subject { ItemVertex.new(sample_item) }
 
       context 'Initialization:' do
@@ -59,11 +59,11 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           expect(subject).not_to be_complete
 
           # Case: dot at the end
-          instance1 = ItemVertex.new(Parser::DottedItem.new(sample_prod, 3))
+          instance1 = ItemVertex.new(Base::DottedItem.new(sample_prod, 3))
           expect(instance1).to be_complete
 
           # Case: empty production
-          instance2 = ItemVertex.new(Parser::DottedItem.new(empty_prod, 0))
+          instance2 = ItemVertex.new(Base::DottedItem.new(empty_prod, 0))
           expect(instance2).to be_complete
         end
 
@@ -77,11 +77,11 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           expect(instance2.prev_symbol).to eq(nt_b_sequence)          
 
           # Case: dot is at begin
-          instance3 = ItemVertex.new(Parser::DottedItem.new(sample_prod, 0))
+          instance3 = ItemVertex.new(Base::DottedItem.new(sample_prod, 0))
           expect(instance3.prev_symbol).to be_nil
 
           # Case: empty production
-          instance4 = ItemVertex.new(Parser::DottedItem.new(empty_prod, 0))
+          instance4 = ItemVertex.new(Base::DottedItem.new(empty_prod, 0))
           expect(instance4.prev_symbol).to be_nil
         end
         
@@ -95,11 +95,11 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           expect(instance1.next_symbol).to eq(t_c)
 
           # Case: dot is at end
-          instance2 = ItemVertex.new(Parser::DottedItem.new(sample_prod, 3))
+          instance2 = ItemVertex.new(Base::DottedItem.new(sample_prod, 3))
           expect(instance2.next_symbol).to be_nil
 
           # Case: empty production
-          instance3 = ItemVertex.new(Parser::DottedItem.new(empty_prod, 0))
+          instance3 = ItemVertex.new(Base::DottedItem.new(empty_prod, 0))
           expect(instance3.next_symbol).to be_nil
         end
 

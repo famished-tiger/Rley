@@ -3,7 +3,7 @@ require_relative '../../spec_helper'
 require_relative '../../../lib/rley/syntax/terminal'
 require_relative '../../../lib/rley/syntax/non_terminal'
 require_relative '../../../lib/rley/syntax/production'
-require_relative '../../../lib/rley/parser/dotted_item'
+require_relative '../../../lib/rley/base/dotted_item'
 
 # Load the class under test
 require_relative '../../../lib/rley/parser/parse_entry'
@@ -24,7 +24,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
         Syntax::Production.new(nt_sentence, [])
       end
 
-      let(:dotted_rule) { DottedItem.new(sample_prod, 2) }
+      let(:dotted_rule) { Base::DottedItem.new(sample_prod, 2) }
       let(:origin_val) { 3 }
       let(:vertex_faked) { double('fake-vertex') }
       let(:vertex2) { double('vertex-mock') }
@@ -129,13 +129,13 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           expect(instance2).not_to be_entry_entry
 
           # Case: item vertex not at begin of rhs
-          d1 = DottedItem.new(sample_prod, 1)          
+          d1 = Base::DottedItem.new(sample_prod, 1)          
           v1 = GFG::ItemVertex.new(d1)
           instance3 = ParseEntry.new(v1, 3)
           expect(instance3).not_to be_entry_entry
 
           # Case: item vertex at end of rhs
-          d2 = DottedItem.new(sample_prod, 0)          
+          d2 = Base::DottedItem.new(sample_prod, 0)          
           v2 = GFG::ItemVertex.new(d2)          
           instance4 = ParseEntry.new(v2, 3)
           expect(instance4).to be_entry_entry

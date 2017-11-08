@@ -51,7 +51,7 @@ class JSONLexer
         when '{', '}', '[', ']', ',', ':'
           type_name = @@lexeme2name[curr_ch]
           token_type = name2symbol[type_name]
-          token = Rley::Tokens::Token.new(curr_ch, token_type)
+          token = Rley::Lexical::Token.new(curr_ch, token_type)
 
         when /[ftn]/ # First letter of keywords
           @scanner.pos = scanner.pos - 1 # Simulate putback
@@ -61,7 +61,7 @@ class JSONLexer
             raise ScanError.new("Invalid keyword: #{invalid_keyw}")
           else
             token_type = name2symbol[keyw]
-            token = Rley::Tokens::Token.new(keyw, token_type)
+            token = Rley::Lexical::Token.new(keyw, token_type)
           end
 
         # LITERALS
@@ -71,13 +71,13 @@ class JSONLexer
           err_msg = 'No closing quotes (") found'
           raise ScanError.new(err_msg) if end_delimiter.nil?
           token_type = name2symbol['string']
-          token = Rley::Tokens::Token.new(value, token_type)
+          token = Rley::Lexical::Token.new(value, token_type)
 
         when /[-0-9]/ # Start character of number literal found
           @scanner.pos = scanner.pos - 1 # Simulate putback
           value = scanner.scan(/-?[0-9]+(\.[0-9]+)?([eE][-+]?[0-9])?/)
           token_type = name2symbol['number']
-          token = Rley::Tokens::Token.new(value, token_type)
+          token = Rley::Lexical::Token.new(value, token_type)
 
         else # Unknown token
           erroneous = curr_ch.nil? ? '' : curr_ch

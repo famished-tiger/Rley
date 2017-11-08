@@ -48,7 +48,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
       end
 
       def create_range(low, high)
-        return Tokens::TokenRange.new(low: low, high: high)
+        return Lexical::TokenRange.new(low: low, high: high)
       end
 
       context 'Initialization:' do

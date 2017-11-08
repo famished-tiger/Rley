@@ -2,11 +2,11 @@ require_relative '../../spec_helper'
 require 'stringio'
 
 require_relative '../../../lib/rley/syntax/terminal'
-require_relative '../../../lib/rley/tokens/token'
+require_relative '../../../lib/rley/lexical/token'
 require_relative '../../../lib/rley/gfg/start_vertex'
 require_relative '../../../lib/rley/parser/parse_entry'
 require_relative '../../../lib/rley/parser/parse_tracer'
-require_relative '../../../lib/rley/parser/grm_items_builder'
+require_relative '../../../lib/rley/base/grm_items_builder'
 require_relative '../../../lib/rley/gfg/grm_flow_graph'
 require_relative '../support/grammar_abc_helper'
 
@@ -23,7 +23,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
       # from the given grammar
       def build_items_for_grammar(aGrammar)
         helper = Object.new
-        helper.extend(Parser::GrmItemsBuilder)
+        helper.extend(Base::GrmItemsBuilder)
         return helper.build_dotted_items(aGrammar)
       end
 
@@ -39,7 +39,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
 
       let(:token_seq) do
         literals = %w[a a b c c]
-        literals.map { |lexeme| Tokens::Token.new(lexeme, nil) }
+        literals.map { |lexeme| Lexical::Token.new(lexeme, nil) }
       end
 
       # Helper method. Create an array of dotted items

@@ -3,7 +3,6 @@
 require 'strscan'
 require 'rley' # Load the gem
 
-
 class CalcLexer
   attr_reader(:scanner)
   attr_reader(:lineno)
@@ -17,8 +16,16 @@ class CalcLexer
     '-' => 'MINUS',
     '*' => 'STAR',
     '/' => 'DIVIDE',
-    '**' => 'POWER'
+    '**' => 'POWER',
+    'PI' => 'PI',
+    'E' => 'E'
   }.freeze
+  
+  @@unary_functions = [
+    'sin', 'cos', 'tan',
+    'asin', 'acos', 'atan',
+    'sqrt', 'exp', 'ln'
+  ].freeze
 
   class ScanError < StandardError; end
 
@@ -29,6 +36,7 @@ class CalcLexer
   end
 
   def tokens()
+    @unary_f_pattern = Regexp.new(@@unary_functions.join('|'))
     tok_sequence = []
     until @scanner.eos?
       token = _next_token
@@ -50,11 +58,12 @@ class CalcLexer
     if '()+-/'.include? curr_ch
       # Single character token
       token = build_token(@@lexeme2name[curr_ch], scanner.getch)
-      
     elsif (lexeme = scanner.scan(/\*\*/))
       token = build_token(@@lexeme2name[lexeme], lexeme)
-    elsif (lexeme = scanner.scan(/\*/))
+    elsif (lexeme = scanner.scan(/\*|PI|E/))
       token = build_token(@@lexeme2name[lexeme], lexeme)
+    elsif (lexeme = scanner.scan(@unary_f_pattern))
+      token = build_token('RESERVED', lexeme)  
     elsif (lexeme = scanner.scan(/[0-9]+(\.[0-9]+)?([eE][-+]?[0-9])?/))
       token = build_token('NUMBER', lexeme)
     else # Unknown token
@@ -69,7 +78,7 @@ class CalcLexer
   
   def build_token(aSymbolName, aLexeme)
     token_type = name2symbol[aSymbolName]
-    return Rley::Tokens::Token.new(aLexeme, token_type)    
+    return Rley::Lexical::Token.new(aLexeme, token_type)    
   end
 
   def skip_whitespaces()

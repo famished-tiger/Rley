@@ -71,7 +71,7 @@ class CalcLexer
   
   def build_token(aSymbolName, aLexeme)
     token_type = name2symbol[aSymbolName]
-    return Rley::Tokens::Token.new(aLexeme, token_type)    
+    return Rley::Lexical::Token.new(aLexeme, token_type)    
   end
 
   def skip_whitespaces()

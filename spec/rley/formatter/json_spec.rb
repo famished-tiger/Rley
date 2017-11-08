@@ -2,7 +2,7 @@ require_relative '../../spec_helper'
 require 'stringio'
 
 require_relative '../support/grammar_abc_helper'
-require_relative '../../../lib/rley/tokens/token'
+require_relative '../../../lib/rley/lexical/token'
 require_relative '../../../lib/rley/parser/gfg_earley_parser'
 require_relative '../../../lib/rley/ptree/parse_tree'
 require_relative '../../../lib/rley/parse_tree_visitor'
@@ -30,11 +30,11 @@ module Rley # Re-open the module to get rid of qualified names
       # for the language specified by gramma_abc
       let(:grm_abc_tokens1) do
         [
-          Tokens::Token.new('a', a_),
-          Tokens::Token.new('a', a_),
-          Tokens::Token.new('b', b_),
-          Tokens::Token.new('c', c_),
-          Tokens::Token.new('c', c_)
+          Lexical::Token.new('a', a_),
+          Lexical::Token.new('a', a_),
+          Lexical::Token.new('b', b_),
+          Lexical::Token.new('c', c_),
+          Lexical::Token.new('c', c_)
         ]
       end
 
