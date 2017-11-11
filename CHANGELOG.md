@@ -1,8 +1,13 @@
+### 0.5.07 / 2017-11-11
+* [NEW] File `benchmark_mini_en.rb` added in `examples/NLP` folder for parsing performance measurements.
+* [CHANGE] Demo calculator in `examples/general/calc_iter2`: added support for log10 and cbrt functions. README.md slightly reworked.
+* [FIX] File `README.md` sample code was broken by changes in 0.5.06 (thanks to arjunmenon for pointing this).
+
 ### 0.5.06 / 2017-11-08
 * [CHANGE] Demo calculator in `examples/general/calc_iter2` does much than the basic arithmetic operators, it now  
 support trigonometric functions and their inverse, square root, exponential and natural logarithm functions!.
 * [CHANGE] Internal module re-organization. New module `Base`, module `Tokens` renamed to `Lexical`.
-* [CHANGE] Class `ItemVertex`: Documentation refined.
+* [CHANGE] Improved YARD Documentation for 10+ classes.
 
 ### 0.5.05 / 2017-11-04
 * [FIX] Method `GFGParsing#call_rule` didn't handle properly the case of nullable symbols appearing in more than one production rule.

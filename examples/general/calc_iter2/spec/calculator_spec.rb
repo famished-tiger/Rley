@@ -168,8 +168,18 @@ describe 'Calculator' do
     
     # Some special functions
     it 'should evaluate square root of expressions' do
+      expect_expr('sqrt(0)').to eq(0)
+      expect_expr('sqrt(1)').to eq(1)
       expect_expr('sqrt(1 + 1)').to eq(Math.sqrt(2))
-    end 
+      expect_expr('sqrt(5 * 5)').to eq(5)
+    end
+
+    it 'should evaluate cubic root of expressions' do
+      expect_expr('cbrt(0)').to eq(0)
+      expect_expr('cbrt(1)').to eq(1)
+      expect_expr('cbrt(1 + 1)').to eq(Math.cbrt(2))
+      expect_expr('cbrt(5 * 5 * 5)').to eq(5)
+    end     
 
     it 'should evaluate exponential of expressions' do
       expect_expr('exp(-1)').to eq(1/Math::E)    
@@ -183,7 +193,14 @@ describe 'Calculator' do
       expect_expr('ln(1)').to eq(0)    
       expect_expr('ln(E)').to eq(1)
       expect_expr('ln(E * E)').to eq(2)
-    end     
+    end 
+
+    it 'should evaluate the logarithm base 10 of expressions' do
+      expect_expr('log(1/10)').to eq(-1)    
+      expect_expr('log(1)').to eq(0)    
+      expect_expr('log(10)').to eq(1)
+      expect_expr('log(10 * 10 * 10)').to eq(3)
+    end    
  
     # Trigonometric functions
     

@@ -3,14 +3,24 @@ Compared to the first iteration, this calculator supports:
 - the exponentiation operator '**',
 - the unary '-' operator (sign change),
 - the PI and E constants,
-- the trigonometric functions (sin, cos and tan),
-- the inverse trigonometric functions (asin, acos and atan),
-- the sqrt, exp and ln (natural logarithm) functions.
+- and several functions from Ruby's Math module.
+
 
 It also prints out:
 - The Concrete Syntax Tree (CST), a complete but verbose parse tree representation
-- The Abstract Syntax Tree (AST), a customized parse tree representation that is more 
+- The Abstract Syntax Tree (AST), a customized parse tree representation that is more
 convenient for further processing (here calculation.).
+
+BUILT-IN OPERATORS AND FUNCTIONS
+---------------------------------
+Operators: `+`, `-`, `*`, `/`, `**`  
+Numeric constants: `PI` (= 3.14159...), `E` (= 2.71828...)
+Functions from Ruby's Math module:
+`sqrt` (square root), `cbrt` (cubic root),  
+`exp` (exponential), `ln` (natural or neperian logarithm), `log10` (logarithm in base 10)  
+Trigonometric functions: `sin`, `cos`, `tan`  
+Inverse trigonometric functions: `asin`, `acos`, `atan`  
+
 
 ### Source files
 This sample project consists of the following files:  
@@ -26,8 +36,8 @@ node.
   For more details, run the command-line: `calc_demo.rb`
 
 - **calc_grammar.rb** implementing the class `CalcGrammar`.  
-  The grammar is a list of (production) rules that specifies the syntax of math 
-  expression.   A little examination of the grammar will reveal interesting 
+  The grammar is a list of (production) rules that specifies the syntax of math
+  expression.   A little examination of the grammar will reveal interesting
   grammar features such as:  
     * Recursive rules (e.g. terminal in left-side of rule also appears in right-hand side)
 
@@ -37,9 +47,9 @@ node.
 - **calc_parser.rb** implementing a `CalcParser` class.  
   The parser processes the tokens stream from the lexer and delivers its results
 
-- **sample_result.txt** a sample text containing the output of calculator for the expression: 
+- **sample_result.txt** a sample text containing the output of calculator for the expression:
 2 * 3 + (1 + 3 ** 2). It illustrates the huge difference in size and nesting between the CST
 (Concrete Syntax Tree) and the AST (Abstract Syntax Tree) representations. The generation of CSTs
-comes out-of-the-box with **Rley**. Creating ASTs requires customization. Here, the class for the 
+comes out-of-the-box with **Rley**. Creating ASTs requires customization. Here, the class for the
 AST nodes of the AST are defined in the **calc_ast_nodes.rb** and the methods for assembling the
 AST from the grammar rules are implemented in the `CalcASTBuilder` class.

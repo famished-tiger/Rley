@@ -24,7 +24,8 @@ class CalcLexer
   @@unary_functions = [
     'sin', 'cos', 'tan',
     'asin', 'acos', 'atan',
-    'sqrt', 'exp', 'ln'
+    'sqrt', 'cbrt', 'exp', 
+    'ln', 'log'
   ].freeze
 
   class ScanError < StandardError; end

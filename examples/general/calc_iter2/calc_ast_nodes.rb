@@ -97,11 +97,18 @@ class CalcNegateNode < CalcUnaryOpNode
 end # class
 
 class CalcUnaryFunction < CalcCompositeNode
+  @@name_mapping = begin 
+    map = Hash.new { |me, key| me[key] = key }
+    map['ln'] = 'log'
+    map['log'] = 'log10'
+    map
+  end
   attr_accessor(:func_name)
+  
   
   def interpret()
     argument = children[0].interpret
-    internal_name = @func_name == 'ln' ? 'log' : @func_name
+    internal_name = @@name_mapping[@func_name] # @func_name == 'ln' ? 'log' : @func_name
     return Math.send(internal_name.to_sym, argument)
   end  
 end
