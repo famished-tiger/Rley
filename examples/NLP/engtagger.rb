@@ -153,7 +153,7 @@ def tokenizer(lexicon, grammar, tokens)
   lexicon.each_with_index do |word, i| 
     term_name = tokens[i].last
     terminal = grammar.name2symbol[term_name]
-    rley_tokens << Rley::Lexical::Token.new(word, terminal)
+    rley_tokens << Rley::Tokens::Token.new(word, terminal)
   end
   return rley_tokens
 end
