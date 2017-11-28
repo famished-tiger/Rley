@@ -6,9 +6,12 @@ module Rley # This module is used as a namespace
   module Parser # This module is used as a namespace
     # Implementation of a parser that uses the Earley parsing algorithm.
     class GFGEarleyParser < Base::BaseParser
-      # The Grammar Flow graph for the given grammar
+      # The Grammar Flow graph generated from the provided grammar.
+      # @return [GFG::GrmFlowGraph] The GFG that drives the parsing
       attr_reader :gf_graph
 
+      # Constructor.
+      # @param aGrammar [Syntax::Grammar] The grammar of the language to parse.
       def initialize(aGrammar)
         super(aGrammar)
         @gf_graph = GFG::GrmFlowGraph.new(dotted_items)
@@ -17,7 +20,7 @@ module Rley # This module is used as a namespace
       # Parse a sequence of input tokens.
       # @param aTokenSequence [Array] Array of Tokens objects returned by a
       # tokenizer/scanner/lexer.
-      # @return [Parsing] an object that embeds the parse results.
+      # @return [GFGParsing] an object that embeds the parse results.
       def parse(aTokenSequence)
         result = GFGParsing.new(gf_graph, aTokenSequence)
         last_token_index = aTokenSequence.size

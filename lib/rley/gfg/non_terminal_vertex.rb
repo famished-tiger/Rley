@@ -14,7 +14,7 @@ module Rley # This module is used as a namespace
       attr_reader :non_terminal
       
       # Constructor to specialize in subclasses.
-      # @param [Syntax::NonTerminal]
+      # @param aNonTerminal [Syntax::NonTerminal]
       def initialize(aNonTerminal)
         super()
         @non_terminal = aNonTerminal

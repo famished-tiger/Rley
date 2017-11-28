@@ -1,5 +1,5 @@
-require_relative 'calc_parser'
-require_relative 'calc_ast_builder'
+require_relative 'parser'
+require_relative 'ast_builder'
 
 def print_title(aTitle)
   puts aTitle
@@ -18,24 +18,24 @@ def print_tree(aTitle, aParseTree)
 end
 
 # Create a calculator parser object
-parser = CalcParser.new
+parser = SRL::Parser.new
 
 # Parse the input expression in command-line
 if ARGV.empty?
   my_name = File.basename(__FILE__)
   msg = <<-END_MSG
-Demo calculator that prints:
-- The Concrete and Abstract Syntax Trees of the math expression.
-- The result of the math expression.
+Demo parser for the SRL, the Simple Regex Language (https://simple-regex.com/).
+Ultimately it will support SRL in full, currently it parses only the 
+SRL quantifiers.
+The utility prints the resulting regular expression.
 
 Command-line syntax:
-  ruby #{my_name} "arithmetic expression"
+  ruby #{my_name} filename
   where:
-    the arithmetic expression is enclosed between double quotes (")
+    the file name is a SRL source file.
 
   Examples:
-  ruby #{my_name} "2 * 3 + (1 + 3 ** 2)"
-  ruby #{my_name} "cos(PI/2) + sqrt(1 + 1)"
+  ruby #{my_name} sample01.srl
 END_MSG
   puts msg
   exit(1)
@@ -56,12 +56,12 @@ cst_ptree = result.parse_tree
 print_tree('Concrete Syntax Tree (CST)', cst_ptree)
 
 # Generate an abstract syntax parse tree from the parse result
-tree_builder = CalcASTBuilder
+tree_builder = ASTBuilder
 ast_ptree = result.parse_tree(tree_builder)
-print_tree('Abstract Syntax Tree (AST)', ast_ptree)
+# print_tree('Abstract Syntax Tree (AST)', ast_ptree)
 
-# Now perform the computation of math expression
-root = ast_ptree.root
-print_title('Result:')
-puts root.interpret.to_s # Output the expression result
+# # Now perform the computation of math expression
+# root = ast_ptree.root
+# print_title('Result:')
+# puts root.interpret.to_s # Output the expression result
 # End of file

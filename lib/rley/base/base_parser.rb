@@ -17,7 +17,7 @@ module Rley # This module is used as a namespace
       attr_reader(:dotted_items)
 
       # Constructor.
-      # @param [Syntax::Grammar] The grammar of the language.
+      # @param aGrammar [Syntax::Grammar] The grammar of the language.
       def initialize(aGrammar)
         @grammar = aGrammar
         @dotted_items = build_dotted_items(grammar) # Method from mixin

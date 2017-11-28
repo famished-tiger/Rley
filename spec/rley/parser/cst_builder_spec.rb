@@ -133,7 +133,6 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           expect { subject.receive_event(*event) }.not_to raise_error
           stack = get_stack(subject)
           expect(stack.size).to eq(1)
-          expect(stack.last.children).to eq([nil])
         end
 
         it 'should react to a second end event' do
@@ -152,7 +151,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           expect { subject.receive_event(*event) }.not_to raise_error
           stack = get_stack(subject)
           expect(stack.size).to eq(2)
-          expect(stack.last.children).to eq([nil, nil, nil])
+          expect(stack.last.children.size).to eq(3)
         end
 
         it 'should react to an exit event that creates a terminal node' do
@@ -370,7 +369,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           expect(stack.last.children).to be_nil
 
           next_event('visit P => arr . | 0 2')
-          expect(stack.last.children).to eq([nil])
+          expect(stack.last.children.size).to eq(1)
 
           next_event('visit arr. | 0 2')
           expect(stack.size).to eq(2)

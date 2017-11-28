@@ -5,7 +5,7 @@ require_relative 'calc_ast_builder'
 if ARGV.empty?
   my_name = File.basename(__FILE__)
   msg = <<-END_MSG
-Command-line symtax:
+Command-line syntax:
   ruby #{my_name} "arithmetic expression"
   where:
     the arithmetic expression is enclosed between double quotes (")

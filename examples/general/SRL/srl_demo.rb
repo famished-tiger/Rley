@@ -1,5 +1,5 @@
-require_relative 'calc_parser'
-require_relative 'calc_ast_builder'
+require_relative './lib/parser'
+require_relative './lib/ast_builder'
 
 def print_title(aTitle)
   puts aTitle
@@ -18,30 +18,30 @@ def print_tree(aTitle, aParseTree)
 end
 
 # Create a calculator parser object
-parser = CalcParser.new
+parser = SRL::Parser.new
 
 # Parse the input expression in command-line
 if ARGV.empty?
   my_name = File.basename(__FILE__)
   msg = <<-END_MSG
-Demo calculator that prints:
-- The Concrete and Abstract Syntax Trees of the math expression.
-- The result of the math expression.
+WORK IN PROGRESS
+Simple Regex Language parser:
+- Parses a very limited subset of the language and displays the parse tree
 
 Command-line syntax:
-  ruby #{my_name} "arithmetic expression"
+  ruby #{my_name} "quantifier expression"
   where:
-    the arithmetic expression is enclosed between double quotes (")
+    the SRL quantifier expression is enclosed between double quotes (")
 
   Examples:
-  ruby #{my_name} "2 * 3 + (1 + 3 ** 2)"
-  ruby #{my_name} "cos(PI/2) + sqrt(1 + 1)"
+  ruby #{my_name} "exactly 4 times"
+  ruby #{my_name} "between 2 and 3 times"
 END_MSG
   puts msg
   exit(1)
 end
 puts ARGV[0]
-result = parser.parse_expression(ARGV[0])
+result = parser.parse_SRL(ARGV[0])
 
 unless result.success?
   # Stop if the parse failed...
@@ -55,13 +55,13 @@ end
 cst_ptree = result.parse_tree
 print_tree('Concrete Syntax Tree (CST)', cst_ptree)
 
-# Generate an abstract syntax parse tree from the parse result
-tree_builder = CalcASTBuilder
+# Generate a regexp literal representation from the parse result
+tree_builder = ASTBuilder
 ast_ptree = result.parse_tree(tree_builder)
-print_tree('Abstract Syntax Tree (AST)', ast_ptree)
 
-# Now perform the computation of math expression
+# Now output the regexp literal
 root = ast_ptree.root
-print_title('Result:')
-puts root.interpret.to_s # Output the expression result
+print_title('SRL to Regexp representation:')
+puts "#{ARGV[0]} => #{root.to_str}" # Output the expression result
+
 # End of file

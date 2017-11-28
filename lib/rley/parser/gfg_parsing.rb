@@ -9,12 +9,15 @@ module Rley # This module is used as a namespace
   module Parser # This module is used as a namespace
     class GFGParsing
       # The link to the grammar flow graph
+      # @return [GFG::GrmFlowGraph] The GFG that drives the parsing      
       attr_reader(:gf_graph)
 
       # The link to the chart object
+      # @return [GFGChart]     
       attr_reader(:chart)
 
       # The sequence of input token to parse
+      # @return [Array<Lexical::Token>]
       attr_reader(:tokens)
 
       # A Hash with pairs of the form:
@@ -22,13 +25,14 @@ module Rley # This module is used as a namespace
       # It associates to a every parse entry its antecedent(s), that is,
       # the parse entry/ies that causes the key parse entry to be created
       # with one the gfg rules
+      # @return [Hash{ParseEntry => Array<ParseEntry>}]
       attr_reader(:antecedence)
 
       # The reason of a parse failure
       attr_reader(:failure_reason)
 
       # Constructor
-      # @param theGFG [GrmFlowGraph] the Grammar Flow Graph
+      # @param theGFG [GFG::GrmFlowGraph] the Grammar Flow Graph
       # @param theTokens [Array<Token>] the array of input tokens
       def initialize(theGFG, theTokens)
         @gf_graph = theGFG
