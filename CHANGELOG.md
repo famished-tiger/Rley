@@ -1,3 +1,12 @@
+### 0.5.08 / 2017-11-28
+* [CHANGE] Dir `examples/general/SRL/ Added an initial version of the Simple Regex Language parser.
+  Supports the SRL quantifier syntax only.
+* [FIX] Method `ParseTreeBuilder::place_TOS_child` was sometimes fooled when argument `aNode` was nil.
+* [FIX] Method `BaseParser::initialize` missing parameter name in doc caused a YARD warning.
+* [FIX] Method `GrmItemsBuilder::build_dotted_items` missing parameter name in doc caused a YARD warning.
+* [FIX] Method `NonTerminalVertex::initialize` missing parameter name in doc caused a YARD warning.
+
+
 ### 0.5.07 / 2017-11-11
 * [NEW] File `benchmark_mini_en.rb` added in `examples/NLP` folder for parsing performance measurements.
 * [CHANGE] Demo calculator in `examples/general/calc_iter2`: added support for log10 and cbrt functions. README.md slightly reworked.
