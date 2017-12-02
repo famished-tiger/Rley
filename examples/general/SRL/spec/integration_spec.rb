@@ -16,6 +16,7 @@ describe 'Integration tests:' do
   end
 
   context 'Parsing character ranges:' do
+
     it "should parse 'letter from ... to ...' syntax" do
       result = parse('letter from a to f')
       expect(result).to be_success
@@ -46,6 +47,30 @@ describe 'Integration tests:' do
 
       regexp = regexp_repr(result)
       expect(regexp.to_str).to eq('[A-Z]')
+    end
+
+    it "should parse 'digit from ... to ...' syntax" do
+      result = parse('digit from 1 to 4')
+      expect(result).to be_success
+
+      regexp = regexp_repr(result)
+      expect(regexp.to_str).to eq('[1-4]')
+    end
+
+    it "should parse 'digit' syntax" do
+      result = parse('digit')
+      expect(result).to be_success
+
+      regexp = regexp_repr(result)
+      expect(regexp.to_str).to eq('[0-9]')
+    end
+
+    it "should parse 'number' syntax" do
+      result = parse('number')
+      expect(result).to be_success
+
+      regexp = regexp_repr(result)
+      expect(regexp.to_str).to eq('[0-9]')
     end
 
   end # context

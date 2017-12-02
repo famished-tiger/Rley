@@ -28,12 +28,14 @@ module SRL
       AND
       AT
       BETWEEN
+      DIGIT
       EXACTLY
       FROM
       LEAST
       LETTER
       MORE
       NEVER
+      NUMBER
       ONCE
       OPTIONAL
       OR

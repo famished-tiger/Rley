@@ -36,6 +36,7 @@ Command-line syntax:
   Examples:
   ruby #{my_name} "letter from a to f exactly 4 times"
   ruby #{my_name} "uppercase letter between 2 and 3 times"
+  ruby #{my_name} "digit from 0 to 7 once or more"
 END_MSG
   puts msg
   exit(1)

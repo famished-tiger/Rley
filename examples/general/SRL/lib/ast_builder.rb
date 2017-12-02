@@ -44,20 +44,32 @@ class ASTBuilder < Rley::Parser::ParseTreeBuilder
       when 'term_1' # rule 'term' => %w[atom quantifier]
         reduce_term_1(aProduction, aRange, theTokens, theChildren)
 
-      when 'atom_0' #rule 'atom' => 'letter_range'
+      when 'atom_0' # rule 'atom' => 'letter_range'
         return_first_child(aRange, theTokens, theChildren)
-
-      when 'letter_range_0' # rule 'letter_range' => %w[LETTER FROM LETTER_LIT TO LETTER_LIT]
+        
+      when 'atom_1' # rule 'atom' => 'digit_range'
+        return_first_child(aRange, theTokens, theChildren)
+      
+      # rule 'letter_range' => %w[LETTER FROM LETTER_LIT TO LETTER_LIT]
+      when 'letter_range_0' 
         reduce_letter_range_0(aProduction, aRange, theTokens, theChildren)
-        
-       when 'letter_range_1' #rule 'letter_range' => %w[UPPERCASE LETTER FROM LETTER_LIT TO LETTER_LIT]
+
+      #rule 'letter_range' => %w[UPPERCASE LETTER FROM LETTER_LIT TO LETTER_LIT]  
+      when 'letter_range_1' 
         reduce_letter_range_1(aProduction, aRange, theTokens, theChildren)
-        
+
       when 'letter_range_2' # rule 'letter_range' => 'LETTER'
         reduce_letter_range_2(aProduction, aRange, theTokens, theChildren)
 
       when 'letter_range_3' # rule 'letter_range' => %w[UPPERCASE LETTER]
-        reduce_letter_range_3(aProduction, aRange, theTokens, theChildren)        
+        reduce_letter_range_3(aProduction, aRange, theTokens, theChildren)
+
+      # rule 'digit_range' => %w[digit_or_number FROM DIGIT_LIT TO DIGIT_LIT]
+      when 'digit_range_0' 
+        reduce_digit_range_0(aProduction, aRange, theTokens, theChildren)
+
+      when 'digit_range_1' #rule 'digit_range' => 'digit_or_number'
+        reduce_digit_range_1(aProduction, aRange, theTokens, theChildren)
 
       when 'quantifier_0' # rule 'quantifier' => 'ONCE'
         multiplicity(1, 1)
@@ -68,7 +80,8 @@ class ASTBuilder < Rley::Parser::ParseTreeBuilder
       when 'quantifier_2' # rule 'quantifier' => %w[EXACTLY count TIMES]
         reduce_quantifier_2(aProduction, aRange, theTokens, theChildren)
 
-      when 'quantifier_3' # rule 'quantifier' => %w[BETWEEN count AND count times_suffix]
+      # rule 'quantifier' => %w[BETWEEN count AND count times_suffix]
+      when 'quantifier_3' 
         reduce_quantifier_3(aProduction, aRange, theTokens, theChildren)
 
       when 'quantifier_4' # rule 'quantifier' => 'OPTIONAL'
@@ -82,6 +95,11 @@ class ASTBuilder < Rley::Parser::ParseTreeBuilder
 
       when 'quantifier_7' # rule 'quantifier' => %w[AT LEAST count TIMES]
         reduce_quantifier_7(aProduction, aRange, theTokens, theChildren)
+      
+      # rule 'digit_or_number' => 'DIGIT'
+      # rule 'digit_or_number' => 'NUMER'
+      when 'digit_or_number_0', 'digit_or_number_1' 
+        return_first_child(aRange, theTokens, theChildren)
 
       when 'count_0', 'count_1'
         return_first_child(aRange, theTokens, theChildren)
@@ -100,16 +118,16 @@ class ASTBuilder < Rley::Parser::ParseTreeBuilder
   end
 
   def char_range(lowerBound, upperBound)
-    # TODO fix module nesting  
+    # TODO fix module nesting
     lower = Regex::Character.new(lowerBound)
     upper =  Regex::Character.new(upperBound)
     return Regex::CharRange.new(lower, upper)
   end
-  
+
   def char_class(toNegate, *theChildren)
     Regex::CharClass.new(toNegate, *theChildren)
   end
-  
+
   def repetition(expressionToRepeat, aMultiplicity)
     return Regex::Repetition.new(expressionToRepeat, aMultiplicity)
   end
@@ -128,7 +146,7 @@ class ASTBuilder < Rley::Parser::ParseTreeBuilder
     ch_range = char_range(lower, upper)
     char_class(false, ch_range)
   end
-  
+
   # rule 'letter_range' => %w[UPPERCASE LETTER FROM LETTER_LIT TO LETTER_LIT]
   def reduce_letter_range_1(aProduction, aRange, theTokens, theChildren)
     lower = theChildren[3].token.lexeme
@@ -136,17 +154,28 @@ class ASTBuilder < Rley::Parser::ParseTreeBuilder
     ch_range = char_range(lower.upcase, upper.upcase)
     char_class(false, ch_range)
   end
-  
+
   # rule 'letter_range' => 'LETTER'
   def reduce_letter_range_2(aProduction, aRange, theTokens, theChildren)
     ch_range = char_range('a', 'z')
-    char_class(false, ch_range)  
+    char_class(false, ch_range)
   end
-  
+
   #rule 'letter_range' => %w[UPPERCASE LETTER]
   def reduce_letter_range_3(aProduction, aRange, theTokens, theChildren)
     ch_range = char_range('A', 'Z')
-    char_class(false, ch_range)    
+    char_class(false, ch_range)
+  end
+  
+  # rule 'digit_range' => %w[digit_or_number FROM DIGIT_LIT TO DIGIT_LIT]
+  def reduce_digit_range_0(aProduction, aRange, theTokens, theChildren)
+    reduce_letter_range_0(aProduction, aRange, theTokens, theChildren)
+  end
+
+  # rule 'digit_range' => 'digit_or_number'
+  def reduce_digit_range_1(aProduction, aRange, theTokens, theChildren)
+    ch_range = char_range('0', '9')
+    char_class(false, ch_range)  
   end
 
   # rule 'quantifier' => %w[EXACTLY count TIMES]
