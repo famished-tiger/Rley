@@ -29,14 +29,18 @@ module SRL
       AT
       BETWEEN
       EXACTLY
+      FROM
       LEAST
+      LETTER
       MORE
       NEVER
       ONCE
       OPTIONAL
       OR
       TIMES
+      TO
       TWICE
+      UPPERCASE
     ].map { |x| [x, x] } .to_h
     
     class ScanError < StandardError; end
@@ -67,18 +71,17 @@ module SRL
       token = nil
 
       if '(),'.include? curr_ch
-        # Single character token
+        # Delimiters, separators => single character token
         token = build_token(@@lexeme2name[curr_ch], scanner.getch)  
       elsif (lexeme = scanner.scan(/[0-9]{2,}/))
         token = build_token('INTEGER', lexeme) # An integer has two or more digits
       elsif (lexeme = scanner.scan(/[0-9]/))
-        token = build_token('DIGIT', lexeme) 
+        token = build_token('DIGIT_LIT', lexeme) 
       elsif (lexeme = scanner.scan(/[a-zA-Z]{2,}/))
         token = build_token(@@keywords[lexeme.upcase], lexeme)
         # TODO: handle case unknown identifier
-      elsif (lexeme = scanner.scan(/\w/))
-        puts 'Buff'
-        token = build_token('CHAR', lexeme)      
+      elsif (lexeme = scanner.scan(/[a-zA-Z]((?=\s)|$)/))
+        token = build_token('LETTER_LIT', lexeme)      
       else # Unknown token
         erroneous = curr_ch.nil? ? '' : curr_ch
         sequel = scanner.scan(/.{1,20}/)

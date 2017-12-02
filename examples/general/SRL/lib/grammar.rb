@@ -6,13 +6,21 @@ module SRL
   # This is a very partial grammar of SRL.
   # It will be expanded with the coming versions of Rley
   builder = Rley::Syntax::GrammarBuilder.new do
-    add_terminals('DIGIT', 'INTEGER')
+    add_terminals('DIGIT_LIT', 'INTEGER', 'LETTER_LIT')
+    add_terminals('UPPERCASE', 'LETTER', 'FROM', 'TO')
     add_terminals('EXACTLY', 'TIMES', 'ONCE', 'TWICE')
     add_terminals('BETWEEN', 'AND', 'OPTIONAL', 'OR')
     add_terminals('MORE', 'NEVER', 'AT', 'LEAST')
 
     # For the moment one focuses on quantifier syntax only...
-    rule 'srl' => 'quantifier'
+    rule 'srl' => 'term'
+    rule 'term' => 'atom'
+    rule 'term' => %w[atom quantifier]
+    rule 'atom' => 'letter_range'
+    rule 'letter_range' => %w[LETTER FROM LETTER_LIT TO LETTER_LIT]
+    rule 'letter_range' => %w[UPPERCASE LETTER FROM LETTER_LIT TO LETTER_LIT]
+    rule 'letter_range' => 'LETTER'
+    rule 'letter_range' => %w[UPPERCASE LETTER]    
     rule 'quantifier' => 'ONCE'
     rule 'quantifier' => 'TWICE'
     rule 'quantifier' => %w[EXACTLY count TIMES]
@@ -21,7 +29,7 @@ module SRL
     rule 'quantifier' => %w[ONCE OR MORE]
     rule 'quantifier' => %w[NEVER OR MORE]
     rule 'quantifier' => %w[AT LEAST count TIMES]
-    rule 'count' => 'DIGIT'
+    rule 'count' => 'DIGIT_LIT'
     rule 'count' => 'INTEGER'
     rule 'times_suffix' => 'TIMES'
     rule 'times_suffix' => []

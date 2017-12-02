@@ -29,13 +29,13 @@ Simple Regex Language parser:
 - Parses a very limited subset of the language and displays the parse tree
 
 Command-line syntax:
-  ruby #{my_name} "quantifier expression"
+  ruby #{my_name} "SRL expression"
   where:
-    the SRL quantifier expression is enclosed between double quotes (")
+    the SRL expression is enclosed between double quotes (")
 
   Examples:
-  ruby #{my_name} "exactly 4 times"
-  ruby #{my_name} "between 2 and 3 times"
+  ruby #{my_name} "letter from a to f exactly 4 times"
+  ruby #{my_name} "uppercase letter between 2 and 3 times"
 END_MSG
   puts msg
   exit(1)

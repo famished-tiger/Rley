@@ -57,9 +57,23 @@ module SRL
         subject.scanner.string = ' 1 '
         token = subject.tokens.first
         expect(token).to be_kind_of(Rley::Lexical::Token)
-        expect(token.terminal.name).to eq('DIGIT')
+        expect(token.terminal.name).to eq('DIGIT_LIT')
         expect(token.lexeme).to eq('1')
       end       
+    end # context
+    
+    context 'Character range tokenization:' do
+      it "should recognize 'letter from ... to ...'" do
+        input = 'letter a to f'
+        subject.scanner.string = input
+        expectations = [
+          ['LETTER', 'letter'],
+          ['LETTER_LIT', 'a'],
+          ['TO', 'to'],
+          ['LETTER_LIT', 'f']
+        ]
+        match_expectations(subject, expectations)
+      end    
     end # context
     
     context 'Quantifier tokenization:' do
@@ -68,7 +82,7 @@ module SRL
         subject.scanner.string = input
         expectations = [
           ['EXACTLY', 'exactly'],
-          ['DIGIT', '4'],
+          ['DIGIT_LIT', '4'],
           ['TIMES', 'Times']
         ]
         match_expectations(subject, expectations)
@@ -79,9 +93,9 @@ module SRL
         subject.scanner.string = input
         expectations = [
           ['BETWEEN', 'Between'],
-          ['DIGIT', '2'],
+          ['DIGIT_LIT', '2'],
           ['AND', 'AND'],
-          ['DIGIT', '4'],
+          ['DIGIT_LIT', '4'],
           ['TIMES', 'times']
         ]
         match_expectations(subject, expectations)

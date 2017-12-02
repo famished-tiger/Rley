@@ -15,89 +15,112 @@ describe 'Integration tests:' do
     regexp = tree.root
   end
 
-  context 'Parsing quantifiers:' do
-    it "should parse 'once' syntax" do
-      result = parse('once')
+  context 'Parsing character ranges:' do
+    it "should parse 'letter from ... to ...' syntax" do
+      result = parse('letter from a to f')
       expect(result).to be_success
 
       regexp = regexp_repr(result)
-      expect(regexp.to_str).to eq('{1}')
+      expect(regexp.to_str).to eq('[a-f]')
     end
 
-    it "should parse 'twice' syntax" do
-      result = parse('twice')
+    it "should parse 'uppercase letter from ... to ...' syntax" do
+      result = parse('UPPERCASE letter from A to F')
       expect(result).to be_success
-      
+
       regexp = regexp_repr(result)
-      expect(regexp.to_str).to eq('{2}')      
+      expect(regexp.to_str).to eq('[A-F]')
     end
 
-    it "should parse 'optional' syntax" do
-      result = parse('optional')
+    it "should parse 'letter' syntax" do
+      result = parse('letter')
       expect(result).to be_success
-      
+
       regexp = regexp_repr(result)
-      expect(regexp.to_str).to eq('?')      
+      expect(regexp.to_str).to eq('[a-z]')
     end
 
-    it "should parse 'exactly ... times' syntax" do
-      result = parse('exactly 4 times')
+    it "should parse 'uppercase letter' syntax" do
+      result = parse('uppercase letter')
       expect(result).to be_success
-      
+
       regexp = regexp_repr(result)
-      expect(regexp.to_str).to eq('{4}')        
-    end
-
-    it "should parse 'between ... and ... times' syntax" do
-      result = parse('between 2 and 4 times')
-      expect(result).to be_success
-
-      # Dropping 'times' keyword is shorter syntax
-      expect(parse('between 2 and 4')).to be_success
-      
-      regexp = regexp_repr(result)
-      expect(regexp.to_str).to eq('{2,4}')        
-    end
-
-    it "should parse 'once or more' syntax" do
-      result = parse('once or more')
-      expect(result).to be_success
-    end
-
-    it "should parse 'never or more' syntax" do
-      result = parse('never or more')
-      expect(result).to be_success
-    end
-
-    it "should parse 'at least  ... times' syntax" do
-      result = parse('at least 10 times')
-      expect(result).to be_success
-      
-      regexp = regexp_repr(result)
-      expect(regexp.to_str).to eq('{10,}')      
+      expect(regexp.to_str).to eq('[A-Z]')
     end
 
   end # context
 
+  context 'Parsing quantifiers:' do
+    let(:prefix) { 'letter from p to t ' }
+
+    it "should parse 'once' syntax" do
+      result = parse(prefix + 'once')
+      expect(result).to be_success
+
+      regexp = regexp_repr(result)
+      expect(regexp.to_str).to eq('[p-t]{1}')
+    end
+
+    it "should parse 'twice' syntax" do
+      result = parse(prefix + 'twice')
+      expect(result).to be_success
+
+      regexp = regexp_repr(result)
+      expect(regexp.to_str).to eq('[p-t]{2}')
+    end
+
+    it "should parse 'optional' syntax" do
+      result = parse(prefix + 'optional')
+      expect(result).to be_success
+
+      regexp = regexp_repr(result)
+      expect(regexp.to_str).to eq('[p-t]?')
+    end
+
+    it "should parse 'exactly ... times' syntax" do
+      result = parse('letter from a to f exactly 4 times')
+      expect(result).to be_success
+
+      regexp = regexp_repr(result)
+      expect(regexp.to_str).to eq('[a-f]{4}')
+    end
+
+    it "should parse 'between ... and ... times' syntax" do
+      result = parse(prefix + 'between 2 and 4 times')
+      expect(result).to be_success
+
+      # Dropping 'times' keyword is shorter syntax
+      expect(parse(prefix + 'between 2 and 4')).to be_success
+
+      regexp = regexp_repr(result)
+      expect(regexp.to_str).to eq('[p-t]{2,4}')
+    end
+
+
+    it "should parse 'once or more' syntax" do
+      result = parse(prefix + 'once or more')
+      expect(result).to be_success
+
+      regexp = regexp_repr(result)
+      expect(regexp.to_str).to eq('[p-t]+')
+    end
+
+    it "should parse 'never or more' syntax" do
+      result = parse(prefix + 'never or more')
+      expect(result).to be_success
+
+      regexp = regexp_repr(result)
+      expect(regexp.to_str).to eq('[p-t]*')
+    end
+
+    it "should parse 'at least  ... times' syntax" do
+      result = parse(prefix + 'at least 10 times')
+      expect(result).to be_success
+
+      regexp = regexp_repr(result)
+      expect(regexp.to_str).to eq('[p-t]{10,}')
+    end
+  end # context
 end # describe
 
-
-=begin
-
-unless result.success?
-  # Stop if the parse failed...
-  puts "Parsing of '#{ARGV[0]}' failed"
-  puts "Reason: #{result.failure_reason.message}"
-  exit(1)
-end
-
-
-# Generate a concrete syntax parse tree from the parse result
-cst_ptree = result.parse_tree
-print_tree('Concrete Syntax Tree (CST)', cst_ptree)
-
-# Generate an abstract syntax parse tree from the parse result
-tree_builder = ASTBuilder
-ast_ptree = result.parse_tree(tree_builder)
-=end
 
