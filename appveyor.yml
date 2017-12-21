@@ -15,8 +15,7 @@ environment:
 install:
 - cmd: >-
     SET PATH=C:\Ruby%Ruby_version%\bin;%PATH%
-
-    bundle install --retry=3 --clean
+    bundle install --retry=3 --clean --force
 build: off
 test_script:
 - cmd: bundle exec rake
