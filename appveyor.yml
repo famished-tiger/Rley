@@ -11,12 +11,13 @@ environment:
   - Ruby_version: 23
   - Ruby_version: 23-x64
   - Ruby_version: 24  
-  - Ruby_version: 24-x64  
-install:
-- cmd: >-
-    SET PATH=C:\Ruby%Ruby_version%\bin;%PATH%
+  - Ruby_version: 24-x64
 
-    bundle install --retry=3 --clean
+install:
+  - set PATH=C:\Ruby%Ruby_version%\bin;%PATH%
+  - bundle install --retry=3 --clean --force
+
 build: off
+
 test_script:
-- cmd: bundle exec rake
+  - bundle exec rake
