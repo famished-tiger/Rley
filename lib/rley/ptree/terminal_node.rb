@@ -3,10 +3,11 @@ require_relative 'parse_tree_node' # Load superclass
 module Rley # This module is used as a namespace
   module PTree # This module is used as a namespace
     class TerminalNode < ParseTreeNode
-      # Link to the input token
+      # @return [Lexical::Token] the input token
       attr_reader(:token)
 
-      # aPosition is the position of the token in the input stream.      
+      # @param aToken [Lexical::Token] Input Token object
+      # @param aPos [Integer] position of the token in the input stream.      
       def initialize(aToken, aPos)
         # (major, minor) =  
         

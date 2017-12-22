@@ -1,3 +1,4 @@
+require_relative 'ast_building'
 require_relative 'calc_ast_nodes'
 
 # The purpose of a CalcASTBuilder is to build piece by piece an AST
@@ -8,6 +9,8 @@ require_relative 'calc_ast_nodes'
 # (say, a parse tree) from simpler objects (terminal and non-terminal
 # nodes) and using a step by step approach.
 class CalcASTBuilder < Rley::Parser::ParseTreeBuilder
+  include ASTBuilding
+
   Terminal2NodeClass = {
     # Lexical ambiguity: minus sign represents two very concepts:
     # The unary negation operator on one hand, the binary substraction operator
@@ -22,29 +25,6 @@ class CalcASTBuilder < Rley::Parser::ParseTreeBuilder
   }.freeze
 
   protected
-
-  def return_first_child(_range, _tokens, theChildren)
-    return theChildren[0]
-  end
-
-  def return_second_child(_range, _tokens, theChildren)
-    return theChildren[1]
-  end
-
-  def return_last_child(_range, _tokens, theChildren)
-    return theChildren[-1]
-  end
-
-  def return_epsilon(_range, _tokens, _children)
-    return nil
-  end
-
-  # Overriding method.
-  # Create a parse tree object with given
-  # node as root node.
-  def create_tree(aRootNode)
-    return Rley::PTree::ParseTree.new(aRootNode)
-  end
 
   # Overriding method.
   # Factory method for creating a node object for the given

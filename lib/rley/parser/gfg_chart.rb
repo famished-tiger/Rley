@@ -9,26 +9,29 @@ module Rley # This module is used as a namespace
     # Assuming that n == number of input tokens,
     # the chart is an array with n + 1 entry sets.
     class GFGChart
-      # An array of entry sets (one per input token + 1)
+      # @return [Array<ParseEntrySet>] entry sets (one per input token + 1)
       attr_reader(:sets)
 
       # @param tokenCount [Integer] The number of lexemes in the input to parse.
+      # @param aGFGraph [GFG::GrmFlowGraph] The GFG for the grammar in use.       
       def initialize(tokenCount, aGFGraph)
         @sets = Array.new(tokenCount + 1) { |_| ParseEntrySet.new }
         push_entry(aGFGraph.start_vertex, 0, 0, :start_rule)
       end
 
-      # Return the start (non-terminal) symbol of the grammar.
+      # @return [Syntax::NonTerminal] the start symbol of the grammar.
       def start_symbol()
         return sets.first.entries[0].vertex.non_terminal
       end
 
-      # Access the entry set at given position
+      # @param index [Integer]
+      # @return [ParseEntrySet] Access the entry set at given position
       def [](index)
         return sets[index]
       end
 
       # Return the index value of the last non-empty entry set.
+      # @return [Integer]
       def last_index()
         first_empty = sets.find_index(&:empty?)
         index = if first_empty.nil?
@@ -49,11 +52,13 @@ module Rley # This module is used as a namespace
       end
 
       # Retrieve the first parse entry added to this chart
+      # @return [ParseEntry]
       def initial_entry()
         return sets[0].first
       end
 
       # Retrieve the entry that corresponds to a complete and successful parse
+      # @return [ParseEntry]
       def accepting_entry()
         # Success can be detected as follows:
         # The last chart entry set has at least one complete parse entry

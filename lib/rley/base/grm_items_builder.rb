@@ -5,7 +5,7 @@ module Rley # This module is used as a namespace
     # Mix-in module. Builds the dotted items for a given grammar
     module GrmItemsBuilder
       # Build an array of dotted items from the productions of passed grammar.
-      # @param [Syntax::Grammar]
+      # @param aGrammar [Syntax::Grammar]
       # @return [Array<DottedItem>]
       def build_dotted_items(aGrammar)
         items = []

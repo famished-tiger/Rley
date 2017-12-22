@@ -253,7 +253,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
 
           next_event('visit P => arr . | 0 7')
           # stack: [P[0, 7]]
-          expect(stack.last.children).to eq([nil])
+          expect(stack.last.children.size).to eq(1)
 
           next_event('visit arr. | 0 7')
           expect(stack.size).to eq(2)
@@ -276,7 +276,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           expect(stack.last.children).to be_nil
 
           next_event('visit sequence => list . | 1 6')
-          expect(stack.last.children).to eq([nil])
+          expect(stack.last.children.size).to eq(1)
 
           next_event('visit list. | 1 6')
           expect(stack.size).to eq(4)

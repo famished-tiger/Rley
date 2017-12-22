@@ -12,6 +12,9 @@ module Rley # This module is used as a namespace
   module Parser # This module is used as a namespace
     # Structure used internally by ParseTreeBuilder class.
     CSTRawNode = Struct.new(:range, :symbol, :children) do
+      # Constructor.
+      # @param aSymbol [Lexical::TokenRange] The token position range.
+      # @param aSymbol [Syntax::Symbol] A symbol from grammar.
       def initialize(aRange, aSymbol)
         super
         self.range = aRange
@@ -41,12 +44,13 @@ module Rley # This module is used as a namespace
       def initialize(theTokens)
         @tokens = theTokens
         @stack = []
+        @dummy_node = Object.new.freeze
       end
 
       # Receive events resulting from a visit of GFGParsing object.
       # These events are produced by a specialized Enumerator created
       # with a ParseWalkerFactory instance.
-      # @param anEvent [Symbol] Kind of visit event. Should be: :visit
+      # @param anEvent [Syntax::Symbol] Kind of visit event. Should be: :visit
       # @param anEntry [ParseEntry] The entry being visited
       # @param anIndex [anIndex] The token index associated with anEntry
       def receive_event(anEvent, anEntry, anIndex)
@@ -70,6 +74,13 @@ module Rley # This module is used as a namespace
       def stack()
         return @stack
       end
+
+      # Overriding method.
+      # Create a parse tree object with given
+      # node as root node.
+      def create_tree(aRootNode)
+        return Rley::PTree::ParseTree.new(aRootNode)
+      end      
 
       private
 
@@ -173,7 +184,7 @@ module Rley # This module is used as a namespace
       # Initialize children array of TOS with nil placeholders.
       # The number of elements equals the number of symbols at rhs.
       def init_TOS_children(aCount)
-        tos.children = Array.new(aCount)
+        tos.children = Array.new(aCount) { |_index| @dummy_node }
       end
 
       # Does the position on the left side of the dot correspond
@@ -213,15 +224,15 @@ module Rley # This module is used as a namespace
       # array at that position.
       # If the position is nil, then the node will be placed at the position of
       # the rightmost nil element in children array.
-      def place_TOS_child(aNode, aRHSPos)
+      def place_TOS_child(aNode, aRHSPos)       
         if aRHSPos.nil?
           # Retrieve index of most rightmost nil child...
-          pos = tos.children.rindex(&:nil?)
+          pos = tos.children.rindex { |child| child == @dummy_node }
           raise StandardError, 'Internal error' if pos.nil?
         else
           pos = aRHSPos
         end
-
+        
         tos.children[pos] = aNode
       end
 
