@@ -113,7 +113,6 @@ module Rley # This module is used as a namespace
       # [event, entry, index, vertex]
       def visit_entry(anEntry, aContext)
         index = aContext.entry_set_index
-
         aContext.nterm2start[[anEntry, index]] if anEntry.start_entry?
 
         if aContext.visitees.include?(anEntry) # Already visited?...

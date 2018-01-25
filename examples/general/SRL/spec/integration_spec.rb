@@ -16,7 +16,6 @@ describe 'Integration tests:' do
   end
 
   context 'Parsing character ranges:' do
-
     it "should parse 'letter from ... to ...' syntax" do
       result = parse('letter from a to f')
       expect(result).to be_success
@@ -56,13 +55,41 @@ describe 'Integration tests:' do
       regexp = regexp_repr(result)
       expect(regexp.to_str).to eq('[1-4]')
     end
+  end # context
 
+  context 'Parsing string literals:' do
+    it 'should parse double quotes literal string' do
+      result = parse('literally "hello"')
+      expect(result).to be_success
+
+      regexp = regexp_repr(result)
+      expect(regexp.to_str).to eq('hello')
+    end
+
+    it 'should parse single quotes literal string' do
+      result = parse("literally 'hello'")
+      expect(result).to be_success
+
+      regexp = regexp_repr(result)
+      expect(regexp.to_str).to eq('hello')
+    end
+
+    it 'should escape special characters' do
+      result = parse("literally '.'")
+      expect(result).to be_success
+
+      regexp = regexp_repr(result)
+      expect(regexp.to_str).to eq('\.')
+    end
+  end
+
+  context 'Parsing character classes:' do
     it "should parse 'digit' syntax" do
       result = parse('digit')
       expect(result).to be_success
 
       regexp = regexp_repr(result)
-      expect(regexp.to_str).to eq('[0-9]')
+      expect(regexp.to_str).to eq('\d')
     end
 
     it "should parse 'number' syntax" do
@@ -70,9 +97,126 @@ describe 'Integration tests:' do
       expect(result).to be_success
 
       regexp = regexp_repr(result)
-      expect(regexp.to_str).to eq('[0-9]')
+      expect(regexp.to_str).to eq('\d')
     end
 
+    it "should parse 'any character' syntax" do
+      result = parse('any character')
+      expect(result).to be_success
+
+      regexp = regexp_repr(result)
+      expect(regexp.to_str).to eq('\w')
+    end
+
+    it "should parse 'no character' syntax" do
+      result = parse('no character')
+      expect(result).to be_success
+
+      regexp = regexp_repr(result)
+      expect(regexp.to_str).to eq('\W')
+    end
+
+    it "should parse 'whitespace' syntax" do
+      result = parse('whitespace')
+      expect(result).to be_success
+
+      regexp = regexp_repr(result)
+      expect(regexp.to_str).to eq('\s')
+    end
+
+    it "should parse 'no whitespace' syntax" do
+      result = parse('no whitespace')
+      expect(result).to be_success
+
+      regexp = regexp_repr(result)
+      expect(regexp.to_str).to eq('\S')
+    end
+
+    it "should parse 'anything' syntax" do
+      result = parse('anything')
+      expect(result).to be_success
+
+      regexp = regexp_repr(result)
+      expect(regexp.to_str).to eq('.')
+    end
+
+    it "should parse 'one of' syntax" do
+      result = parse('one of "._%+-"')
+      expect(result).to be_success
+
+      regexp = regexp_repr(result)
+      # Remark: reference implementation less readable
+      # (escapes more characters than required)
+      expect(regexp.to_str).to eq('[._%+\-]')
+    end
+  end # context
+
+
+  context 'Parsing special character declarations:' do
+    it "should parse 'tab' syntax" do
+      result = parse('tab')
+      expect(result).to be_success
+
+      regexp = regexp_repr(result)
+      expect(regexp.to_str).to eq('\t')
+    end
+
+    it "should parse 'backslash' syntax" do
+      result = parse('backslash')
+      expect(result).to be_success
+
+      regexp = regexp_repr(result)
+      expect(regexp.to_str).to eq('\\')
+    end
+
+    it "should parse 'new line' syntax" do
+      result = parse('new line')
+      expect(result).to be_success
+
+      regexp = regexp_repr(result)
+      expect(regexp.to_str).to eq('\n')
+    end
+  end # context
+
+  context 'Parsing alternations:' do
+    it "should parse 'any of' syntax" do
+      source = 'any of (any character, one of "._%-+")'
+      result = parse(source)
+      expect(result).to be_success
+
+      regexp = regexp_repr(result)
+      expect(regexp.to_str).to eq('(?:\w|[._%\-+])')
+    end
+  end # context
+
+  context 'Parsing concatenation:' do
+    it "should reject dangling comma" do
+      source = 'literally "a",'
+      result = parse(source)
+      expect(result).not_to be_success
+      message_prefix = /Premature end of input after ','/
+      expect(result.failure_reason.message).to match(message_prefix)
+    end
+
+    it "should parse a sequence of patterns" do
+      #
+      # DEBUG When I put a comma at the end ... looping endlessly
+      #
+      source = <<-ENDS
+      any of (any character, one of "._%-+") once or more,
+      literally "@",
+      any of (digit, letter, one of ".-") once or more,
+      literally ".",
+      letter at least 2 times
+ENDS
+
+      result = parse(source)
+      expect(result).to be_success
+
+      regexp = regexp_repr(result)
+      # SRL expect: (?:\w|[\._%\-\+])+(?:@)(?:[0-9]|[a-z]|[\.\-])+(?:\.)[a-z]{2,}
+      expect(regexp.to_str).to eq('(?:\w|[._%\-+])+@(?:\d|[a-z]|[.\-])+\.[a-z]{2,}')
+    end
   end # context
 
   context 'Parsing quantifiers:' do
@@ -87,19 +231,19 @@ describe 'Integration tests:' do
     end
 
     it "should parse 'twice' syntax" do
-      result = parse(prefix + 'twice')
+      result = parse('digit twice')
       expect(result).to be_success
 
       regexp = regexp_repr(result)
-      expect(regexp.to_str).to eq('[p-t]{2}')
+      expect(regexp.to_str).to eq('\d{2}')
     end
 
     it "should parse 'optional' syntax" do
-      result = parse(prefix + 'optional')
+      result = parse('anything optional')
       expect(result).to be_success
 
       regexp = regexp_repr(result)
-      expect(regexp.to_str).to eq('[p-t]?')
+      expect(regexp.to_str).to eq('.?')
     end
 
     it "should parse 'exactly ... times' syntax" do
@@ -120,7 +264,6 @@ describe 'Integration tests:' do
       regexp = regexp_repr(result)
       expect(regexp.to_str).to eq('[p-t]{2,4}')
     end
-
 
     it "should parse 'once or more' syntax" do
       result = parse(prefix + 'once or more')

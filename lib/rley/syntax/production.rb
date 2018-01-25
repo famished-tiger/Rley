@@ -19,7 +19,7 @@ module Rley # This module is used as a namespace
       # @return [String] The unique name of the production rule.
       attr_accessor(:name)
       
-      # @return [Boolean ]A production is generative when all of its 
+      # @return [Boolean] A production is generative when all of its 
       # rhs members are generative (that is, they can each generate/derive
       # a non-empty string of terminals).
       attr_writer(:generative)      
@@ -38,7 +38,7 @@ module Rley # This module is used as a namespace
       end
 
       # Is the rhs empty?
-      # @ return true if the rhs has no members.
+      # @return [Boolean] true if the rhs has no members.
       def empty?()
         return rhs.empty?
       end
@@ -49,7 +49,19 @@ module Rley # This module is used as a namespace
         end
         
         return @generative
-      end      
+      end
+
+      # Returns a string containing a human-readable representation of the 
+      # production.
+      # @return [String]
+      def inspect()
+        result = "#<#{self.class.name}:#{self.object_id}"
+        result << " @name=\"#{self.name}\""
+        result << " @lhs=#{lhs.name}"
+        result << " @rhs=#{rhs.inspect}"
+        result << " @generative=#{@generative}>"
+        return result
+      end
 
       private
 

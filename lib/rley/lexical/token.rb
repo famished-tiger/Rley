@@ -22,6 +22,7 @@ module Rley # This module is used as a namespace
       # @param theLexeme [String] the lexeme (= piece of text from input)
       # @param aTerminal [Syntax::Terminal] The terminal symbol corresponding to the lexeme.
       def initialize(theLexeme, aTerminal)
+        raise 'Internal error: nil terminal symbol detected' if aTerminal.nil?
         @lexeme = theLexeme
         @terminal = aTerminal
       end

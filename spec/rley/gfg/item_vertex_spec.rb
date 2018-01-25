@@ -117,6 +117,15 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           expect { subject.shortcut = 'invalid' }.to raise_error(err, err_msg)
         end        
       end # context
+
+      context 'Provided services:' do
+        it 'should provide human-readable representation of itself' do
+          prefix = /^#<Rley::GFG::ItemVertex:\d+/           
+          expect(subject.inspect).to match(prefix)
+          suffix = /label="sentence => a \. b_sequence c">$/        
+          expect(subject.inspect).to match(suffix)            
+        end        
+      end # context
     end # describe
   end # module
 end # module

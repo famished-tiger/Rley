@@ -44,7 +44,14 @@ module Rley # This module is used as a namespace
       end
 
       # Push a parse entry for the chart entry with given index
+      # @param anIndex [Integer] The rank of the token in the input stream.
+      # @return [ParseEntry] the passed parse entry if it is pushed
       def push_entry(aVertex, anOrigin, anIndex, _reason)
+        # puts "push_entry:"
+        # puts "  aVertex #{aVertex.inspect}"
+        # puts "  anOrigin: #{anOrigin}"
+        # puts "  anIndex: #{anIndex}"
+        # puts "  _reason: #{_reason}"
         new_entry = ParseEntry.new(aVertex, anOrigin)
         pushed = self[anIndex].push_entry(new_entry)
 
@@ -66,6 +73,13 @@ module Rley # This module is used as a namespace
 
         # Retrieve all the end entries (i.e. of the form
         last_entries = sets[last_index].entries.select(&:end_entry?)
+        # last_entries.each_with_index do |entry, index|
+          # if entry.nil?
+            # puts "Nil entry at index #{index}"
+          # else
+            # puts entry
+          # end
+        # end
 
         # ... now find the end vertex for start symbol and with origin at zero.
         success_entries = last_entries.select do |entry|

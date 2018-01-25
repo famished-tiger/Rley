@@ -8,20 +8,37 @@ module Rley # This module is used as a namespace
     # - To know whether the vertex is a start, end or item vertex
     # - To know the next symbol to expect
     class ParseEntry
-      # Link to a vertex of the GFG
+      # @return [GFG::Vertex] Link to a vertex of the GFG
       attr_reader(:vertex)
 
-      # Links to preceding parse entries
+      # @return [Array<ParseEntry>] Links to preceding parse entries
       attr_reader(:antecedents)
 
       # the position in the input that matches the beginning of the rhs
       # of the production.
+      # @return [Integer]
       attr_reader(:origin)
 
+      # @param aVertex [GFG::Vertex]
+      # @param theOrigin [Integer]
       def initialize(aVertex, theOrigin)
         @vertex = valid_vertex(aVertex)
         @origin = theOrigin
         @antecedents = []
+      end
+
+      # Returns a string containing a human-readable representation of the
+      # production.
+      # @return [String]
+      def inspect()
+        result = selfie()
+        result << " @antecedents=["
+        antecedents.each do |antec|
+          result << antec.selfie
+        end
+        result << ']>'
+
+        return result
       end
 
       # Add a link to an antecedent parse entry
@@ -75,7 +92,7 @@ module Rley # This module is used as a namespace
       def next_symbol()
         return vertex.next_symbol
       end
-      
+
       # Return true if the entry has no antecedent entry
       def orphan?()
         return antecedents.empty?
@@ -125,8 +142,21 @@ module Rley # This module is used as a namespace
         return vertex.label + " | #{origin}"
       end
 
+      protected
+
+      # Returns a human-readable and partial representation of itself.
+      # @return [String]
+      def selfie()
+        result = "#<#{self.class.name}:#{self.object_id}"
+        result << " @vertex=<#{vertex.class.name}:#{vertex.object_id}"
+        result << " label=#{vertex.label}>"
+        result << " @origin=#{origin}"
+
+        return result
+      end
 
       private
+
 
       # Return the validated GFG vertex
       def valid_vertex(aVertex)

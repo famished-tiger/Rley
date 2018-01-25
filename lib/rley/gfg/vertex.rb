@@ -28,6 +28,28 @@ module Rley # This module is used as a namespace
         return false # Default implementation
       end
       
+      # Returns a string containing a human-readable representation of the 
+      # vertex.
+      # @return [String]
+      def inspect()
+        result = '#<'
+        result << selfie
+        edges.each { |e| result << e.inspect }
+        result << specific_inspect()
+        result << '>'
+        
+        return result
+      end
+      
+      # Returns a string containing a human-readable representation of the 
+      # vertex without the edges.
+      # @return [String]      
+      def selfie()
+        result = "#{self.class.name}:#{self.object_id}"
+        result << %Q[ label="#{self.label}"]
+        return result
+      end
+      
       # Retrieve the grammar symbol before the dot.
       # @return [GrmSymbol, NilClass] The symbol or otherwise nil.
       def prev_symbol()
@@ -49,6 +71,11 @@ module Rley # This module is used as a namespace
         raise StandardError, 'At most one edge accepted' unless edges.empty?
         return anEdge
       end
+      
+      def specific_inspect()
+        return ''
+      end      
+      
     end # class
   end # module
 end # module

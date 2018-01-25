@@ -15,7 +15,7 @@ What is the purpose of this demo project?
 The objectives are:  
 - Use _Rley_ as a parser of a language of moderate complexity,
 - Show how to generate a regular expression from the parse tree.
-- Be one of the very first Ruby implementation of the Simple Regex Language that passes.
+- Be one of the very first Ruby implementation of the Simple Regex Language that passes the official test suite.
 - Deliver a utility of value for those that are afraid to design complex regexp.
 
 What's next?
@@ -28,4 +28,4 @@ Each increment is a cycle organized as follows:
 - Update the parse tree to support the tree nodes for the grammar subset
 - Test the new grammar subset in the regular expression generation.
 
-At the end, the complete SRL is supported and the [standard test suite](https://github.com/SimpleRegex/Test-Rules) is passing.
+At the end, the complete SRL is supported and the [standard test suite](https://github.com/SimpleRegex/Test-Rules) is passing (hopefully).

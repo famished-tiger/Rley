@@ -26,7 +26,7 @@ module Rley # This module is used as a namespace
       # A start vertex may accept an indegree and outdegree greater than one
       def check_add_edge(anEdge)
         return anEdge
-      end      
+      end
     end # class
   end # module
 end # module

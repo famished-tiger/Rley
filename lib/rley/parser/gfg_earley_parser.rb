@@ -46,7 +46,6 @@ module Rley # This module is used as a namespace
             break unless scan_success
           end
         end
-        
         result.done # End of parsing process
         return result
       end

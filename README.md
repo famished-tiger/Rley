@@ -148,7 +148,7 @@ The subset of English grammar is based on an example from the NLTK book.
         term_name = Lexicon[word]
         raise StandardError, "Word '#{word}' not found in lexicon" if term_name.nil?
         terminal = aGrammar.name2symbol[term_name]
-        Rley::Tokens::Token.new(word, terminal)
+        Rley::Lexical::Token.new(word, terminal)
       end
 
       return tokens
@@ -440,6 +440,7 @@ actively curated by Andrei Beliankou (aka arbox).
 
 ##  Thanks to:
 * Professor Keshav Pingali, one of the creators of the Grammar Flow Graph parsing approach for his encouraging e-mail exchange.
+* [Arjun Menon](https://github.com/arjunmenon) for his NLP example that uses `engtagger` gem.
 
 ## Grammar Flow Graph
 Since the Grammar Flow Graph parsing approach is quite new, it has not yet taken a place in
@@ -452,5 +453,5 @@ standard parser textbooks. Here are a few references (and links) of papers on GF
 
 Copyright
 ---------
-Copyright (c) 2014-2017, Dimitri Geshef.  
+Copyright (c) 2014-2018, Dimitri Geshef.  
 __Rley__ is released under the MIT License see [LICENSE.txt](https://github.com/famished-tiger/Rley/blob/master/LICENSE.txt) for details.

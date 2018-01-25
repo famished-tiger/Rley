@@ -4,16 +4,27 @@ module Rley # This module is used as a namespace
     # Responsibilities:
     # - To know the successor vertex
     class Edge
-      # The destination vertex of the edge .
+      # @return [Vertex] The destination vertex of the edge .
       attr_reader :successor
 
+      # Construct a directed edge between two given vertices
+      # @param [Vertex]
+      # @param [Vertex]
       def initialize(thePredecessor, theSuccessor)
         @successor = theSuccessor
         thePredecessor.add_edge(self)
       end
 
+      # @return [String]
       def to_s()
         " --> #{successor.label}"
+      end
+      
+      # Returns a string containing a human-readable representation of the 
+      # production.
+      # @return [String]
+      def inspect()
+        to_s
       end
     end # class
   end # module

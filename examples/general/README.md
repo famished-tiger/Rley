@@ -1,8 +1,8 @@
 ## Demo calculator
-The purpose is show how a basic command-line tool can parse a math expression
+The purpose is to show how a basic command-line tool can parse a math expression
 and calculates its numeric value.
 
-There are two variants of the calcultator:
+There are two variants of the calculator:
 - **Iteration 1**. A simple calculator program that handles expressions with the  
   4 basic arithmetic operators: + - * and /
 - **Iteration 2**. A significantly more elaborated calculator that adds:  
@@ -17,4 +17,4 @@ As a bonus, the iteration 2 calculator prints out:
 for further processing (i.e. calculation, execution,...).
 
 Although these calculators are demo apps (read: they lack robust error handling and user friendly
-error reporting), great care about their modularity.
+error reporting), great care was taken about their modularity.

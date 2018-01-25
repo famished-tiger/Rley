@@ -26,23 +26,35 @@ module SRL
     # Here are all the SRL keywords (in uppercase)
     @@keywords = %w[
       AND
+      ANY
+      ANYTHING
       AT
+      BACKSLASH
       BETWEEN
+      CHARACTER
       DIGIT
       EXACTLY
       FROM
       LEAST
       LETTER
+      LINE
+      LITERALLY
       MORE
       NEVER
+      NEW
+      NO
       NUMBER
+      OF
       ONCE
+      ONE
       OPTIONAL
       OR
+      TAB
       TIMES
       TO
       TWICE
       UPPERCASE
+      WHITESPACE
     ].map { |x| [x, x] } .to_h
     
     class ScanError < StandardError; end
@@ -68,7 +80,7 @@ module SRL
     def _next_token()
       skip_whitespaces
       curr_ch = scanner.peek(1)
-      return nil if curr_ch.nil?
+      return nil if curr_ch.nil? || curr_ch.empty?
       
       token = nil
 
@@ -83,7 +95,13 @@ module SRL
         token = build_token(@@keywords[lexeme.upcase], lexeme)
         # TODO: handle case unknown identifier
       elsif (lexeme = scanner.scan(/[a-zA-Z]((?=\s)|$)/))
-        token = build_token('LETTER_LIT', lexeme)      
+        token = build_token('LETTER_LIT', lexeme)
+      elsif (lexeme = scanner.scan(/"([^"]|\\")*"/)) # Double quotes literal?
+        unquoted = lexeme.gsub(/(^")|("$)/, '')
+        token = build_token('STRING_LIT', unquoted)
+      elsif (lexeme = scanner.scan(/'([^']|\\')*'/)) # Single quotes literal?
+        unquoted = lexeme.gsub(/(^')|('$)/, '')
+        token = build_token('STRING_LIT', unquoted)
       else # Unknown token
         erroneous = curr_ch.nil? ? '' : curr_ch
         sequel = scanner.scan(/.{1,20}/)
@@ -96,7 +114,14 @@ module SRL
     
     def build_token(aSymbolName, aLexeme)
       token_type = name2symbol[aSymbolName]
-      return Rley::Lexical::Token.new(aLexeme, token_type)    
+      begin
+        token = Rley::Lexical::Token.new(aLexeme, token_type)
+      rescue Exception => ex
+        puts "Failing with '#{aSymbolName}' and '#{aLexeme}'"
+        raise ex
+      end
+      
+      return token
     end
 
     def skip_whitespaces()

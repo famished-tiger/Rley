@@ -16,7 +16,7 @@ module Rley # Module used as a namespace
 
       # Returns the result of invoking reason.to_s.
       def message()
-        return to_s
+        return self.to_s
       end
 
       # Return this reason's class name and message
@@ -51,6 +51,7 @@ module Rley # Module used as a namespace
 
       def initialize(aPosition, lastToken, expectedTerminals)
         super(aPosition)
+        raise StandardError, 'Internal error: nil token' if lastToken.nil?
         @last_token = lastToken.dup
         @expected_terminals = expectedTerminals.dup
       end

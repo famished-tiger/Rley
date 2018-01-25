@@ -61,6 +61,11 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           msg = 'Cannot compare a SymbolSeq with a String'
           expect { subject == 'dummy-text' }.to raise_error(err, msg)
         end
+        
+        it 'should provide human-readable representation of itself' do
+          suffix = /::SymbolSeq:\d+ @members=\["Verb", "NP", "PP"\]>$/
+          expect(subject.inspect).to match(suffix)
+        end
       end # context
     end # describe
   end # module

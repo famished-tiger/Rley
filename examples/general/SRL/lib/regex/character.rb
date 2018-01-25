@@ -25,6 +25,8 @@ class Character < AtomicExpression
 		"\\6" => 6,	
 		"\\7" => 7			
 	}
+  
+  MetaChars = '\^$+?.'
 	
 	# The integer value that uniquely identifies the character. 
 	attr_reader(:codepoint)
@@ -63,7 +65,7 @@ class Character < AtomicExpression
 				end
 				@lexeme = aValue
 				
-			when Fixnum
+			when Integer
 				@codepoint = aValue
 			else
 				raise StandardError, "Cannot initialize a Character with a '#{aValue}'."
@@ -125,14 +127,14 @@ public
 	# newOne == newOne	# true. Identity
 	# newOne == Character.new(?\u03a3)	# true. Both have same codepoint
 	# newOne == ?\u03a3	# true. The single character String match exactly the char attribute.
-	# newOne == 0x03a3	# true. The Fixnum is compared to the codepoint value.
+	# newOne == 0x03a3	# true. The Integer is compared to the codepoint value.
 	# Will test equality with any Object that knows the to_s method
 	def ==(another)
 		result = case another
 			when Character
 				self.to_str == another.to_str
 				
-			when Fixnum
+			when Integer
 				self.codepoint == another
 				
 			when String

@@ -197,6 +197,15 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           expect(result).to eq(expected)
         end
         
+        it 'should provide human-readable representation of itself' do
+          prefix = /^#<Rley::GFG::GrmFlowGraph:\d+ @vertices=\[/
+          expect(subject.inspect).to match(prefix)
+          pattern = /@vertices=\[#<Rley::GFG::StartVertex:\d+ label="\.S"/          
+          expect(subject.inspect).to match(pattern)
+          suffix = /]>$/          
+          expect(subject.inspect).to match(suffix)          
+        end        
+        
         it 'should perform a diagnosis of a correct grammar' do
           expect { subject.diagnose }.not_to raise_error
           grammar_abc.non_terminals.each do |nterm|

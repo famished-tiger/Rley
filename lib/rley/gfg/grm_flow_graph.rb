@@ -35,10 +35,11 @@ module Rley # This module is used as a namespace
     # A GFG has three types of directed edges linking the vertices.
     # call edge, return edge and scan edge.
     class GrmFlowGraph
-      # The set of all vertices in the graph
+      # @return [Array<Vertex>] The set of all vertices in the graph
       attr_reader :vertices
 
       # The vertex marked as start node of the graph
+      # @return [StartVertex>]
       attr_reader :start_vertex
 
       # A Hash with pairs of the form: non-terminal symbol => start node
@@ -56,6 +57,25 @@ module Rley # This module is used as a namespace
         @end_vertex_for = {}
 
         build_graph(theDottedItems)
+      end
+      
+      # Returns a string containing a human-readable representation of the 
+      # production.
+      # @return [String]
+      def inspect()
+        result = "#<#{self.class.name}:#{self.object_id}"
+        result << ' @vertices=['
+        list = vertices.map { |v| "#<#{v.selfie}>" }
+        result << list.join(', ')
+        result << '] '
+        edges = []
+        vertices.each do |v| 
+          edges << v.edges do |e|
+            result << "#{v.object_id} #{e.inspect}"
+          end
+        end
+        result << "edges=[#{edges.join(",\n ")}]>"
+        return result
       end
 
       # Retrieve the vertex with given vertex label.

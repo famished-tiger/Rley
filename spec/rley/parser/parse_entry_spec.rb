@@ -26,14 +26,14 @@ module Rley # Open this namespace to avoid module qualifier prefixes
 
       let(:dotted_rule) { Base::DottedItem.new(sample_prod, 2) }
       let(:origin_val) { 3 }
-      let(:vertex_faked) { double('fake-vertex') }
+      let(:sample_vertex) { GFG::StartVertex.new(nt_sentence) }
       let(:vertex2) { double('vertex-mock') }
       # Default instantiation rule
-      subject { ParseEntry.new(vertex_faked, origin_val) }
+      subject { ParseEntry.new(sample_vertex, origin_val) }
 
       context 'Initialization:' do
         it 'should be created with a vertex and an origin position' do
-          args = [vertex_faked, origin_val]
+          args = [sample_vertex, origin_val]
           expect { ParseEntry.new(*args) }.not_to raise_error
         end
 
@@ -44,7 +44,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
         end
 
         it 'should know the vertex' do
-          expect(subject.vertex).to eq(vertex_faked)
+          expect(subject.vertex).to eq(sample_vertex)
         end
 
         it 'should know the origin value' do
@@ -64,23 +64,23 @@ module Rley # Open this namespace to avoid module qualifier prefixes
         end
 
         it 'should compare with another' do
-          equal = ParseEntry.new(vertex_faked, origin_val)
+          equal = ParseEntry.new(sample_vertex, origin_val)
           expect(subject == equal).to eq(true)
 
           # Same vertex, different origin
-          diff_origin = ParseEntry.new(vertex_faked, 2)
+          diff_origin = ParseEntry.new(sample_vertex, 2)
           expect(subject == diff_origin).to eq(false)
 
           # Different vertices, same origin
-          diff_vertex = ParseEntry.new(double('other_vertex_faked'), 3)
+          diff_vertex = ParseEntry.new(double('other_sample_vertex'), 3)
           expect(subject == diff_vertex).to eq(false)
         end
 
         it 'should know if the vertex is a start vertex' do
-          expect(subject).not_to be_start_entry
+          expect(subject).to be_start_entry
 
-          instance = ParseEntry.new(GFG::StartVertex.new('.NT'), 3)
-          expect(instance).to be_start_entry
+          instance = ParseEntry.new(GFG::EndVertex.new('.NT'), 3)
+          expect(instance).not_to be_start_entry
         end
 
         it 'should know if the vertex is an end vertex' do
@@ -191,13 +191,24 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           expect(subject.antecedents).to eql([antecedent])
           expect(subject).not_to be_orphan
         end
-=begin
 
         it 'should know its text representation' do
-          expected = 'sentence => A B . C | 3'
+          expected = '.sentence | 3'
           expect(subject.to_s).to eq(expected)
         end
-=end
+        
+        it 'should be inspectable' do
+          subject.add_antecedent(subject) # Cheat for the good cause...
+          expected = '.sentence | 3'
+          prefix = /^#<Rley::Parser::ParseEntry:\d+ @vertex/
+          expect(subject.inspect).to match(prefix)
+          pattern = /@vertex=<Rley::GFG::StartVertex:\d+ label=\.sentence/
+          expect(subject.inspect).to match(pattern)
+          pattern2 = /@origin=3 @antecedents=\[/
+          expect(subject.inspect).to match(pattern2)
+          suffix = /<Rley::GFG::StartVertex:\d+ label=\.sentence> @origin=3\]>$/
+          expect(subject.inspect).to match(suffix)          
+        end        
       end # context
     end # describe
   end # module

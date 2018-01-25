@@ -28,7 +28,7 @@ module Rley # This module is used as a namespace
       # @return [Hash{ParseEntry => Array<ParseEntry>}]
       attr_reader(:antecedence)
 
-      # The reason of a parse failure
+      # @return [ErrorReason] The reason of a parse failure
       attr_reader(:failure_reason)
 
       # Constructor
@@ -163,8 +163,9 @@ module Rley # This module is used as a namespace
       # Return true if the parse was successful (= input tokens
       # followed the syntax specified by the grammar)
       def success?()
+        return false if @failure_reason
         return chart.accepting_entry ? true : false
-      end
+      end      
 
       # Return true if there are more than one complete state
       # for the same lhs and same origin in any state set.
@@ -210,7 +211,7 @@ module Rley # This module is used as a namespace
       end
 
       # A notification that the parsing reached an end
-      def done
+      def done()
         # Parse not successful and no reason identified
         # Assuming that parse failed because of a premature end      
         premature_end unless success? || failure_reason

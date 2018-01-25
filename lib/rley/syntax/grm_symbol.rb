@@ -13,7 +13,9 @@ module Rley # This module is used as a namespace
       # Constructor.
       # aName [String] The name of the grammar symbol.
       def initialize(aName)
+        raise 'Internal error: nil name encountered' if aName.nil?
         @name = aName.dup
+        @name.freeze
       end
 
       # The String representation of the grammar symbol

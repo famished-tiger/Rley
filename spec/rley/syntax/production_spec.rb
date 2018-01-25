@@ -59,6 +59,16 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           subject.name = a_name
           expect(subject.name).to eq(a_name)
         end
+        
+        it 'should provide human-readable representation of itself' do
+          subject.name = 'some name'
+          prefix = /^#<Rley::Syntax::Production:\d+ @name="some name"/
+          expect(subject.inspect).to match(prefix)
+          pattern = /@lhs=Sentence @rhs=#<Rley::Syntax::SymbolSeq/          
+          expect(subject.inspect).to match(pattern)
+          suffix = /> @generative=>$/          
+          expect(subject.inspect).to match(suffix)          
+        end        
       end # context
     end # describe
   end # module

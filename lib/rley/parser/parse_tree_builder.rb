@@ -135,7 +135,7 @@ module Rley # This module is used as a namespace
               process_middle_entry(anEntry, anIndex)
             end
           else
-            $stderr.puts "waiko '#{anEvent}'"
+            $stderr.puts "Internal Errore '#{anEvent}'"
             raise NotImplementedError
         end
       end

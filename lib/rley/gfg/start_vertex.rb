@@ -12,6 +12,7 @@ module Rley # This module is used as a namespace
         super(aNonTerminal)
       end
 
+      # @return [String]
       def label()
         return ".#{non_terminal}"
       end       

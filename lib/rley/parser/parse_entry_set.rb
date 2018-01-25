@@ -1,4 +1,4 @@
-require 'forwardable' # Delegation
+require 'forwardable' # For the Delegation pattern
 
 require_relative '../syntax/terminal'
 require_relative '../syntax/non_terminal'
@@ -11,13 +11,25 @@ module Rley # This module is used as a namespace
       extend Forwardable
       def_delegators :entries, :empty?, :size, :first, :last, :pop, :each
 
-      # The set of parse entries
+      # @return [Array<ParseEntry>] The set of parse entries
       attr_reader :entries
 
+      # Constructor.
       def initialize()
         @entries = []
         @entries4term = Hash.new { |hash, key| hash[key] = [] }
         @entries4n_term = Hash.new { |hash, key| hash[key] = [] }
+      end
+      
+      # Returns a string containing a human-readable representation of the 
+      # set of parse entries.
+      # @return [String]
+      def inspect()
+        result = "#<#{self.class.name}:#{self.object_id}"
+        result << ' @entries=['
+        entries.each { |e| result << e.inspect }
+        result << ']>'
+        return result
       end
 
       # Access the entry at given position

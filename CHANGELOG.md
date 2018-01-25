@@ -1,3 +1,18 @@
+### 0.5.11 / 2018-01-25
+* [NEW] File `left.rb` added in `examples/general` folder for showing use of left-recursive rules.
+* [NEW] File `right.rb` added in `examples/general` folder for showing use of right-recursive rules (less performant).
+* [NEW] File `examples/general/SRL/lib/alternation.rb Added support for alternation in regular expressions (|).
+* [NEW] File `examples/general/SRL/lib/character.rb Added support for single character in regular expressions.
+* [NEW] File `examples/general/SRL/lib/char_class.rb Added support for character class in regular expressions.
+* [NEW] File `examples/general/SRL/lib/shorthand.rb Added support for character class shorthand in regular expressions.
+* [NEW] File `examples/general/SRL/lib/concatenation.rb Added support for concatenation in regular expressions.
+* [NEW] File `examples/general/SRL/lib/non_capturing_group.rb Added support for non-capturing groups in regular expressions.
+* [NEW] File `examples/general/SRL/lib/wildcard.rb Added support for wilcards in regular expressions.
+* [CHANGE] File `examples/general/SRL/grammar.rb increased coverage of Simple Regex Language parser.
+* [CHANGE] File `examples/general/SRL/ast_builder.rb Added transformation rules for constructing regular expressions.
+* [CHANGE] File `examples/general/SRL/spac/integration_spec.rb Added tests for SRL expressions.
+* [FIX] Added an custom `inspect` method to sevaral core classes. This was necessary because default implementation from Ruby got lost with object graphs.
+
 ### 0.5.10 / 2017-12-02
 * [CHANGE] Dir `examples/general/SRL/ Added support for digit range to Simple Regex Language parser.
 

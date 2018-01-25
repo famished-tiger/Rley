@@ -62,6 +62,18 @@ module SRL
       end       
     end # context
     
+    context 'String literal tokenization:' do
+      it "should recognize 'literally ...'" do
+        input = 'literally "hello"'
+        subject.scanner.string = input
+        expectations = [
+          ['LITERALLY', 'literally'],
+          ['STRING_LIT', 'hello']
+        ]
+        match_expectations(subject, expectations)
+      end    
+    end # context    
+    
     context 'Character range tokenization:' do
       it "should recognize 'letter from ... to ...'" do
         input = 'letter a to f'

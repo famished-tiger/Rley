@@ -319,7 +319,6 @@ SNIPPET
 
         it 'should build a parse forest' do
           expect { subject.parse_forest }.not_to raise_error
-          
         end
 =begin
         it 'should create the root of a parse forest' do

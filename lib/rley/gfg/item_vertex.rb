@@ -74,7 +74,7 @@ module Rley # This module is used as a namespace
       # @return [Syntax::GrmSymbol] The non-terminal symbol at left side of production.
       def lhs()
         return dotted_item.lhs
-      end
+      end 
     end # class
   end # module
 end # module

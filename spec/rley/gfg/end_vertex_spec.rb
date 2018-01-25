@@ -1,4 +1,5 @@
 require_relative '../../spec_helper'
+require_relative '../../../lib/rley/syntax/non_terminal'
 
 # Load the class under test
 require_relative '../../../lib/rley/gfg/end_vertex'
@@ -6,7 +7,7 @@ require_relative '../../../lib/rley/gfg/end_vertex'
 module Rley # Open this namespace to avoid module qualifier prefixes
   module GFG # Open this namespace to avoid module qualifier prefixes
     describe EndVertex do
-      let(:sample_nt) { double('NT') }
+      let(:sample_nt) { Syntax::NonTerminal.new('NT') }
       subject { EndVertex.new(sample_nt) }
 
       context 'Initialization:' do
@@ -19,6 +20,13 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           expect(subject.label).to eq('NT.')
         end
       end # context
+
+      context 'Provided services:' do       
+        it 'should provide human-readable representation of itself' do
+          pattern = /^#<Rley::GFG::EndVertex:\d+ label="NT\."/         
+          expect(subject.inspect).to match(pattern)       
+        end        
+      end # context      
     end # describe
   end # module
 end # module
