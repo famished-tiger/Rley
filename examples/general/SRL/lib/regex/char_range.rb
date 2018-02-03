@@ -26,11 +26,13 @@ public
 	# Return the upper bound of the range.
 	def upper()
 		return children.last
-	end	
+	end
+
+  protected
 
 	# Conversion method re-definition.
 	# Purpose: Return the String representation of the concatented expressions.
-	def to_str()
+	def text_repr()
 		result = lower.to_str() + '-' + upper.to_str()
 		
 		return result

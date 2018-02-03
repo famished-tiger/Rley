@@ -1,3 +1,12 @@
+### 0.5.12 / 2018-02-03
+* [CHANGE] Simple Regex Language is fully supported!...
+* [CHANGE] File `examples/general/SRL/grammar.rb added missing rule productions for Simple Regex Language.
+* [CHANGE] File `examples/general/SRL/ast_builder.rb Added transformation rules missing regular expressions features.
+* [CHANGE] File `examples/general/SRL/spac/integration_spec.rb Added tests for covering SRL.
+* [NEW] File `examples/general/SRL/lib/anchor.rb Added support for anchors in regular expressions.
+* [NEW] File `examples/general/SRL/lib/capturing_group.rb Added support for single character in regular expressions.
+* [NEW] File `examples/general/SRL/lib/lookaround.rb Added support for lookaround in regular expressions.
+
 ### 0.5.11 / 2018-01-25
 * [NEW] File `left.rb` added in `examples/general` folder for showing use of left-recursive rules.
 * [NEW] File `right.rb` added in `examples/general` folder for showing use of right-recursive rules (less performant).

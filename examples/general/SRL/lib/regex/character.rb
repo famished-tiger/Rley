@@ -106,20 +106,6 @@ public
 		self.class.codepoint2char(@codepoint)
 	end
 	
-	# Conversion method re-definition.
-	# Purpose: Return the String representation of the expression.
-	# If the Character was initially from a text (the lexeme), then the lexeme is returned back.
-	# Otherwise the character corresponding to the codepoint is returned.
-	def to_str()
-		if lexeme.nil?
-			result = char()
-		else
-			result = lexeme.dup()
-		end
-		
-		return result
-	end
-	
 	# Returns true iff this Character and parameter 'another' represent the same character.
 	# [another] any Object. The way the equality is tested depends on the another's class
 	# Example:
@@ -151,6 +137,22 @@ public
 	# Return a plain English description of the character
 	def explain()
 		return "the character '#{to_str()}'"
+	end
+  
+  protected
+  
+  # Conversion method re-definition.
+	# Purpose: Return the String representation of the expression.
+	# If the Character was initially from a text (the lexeme), then the lexeme is returned back.
+	# Otherwise the character corresponding to the codepoint is returned.
+	def text_repr()
+		if lexeme.nil?
+			result = char()
+		else
+			result = lexeme.dup()
+		end
+		
+		return result
 	end
 	
 private

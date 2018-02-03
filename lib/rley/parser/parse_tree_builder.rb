@@ -135,7 +135,7 @@ module Rley # This module is used as a namespace
               process_middle_entry(anEntry, anIndex)
             end
           else
-            $stderr.puts "Internal Errore '#{anEvent}'"
+            $stderr.puts "Internal Errore '#{anEvent}', entry: #{anEntry}, index: #{anIndex}"
             raise NotImplementedError
         end
       end

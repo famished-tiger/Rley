@@ -14,10 +14,11 @@ module Regex # This module is used as a namespace
       super(aChildExpression)
     end
     
-  public
+    protected
+  
     # Conversion method re-definition.
     # Purpose: Return the String representation of the captured expression.
-    def to_str()
+    def text_repr()
       result = '(?:' + all_child_text() + ")"
       return result
     end

@@ -14,6 +14,8 @@ class ASTBuilder < Rley::Parser::ParseTreeBuilder
 
   Terminal2NodeClass = { }.freeze
 
+  attr_reader :options
+
   protected
 
   # Overriding method.
@@ -36,31 +38,107 @@ class ASTBuilder < Rley::Parser::ParseTreeBuilder
   # @param theChildren [Array] Children nodes (one per rhs symbol)
   def new_parent_node(aProduction, aRange, theTokens, theChildren)
     node = case aProduction.name
-      when 'srl_0' # rule 'srl' => 'pattern'
+      when 'srl_0' # rule 'srl' => 'expression'
         return_first_child(aRange, theTokens, theChildren)
-        
-      when 'pattern_0' # rule 'pattern' => %w[pattern COMMA quantifiable]
+
+      when 'expression_0' # rule 'expression' => %w[pattern separator flags]
+        reduce_expression_0(aProduction, aRange, theTokens, theChildren)
+
+      when 'expression_1' # rule 'expression' => 'pattern'
+        return_first_child(aRange, theTokens, theChildren)
+
+      when 'pattern_0' # rule 'pattern' => %w[pattern separator quantifiable]
         reduce_pattern_0(aProduction, aRange, theTokens, theChildren)
 
-      when 'pattern_1' # rule 'pattern' => %w[pattern quantifiable]
-        reduce_pattern_1(aProduction, aRange, theTokens, theChildren)        
-        
-      when 'pattern_2' # rule 'pattern' => 'quantifiable' 
+      when 'pattern_1' # rule 'pattern' => 'quantifiable'
         return_first_child(aRange, theTokens, theChildren)
 
-      when 'quantifiable_0' # rule 'quantifiable' => 'term'
+      when 'separator_0' # rule 'separator' => 'COMMA'
         return_first_child(aRange, theTokens, theChildren)
 
-      when 'quantifiable_1' # rule 'quantifiable' = %w[term quantifier]
+      when 'separator_1' # rule 'separator' => []
+        nil
+
+      when 'flags_0' # rule 'flags' => %[flags separator single_flag]
+        ### NEW
+        reduce_flags_0(aProduction, aRange, theTokens, theChildren)
+
+      when 'single_flag_0' # rule 'single_flag' => %w[CASE INSENSITIVE]
+        ### NEW
+        reduce_single_flag_0(aProduction, aRange, theTokens, theChildren)
+
+      when 'single_flag_1' # rule 'single_flag' => %w[MULTI LINE]
+        ### NEW
+        reduce_single_flag_1(aProduction, aRange, theTokens, theChildren)
+
+      when 'single_flag_2' # rule 'single_flag' => %w[ALL LAZY]
+        ### NEW
+        reduce_single_flag_2(aProduction, aRange, theTokens, theChildren)
+
+      # rule 'quantifiable' => %w[begin_anchor anchorable end_anchor]
+      when 'quantifiable_0'
+        reduce_quantifiable_0(aProduction, aRange, theTokens, theChildren)
+
+      # rule 'quantifiable' => %w[begin_anchor anchorable]
+      when 'quantifiable_1'
         reduce_quantifiable_1(aProduction, aRange, theTokens, theChildren)
+
+      # rule 'quantifiable' => %w[anchorable end_anchor]
+      when 'quantifiable_2'
+        reduce_quantifiable_2(aProduction, aRange, theTokens, theChildren)
+
+      when 'quantifiable_3' # rule 'quantifiable' => 'anchorable'
+        return_first_child(aRange, theTokens, theChildren)
+
+      # rule 'begin_anchor' => %w[STARTS WITH]
+      # rule 'begin_anchor' => %w[BEGIN WITH]
+      when 'begin_anchor_0', 'begin_anchor_1'
+        reduce_begin_anchor_0(aProduction, aRange, theTokens, theChildren)
+
+      when 'end_anchor_0' # rule 'end_anchor' => %w[MUST END]
+        reduce_end_anchor_0(aProduction, aRange, theTokens, theChildren)
+
+      when 'anchorable_0' # rule 'anchorable' => 'assertable'
+        return_first_child(aRange, theTokens, theChildren)
+
+      when 'anchorable_1' # rule 'anchorable' => %w[assertable assertion]
+        reduce_anchorable_1(aProduction, aRange, theTokens, theChildren)
+
+      when 'anchorable_1' # rule 'anchorable' => %w[assertable assertion]
+        reduce_anchorable_1(aProduction, aRange, theTokens, theChildren)
+
+      # rule 'assertion' => %w[IF FOLLOWED BY assertable]
+      when 'assertion_0'
+        reduce_assertion_0(aProduction, aRange, theTokens, theChildren)
+
+      # rule 'assertion' => %w[IF NOT FOLLOWED BY assertable]
+      when 'assertion_1'
+        reduce_assertion_1(aProduction, aRange, theTokens, theChildren)
+
+      # rule 'assertion' => %w[IF ALREADY HAD assertable]
+      when 'assertion_2'
+        reduce_assertion_2(aProduction, aRange, theTokens, theChildren)
+
+      # rule 'assertion' => %w[IF NOT ALREADY HAD assertable]
+      when 'assertion_3'
+        reduce_assertion_3(aProduction, aRange, theTokens, theChildren)
+
+      when 'assertable_0' # rule 'assertable' => 'term'
+        return_first_child(aRange, theTokens, theChildren)
+
+      when 'assertable_1' # rule 'assertable' => %w[term quantifier]
+        reduce_assertable_1(aProduction, aRange, theTokens, theChildren)
 
       when 'term_0' # rule 'term' => 'atom'
         return_first_child(aRange, theTokens, theChildren)
 
       when 'term_1' # rule 'term' => 'alternation'
         return_first_child(aRange, theTokens, theChildren)
-        
+
       when 'term_2' # rule 'term' => 'grouping'
+        return_first_child(aRange, theTokens, theChildren)
+
+      when 'term_3' # rule 'term' => 'capturing_group'
         return_first_child(aRange, theTokens, theChildren)
 
       when 'atom_0' # rule 'atom' => 'letter_range'
@@ -133,19 +211,34 @@ class ASTBuilder < Rley::Parser::ParseTreeBuilder
       when 'alternation_0'
         reduce_alternation_0(aProduction, aRange, theTokens, theChildren)
 
-      # rule 'alternatives' => %w[alternatives COMMA quantifiable]
+      # rule 'alternatives' => %w[alternatives separator quantifiable]
       when 'alternatives_0'
         reduce_alternatives_0(aProduction, aRange, theTokens, theChildren)
 
-      # rule 'alternatives' => %w[alternatives quantifiable]
-      when 'alternatives_1'
+      when 'alternatives_1' # rule 'alternatives' => 'quantifiable'
         reduce_alternatives_1(aProduction, aRange, theTokens, theChildren)
 
-      when 'alternatives_2' # rule 'alternatives' => 'quantifiable'
-        reduce_alternatives_2(aProduction, aRange, theTokens, theChildren)
+      when 'grouping_0' # rule 'grouping' => %w[LPAREN pattern RPAREN]
+        reduce_grouping_0(aProduction, aRange, theTokens, theChildren)
+
+      # rule 'capturing_group' => %w[CAPTURE assertable]
+      when 'capturing_group_0'
+        reduce_capturing_group_0(aProduction, aRange, theTokens, theChildren)
+
+      # rule 'capturing_group' => %w[CAPTURE assertable UNTIL assertable]
+      when 'capturing_group_1'
+        reduce_capturing_group_1(aProduction, aRange, theTokens, theChildren)
+
+      # rule 'capturing_group' => %w[CAPTURE assertable AS var_name]
+      when 'capturing_group_2'
+        reduce_capturing_group_2(aProduction, aRange, theTokens, theChildren)
+
+      # rule 'capturing_group' => %w[CAPTURE assertable AS var_name UNTIL assertable]
+      when 'capturing_group_3'
+        reduce_capturing_group_3(aProduction, aRange, theTokens, theChildren)
         
-      when 'grouping' # rule 'grouping' => %w[LPAREN pattern RPAREN]
-        reduce_grouping_0(aProduction, aRange, theTokens, theChildren)      
+      when 'var_name_0' # rule 'var_name' => 'STRING_LIT'
+        return_first_child(aRange, theTokens, theChildren)
 
       when 'quantifier_0' # rule 'quantifier' => 'ONCE'
         multiplicity(1, 1)
@@ -205,11 +298,11 @@ class ASTBuilder < Rley::Parser::ParseTreeBuilder
       result = Regex::Concatenation.new(*chars)
     else
         if to_escape && Regex::Character::MetaChars.include?(aString)
-          result = Regex::Concatenation.new(Regex::Character.new("\\"), 
+          result = Regex::Concatenation.new(Regex::Character.new("\\"),
             Regex::Character.new(aString))
         else
           result = Regex::Character.new(aString)
-        end    
+        end
     end
 
     return result
@@ -237,21 +330,100 @@ class ASTBuilder < Rley::Parser::ParseTreeBuilder
   def repetition(expressionToRepeat, aMultiplicity)
     return Regex::Repetition.new(expressionToRepeat, aMultiplicity)
   end
-  
-  # rule 'pattern' => %w[pattern COMMA quantifiable]
+
+  # rule 'expression' => %w[pattern separator flags]
+  def reduce_expression_0(aProduction, aRange, theTokens, theChildren)
+    @options = theChildren[2] if theChildren[2]
+    return_first_child(aRange, theTokens, theChildren)
+  end
+
+  # rule 'pattern' => %w[pattern separator quantifiable]
   def reduce_pattern_0(aProduction, aRange, theTokens, theChildren)
     return Regex::Concatenation.new(theChildren[0], theChildren[2])
   end
 
-  # rule 'pattern' => %w[pattern quantifiable]
-  def reduce_pattern_1(aProduction, aRange, theTokens, theChildren)
-    return Regex::Concatenation.new(theChildren[0], theChildren[1])
+  # rule 'flags' => %[flags separator single_flag]
+  def reduce_flags_0(aProduction, aRange, theTokens, theChildren)
+    theChildren[0] << theChildren[2]
   end
 
-  # rule 'quantifiable' => %w[term quantifier]
+  # rule 'single_flag' => %w[CASE INSENSITIVE]
+  def reduce_single_flag_0(aProduction, aRange, theTokens, theChildren)
+    return [ Regex::MatchOption.new(:IGNORECASE, true) ]
+  end
+
+  # rule 'single_flag' => %w[MULTI LINE]
+  def reduce_single_flag_1(aProduction, aRange, theTokens, theChildren)
+    return [ Regex::MatchOption.new(:MULTILINE, true) ]
+  end
+
+  # rule 'single_flag' => %w[ALL LAZY]
+  def reduce_single_flag_2(aProduction, aRange, theTokens, theChildren)
+    return [ Regex::MatchOption.new(:ALL_LAZY, true) ]
+  end
+
+  # rule 'quantifiable' => %w[begin_anchor anchorable end_anchor]
+  def reduce_quantifiable_0(aProduction, aRange, theTokens, theChildren)
+    theChildren[1].begin_anchor = theChildren[0]
+    theChildren[1].end_anchor = theChildren[2]
+    return theChildren[1]
+  end
+
+  # rule 'quantifiable' => %w[begin_anchor anchorable]
   def reduce_quantifiable_1(aProduction, aRange, theTokens, theChildren)
-    quantifier = theChildren.last
-    term = theChildren.first
+    theChildren[1].begin_anchor = theChildren[0]
+    return theChildren[1]
+  end
+
+  # rule 'quantifiable' => %w[anchorable end_anchor]
+  def reduce_quantifiable_2(aProduction, aRange, theTokens, theChildren)
+    theChildren[0].end_anchor = theChildren[1]
+    return theChildren[0]
+  end
+
+  # rule 'begin_anchor' => %w[STARTS WITH]
+  # rule 'begin_anchor' => %w[BEGIN WITH]
+  def reduce_begin_anchor_0(aProduction, aRange, theTokens, theChildren)
+    return Regex::Anchor.new('^')
+  end
+
+  # rule 'end_anchor' => %w[MUST END]
+  def reduce_end_anchor_0(aProduction, aRange, theTokens, theChildren)
+    return Regex::Anchor.new('$')
+  end
+
+
+  # rule 'anchorable' => %w[assertable assertion]
+  def reduce_anchorable_1(aProduction, aRange, theTokens, theChildren)
+    assertion = theChildren.last
+    assertion.children.unshift(theChildren[0])
+    return assertion
+  end
+
+  # rule 'assertion' => %w[IF FOLLOWED BY assertable]
+  def reduce_assertion_0(aProduction, aRange, theTokens, theChildren)
+    return Regex::Lookaround.new(theChildren.last, :ahead, :positive)
+  end
+
+  # rule 'assertion' => %w[IF NOT FOLLOWED BY assertable]
+  def reduce_assertion_1(aProduction, aRange, theTokens, theChildren)
+    return Regex::Lookaround.new(theChildren.last, :ahead, :negative)
+  end
+
+  # rule 'assertion' => %w[IF ALREADY HAD assertable]
+  def reduce_assertion_2(aProduction, aRange, theTokens, theChildren)
+    return Regex::Lookaround.new(theChildren.last, :behind, :positive)
+  end
+
+  # rule 'assertion' => %w[IF NOT ALREADY HAD assertable]
+  def reduce_assertion_3(aProduction, aRange, theTokens, theChildren)
+    return Regex::Lookaround.new(theChildren.last, :behind, :negative)
+  end
+
+  # rule 'anchorable' => %w[term quantifier]
+  def reduce_assertable_1(aProduction, aRange, theTokens, theChildren)
+    quantifier = theChildren[1]
+    term = theChildren[0]
     repetition(term, quantifier)
   end
 
@@ -348,37 +520,56 @@ class ASTBuilder < Rley::Parser::ParseTreeBuilder
     raw_literal = theChildren[-1].token.lexeme.dup
     return string_literal(raw_literal)
   end
-  
+
   # rule 'alternation' => %w[ANY OF LPAREN alternatives RPAREN]
   def reduce_alternation_0(aProduction, aRange, theTokens, theChildren)
     return Regex::Alternation.new(*theChildren[3])
   end
 
-  # rule 'alternatives' => %w[alternatives COMMA quantifiable]
+  # rule 'alternatives' => %w[alternatives separator quantifiable]
   def reduce_alternatives_0(aProduction, aRange, theTokens, theChildren)
     return theChildren[0] << theChildren[-1]
   end
 
-  # rule 'alternatives' => %w[alternatives quantifiable]
-  def reduce_alternatives_1(aProduction, aRange, theTokens, theChildren)
-    return theChildren[0] << theChildren[-1]
-  end
-  
   # rule 'alternatives' => 'quantifiable'
-  def reduce_alternatives_2(aProduction, aRange, theTokens, theChildren)
+  def reduce_alternatives_1(aProduction, aRange, theTokens, theChildren)
     return [theChildren.last]
   end
-  
+
   # rule 'grouping' => %w[LPAREN pattern RPAREN]
   def reduce_grouping_0(aProduction, aRange, theTokens, theChildren)
-    return Regex::NonCapturingGroup.new(theChildren[1])  
+    return Regex::NonCapturingGroup.new(theChildren[1])
   end
   
+  # rule 'capturing_group' => %w[CAPTURE assertable]
+  def reduce_capturing_group_0(aProduction, aRange, theTokens, theChildren)
+    return Regex::CapturingGroup.new(theChildren[1])
+  end
+
+  # rule 'capturing_group' => %w[CAPTURE assertable UNTIL assertable]
+  def reduce_capturing_group_1(aProduction, aRange, theTokens, theChildren)
+    group = Regex::CapturingGroup.new(theChildren[1])
+    return Regex::Concatenation.new(group, theChildren[3])
+  end
+
+  # rule 'capturing_group' => %w[CAPTURE assertable AS var_name]
+  def reduce_capturing_group_2(aProduction, aRange, theTokens, theChildren)
+    name = theChildren[3].token.lexeme.dup
+    return Regex::CapturingGroup.new(theChildren[1], name)
+  end
+
+  # rule 'capturing_group' => %w[CAPTURE assertable AS var_name UNTIL assertable]
+  def reduce_capturing_group_3(aProduction, aRange, theTokens, theChildren)
+    name = theChildren[3].token.lexeme.dup
+    group = Regex::CapturingGroup.new(theChildren[1], name)
+    return Regex::Concatenation.new(group, theChildren[5])  
+  end
+
   # rule 'quantifier' => %w[EXACTLY count TIMES]
   def reduce_quantifier_2(aProduction, aRange, theTokens, theChildren)
     count = theChildren[1].token.lexeme.to_i
     multiplicity(count, count)
-  end  
+  end
 
   # rule 'quantifier' => %w[BETWEEN count AND count times_suffix]
   def reduce_quantifier_3(aProduction, aRange, theTokens, theChildren)

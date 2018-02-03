@@ -13,10 +13,11 @@ class Alternation < PolyadicExpression
 		super(theChildren)
 	end
 
-public
+  protected
+
 	# Conversion method re-definition.
 	# Purpose: Return the String representation of the concatented expressions.
-	def to_str()
+	def text_repr()
 		result_children = children.map { |aChild| aChild.to_str() }
 		result =  '(?:' + result_children.join('|') + ')'
 		

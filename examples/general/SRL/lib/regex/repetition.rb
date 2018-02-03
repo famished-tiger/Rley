@@ -16,10 +16,11 @@ class Repetition < MonadicExpression
 		@multiplicity = aMultiplicity
 	end
 	
-public
+  protected
+
 	# Conversion method re-definition.
 	# Purpose: Return the String representation of the concatented expressions.
-	def to_str()
+	def text_repr()
 		result = all_child_text() + multiplicity.to_str()
 		return result
 	end

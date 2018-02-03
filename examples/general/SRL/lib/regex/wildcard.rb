@@ -12,10 +12,11 @@ class Wildcard < AtomicExpression
 		super
 	end
 
-public
+  protected
+
 	# Conversion method re-definition.
 	# Purpose: Return the String representation of the expression.
-	def to_str()
+	def text_repr()
 		return '.'
 	end
 	

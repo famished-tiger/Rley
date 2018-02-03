@@ -151,7 +151,6 @@ describe 'Integration tests:' do
     end
   end # context
 
-
   context 'Parsing special character declarations:' do
     it "should parse 'tab' syntax" do
       result = parse('tab')
@@ -197,11 +196,16 @@ describe 'Integration tests:' do
       message_prefix = /Premature end of input after ','/
       expect(result.failure_reason.message).to match(message_prefix)
     end
+    
+    it 'should parse concatenation' do
+      result = parse('any of (literally "sample", (digit once or more))')
+      expect(result).to be_success
 
-    it "should parse a sequence of patterns" do
-      #
-      # DEBUG When I put a comma at the end ... looping endlessly
-      #
+      regexp = regexp_repr(result)
+      expect(regexp.to_str).to eq('(?:sample|(?:\d+))')
+    end
+
+    it "should parse a long sequence of patterns" do
       source = <<-ENDS
       any of (any character, one of "._%-+") once or more,
       literally "@",
@@ -287,6 +291,145 @@ ENDS
 
       regexp = regexp_repr(result)
       expect(regexp.to_str).to eq('[p-t]{10,}')
+    end
+  end # context
+
+  context 'Parsing lookaround:' do
+    it 'should parse positive lookahead' do
+      result = parse('letter if followed by (anything once or more, digit)')
+      expect(result).to be_success
+
+      regexp = regexp_repr(result)
+      expect(regexp.to_str).to eq('[a-z](?=(?:.+\d))')
+    end
+    
+    it 'should parse negative lookahead' do
+      result = parse('letter if not followed by (anything once or more, digit)')
+      expect(result).to be_success
+
+      regexp = regexp_repr(result)
+      expect(regexp.to_str).to eq('[a-z](?!(?:.+\d))')
+    end
+
+    it 'should parse positive lookbehind' do
+      result = parse('literally "bar" if already had literally "foo"')
+      expect(result).to be_success
+
+      regexp = regexp_repr(result)
+      expect(regexp.to_str).to eq('bar(?<=foo)')
+    end
+
+    it 'should parse negative lookbehind' do
+      result = parse('literally "bar" if not already had literally "foo"')
+      expect(result).to be_success
+
+      regexp = regexp_repr(result)
+      expect(regexp.to_str).to eq('bar(?<!foo)')
+    end    
+  end # context
+  
+  context 'Parsing capturing group:' do
+    it 'should parse simple anonymous capturing group' do
+      result = parse('capture(literally "sample")')
+      expect(result).to be_success
+
+      regexp = regexp_repr(result)
+      expect(regexp.to_str).to eq('(sample)')
+    end  
+  
+    it 'should parse complex anonymous capturing group' do
+      result = parse('capture(any of (literally "sample", (digit once or more)))')
+      expect(result).to be_success
+
+      regexp = regexp_repr(result)
+      expect(regexp.to_str).to eq('((?:sample|(?:\d+)))')
+    end
+    
+    it 'should parse simple anonymous until capturing group' do
+      result = parse('capture anything once or more until literally "!"')
+      expect(result).to be_success
+
+      regexp = regexp_repr(result)
+      expect(regexp.to_str).to eq('(.+)!')
+    end
+
+    it 'should parse complex named capturing group' do
+      result = parse('capture(any of (literally "sample", (digit once or more))) as "foo"')
+      expect(result).to be_success
+
+      regexp = regexp_repr(result)
+      expect(regexp.to_str).to eq('(?<foo>(?:sample|(?:\d+)))')
+    end
+    
+    it 'should parse a sequence with named capturing groups' do
+      source = <<-ENDS
+      capture (anything once or more) as "first",
+      literally " - ", 
+      capture literally "second part" as "second"
+ENDS
+      result = parse(source)
+      expect(result).to be_success
+
+      regexp = regexp_repr(result)
+      expect(regexp.to_str).to eq('(?<first>.+) - (?<second>second part)')
+    end   
+
+    it 'should parse complex named until capturing group' do
+      result = parse('capture (anything once or more) as "foo" until literally "m"')
+      expect(result).to be_success
+
+      regexp = regexp_repr(result)
+      expect(regexp.to_str).to eq('(?<foo>.+)m')
+    end
+   
+  end # context
+
+  context 'Parsing anchors:' do
+    it 'should parse begin anchors' do
+      result = parse('starts with literally "match"')
+      expect(result).to be_success
+
+      regexp = regexp_repr(result)
+      expect(regexp.to_str).to eq('^match')
+    end
+
+    it 'should parse begin anchors (alternative syntax)' do
+      result = parse('begin with literally "match"')
+      expect(result).to be_success
+
+      regexp = regexp_repr(result)
+      expect(regexp.to_str).to eq('^match')
+    end
+
+    it 'should parse end anchors' do
+      result = parse('literally "match" must end')
+      expect(result).to be_success
+
+      regexp = regexp_repr(result)
+      expect(regexp.to_str).to eq('match$')
+    end
+
+    it 'should parse combination of begin and end anchors' do
+      result = parse('starts with literally "match" must end')
+      expect(result).to be_success
+
+      regexp = regexp_repr(result)
+      expect(regexp.to_str).to eq('^match$')
+    end
+
+    it "should accept anchor with a sequence of patterns" do
+      source = <<-ENDS
+      begin with any of (digit, letter, one of ".-") once or more,
+      literally ".",
+      letter at least 2 times must end
+ENDS
+
+      result = parse(source)
+      expect(result).to be_success
+
+      regexp = regexp_repr(result)
+      # SRL expect: (?:\w|[\._%\-\+])+(?:@)(?:[0-9]|[a-z]|[\.\-])+(?:\.)[a-z]{2,}
+      expect(regexp.to_str).to eq('^(?:\d|[a-z]|[.\-])+\.[a-z]{2,}$')
     end
   end # context
 end # describe

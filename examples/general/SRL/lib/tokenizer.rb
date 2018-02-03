@@ -22,41 +22,60 @@ module SRL
       ')' => 'RPAREN',
       ',' => 'COMMA'
     }.freeze
-    
+
     # Here are all the SRL keywords (in uppercase)
     @@keywords = %w[
+      ALL
+      ALREADY
       AND
       ANY
       ANYTHING
+      AS
       AT
       BACKSLASH
+      BEGIN
       BETWEEN
+      BY
+      CAPTURE
+      CASE
       CHARACTER
       DIGIT
+      END
       EXACTLY
+      FOLLOWED
       FROM
+      HAD
+      IF
+      INSENSITIVE
+      LAZY
       LEAST
       LETTER
       LINE
       LITERALLY
       MORE
+      MULTI
+      MUST
       NEVER
       NEW
       NO
+      NOT
       NUMBER
       OF
       ONCE
       ONE
       OPTIONAL
       OR
+      STARTS
       TAB
       TIMES
       TO
       TWICE
+      UNTIL
       UPPERCASE
       WHITESPACE
+      WITH
     ].map { |x| [x, x] } .to_h
-    
+
     class ScanError < StandardError; end
 
     def initialize(source, aGrammar)
@@ -81,16 +100,16 @@ module SRL
       skip_whitespaces
       curr_ch = scanner.peek(1)
       return nil if curr_ch.nil? || curr_ch.empty?
-      
+
       token = nil
 
       if '(),'.include? curr_ch
         # Delimiters, separators => single character token
-        token = build_token(@@lexeme2name[curr_ch], scanner.getch)  
+        token = build_token(@@lexeme2name[curr_ch], scanner.getch)
       elsif (lexeme = scanner.scan(/[0-9]{2,}/))
         token = build_token('INTEGER', lexeme) # An integer has two or more digits
       elsif (lexeme = scanner.scan(/[0-9]/))
-        token = build_token('DIGIT_LIT', lexeme) 
+        token = build_token('DIGIT_LIT', lexeme)
       elsif (lexeme = scanner.scan(/[a-zA-Z]{2,}/))
         token = build_token(@@keywords[lexeme.upcase], lexeme)
         # TODO: handle case unknown identifier
@@ -111,7 +130,7 @@ module SRL
 
       return token
     end
-    
+
     def build_token(aSymbolName, aLexeme)
       token_type = name2symbol[aSymbolName]
       begin
@@ -120,7 +139,7 @@ module SRL
         puts "Failing with '#{aSymbolName}' and '#{aLexeme}'"
         raise ex
       end
-      
+
       return token
     end
 

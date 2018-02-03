@@ -9,6 +9,8 @@ module SRL
     add_terminals('LPAREN', 'RPAREN', 'COMMA')
     add_terminals('DIGIT_LIT', 'INTEGER', 'LETTER_LIT')
     add_terminals('LITERALLY', 'STRING_LIT')
+    add_terminals('BEGIN', 'STARTS', 'WITH')
+    add_terminals('MUST', 'END')
     add_terminals('UPPERCASE', 'LETTER', 'FROM', 'TO')
     add_terminals('DIGIT', 'NUMBER', 'ANY', 'NO')
     add_terminals('CHARACTER', 'WHITESPACE', 'ANYTHING')
@@ -17,16 +19,42 @@ module SRL
     add_terminals('EXACTLY', 'TIMES', 'ONCE', 'TWICE')
     add_terminals('BETWEEN', 'AND', 'OPTIONAL', 'OR')
     add_terminals('MORE', 'NEVER', 'AT', 'LEAST')
+    add_terminals('IF', 'FOLLOWED', 'BY', 'NOT')
+    add_terminals('ALREADY', 'HAD')
+    add_terminals('CAPTURE', 'AS', 'UNTIL')
+    add_terminals('CASE', 'INSENSITIVE', 'MULTI', 'ALL')
+    add_terminals('LAZY')
 
-    rule 'srl' => 'pattern'
-    rule 'pattern' => %w[pattern COMMA quantifiable]
-    rule 'pattern' => %w[pattern quantifiable]
+    rule 'srl' => 'expression'
+    rule 'expression' => %w[pattern separator flags]
+    rule 'expression' => 'pattern'
+    rule 'pattern' => %w[pattern separator quantifiable]
     rule 'pattern' => 'quantifiable'
-    rule 'quantifiable' => 'term'
-    rule 'quantifiable' => %w[term quantifier]
+    rule 'separator' => 'COMMA'
+    rule 'separator' => []
+    rule 'flags' => %[flags separator single_flag]
+    rule 'single_flag' => %w[CASE INSENSITIVE]
+    rule 'single_flag' => %w[MULTI LINE]
+    rule 'single_flag' => %w[ALL LAZY]
+    rule 'quantifiable' => %w[begin_anchor anchorable end_anchor]
+    rule 'quantifiable' => %w[begin_anchor anchorable]
+    rule 'quantifiable' => %w[anchorable end_anchor]
+    rule 'quantifiable' => 'anchorable'
+    rule 'begin_anchor' => %w[STARTS WITH]
+    rule 'begin_anchor' => %w[BEGIN WITH]
+    rule 'end_anchor' => %w[MUST END]
+    rule 'anchorable' => 'assertable'
+    rule 'anchorable' => %w[assertable assertion]
+    rule 'assertion' => %w[IF FOLLOWED BY assertable]
+    rule 'assertion' => %w[IF NOT FOLLOWED BY assertable]
+    rule 'assertion' => %w[IF ALREADY HAD assertable]
+    rule 'assertion' => %w[IF NOT ALREADY HAD assertable]
+    rule 'assertable' => 'term'
+    rule 'assertable' => %w[term quantifier]
     rule 'term' => 'atom'
     rule 'term' => 'alternation'
     rule 'term' => 'grouping'
+    rule 'term' => 'capturing_group'
     rule 'atom' => 'letter_range'
     rule 'atom' => 'digit_range'
     rule 'atom' => 'character_class'
@@ -49,10 +77,14 @@ module SRL
     rule 'special_char' => %w[NEW LINE]
     rule 'literal' => %w[LITERALLY STRING_LIT]
     rule 'alternation' => %w[ANY OF LPAREN alternatives RPAREN]
-    rule 'alternatives' => %w[alternatives COMMA quantifiable]
-    rule 'alternatives' => %w[alternatives quantifiable]
+    rule 'alternatives' => %w[alternatives separator quantifiable]
     rule 'alternatives' => 'quantifiable'
     rule 'grouping' => %w[LPAREN pattern RPAREN]
+    rule 'capturing_group' => %w[CAPTURE assertable]
+    rule 'capturing_group' => %w[CAPTURE assertable UNTIL assertable]    
+    rule 'capturing_group' => %w[CAPTURE assertable AS var_name]
+    rule 'capturing_group' => %w[CAPTURE assertable AS var_name UNTIL assertable]
+    rule 'var_name' => 'STRING_LIT'
     rule 'quantifier' => 'ONCE'
     rule 'quantifier' => 'TWICE'
     rule 'quantifier' => %w[EXACTLY count TIMES]

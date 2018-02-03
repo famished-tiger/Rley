@@ -18,10 +18,11 @@ module Regex # This module is used as a namespace
       @negated = to_negate
     end
 
-  public
+    protected
+  
     # Conversion method re-definition.
     # Purpose: Return the String representation of the character class.
-    def to_str()
+    def text_repr()
       result_children = children.inject('') do |subResult, aChild| 
         if aChild.kind_of?(Regex::Character) && Metachars.include?(aChild.codepoint)
           subResult << "\\" # Escape meta-character...
