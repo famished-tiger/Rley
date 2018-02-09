@@ -54,10 +54,16 @@ module Rley # Open this namespace to avoid module qualifier prefixes
       end # context
       
       context 'Provided services:' do
-        it 'should accept a name' do
+        it 'should accept a name (i)' do
           a_name = 'nominem'
           subject.name = a_name
           expect(subject.name).to eq(a_name)
+        end
+        
+        it 'should accept a name (ii)' do
+          a_name = 'nominem'
+          subject.as(a_name)
+          expect(subject.name).to eq(a_name)          
         end
         
         it 'should provide human-readable representation of itself' do

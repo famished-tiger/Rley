@@ -16,7 +16,7 @@ module Rley # This module is used as a namespace
       # @return [NonTerminal] The left-hand side of the rule.
       attr_reader(:lhs)
       
-      # @return [String] The unique name of the production rule.
+      # @return [String] The name of the production rule. It must be unique in a grammar.
       attr_accessor(:name)
       
       # @return [Boolean] A production is generative when all of its 
@@ -61,6 +61,12 @@ module Rley # This module is used as a namespace
         result << " @rhs=#{rhs.inspect}"
         result << " @generative=#{@generative}>"
         return result
+      end
+      
+      # A setter for the production name
+      # @param aName [String] the name of the production
+      def as(aName)
+        @name = aName
       end
 
       private

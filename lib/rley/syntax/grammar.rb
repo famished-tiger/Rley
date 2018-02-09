@@ -85,7 +85,11 @@ module Rley # This module is used as a namespace
           suffix = '_0'
         else
           prev_serial = previous.name.match(/_(\d+)$/)
-          suffix = "_#{prev_serial[1].to_i + 1}"
+          if prev_serial
+            suffix = "_#{prev_serial[1].to_i + 1}"
+          else
+            suffix = '_0'
+          end
         end
 
         aProduction.name = prefix + suffix

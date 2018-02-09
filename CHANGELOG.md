@@ -1,3 +1,7 @@
+### 0.5.13 / 2018-02-09
+* [CHANGE] File `examples/general/SRL/grammar.rb added names to each production rule.
+* [CHANGE] File `examples/general/SRL/ast_builder.rb Code refactoring to take profit of rule naming.
+
 ### 0.5.12 / 2018-02-03
 * [CHANGE] Simple Regex Language is fully supported!...
 * [CHANGE] File `examples/general/SRL/grammar.rb added missing rule productions for Simple Regex Language.

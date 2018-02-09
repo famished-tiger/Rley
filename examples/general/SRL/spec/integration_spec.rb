@@ -380,8 +380,7 @@ ENDS
 
       regexp = regexp_repr(result)
       expect(regexp.to_str).to eq('(?<foo>.+)m')
-    end
-   
+    end   
   end # context
 
   context 'Parsing anchors:' do
