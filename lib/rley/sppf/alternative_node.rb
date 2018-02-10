@@ -5,16 +5,17 @@ module Rley # This module is used as a namespace
     # A node in a parse forest that is a child
     # of a parent node with :or refinement
     class AlternativeNode < CompositeNode
-      # GFG vertex label
+      # @return [String] GFG vertex label
       attr_reader(:label)
 
-      # Link to lhs symbol
+      # @return [Syntax::NonTerminal] Link to lhs symbol
       attr_reader(:symbol)
 
-      # @param aVertex [ItemVertex] An GFG vertex that corresponds
-      # a dotted item (with the dot at the end)for the alternative under
-      # consideration.
-      # @param aRange [TokenRange]
+      # @param aVertex [GFG::ItemVertex] 
+      #   A GFG vertex that corresponds to a dotted item 
+      #   with the dot at the end) for the alternative under consideration.
+      # @param aRange [Lexical::TokenRange] 
+      #   A range of token indices corresponding to this node.
       def initialize(aVertex, aRange)
         super(aRange)
         @label = aVertex.label
@@ -23,6 +24,7 @@ module Rley # This module is used as a namespace
 
       # Emit a (formatted) string representation of the node.
       # Mainly used for diagnosis/debugging purposes.
+      # @return [String]
       def to_string(indentation)
         return "Alt(#{label})#{range.to_string(indentation)}"
       end

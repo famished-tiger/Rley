@@ -2,12 +2,16 @@ require_relative 'leaf_node'
 
 module Rley # This module is used as a namespace
   module SPPF # This module is used as a namespace
-    # A node in a parse forest that matches exactly one
-    # token from the input
+    # A SPPF node that matches exactly one
+    # token from the input.
     class TokenNode < LeafNode
+      # @return [Lexical::Token]
+      # The input token that is represented by this parse node.
       attr_reader(:token)
 
-      # aPosition is the position of the token in the input stream.
+      # Constructor
+      # @param aToken [Lexical::Token] input token represented by this node.
+      # @param aPosition [Integer] index of the token in the input stream.
       def initialize(aToken, aPosition)
         range = { low: aPosition, high: aPosition + 1 }
         super(range)
@@ -16,12 +20,10 @@ module Rley # This module is used as a namespace
 
       # Emit a (formatted) string representation of the node.
       # Mainly used for diagnosis/debugging purposes.
+      # @param indentation [Integer]
+      # @return [String]
       def to_string(indentation)
         return "#{token.terminal.name}#{range.to_string(indentation)}"
-      end
-
-      def key()
-        @key ||= to_string(0)
       end
     end # class
   end # module

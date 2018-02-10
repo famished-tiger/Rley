@@ -8,8 +8,8 @@ module Rley # This module is used as a namespace
       attr_reader :successor
 
       # Construct a directed edge between two given vertices
-      # @param [Vertex]
-      # @param [Vertex]
+      # @param thePredecessor [Vertex]
+      # @param theSuccessor [Vertex]
       def initialize(thePredecessor, theSuccessor)
         @successor = theSuccessor
         thePredecessor.add_edge(self)

@@ -1,8 +1,10 @@
 # Purpose: define a grammar with left-recursive rule
 require 'rley' # Load Rley library
 
-# Instantiate a builder object that will build the grammar for us
+# Instantiate a builder object that will build the grammar for us.
 builder = Rley::Syntax::GrammarBuilder.new do
+  # The grammar defines a language that consists in a sequence
+  # of 0 or more dots...
   add_terminals('DOT')
   
   # Grammar with left recursive rule.

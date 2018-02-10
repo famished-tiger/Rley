@@ -13,7 +13,7 @@ module Rley # This module is used as a namespace
     # Structure used internally by ParseTreeBuilder class.
     CSTRawNode = Struct.new(:range, :symbol, :children) do
       # Constructor.
-      # @param aSymbol [Lexical::TokenRange] The token position range.
+      # @param aRange [Lexical::TokenRange] The token position range.
       # @param aSymbol [Syntax::Symbol] A symbol from grammar.
       def initialize(aRange, aSymbol)
         super
