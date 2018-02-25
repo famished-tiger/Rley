@@ -1,18 +1,22 @@
 require 'rley' # Load Rley library
 
-########################################
-# Step 1. Define a grammar for a pico English-like language
-# based on example from NLTK book (chapter 8 of the book).
-# Bird, Steven, Edward Loper and Ewan Klein: "Natural Language Processing 
-# with Python"; 2009, O’Reilly Media Inc., ISBN 978-0596516499
-# It defines the syntax of a sentence in a mini English-like language 
-# with a very simplified syntax and vocabulary
 
-# Instantiate a builder object that will build the grammar for us
-builder = Rley::Syntax::GrammarBuilder.new do
-  # Next 2 lines we define the terminal symbols 
+########################################
+# Step 1. Creating facade object of Rley library
+# It provides a unified, higher-level interface
+engine = Rley::Engine.new
+
+########################################
+# Step 2. Define a grammar for a pico English-like language
+# based on example from NLTK book (chapter 8 of the book).
+# Bird, Steven, Edward Loper and Ewan Klein: "Natural Language Processing
+# with Python"; 2009, O’Reilly Media Inc., ISBN 978-0596516499
+# It defines the syntax of a sentence in a mini English-like language
+# with a very simplified syntax and vocabulary
+engine.build_grammar do
+  # Next 2 lines we define the terminal symbols
   # (= word categories in the lexicon)
-  add_terminals('Noun', 'Proper-Noun', 'Verb') 
+  add_terminals('Noun', 'Proper-Noun', 'Verb')
   add_terminals('Determiner', 'Preposition')
 
   # Here we define the productions (= grammar rules)
@@ -23,13 +27,10 @@ builder = Rley::Syntax::GrammarBuilder.new do
   rule 'VP' => %w[Verb NP]
   rule 'VP' => %w[Verb NP PP]
   rule 'PP' => %w[Preposition NP]
-end 
-
-# And now, let's build the grammar...
-grammar = builder.grammar
+end
 
 ########################################
-# Step 2. Creating a lexicon
+# Step 3. Creating a lexicon
 # To simplify things, lexicon is implemented as a Hash with pairs of the form:
 # word => terminal symbol name
 Lexicon = {
@@ -37,7 +38,7 @@ Lexicon = {
   'dog' => 'Noun',
   'cat' => 'Noun',
   'telescope' => 'Noun',
-  'park' => 'Noun',  
+  'park' => 'Noun',
   'saw' => 'Verb',
   'ate' => 'Verb',
   'walked' => 'Verb',
@@ -55,32 +56,28 @@ Lexicon = {
 }.freeze
 
 ########################################
-# Step 3. Creating a tokenizer
-# A tokenizer reads the input string and converts it into a sequence of tokens
-# Highly simplified tokenizer implementation.
-def tokenizer(aTextToParse, aGrammar)
+# Step 4. Create a tokenizer
+# A tokenizer reads the input string and converts it into a sequence of tokens.
+# Remark: Rley doesn't provide tokenizer functionality.
+# Highly simplified tokenizer implementation
+def tokenizer(aTextToParse)
   tokens = aTextToParse.scan(/\S+/).map do |word|
     term_name = Lexicon[word]
     raise StandardError, "Word '#{word}' not found in lexicon" if term_name.nil?
-    terminal = aGrammar.name2symbol[term_name]
-    Rley::Lexical::Token.new(word, terminal)
+    Rley::Lexical::Token.new(word, term_name)
   end
-  
+
   return tokens
 end
 
-########################################
-# Step 4. Create a parser for that grammar
-# Easy with Rley...
-parser = Rley::Parser::GFGEarleyParser.new(grammar)
 
 ########################################
-# Step 5. Parsing the input
+# Step 5. Parse the input
 input_to_parse = 'John saw Mary with a telescope'
 # input_to_parse = 'the dog saw a man in the park' # This one is ambiguous
 # Convert input text into a sequence of token objects...
-tokens = tokenizer(input_to_parse, grammar)
-result = parser.parse(tokens)
+tokens = tokenizer(input_to_parse)
+result = engine.parse(tokens)
 
 puts "Parsing successful? #{result.success?}"
 unless result.success?
@@ -90,10 +87,10 @@ end
 
 ########################################
 # Step 6. Generating a parse tree from parse result
-ptree = result.parse_tree
+ptree = engine.to_ptree(result)
 
 # Let's create a parse tree visitor
-visitor = Rley::ParseTreeVisitor.new(ptree)
+visitor = engine.ptree_visitor(ptree)
 
 # Let's create a formatter (i.e. visit event listener)
 # renderer = Rley::Formatter::Debug.new($stdout)
@@ -101,7 +98,7 @@ visitor = Rley::ParseTreeVisitor.new(ptree)
 # Let's create a formatter that will render the parse tree with characters
 renderer = Rley::Formatter::Asciitree.new($stdout)
 
-# Let's create a formatter that will render the parse tree in labelled 
+# Let's create a formatter that will render the parse tree in labelled
 # bracket notation
 # renderer = Rley::Formatter::BracketNotation.new($stdout)
 

@@ -1,5 +1,6 @@
 require 'rspec' # Use the RSpec framework
-require_relative '../calc_parser' # Load the class under test
+require_relative '../calc_lexer'
+require_relative '../calc_grammar'
 require_relative '../calc_ast_builder'
 
 RSpec.configure do |config|
@@ -9,10 +10,21 @@ end
 
 
 describe 'Calculator' do
-  def parse_expression(anExpression)
-    # Create a calculator parser object
-    parser = CalcParser.new
-    result = parser.parse_expression(anExpression)
+  def expect_expr(anExpression)
+    # Create a Rley facade object
+    engine = Rley::Engine.new do |cfg|
+      cfg.repr_builder = CalcASTBuilder
+    end
+    
+    engine.use_grammar(CalcGrammar)
+    raw_result = parse_expression(engine, anExpression)
+    ast = engine.to_ptree(raw_result)
+    return expect(ast.root.interpret)
+  end
+  
+  def parse_expression(anEngine, anExpression)
+    lexer = CalcLexer.new(anExpression)
+    result = anEngine.parse(lexer.tokens)
 
     unless result.success?
       # Stop if the parse failed...
@@ -22,31 +34,6 @@ describe 'Calculator' do
     end
 
     return result
-  end
-
-  def print_cst(aParseResult)
-    # Generate a parse tree from the parse result
-    ptree = aParseResult.parse_tree
-
-    # Let's create a parse tree visitor
-    visitor = Rley::ParseTreeVisitor.new(ptree)
-
-    # Now output formatted parse tree
-    renderer = Rley::Formatter::Asciitree.new($stdout)
-    renderer.render(visitor)
-  end
-
-  def build_ast(aParseResult)
-    tree_builder = CalcASTBuilder
-    # Generate an abstract syntax tree from the parse result
-    ast = aParseResult.parse_tree(tree_builder)
-    return ast.root
-  end
-
-  def expect_expr(anExpression)
-    parsing = parse_expression(anExpression)
-    ast = build_ast(parsing)
-    return expect(ast.interpret)
   end
 
   context 'Parsing valid expressions' do
@@ -143,7 +130,7 @@ describe 'Calculator' do
     end
 
     it 'should handle nested exponentiations' do
-      expect_expr('2 ** 2**2)').to eq(16)
+      expect_expr('2 ** 2**2').to eq(16)
     end
 
     it 'should change sign of expression in parentheses' do

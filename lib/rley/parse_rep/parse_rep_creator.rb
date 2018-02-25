@@ -1,7 +1,7 @@
-require_relative 'parse_walker_factory'
+require_relative '../parser/parse_walker_factory'
 
 module Rley # This module is used as a namespace
-  module Parser # This module is used as a namespace
+  module ParseRep # This module is used as a namespace
     # Utility class that helps to create a representation of a parse from
     # a given Parsing object.
     class ParseRepCreator
@@ -39,7 +39,7 @@ module Rley # This module is used as a namespace
       # that will iterate over the relevant nodes (= parsing entries)
       # of a GFGParsing
       def walker(aParseResult)
-        walker_factory = ParseWalkerFactory.new
+        walker_factory = Parser::ParseWalkerFactory.new
         accept_entry = aParseResult.accepting_entry
         accept_index = aParseResult.chart.last_index
         walker_factory.build_walker(accept_entry, accept_index, jump_to_start)

@@ -8,10 +8,10 @@ require_relative '../support/grammar_b_expr_helper'
 require_relative '../support/grammar_arr_int_helper'
 
 # Load the class under test
-require_relative '../../../lib/rley/parser/cst_builder'
+require_relative '../../../lib/rley/parse_rep/cst_builder'
 
 module Rley # Open this namespace to avoid module qualifier prefixes
-  module Parser
+  module ParseRep
     describe CSTBuilder do
       include ExpectationHelper # Mix-in with expectation on parse entry sets
       include GrammarBExprHelper # Mix-in for basic arithmetic language
@@ -30,7 +30,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
 
       def init_walker(theParser, theTokens)
         result = theParser.parse(theTokens)
-        factory = ParseWalkerFactory.new
+        factory = Parser::ParseWalkerFactory.new
         accept_entry = result.accepting_entry
         accept_index = result.chart.last_index
         @walker = factory.build_walker(accept_entry, accept_index)

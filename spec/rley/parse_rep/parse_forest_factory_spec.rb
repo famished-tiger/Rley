@@ -7,10 +7,10 @@ require_relative '../support/grammar_helper'
 require_relative '../support/expectation_helper'
 
 # Load the class under test
-require_relative '../../../lib/rley/parser/parse_forest_factory'
+require_relative '../../../lib/rley/parse_rep/parse_forest_factory'
 
 module Rley # Open this namespace to avoid module qualifier prefixes
-  module Parser
+  module ParseRep
     describe ParseForestFactory do
       include GrammarHelper     # Mix-in with token factory method
       include ExpectationHelper # Mix-in with expectation on parse entry sets

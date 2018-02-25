@@ -1,5 +1,4 @@
 require_relative 'spec_helper' # Use the RSpec framework
-require_relative '../lib/grammar'
 require_relative '../lib/tokenizer' # Load the class under test
 
 
@@ -8,18 +7,18 @@ module SRL
     def match_expectations(aTokenizer, theExpectations)
       aTokenizer.tokens.each_with_index do |token, i|
         terminal, lexeme = theExpectations[i]
-        expect(token.terminal.name).to eq(terminal)
+        expect(token.terminal).to eq(terminal)
         expect(token.lexeme).to eq(lexeme)
       end
     end
   
   
-    subject { Tokenizer.new('', SRL::Grammar) }    
+    subject { Tokenizer.new('') }    
     
     context 'Initialization:' do
 
       it 'should be initialized with a text to tokenize and a grammar' do
-        expect { Tokenizer.new('anything', SRL::Grammar) }.not_to raise_error
+        expect { Tokenizer.new('anything') }.not_to raise_error
       end
 
       it 'should have its scanner initialized' do
@@ -28,20 +27,20 @@ module SRL
     end # context
 
     context 'Single token recognition:' do
-      # it 'should tokenize delimiters and separators' do
-        # subject.scanner.string = ','
-        # token = subject.tokens.first
-        # expect(token).to be_kind_of(Rley::Lexical::Token)
-        # expect(token.terminal.name).to eq('COMMA')
-        # expect(token.lexeme).to eq(',')
-      # end
+      it 'should tokenize delimiters and separators' do
+        subject.scanner.string = ','
+        token = subject.tokens.first
+        expect(token).to be_kind_of(Rley::Lexical::Token)
+        expect(token.terminal).to eq('COMMA')
+        expect(token.lexeme).to eq(',')
+      end
       
       it 'should tokenize keywords' do
         sample = 'between Exactly oncE optional TWICE'
         subject.scanner.string = sample
         subject.tokens.each do |tok|
           expect(tok).to be_kind_of(Rley::Lexical::Token)
-          expect(tok.terminal.name).to eq(tok.lexeme.upcase)
+          expect(tok.terminal).to eq(tok.lexeme.upcase)
         end
       end
       
@@ -49,7 +48,7 @@ module SRL
         subject.scanner.string = ' 123 '
         token = subject.tokens.first
         expect(token).to be_kind_of(Rley::Lexical::Token)
-        expect(token.terminal.name).to eq('INTEGER')
+        expect(token.terminal).to eq('INTEGER')
         expect(token.lexeme).to eq('123')
       end 
 
@@ -57,7 +56,7 @@ module SRL
         subject.scanner.string = ' 1 '
         token = subject.tokens.first
         expect(token).to be_kind_of(Rley::Lexical::Token)
-        expect(token.terminal.name).to eq('DIGIT_LIT')
+        expect(token.terminal).to eq('DIGIT_LIT')
         expect(token.lexeme).to eq('1')
       end       
     end # context

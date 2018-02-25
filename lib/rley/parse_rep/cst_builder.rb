@@ -4,7 +4,7 @@ require_relative '../ptree/terminal_node'
 require_relative '../ptree/parse_tree'
 
 module Rley # This module is used as a namespace
-  module Parser # This module is used as a namespace
+  module ParseRep # This module is used as a namespace
     # The purpose of a CSTBuilder is to build piece by piece a CST
     # (Concrete Syntax Tree) from a sequence of input tokens and
     # visit events produced by walking over a GFGParsing object.

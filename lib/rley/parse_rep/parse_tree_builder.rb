@@ -9,7 +9,7 @@ require_relative '../ptree/terminal_node'
 require_relative '../ptree/parse_tree'
 
 module Rley # This module is used as a namespace
-  module Parser # This module is used as a namespace
+  module ParseRep # This module is used as a namespace
     # Structure used internally by ParseTreeBuilder class.
     CSTRawNode = Struct.new(:range, :symbol, :children) do
       # Constructor.
@@ -55,11 +55,11 @@ module Rley # This module is used as a namespace
       # @param anIndex [anIndex] The token index associated with anEntry
       def receive_event(anEvent, anEntry, anIndex)
         # puts "Event: #{anEvent} #{anEntry} #{anIndex}"
-        if anEntry.dotted_entry? # A N => alpha . beta pattern?
+        if anEntry.dotted_entry? # N => alpha . beta pattern?
           process_item_entry(anEvent, anEntry, anIndex)
-        elsif anEntry.start_entry? # A .N pattern?
+        elsif anEntry.start_entry? # .N pattern?
           process_start_entry(anEvent, anEntry, anIndex)
-        elsif anEntry.end_entry? # A N. pattern?
+        elsif anEntry.end_entry? # N. pattern?
           process_end_entry(anEvent, anEntry, anIndex)
         else
           raise NotImplementedError

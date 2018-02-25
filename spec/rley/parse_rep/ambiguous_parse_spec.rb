@@ -8,10 +8,10 @@ require_relative '../support/expectation_helper'
 require_relative '../support/grammar_ambig01_helper'
 
 # Load the class under test
-require_relative '../../../lib/rley/parser/parse_forest_builder'
+require_relative '../../../lib/rley/parse_rep/parse_forest_builder'
 
 module Rley # Open this namespace to avoid module qualifier prefixes
-  module Parser
+  module ParseRep
     describe 'Coping with ambiguous grammar' do
       include GrammarHelper     # Mix-in with token factory method
       include ExpectationHelper # Mix-in with expectation on parse entry sets
@@ -45,7 +45,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
       end
 
       before(:each) do
-        factory = ParseWalkerFactory.new
+        factory = Parser::ParseWalkerFactory.new
         accept_entry = sentence_result.accepting_entry
         accept_index = sentence_result.chart.last_index
         @walker = factory.build_walker(accept_entry, accept_index, true)

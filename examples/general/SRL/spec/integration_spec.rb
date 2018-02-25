@@ -1,18 +1,25 @@
 require_relative 'spec_helper' # Use the RSpec framework
-require_relative '../lib/parser'
+require_relative '../lib/tokenizer'
+require_relative '../lib/grammar'
 require_relative '../lib/ast_builder'
 
 describe 'Integration tests:' do
   def parse(someSRL)
-    parser = SRL::Parser.new
-    result = parser.parse_SRL(someSRL)
+    tokenizer = SRL::Tokenizer.new(someSRL)
+    @engine.parse(tokenizer.tokens)
   end
 
   def regexp_repr(aResult)
     # Generate an abstract syntax parse tree from the parse result
-    regexp_expr_builder = ASTBuilder
-    tree = aResult.parse_tree(regexp_expr_builder)
+    tree = @engine.convert(aResult)
     regexp = tree.root
+  end
+  
+  before(:each) do
+    @engine = Rley::Engine.new do |config|
+      config.repr_builder = ASTBuilder
+    end
+    @engine.use_grammar(SRL::Grammar)
   end
 
   context 'Parsing character ranges:' do

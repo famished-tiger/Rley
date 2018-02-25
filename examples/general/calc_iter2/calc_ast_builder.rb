@@ -1,4 +1,3 @@
-require_relative 'ast_building'
 require_relative 'calc_ast_nodes'
 
 # The purpose of a CalcASTBuilder is to build piece by piece an AST
@@ -8,8 +7,7 @@ require_relative 'calc_ast_nodes'
 # The Builder pattern creates a complex object
 # (say, a parse tree) from simpler objects (terminal and non-terminal
 # nodes) and using a step by step approach.
-class CalcASTBuilder < Rley::Parser::ParseTreeBuilder
-  include ASTBuilding
+class CalcASTBuilder < Rley::ParseRep::ASTBaseBuilder
 
   Terminal2NodeClass = {
     # Lexical ambiguity: minus sign represents two very concepts:
@@ -26,111 +24,10 @@ class CalcASTBuilder < Rley::Parser::ParseTreeBuilder
 
   protected
 
-  # Overriding method.
-  # Factory method for creating a node object for the given
-  # input token.
-  # @param aTerminal [Terminal] Terminal symbol associated with the token
-  # @param aTokenPosition [Integer] Position of token in the input stream
-  # @param aToken [Token] The input token
-  def new_leaf_node(aProduction, aTerminal, aTokenPosition, aToken)
-    klass = Terminal2NodeClass.fetch(aTerminal.name, CalcTerminalNode)
-    node = if klass
-             if klass.is_a?(Hash)
-              # Lexical ambiguity...
-              klass = klass.fetch(aProduction.name)
-             end
-             klass.new(aToken, aTokenPosition)
-           else
-             PTree::TerminalNode.new(aToken, aTokenPosition)
-           end
-
-    return node
+  def terminal2node()
+    Terminal2NodeClass
   end
 
-  # Method to override.
-  # Factory method for creating a parent node object.
-  # @param aProduction [Production] Production rule
-  # @param aRange [Range] Range of tokens matched by the rule
-  # @param theTokens [Array] The input tokens
-  # @param theChildren [Array] Children nodes (one per rhs symbol)
-  def new_parent_node(aProduction, aRange, theTokens, theChildren)
-    node = case aProduction.name
-      when 'expression_0' # rule 'expression' => %w[simple_expression]
-        return_first_child(aRange, theTokens, theChildren)
-
-      when 'simple_expression_0' # rule 'simple_expression' => 'term'
-        return_first_child(aRange, theTokens, theChildren)
-
-      when 'simple_expression_1'
-        # rule 'simple_expression' => %w[simple_expression add_operator term]
-        reduce_simple_expression_1(aProduction, aRange, theTokens, theChildren)
-
-      when 'term_0' # rule 'term' => 'factor'
-        return_first_child(aRange, theTokens, theChildren)
-
-      when 'term_1' # rule 'term' => %w[term mul_operator factor]
-        reduce_term_1(aProduction, aRange, theTokens, theChildren)
-
-      when 'factor_0' # rule 'factor' => 'simple_factor'
-        return_first_child(aRange, theTokens, theChildren)
-
-      when 'factor_1' # rule 'factor' => %w[factor POWER simple_factor]
-        reduce_factor_1(aProduction, aRange, theTokens, theChildren)
-
-      when 'simple_factor_0' # rule 'simple_factor' => %[sign scalar]
-        reduce_simple_factor_0(aProduction, aRange, theTokens, theChildren)
-
-      when 'simple_factor_1'  # rule 'simple_factor' => %w[unary_function in_parenthesis]
-        reduce_simple_factor_1(aProduction, aRange, theTokens, theChildren)
-
-      when 'simple_factor_2' # rule 'simple_factor' => %w[MINUS in_parenthesis]
-        reduce_simple_factor_2(aProduction, aRange, theTokens, theChildren)
-
-      when 'simple_factor_3' # rule 'simple_factor' => 'in_parenthesis'
-        return_first_child(aRange, theTokens, theChildren)
-
-      when 'sign_0' # rule 'sign' => 'PLUS'
-        return_first_child(aRange, theTokens, theChildren)
-
-      when 'sign_1' # rule 'sign' => 'MINUS'
-        return_first_child(aRange, theTokens, theChildren)
-
-      when 'sign_2' # rule 'sign' => []
-        return_epsilon(aRange, theTokens, theChildren)
-
-      when 'scalar_0' # rule 'scalar' => 'NUMBER'
-          return_first_child(aRange, theTokens, theChildren)
-
-      when 'scalar_1' # rule 'scalar' => 'PI'
-        return_first_child(aRange, theTokens, theChildren)
-
-      when 'scalar_2' # rule 'scalar' => 'E'
-        return_first_child(aRange, theTokens, theChildren)
-          
-      when 'unary_function_0' # rule 'unary_function' => 'RESERVED'
-        return_first_child(aRange, theTokens, theChildren)
-      
-      when 'in_parenthesis_0' # rule 'in_parenthesis' => %w[LPAREN expression RPAREN]
-        return_second_child(aRange, theTokens, theChildren)      
-
-      when 'add_operator_0' # rule 'add_operator' => 'PLUS'
-        reduce_add_operator_0(aProduction, aRange, theTokens, theChildren)
-
-      when 'add_operator_1' # rule 'add_operator' => 'MINUS'
-        reduce_add_operator_1(aProduction, aRange, theTokens, theChildren)
-
-      when 'mul_operator_0' # rule 'mul_operator' => 'STAR'
-        reduce_mul_operator_0(aProduction, aRange, theTokens, theChildren)
-
-      when 'mul_operator_1' # rule 'mul_operator' =>  'DIVIDE'
-         reduce_mul_operator_1(aProduction, aRange, theTokens, theChildren)
-
-      else
-        raise StandardError, "Don't know production #{aProduction.name}"
-    end
-
-    return node
-  end
 
   def reduce_binary_operator(theChildren)
     operator_node = theChildren[1]
@@ -179,10 +76,15 @@ class CalcASTBuilder < Rley::Parser::ParseTreeBuilder
   end
 
   # rule 'simple_factor' => %w[MINUS in_parenthesis]
-  def reduce_simple_factor_2(aProduction, aRange, theTokens, theChildren)
+  def reduce_simple_factor_2(aProduction, aRange, _tokens, theChildren)
     negation = CalcNegateNode.new(theChildren[0].symbol, aRange.low)
     negation.children << theChildren[1]
     return negation
+  end
+
+   # rule 'in_parenthesis' => %w[LPAREN expression RPAREN]
+  def reduce_in_parenthesis_0(_production, _range, _tokens, theChildren)
+    return_second_child(_range, _tokens, theChildren)
   end
 
   # rule 'add_operator' => 'PLUS'

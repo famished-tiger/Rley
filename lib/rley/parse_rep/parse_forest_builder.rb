@@ -9,7 +9,7 @@ require_relative '../sppf/alternative_node'
 require_relative '../sppf/parse_forest'
 
 module Rley # This module is used as a namespace
-  module Parser # This module is used as a namespace
+  module ParseRep # This module is used as a namespace
     # Builder GoF pattern. Builder pattern builds a complex object
     # (say, a parse forest) from simpler objects (terminal and non-terminal
     # nodes) and using a step by step approach.

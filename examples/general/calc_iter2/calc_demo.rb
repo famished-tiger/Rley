@@ -1,4 +1,4 @@
-require_relative 'calc_parser'
+require_relative 'calc_lexer'
 require_relative 'calc_ast_builder'
 
 def print_title(aTitle)
@@ -16,9 +16,6 @@ def print_tree(aTitle, aParseTree)
   renderer.render(visitor)
   puts ''
 end
-
-# Create a calculator parser object
-parser = CalcParser.new
 
 # Parse the input expression in command-line
 if ARGV.empty?
@@ -41,7 +38,17 @@ END_MSG
   exit(1)
 end
 puts ARGV[0]
-result = parser.parse_expression(ARGV[0])
+
+# Create a Rley facade object
+engine = Rley::Engine.new
+
+########################################
+# Step 1. Load a grammar for calculator
+require_relative 'calc_grammar'
+engine.use_grammar(CalcGrammar)
+
+lexer = CalcLexer.new(ARGV[0])
+result = engine.parse(lexer.tokens)
 
 unless result.success?
   # Stop if the parse failed...
@@ -52,12 +59,12 @@ end
 
 
 # Generate a concrete syntax parse tree from the parse result
-cst_ptree = result.parse_tree
+cst_ptree = engine.convert(result)
 print_tree('Concrete Syntax Tree (CST)', cst_ptree)
 
 # Generate an abstract syntax parse tree from the parse result
-tree_builder = CalcASTBuilder
-ast_ptree = result.parse_tree(tree_builder)
+engine.configuration.repr_builder = CalcASTBuilder
+ast_ptree = engine.convert(result)
 print_tree('Abstract Syntax Tree (AST)', ast_ptree)
 
 # Now perform the computation of math expression

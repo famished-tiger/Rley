@@ -1,4 +1,5 @@
 require 'stringio'
+require_relative 'ast_building'
 require_relative 'regex_repr'
 
 # The purpose of a ASTBuilder is to build piece by piece an AST
@@ -8,17 +9,14 @@ require_relative 'regex_repr'
 # The Builder pattern creates a complex object
 # (say, a parse tree) from simpler objects (terminal and non-terminal
 # nodes) and using a step by step approach.
-class ASTBuilder < Rley::ParseRep::ASTBaseBuilder
+class ASTBuilder < Rley::Parser::ParseTreeBuilder
+  include ASTBuilding
 
   Terminal2NodeClass = { }.freeze
 
   attr_reader :options
 
   protected
-  
-  def terminal2node()
-    Terminal2NodeClass
-  end
 
   # Overriding method.
   # Factory method for creating a node object for the given
@@ -29,6 +27,31 @@ class ASTBuilder < Rley::ParseRep::ASTBaseBuilder
   def new_leaf_node(aProduction, aTerminal, aTokenPosition, aToken)
     node = Rley::PTree::TerminalNode.new(aToken, aTokenPosition)
 
+    return node
+  end
+
+  # Method to override.
+  # Factory method for creating a parent node object.
+  # @param aProduction [Production] Production rule
+  # @param aRange [Range] Range of tokens matched by the rule
+  # @param theTokens [Array] The input tokens
+  # @param theChildren [Array] Children nodes (one per rhs symbol)
+  def new_parent_node(aProduction, aRange, theTokens, theChildren)
+    short_name = aProduction.name
+    method_name = 'reduce_' + short_name
+    if self.respond_to?(method_name, true)
+      node = send(method_name, aProduction, aRange, theTokens, theChildren)
+    else
+      # Default action...
+      node = case aProduction.rhs.size
+               when 0
+                 nil
+               when 1
+                 return_first_child(aRange, theTokens, theChildren)
+               else
+                raise StandardError, "Don't know production '#{aProduction.name}'"
+             end            
+    end
     return node
   end
 

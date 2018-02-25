@@ -1,7 +1,8 @@
 require_relative 'cli_options'
-require_relative 'json_parser'
+require_relative 'json_lexer'
 require_relative 'json_minifier'
 require_relative 'json_ast_builder'
+
 
 prog_name = 'json_demo'
 prog_version = '0.3.0'
@@ -14,16 +15,6 @@ if ARGV.empty?
 end
 
 file_name = ARGV[0]
-# Create a JSON parser object
-parser = JSONParser.new 
-result = parser.parse_file(file_name) # result object contains parse details
-
-unless result.success?
-  # Stop if parse failed...
-  puts "Parsing of '#{file_name}' failed"
-  puts result.failure_reason.message
-  exit(1)
-end
 
 tree_rep = cli_options[:rep]
 renderer = nil
@@ -43,14 +34,41 @@ case cli_options[:format]
     raise StandardError, msg if tree_rep == :cst
 end
 
-tree_builder = tree_rep == :ast ? JSONASTBuilder : nil
+
+# Create a Rley facade object
+# If necessary, select AST representation
+engine = Rley::Engine.new do |cfg|
+  builder = tree_rep == :ast ? JSONASTBuilder : nil
+  cfg.repr_builder = builder
+end
+
+########################################
+# Step 1. Load a grammar for JSON
+require_relative 'json_grammar'
+engine.use_grammar(GrammarJSON)
+
+
+input_source = nil
+File.open(file_name, 'r') { |f| input_source = f.read }
+lexer = JSONLexer.new(input_source)
+
+result = engine.parse(lexer.tokens)
+
+unless result.success?
+  # Stop if parse failed...
+  puts "Parsing of '#{file_name}' failed"
+  puts result.failure_reason.message
+  exit(1)
+end
+
+
 
 # Generate a parse tree from the parse result
-ptree = result.parse_tree(tree_builder)
+ptree = engine.convert(result)
 
 if renderer
   # Let's create a parse tree visitor
-  visitor = Rley::ParseTreeVisitor.new(ptree)
+  visitor = engine.ptree_visitor(ptree)
 
   # Now output formatted parse tree
   renderer.render(visitor)

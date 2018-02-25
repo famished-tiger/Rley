@@ -2,7 +2,7 @@ require_relative 'parse_rep_creator'
 require_relative 'parse_forest_builder'
 
 module Rley # This module is used as a namespace
-  module Parser # This module is used as a namespace
+  module ParseRep # This module is used as a namespace
     # Utility class that helps to create a ParseForest from
     # a given Parsing object.
     class ParseForestFactory < ParseRepCreator
@@ -14,7 +14,7 @@ module Rley # This module is used as a namespace
         ParseForestBuilder.new(aParseResult.tokens)
       end
       
-      # When a end vertex is re-visited then jump
+      # When an end vertex is re-visited then jump
       # its corresponding start vertex. This behaviour
       # makes sense for sharing nodes.
       def jump_to_start()

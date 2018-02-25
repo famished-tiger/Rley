@@ -7,96 +7,15 @@ require_relative 'calc_ast_nodes'
 # The Builder pattern creates a complex object
 # (say, a parse tree) from simpler objects (terminal and non-terminal
 # nodes) and using a step by step approach.
-class CalcASTBuilder < Rley::Parser::ParseTreeBuilder
+class CalcASTBuilder < Rley::ParseRep::ASTBaseBuilder
   Terminal2NodeClass = {
     'NUMBER' => CalcNumberNode
   }.freeze
 
   protected
-
-  def return_first_child(_range, _tokens, theChildren)
-    return theChildren[0]
-  end
-
-  def return_second_child(_range, _tokens, theChildren)
-    return theChildren[1]
-  end
-
-  def return_last_child(_range, _tokens, theChildren)
-    return theChildren[-1]
-  end
-
-  # Overriding method.
-  # Create a parse tree object with given
-  # node as root node.
-  def create_tree(aRootNode)
-    return Rley::PTree::ParseTree.new(aRootNode)
-  end
-
-  # Overriding method.
-  # Factory method for creating a node object for the given
-  # input token.
-  # @param aTerminal [Terminal] Terminal symbol associated with the token
-  # @param aTokenPosition [Integer] Position of token in the input stream
-  # @param aToken [Token] The input token
-  def new_leaf_node(_production, aTerminal, aTokenPosition, aToken)
-    klass = Terminal2NodeClass.fetch(aTerminal.name, CalcTerminalNode)
-    node = if klass
-             klass.new(aToken, aTokenPosition)
-           else
-             PTree::TerminalNode.new(aToken, aTokenPosition)
-           end
-
-    return node
-  end
-
-  # Method to override.
-  # Factory method for creating a parent node object.
-  # @param aProduction [Production] Production rule
-  # @param aRange [Range] Range of tokens matched by the rule
-  # @param theTokens [Array] The input tokens
-  # @param theChildren [Array] Children nodes (one per rhs symbol)
-  def new_parent_node(aProduction, aRange, theTokens, theChildren)
-    node = case aProduction.name
-      when 'expression_0' # rule 'expression' => 'simple_expression'
-        return_first_child(aRange, theTokens, theChildren)
-
-      when 'simple_expression_0' # rule 'simple_expression' => 'term'
-        return_first_child(aRange, theTokens, theChildren)
-
-      when 'simple_expression_1'
-        # rule 'simple_expression' => %w[simple_expression add_operator term]
-        reduce_simple_expression_1(aProduction, aRange, theTokens, theChildren)
-
-      when 'term_0' # rule 'term' => 'factor'
-        return_first_child(aRange, theTokens, theChildren)
-
-      when 'term_1' # rule 'term' => %w[term mul_operator factor]
-        reduce_term_1(aProduction, aRange, theTokens, theChildren)
-
-      when 'factor_0' # rule 'factor' => 'NUMBER'
-        return_first_child(aRange, theTokens, theChildren)
-
-      when 'factor_1' # rule 'factor' => %w[LPAREN expression RPAREN]
-        return_second_child(aRange, theTokens, theChildren)
-
-      when 'add_operator_0' # rule 'add_operator' => 'PLUS'
-        reduce_add_operator_0(aProduction, aRange, theTokens, theChildren)
-
-      when 'add_operator_1' # rule 'add_operator' => 'MINUS'
-        reduce_add_operator_1(aProduction, aRange, theTokens, theChildren)
-
-      when 'mul_operator_0' # rule 'mul_operator' => 'STAR'
-         reduce_mul_operator_0(aProduction, aRange, theTokens, theChildren)
-
-      when 'mul_operator_1' # rule 'mul_operator' =>  'DIVIDE'
-         reduce_mul_operator_1(aProduction, aRange, theTokens, theChildren)
-
-      else
-        raise StandardError, "Don't know production #{aProduction.name}"
-    end
-
-    return node
+  
+  def terminal2node()
+    Terminal2NodeClass
   end
 
   def reduce_binary_operator(theChildren)
@@ -105,16 +24,41 @@ class CalcASTBuilder < Rley::Parser::ParseTreeBuilder
     operator_node.children << theChildren[2]
     return operator_node
   end
+  
+  # rule 'expression' => 'simple_expression'
+  def reduce_expression_0(_aProd, _range, _tokens, theChildren)
+    return_first_child(_range, _tokens, theChildren)
+  end
+
+  # rule 'simple_expression' => 'term'
+  def reduce_simple_expression_0(_aProd, _range, _tokens, theChildren)
+    return_first_child(_range, _tokens, theChildren)
+  end          
 
   # rule 'simple_expression' => %w[simple_expression add_operator term]
   def reduce_simple_expression_1(_production, _range, _tokens, theChildren)
     reduce_binary_operator(theChildren)
   end
+  
+  # rule 'term' => 'factor' 
+  def reduce_term_0(_aProd, _range, _tokens, theChildren)
+    return_first_child(_range, _tokens, theChildren)
+  end  
 
   # rule 'term' => %w[term mul_operator factor]
   def reduce_term_1(_production, _range, _tokens, theChildren)
     reduce_binary_operator(theChildren)
   end
+  
+  # rule 'factor' => 'NUMBER'
+  def reduce_factor_0(_aProd, _range, _tokens, theChildren)
+    return_first_child(_range, _tokens, theChildren)
+  end
+  
+  # # rule 'factor' => %w[LPAREN expression RPAREN]
+  def reduce_factor_1(_aProd, _range, _tokens, theChildren)
+    return_second_child(_range, _tokens, theChildren)
+  end   
 
   # rule 'add_operator' => 'PLUS'
   def reduce_add_operator_0(_production, _range, _tokens, theChildren)

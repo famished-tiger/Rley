@@ -1,4 +1,5 @@
-require_relative './lib/parser'
+require_relative './lib/tokenizer'
+require_relative './lib/grammar'
 require_relative './lib/ast_builder'
 
 def print_title(aTitle)
@@ -16,9 +17,6 @@ def print_tree(aTitle, aParseTree)
   renderer.render(visitor)
   puts ''
 end
-
-# Create a calculator parser object
-parser = SRL::Parser.new
 
 # Parse the input expression in command-line
 if ARGV.empty?
@@ -42,7 +40,16 @@ END_MSG
   exit(1)
 end
 puts ARGV[0]
-result = parser.parse_SRL(ARGV[0])
+
+# Create a Rley facade object
+engine = Rley::Engine.new
+
+########################################
+# Step 1. Load a grammar for calculator
+engine.use_grammar(SRL::Grammar)
+
+lexer = SRL::Tokenizer.new(ARGV[0])
+result = engine.parse(lexer.tokens)
 
 unless result.success?
   # Stop if the parse failed...
@@ -53,12 +60,12 @@ end
 
 
 # Generate a concrete syntax parse tree from the parse result
-cst_ptree = result.parse_tree
+cst_ptree = engine.convert(result)
 print_tree('Concrete Syntax Tree (CST)', cst_ptree)
 
-# Generate a regexp literal representation from the parse result
-tree_builder = ASTBuilder
-ast_ptree = result.parse_tree(tree_builder)
+# Generate an abstract syntax tree (AST) from the parse result
+engine.configuration.repr_builder = ASTBuilder
+ast_ptree = engine.convert(result)
 
 # Now output the regexp literal
 root = ast_ptree.root

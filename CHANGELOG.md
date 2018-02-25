@@ -1,9 +1,25 @@
+### 0.6.00 / 2018-02-25
+Version bump. Highlights: new programming interface through facade object, improved AST generation. 
+* [NEW] Class `Rley::Engine`: Implementation of Facade design pattern to reach more convenient interface.
+* [NEW] Class `Rley::ParseRep::ASTBaseBuilder` Abstract class that simplifies the creation of custom AST (Abstract Syntax Tree)
+* [NEW] Module `Rley::ParseRep` hosts the classes for building parse representations (parse trees and forests)
+* [CHANGE] File `README.md` updated to reflect the new facade interface.
+* [CHANGE] Almost all the examples have been updated to use the `Rley::Engine` facade and the new AST building.
+* [CHANGE] All the specs have been updated to use the `Rley::Engine` facade and the new AST building.
+* [DEPRECATED] Method `Rley::Parser::GFGParsing#parse_tree`.
+
+### 0.5.14 / 2018-02-10
+* [NEW] Files spec/rley/sppf/token_node_spec.rb` Added RSpec file for testing  `SPPF::TokenNode` class.
+* [CHANGE] Files `lib/rley/sppf` Minor update in the YARD documentation of the SPPF node classes.
+* [FIX] Method `Parser::CSTRawNode#initialize`. Yard warning because of duplicate parameter names in documentation.
+* [FIX] Method `GFG::Edge#initialize`. Yard warning because parameter names were missing in documentation.
+
 ### 0.5.13 / 2018-02-09
 * [CHANGE] File `examples/general/SRL/grammar.rb added names to each production rule.
 * [CHANGE] File `examples/general/SRL/ast_builder.rb Code refactoring to take profit of rule naming.
 
 ### 0.5.12 / 2018-02-03
-* [CHANGE] Simple Regex Language is fully supported!...
+* [CHANGE] Simple Regex Language is almost fully supported!...
 * [CHANGE] File `examples/general/SRL/grammar.rb added missing rule productions for Simple Regex Language.
 * [CHANGE] File `examples/general/SRL/ast_builder.rb Added transformation rules missing regular expressions features.
 * [CHANGE] File `examples/general/SRL/spac/integration_spec.rb Added tests for covering SRL.
@@ -24,7 +40,7 @@
 * [CHANGE] File `examples/general/SRL/grammar.rb increased coverage of Simple Regex Language parser.
 * [CHANGE] File `examples/general/SRL/ast_builder.rb Added transformation rules for constructing regular expressions.
 * [CHANGE] File `examples/general/SRL/spac/integration_spec.rb Added tests for SRL expressions.
-* [FIX] Added an custom `inspect` method to sevaral core classes. This was necessary because default implementation from Ruby got lost with object graphs.
+* [FIX] Added an custom `inspect` method to several core classes. This was necessary because default implementation from Ruby got lost with object graphs.
 
 ### 0.5.10 / 2017-12-02
 * [CHANGE] Dir `examples/general/SRL/ Added support for digit range to Simple Regex Language parser.

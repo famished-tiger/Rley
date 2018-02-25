@@ -74,10 +74,10 @@ Installing the latest stable version is simple:
 The purpose of this section is show how to create a parser for a minimalistic
 English language subset.
 The tour is organized as follows:  
-1. [Defining the language grammar](#defining-the-language-grammar)  
-2. [Creating a lexicon](#creating-a-lexicon)  
-3. [Creating a tokenizer](#creating-a-tokenizer)  
-4. [Building the parser](#building-the-parser)  
+1. [Creating facade object of Rley library](#creating-facade-object-of-rley-library)   
+2. [Defining the language grammar](#defining-the-language-grammar)  
+3. [Creating a lexicon](#creating-a-lexicon)  
+4. [Creating a tokenizer](#creating-a-tokenizer)    
 5. [Parsing some input](#parsing-some-input)  
 6. [Generating the parse tree](#generating-the-parse-tree)
 
@@ -85,14 +85,22 @@ The complete source code of the example used in this tour can be found in the
 [examples](https://github.com/famished-tiger/Rley/tree/master/examples/NLP/mini_en_demo.rb)
 directory
 
+
+### Creating facade object of Rley library
+```ruby  
+    require 'rley' # Load Rley library
+
+    # Let's create a facade object called 'engine'
+    # It provides a unified, higher-level interface
+    engine = Rley.Engine.new
+```
+
+
 ### Defining the language grammar
 The subset of English grammar is based on an example from the NLTK book.
 
 ```ruby  
-    require 'rley' # Load Rley library
-
-    # Instantiate a builder object that will build the grammar for us
-    builder = Rley::Syntax::GrammarBuilder.new do
+    engine.build_grammar do
       # Terminal symbols (= word categories in lexicon)
       add_terminals('Noun', 'Proper-Noun', 'Verb')
       add_terminals('Determiner', 'Preposition')
@@ -106,8 +114,6 @@ The subset of English grammar is based on an example from the NLTK book.
       rule 'VP' => %w[Verb NP PP]
       rule 'PP' => %w[Preposition NP]
     end
-    # And now, let's build the grammar...
-    grammar = builder.grammar
 ```  
 
 ### Creating a lexicon
@@ -141,14 +147,14 @@ The subset of English grammar is based on an example from the NLTK book.
 
 ### Creating a tokenizer
 ```ruby
-    # A tokenizer reads the input string and converts it into a sequence of tokens
-    # Highly simplified tokenizer implementation.
-    def tokenizer(aTextToParse, aGrammar)
+    # A tokenizer reads the input string and converts it into a sequence of tokens.
+    # Remark: Rley doesn't provide tokenizer functionality.
+    # Highly simplified tokenizer implementation
+    def tokenizer(aTextToParse)
       tokens = aTextToParse.scan(/\S+/).map do |word|
         term_name = Lexicon[word]
         raise StandardError, "Word '#{word}' not found in lexicon" if term_name.nil?
-        terminal = aGrammar.name2symbol[term_name]
-        Rley::Lexical::Token.new(word, terminal)
+        Rley::Lexical::Token.new(word, term_name)
       end
 
       return tokens
@@ -161,20 +167,12 @@ creating a lexicon and tokenizer from scratch. Here are a few Ruby Part-of-Speec
 * [rbtagger](https://rubygems.org/gems/rbtagger)
 
 
-
-### Building the parser
-```ruby
-  # Easy with Rley...
-  parser = Rley::Parser::GFGEarleyParser.new(grammar)
-```
-
-
 ### Parsing some input
 ```ruby
     input_to_parse = 'John saw Mary with a telescope'
     # Convert input text into a sequence of token objects...
-    tokens = tokenizer(input_to_parse, grammar)
-    result = parser.parse(tokens)
+    tokens = tokenizer(input_to_parse)
+    result = engine.parse(tokens)
 
     puts "Parsing successful? #{result.success?}" # => Parsing successful? true
 ```
@@ -194,7 +192,7 @@ For our whirlwind tour, we will opt for parse trees.
 ### Generating the parse tree
 
 ```ruby
-    ptree = result.parse_tree
+    ptree = engine.convert(result)
 ```  
 OK. Now that we have the parse tree, what we can do with it?
 One option is to manipulate the parse tree and its node directly. For instance,
@@ -216,7 +214,7 @@ an one-liner:
 
 ```ruby
     # Let's create a parse tree visitor
-    visitor = Rley::ParseTreeVisitor.new(ptree)
+    visitor = engine.ptree_visitor(ptree)
 ```
 
 #### Visiting the parse tree
@@ -359,8 +357,8 @@ above and, as an error, we delete the verb `saw` in the sentence to parse.
     # Verb has been removed from the sentence on next line
     input_to_parse = 'John Mary with a telescope'
     # Convert input text into a sequence of token objects...
-    tokens = tokenizer(input_to_parse, grammar)
-    result = parser.parse(tokens)
+    tokens = tokenizer(input_to_parse)
+    result = engine.parse(tokens)
 
     puts "Parsing successful? #{result.success?}" # => Parsing successful? false
     exit(1)
@@ -390,8 +388,8 @@ Let's experiment again with the original sentence but without the word
     # Last word has been removed from the sentence on next line
     input_to_parse = 'John saw Mary with a '
     # Convert input text into a sequence of token objects...
-    tokens = tokenizer(input_to_parse, grammar)
-    result = parser.parse(tokens)
+    tokens = tokenizer(input_to_parse)
+    result = engine.parse(tokens)
 
     puts "Parsing successful? #{result.success?}" # => Parsing successful? false
     unless result.success?

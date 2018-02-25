@@ -13,7 +13,7 @@ builder = Rley::Syntax::GrammarBuilder.new do
   add_terminals('begin-object', 'end-object') # For '{', '}' delimiters
   add_terminals('begin-array', 'end-array') # For '[', ']' delimiters
   add_terminals('name-separator', 'value-separator') # For ':', ',' separators
-  rule 'JSON-text' => 'value'
+  rule 'JSON_text' => 'value'
   rule 'value' => 'false'
   rule 'value' => 'null'
   rule 'value' => 'true'   

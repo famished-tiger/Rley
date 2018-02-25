@@ -6,18 +6,20 @@ require_relative '../../../lib/rley/lexical/token'
 require_relative '../../../lib/rley/parser/gfg_earley_parser'
 require_relative '../../../lib/rley/ptree/parse_tree'
 require_relative '../../../lib/rley/parse_tree_visitor'
+require_relative '../../../lib/rley/engine'
 # Load the class under test
 require_relative '../../../lib/rley/formatter/debug'
 
 module Rley # Re-open the module to get rid of qualified names
   module Formatter
     describe Debug do
-      include GrammarABCHelper # Mix-in module for grammar abc
 
-      # Factory method. Build a production with the given sequence
-      # of symbols as its rhs.
+    # Factory method. Build a production with the given sequence    
+    # of symbols as its rhs.
       let(:grammar_abc) do
-        builder = grammar_abc_builder
+        sandbox = Object.new
+        sandbox.extend(GrammarABCHelper)
+        builder = sandbox.grammar_abc_builder
         builder.grammar
       end
       
@@ -27,15 +29,9 @@ module Rley # Re-open the module to get rid of qualified names
       let(:c_) { grammar_abc.name2symbol['c'] }
       
       # Helper method that mimicks the output of a tokenizer
-      # for the language specified by gramma_abc
+      # for the language specified by grammar_abc
       let(:grm_abc_tokens1) do
-        [
-          Lexical::Token.new('a', a_),
-          Lexical::Token.new('a', a_),
-          Lexical::Token.new('b', b_),
-          Lexical::Token.new('c', c_),
-          Lexical::Token.new('c', c_)
-        ]
+        %w[a a b c c].map { |ch| Lexical::Token.new(ch, ch) }
       end
 
       # Factory method that builds a sample parse tree.
@@ -51,9 +47,11 @@ module Rley # Re-open the module to get rid of qualified names
       #    +- c[4,5]
       # Capital letters represent non-terminal nodes
       let(:grm_abc_ptree1) do
-        parser = Parser::GFGEarleyParser.new(grammar_abc)
-        parse_result = parser.parse(grm_abc_tokens1)
-        parse_result.parse_tree
+        engine = Rley::Engine.new
+        engine.use_grammar(grammar_abc)     
+        parse_result = engine.parse(grm_abc_tokens1)
+        ptree = engine.convert(parse_result)
+        ptree
       end
   
       let(:destination) { StringIO.new('', 'w') }

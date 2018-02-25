@@ -1,4 +1,4 @@
-require_relative 'calc_parser'
+require_relative 'calc_lexer'
 require_relative 'calc_ast_builder'
 
 # Retrieve input expression to parse from command-line
@@ -17,9 +17,19 @@ END_MSG
   exit(1)
 end
 
-# Create a calculator parser object
-parser = CalcParser.new
-result = parser.parse_expression(ARGV[0])
+# Create a Rley facade object
+engine = Rley::Engine.new do |cfg|
+  cfg.repr_builder = CalcASTBuilder
+end
+
+########################################
+# Step 1. Load a grammar for calculator
+require_relative 'calc_grammar'
+engine.use_grammar(CalcGrammar)
+
+
+lexer = CalcLexer.new(ARGV[0])
+result = engine.parse(lexer.tokens)
 
 unless result.success?
   # Stop if the parse failed...
@@ -28,10 +38,9 @@ unless result.success?
   exit(1)
 end
 
-tree_builder = CalcASTBuilder
 
 # Generate a parse tree from the parse result
-ptree = result.parse_tree(tree_builder)
+ptree = engine.to_ptree(result)
 
 root = ptree.root
 puts root.interpret # Output the expression result

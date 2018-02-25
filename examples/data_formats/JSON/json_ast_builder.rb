@@ -7,7 +7,7 @@ require_relative 'json_ast_nodes'
 # The Builder pattern creates a complex object
 # (say, a parse tree) from simpler objects (terminal and non-terminal
 # nodes) and using a step by step approach.
-class JSONASTBuilder < Rley::Parser::ParseTreeBuilder 
+class JSONASTBuilder < Rley::ParseRep::ParseTreeBuilder 
   Terminal2NodeClass = {
                          'false' => JSONBooleanNode,
                          'true' => JSONBooleanNode,
@@ -18,77 +18,18 @@ class JSONASTBuilder < Rley::Parser::ParseTreeBuilder
 
   protected
   
-  def return_first_child(_range, _tokens, theChildren)
-    return theChildren[0]
+  def terminal2node()
+    Terminal2NodeClass
   end
-
-  def return_second_child(_range, _tokens, theChildren)
-    return theChildren[1]
-  end      
-
-  # Overriding method.
-  # Create a parse tree object with given
-  # node as root node.
-  def create_tree(aRootNode)
-    return Rley::PTree::ParseTree.new(aRootNode)
+  
+  # Default class for representing terminal nodes.
+  # @return [Class]
+  def terminalnode_class()
+    JSONTerminalNode
   end
-
-  # Overriding method.
-  # Factory method for creating a node object for the given
-  # input token.
-  # @param terminal [Terminal] Terminal symbol associated with the token
-  # @param aTokenPosition [Integer] Position of token in the input stream
-  # @param aToken [Token] The input token
-  def new_leaf_node(_production, terminal, aTokenPosition, aToken)
-    klass = Terminal2NodeClass.fetch(terminal.name, JSONTerminalNode)
-    return klass.new(aToken, aTokenPosition)
-  end
-
-  # Method to override.
-  # Factory method for creating a parent node object.
-  # @param aProduction [Production] Production rule
-  # @param aRange [Range] Range of tokens matched by the rule
-  # @param theTokens [Array] The input tokens
-  # @param theChildren [Array] Children nodes (one per rhs symbol)
-  def new_parent_node(aProduction, aRange, theTokens, theChildren)
-    node = case aProduction.name
-      when 'JSON-text_0' # rule 'JSON-text' => 'value'
-        return_first_child(aRange, theTokens, theChildren)
-
-      when /value_\d/
-        return_first_child(aRange, theTokens, theChildren)
-
-      when 'object_0'
-        reduce_object_0(aProduction, aRange, theTokens, theChildren)
-
-      when 'object_1'
-        reduce_object_1(aRange, theTokens, theChildren)
-
-      when 'member-list_0'
-        reduce_member_list_0(aRange, theTokens, theChildren)
-
-      when 'member-list_1'
-        reduce_member_list_1(aProduction, aRange, theTokens, theChildren)
-
-      when 'member_0'
-        reduce_member_0(aProduction, aRange, theTokens, theChildren)
-
-      when 'array_0'
-        reduce_array_0(aProduction, aRange, theTokens, theChildren)
-
-      when 'array_1'
-        reduce_array_1(aRange, theTokens, theChildren)
-
-      when 'array-items_0'
-        reduce_array_items_0(aRange, theTokens, theChildren)
-
-      when 'array-items_1'
-        reduce_array_items_1(aProduction, aRange, theTokens, theChildren)
-      else
-        raise StandardError, "Don't know production #{aProduction.name}"
-    end
-
-    return node
+  
+  def reduce_JSON_text_0(_aProd, _range, _tokens, theChildren)
+    return_first_child(_range, _tokens, theChildren)
   end
   
   # rule 'object' => %w[begin-object member-list end-object]

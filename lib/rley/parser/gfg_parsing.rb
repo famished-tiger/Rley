@@ -1,8 +1,8 @@
 require_relative 'gfg_chart'
 require_relative 'error_reason'
 require_relative 'parse_entry_tracker'
-require_relative 'parse_forest_factory'
-require_relative 'parse_tree_factory'
+require_relative '../parse_rep/parse_forest_factory'
+require_relative '../parse_rep/parse_tree_factory'
 
 
 module Rley # This module is used as a namespace
@@ -177,7 +177,13 @@ module Rley # This module is used as a namespace
       # Factory method. Builds a ParseForest from the parse result.
       # @return [ParseForest]
       def parse_forest()
-        factory = ParseForestFactory.new(self)
+        msg = <<-END_MSG
+ Method Rley::Parser::GFGParsing.parse_forest is deprecated, call
+ Rley::Engine::to_pforest. It will be removed April 1st 
+ or version 0.6.1 (whichever is first)       
+END_MSG
+        # $stderr.puts(msg)      
+        factory = ParseRep::ParseForestFactory.new(self)
 
         return factory.create
       end
@@ -185,7 +191,13 @@ module Rley # This module is used as a namespace
       # Factory method. Builds a ParseTree from the parse result.
       # @return [ParseTree]
       def parse_tree(aBuilder = nil)
-        factory = ParseTreeFactory.new(self)
+        msg = <<-END_MSG
+Method Rley::Parser::GFGParsing.parse_tree is deprecated, call
+Rley::Engine::to_ptree. It will be removed April 1st 
+or version 0.6.1 (whichever is first)       
+END_MSG
+        $stderr.puts(msg)
+        factory = ParseRep::ParseTreeFactory.new(self)
 
         return factory.create(aBuilder)
       end      

@@ -8,7 +8,6 @@ class CalcLexer
   attr_reader(:scanner)
   attr_reader(:lineno)
   attr_reader(:line_start)
-  attr_reader(:name2symbol)
 
   @@lexeme2name = {
     '(' => 'LPAREN',
@@ -22,9 +21,8 @@ class CalcLexer
 
   class ScanError < StandardError; end
 
-  def initialize(source, aGrammar)
+  def initialize(source)
     @scanner = StringScanner.new(source)
-    @name2symbol = aGrammar.name2symbol
     @lineno = 1
   end
 
@@ -70,8 +68,7 @@ class CalcLexer
   end
   
   def build_token(aSymbolName, aLexeme)
-    token_type = name2symbol[aSymbolName]
-    return Rley::Lexical::Token.new(aLexeme, token_type)    
+    return Rley::Lexical::Token.new(aLexeme, aSymbolName)    
   end
 
   def skip_whitespaces()

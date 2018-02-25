@@ -14,9 +14,9 @@ module GrammarArrIntHelper
       add_terminals('[', ']', ',', 'integer')
       rule 'P' => 'arr'
       rule 'arr' => %w([ sequence ])
-      rule 'sequence' => ['list']
+      rule 'sequence' => 'list'
       rule 'sequence' => []
-      rule 'list' => %w[list , integer] # Right-recursive rule
+      rule 'list' => %w[list , integer] # Left-recursive rule
       rule 'list' => 'integer'
     end
     builder
