@@ -63,7 +63,7 @@ module Rley # This module is used as a namespace
       # production.
       # @return [String]
       def inspect()
-        result = "#<#{self.class.name}:#{self.object_id}"
+        result = "#<#{self.class.name}:#{object_id}"
         result << ' @vertices=['
         list = vertices.map { |v| "#<#{v.selfie}>" }
         result << list.join(', ')

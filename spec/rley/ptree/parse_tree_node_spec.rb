@@ -13,7 +13,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
 
       context 'Initialization:' do
         it 'should be created with a symbol and a range' do
-          args = [ sample_symbol, sample_range ]
+          args = [sample_symbol, sample_range]
           expect { ParseTreeNode.new(*args) }.not_to raise_error
         end
 

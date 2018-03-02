@@ -190,7 +190,7 @@ module Rley # This module is used as a namespace
       # A nullable nonterminal is a nonterminal that can match an empty string.
       def compute_nullable()
         non_terminals.each { |nterm| nterm.nullable = false }
-        nullable_sets = [ direct_nullable ]
+        nullable_sets = [direct_nullable]
 
         # Drop productions with one terminal in rhs or with a nullable lhs
         filtered_rules = rules.reject do |prod|

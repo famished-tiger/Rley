@@ -18,7 +18,9 @@ module Rley # Open this namespace to avoid module qualifier prefixes
 
       let(:token_seq) do
         literals = %w[I saw John with a dog]
-        literals.map { |lexeme| Lexical::Token.new(lexeme, double('fake-terminal')) }
+        literals.map do |lexeme| 
+          Lexical::Token.new(lexeme, double('fake-terminal')) 
+        end
       end
 
       subject { ParseTracer.new(1, output, token_seq) }

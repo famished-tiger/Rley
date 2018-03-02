@@ -19,7 +19,7 @@ module Rley # This module is used as a namespace
       # non-terminal symbol => { index(=origin) => start entry }
       :return_stack, # @return [Array<ParseEntry>] A stack of parse entries
       :backtrack_points,
-      :lazy_walk # If true and revisit end vertex then jump to start vertex      
+      :lazy_walk # If true and revisit end vertex then jump to start vertex
     )
 
 
@@ -27,29 +27,29 @@ module Rley # This module is used as a namespace
       :entry_set_index, # Sigma set index of current parse entry
       :return_stack, # A stack of parse entries
       :visitee, # The parse entry being visited
-      :antecedent_index,
+      :antecedent_index
     )
 
     # A factory that creates an Enumerator object
     # that itself walks through a GFGParsing object.
-    # The walker (= Enumerator) yields visit events.  
+    # The walker (= Enumerator) yields visit events.
     # This class implements an external iterator
     # for a given GFGParsing object.
-    # This is different from the internal iterators, usually implemented 
+    # This is different from the internal iterators, usually implemented
     # in Ruby with an :each method.
     # Allows to perform a backwards traversal over the relevant parse entries.
-    # backwards traversal means that the traversal starts from the 
+    # backwards traversal means that the traversal starts from the
     # accepting (final) parse entries and goes to the initial parse entry.
     # Relevant parse entries are parse entries that "count" in the parse
     # (i.e. they belong to a path that leads to the accepting parse entry)
     class ParseWalkerFactory
       # Build an Enumerator that will yield the parse entries as it
       # walks backwards on the parse graph.
-      # @param acceptingEntry [ParseEntry] the final ParseEntry of a 
+      # @param acceptingEntry [ParseEntry] the final ParseEntry of a
       #    successful parse.
       # @param maxIndex [Integer] the index of the last input token.
       # @param lazyWalk [Boolean] if true then take some shortcut in re-visits.
-      # @return [Enumerator] yields visit events when walking over the 
+      # @return [Enumerator] yields visit events when walking over the
       #   parse result
       def build_walker(acceptingEntry, maxIndex, lazyWalk = false)
         # Local context for the enumerator
@@ -93,12 +93,12 @@ module Rley # This module is used as a namespace
 
         return context
       end
-      
+
       # Initialize the non-terminal to start entry mapping
       def init_nterm2start()
         h = Hash.new do |hsh, defval|
           entry, index = defval
-          nonterm = entry.vertex.non_terminal          
+          nonterm = entry.vertex.non_terminal
           if hsh.include? nonterm
             pre = hsh[nonterm]
             pre[index] = entry
@@ -106,7 +106,7 @@ module Rley # This module is used as a namespace
             hsh[nonterm] = { index => entry }
           end
         end
-          
+
         return h
       end
 
@@ -134,7 +134,7 @@ module Rley # This module is used as a namespace
 
             when GFG::ItemVertex
               # Even for non-ambiguous parse, can be caused by
-              # left recursive rule e.g. (S => S A)            
+              # left recursive rule e.g. (S => S A)
               # Skip item entries while revisiting
               event = [:revisit, anEntry, index]
             else
@@ -207,19 +207,19 @@ module Rley # This module is used as a namespace
 
           when GFG::StartVertex
             new_entry = select_calling_entry(aContext)
-            
+
           when GFG::ItemVertex
             # Push current entry onto stack
             # puts "Special push on return stack #{aContext.curr_entry}"
-            aContext.return_stack << aContext.curr_entry        
+            aContext.return_stack << aContext.curr_entry
             # puts "Add special backtrack point stack #{aContext.curr_entry}"
             bp = add_backtrack_point(aContext)
-            new_entry = bp.visitee.antecedents[bp.antecedent_index]          
+            new_entry = bp.visitee.antecedents[bp.antecedent_index]
           else
             raise StandardError, 'Internal error'
         end
 
-        return [ new_entry ]
+        return [new_entry]
       end
 
       def add_backtrack_point(aContext)

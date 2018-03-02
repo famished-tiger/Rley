@@ -7,20 +7,21 @@ module Rley # This module is used as a namespace
     # Say, that in a particular language, the lexeme 'foo' is an occurrence
     # of the terminal symbol IDENTIFIER. Then the lexer will return a Token
     # object that states the fact that 'foo' is indeed an IDENTIFIER. Basically,
-    # a Token is a pair (lexeme, terminal): it asserts that a given lexeme 
+    # a Token is a pair (lexeme, terminal): it asserts that a given lexeme
     # is an instance of given terminal symbol.
     class Token
       # The sequence of character(s) from the input stream that is an occurrence
       # of the related terminal symbol.
       # @return [String] Input substring that is an instance of the terminal.
       attr_reader(:lexeme)
-      
+
       # @return [Syntax::Terminal] Terminal symbol corresponding to the lexeme.
       attr_reader(:terminal)
 
       # Constructor.
       # @param theLexeme [String] the lexeme (= piece of text from input)
-      # @param aTerminal [Syntax::Terminal] The terminal symbol corresponding to the lexeme.
+      # @param aTerminal [Syntax::Terminal]
+      #   The terminal symbol corresponding to the lexeme.
       def initialize(theLexeme, aTerminal)
         raise 'Internal error: nil terminal symbol detected' if aTerminal.nil?
         @lexeme = theLexeme

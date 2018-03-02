@@ -57,6 +57,11 @@ module Rley # Open this namespace to avoid module qualifier prefixes
       end # context
 
       context 'Provided services:' do
+        def new_parse_state(aProd, aRank, aVal)
+          item = Base::DottedItem.new(aProd, aRank)
+          ParseState.new(item, aVal)
+        end
+        
         it 'should compare with itself' do
           synonym = subject # Fool Rubocop
           expect(subject == synonym).to eq(true)
@@ -97,12 +102,12 @@ module Rley # Open this namespace to avoid module qualifier prefixes
         
         it 'should know whether another instance follows this one' do
           expect(subject.precedes?(subject)).to eq(false)
-          state1 = ParseState.new(Base::DottedItem.new(sample_prod, 1), origin_val)
+          state1 = new_parse_state(sample_prod, 1, origin_val)
           expect(state1.precedes?(subject)).to eq(true)
-          state0 = ParseState.new(Base::DottedItem.new(sample_prod, 0), origin_val)
+          state0 = new_parse_state(sample_prod, 0, origin_val)
           expect(state0.precedes?(state1)).to eq(true)
           expect(state0.precedes?(subject)).to eq(false)
-          state3 = ParseState.new(Base::DottedItem.new(sample_prod, 3), origin_val)
+          state3 = new_parse_state(sample_prod, 3, origin_val)
           expect(state3.precedes?(state0)).to eq(false)
         end
         

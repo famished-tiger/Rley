@@ -100,7 +100,7 @@ module Rley # This module is used as a namespace
             non_terminal = entry2nonterm(anEntry)
             # Create raw node and push onto stack
             push_raw_node(range, non_terminal)
-          #when :revisit
+          # when :revisit
           #  # TODO: design specification
           else
             raise NotImplementedError, "Cannot handle event #{anEvent}"
@@ -135,7 +135,8 @@ module Rley # This module is used as a namespace
               process_middle_entry(anEntry, anIndex)
             end
           else
-            $stderr.puts "Internal Errore '#{anEvent}', entry: #{anEntry}, index: #{anIndex}"
+            msg_prefix = "Internal Error '#{anEvent}', "
+            $stderr.puts msg_prefix + "entry: #{anEntry}, index: #{anIndex}"
             raise NotImplementedError
         end
       end

@@ -42,7 +42,7 @@ class CalcNumberNode < CalcTerminalNode
   
   # Overriding the unary minus operator
   def -@()
-    self.value = - self.value
+    self.value = - value
     return self
   end
 end
@@ -59,7 +59,6 @@ class CalcConstantNode < CalcNumberNode
 end
 
 class CalcReservedNode < CalcTerminalNode
-
 end
 
 class CalcCompositeNode
@@ -84,7 +83,7 @@ end # class
 
 class CalcUnaryOpNode < CalcCompositeNode
   def initialize(aSymbol, aPosition)
-    super(aSymbol,aPosition)
+    super(aSymbol, aPosition)
   end
 
   alias members children
@@ -92,7 +91,7 @@ end # class
 
 class CalcNegateNode < CalcUnaryOpNode  
   def interpret()
-    return -(children[0].interpret)
+    return -children[0].interpret
   end
 end # class
 
@@ -108,7 +107,7 @@ class CalcUnaryFunction < CalcCompositeNode
   
   def interpret()
     argument = children[0].interpret
-    internal_name = @@name_mapping[@func_name] # @func_name == 'ln' ? 'log' : @func_name
+    internal_name = @@name_mapping[@func_name]
     return Math.send(internal_name.to_sym, argument)
   end  
 end
@@ -177,7 +176,7 @@ class PowerNode < CalcBinaryOpNode
   # TODO
   def interpret()
     operands = retrieve_operands
-    exponentiation = operands[0] ** operands[1]
+    exponentiation = operands[0]**operands[1]
     return exponentiation
   end
 end # class

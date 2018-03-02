@@ -105,7 +105,7 @@ module SRL
         # Delimiters, separators => single character token
         token = build_token(@@lexeme2name[curr_ch], scanner.getch)
       elsif (lexeme = scanner.scan(/[0-9]{2,}/))
-        token = build_token('INTEGER', lexeme) # An integer has two or more digits
+        token = build_token('INTEGER', lexeme) # An integer has 2..* digits
       elsif (lexeme = scanner.scan(/[0-9]/))
         token = build_token('DIGIT_LIT', lexeme)
       elsif (lexeme = scanner.scan(/[a-zA-Z]{2,}/))
@@ -132,7 +132,7 @@ module SRL
     def build_token(aSymbolName, aLexeme)
       begin
         token = Rley::Lexical::Token.new(aLexeme, aSymbolName)
-      rescue Exception => ex
+      rescue StandardError
         puts "Failing with '#{aSymbolName}' and '#{aLexeme}'"
         raise ex
       end

@@ -19,9 +19,9 @@ module Rley # Open this namespace to avoid module qualifier prefixes
 
       it 'could be created with block argument' do
         expect { Engine.new do |config|
-            config.parse_repr = :raw
-          end
-        }.not_to raise_error
+                   config.parse_repr = :raw
+                 end
+               }.not_to raise_error
       end
 
       it "shouldn't have a link to a grammar yet" do
@@ -87,8 +87,6 @@ module Rley # Open this namespace to avoid module qualifier prefixes
       end
     end # context
 
-
-
     context 'Parse tree manipulation:' do
       subject do
         instance = Engine.new
@@ -124,4 +122,3 @@ module Rley # Open this namespace to avoid module qualifier prefixes
     end # context
   end # describe
 end # module
-

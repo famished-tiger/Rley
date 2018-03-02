@@ -85,7 +85,7 @@ module Rley # This module is used as a namespace
       # Factory method for creating a node object for the given
       # input token.
       # @param aTerminal [Syntax::Production] Relevant production rule
-      # @param aTerminal [Syntax::Terminal] Terminal symbol associated with the token
+      # @param aTerminal [Syntax::Terminal] Terminal associated with the token
       # @param aTokenPosition [Integer] Position of token in the input stream
       # @param aToken [Lexical::Token] The input token
       def new_leaf_node(aProduction, aTerminal, aTokenPosition, aToken)
@@ -107,7 +107,7 @@ module Rley # This module is used as a namespace
       # @param theChildren [Array] Children nodes (one per rhs symbol)
       def new_parent_node(aProduction, aRange, theTokens, theChildren)
         mth_name = method_name(aProduction.name)
-        if self.respond_to?(mth_name, true)
+        if respond_to?(mth_name, true)
           node = send(mth_name, aProduction, aRange, theTokens, theChildren)
         else
           # Default action...
@@ -117,7 +117,8 @@ module Rley # This module is used as a namespace
                    when 1
                      return_first_child(aRange, theTokens, theChildren)
                    else
-                    raise StandardError, "Don't know production '#{aProduction.name}'"
+                    msg = "Don't know production '#{aProduction.name}'"
+                    raise StandardError, msg
                  end            
         end
         return node

@@ -4,13 +4,13 @@ require_relative 'vertex'
 
 module Rley # This module is used as a namespace
   module GFG # This module is used as a namespace
-    # Specialization of Vertex class. Represents a 
+    # Specialization of Vertex class. Represents a
     # vertex in a grammar flow graph associated to a given dotted item.
     # Responsibilities (in addition to inherited ones):
     # - Know its related non-terminal symbol
     class ItemVertex < Vertex
       # Link to the dotted item object
-      # @return [DottedItem] The corresponding dotted item      
+      # @return [DottedItem] The corresponding dotted item
       attr_reader :dotted_item
 
       # Optional link to a "shortcut" edge.
@@ -65,16 +65,17 @@ module Rley # This module is used as a namespace
       end
 
       # Return the symbol after the dot.
-      # @return [Syntax::GrmSymbol, NilClass] Next grammar symbol otherwise nil.      
+      # @return [Syntax::GrmSymbol, NilClass] Next grammar symbol otherwise nil.
       def next_symbol()
         return dotted_item.next_symbol
       end
 
       # Return the non-terminal symbol at the left-hand side of the production
-      # @return [Syntax::GrmSymbol] The non-terminal symbol at left side of production.
+      # @return [Syntax::GrmSymbol]
+      #   The non-terminal symbol at left side of production.
       def lhs()
         return dotted_item.lhs
-      end 
+      end
     end # class
   end # module
 end # module

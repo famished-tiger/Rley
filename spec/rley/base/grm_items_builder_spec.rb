@@ -23,7 +23,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           # Next line calls method from mixin module under test
           items = build_dotted_items(grammar_abc)
           expect(items.size).to eq(8)
-          expectations = [ 
+          expectations = [
             'S => . A',
             'S => A .',
             'A => . a A c',

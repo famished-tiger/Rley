@@ -1,6 +1,6 @@
 # File: anchor.rb
 
-require_relative "atomic_expression"	# Access the superclass
+require_relative 'atomic_expression' # Access the superclass
 
 module Regex # This module is used as a namespace
   # An anchor is a zero-width assertion based on the current position.
@@ -8,15 +8,15 @@ module Regex # This module is used as a namespace
     # A Hash for converting a lexeme to a symbolic value
     AnchorToSymbol = {
       # Lexeme => Symbol value
-      '^' => :soLine,	# Start of line
-      '$' => :eoLine,	# End of line
+      '^' => :soLine, # Start of line
+      '$' => :eoLine, # End of line
       '\A' => :soSubject,
       '\b' => :wordBoundary,
       '\B' => :nonAtWordBoundary,
       '\G' => :firstMatch,
       '\z' => :eoSubject,
       '\Z' => :eoSubjectOrBeforeNLAtEnd
-    }
+    }.freeze
 
     # A symbolic value that identifies the type of assertion to perform
     attr_reader(:kind)
@@ -27,12 +27,10 @@ module Regex # This module is used as a namespace
       @kind = valid_kind(aKind)
     end
 
-    public
-
     # Conversion method re-definition.
     # Purpose: Return the String representation of the expression.
     def to_str()
-      return AnchorToSymbol.rassoc(kind).first()
+      return AnchorToSymbol.rassoc(kind).first
     end
 
     private
@@ -41,7 +39,6 @@ module Regex # This module is used as a namespace
     def valid_kind(aKind)
       return AnchorToSymbol[aKind]
     end
-
   end # class
 end # module
 

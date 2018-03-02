@@ -32,7 +32,7 @@ module SRL
     rule('pattern' => 'quantifiable').as 'basic_pattern'
     rule('separator' => 'COMMA').as 'comma_separator'
     rule('separator' => []).as 'void_separator'
-    rule('flags' => %[flags separator single_flag]).as 'flag_sequence'
+    rule('flags' => %w[flags separator single_flag]).as 'flag_sequence'
     rule('single_flag' => %w[CASE INSENSITIVE]).as 'case_insensitive'
     rule('single_flag' => %w[MULTI LINE]).as 'multi_line'
     rule('single_flag' => %w[ALL LAZY]).as 'all_lazy'

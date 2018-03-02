@@ -60,7 +60,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
         alternate_prods(term, alternatives)
       end
       let(:expression_prods) do
-        alternatives = [ [term], [expression, add_op, term]]
+        alternatives = [[term], [expression, add_op, term]]
         alternate_prods(expression, alternatives)
       end
 

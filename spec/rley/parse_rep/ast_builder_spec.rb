@@ -45,8 +45,8 @@ module Rley # This module is used as a namespace
         Terminal2NodeClass
       end
 
-      def reduce_P_0(_aProd, _range, _tokens, theChildren)
-        return_first_child(_range, _tokens, theChildren)
+      def reduce_P_0(_aProd, aRange, theTokens, theChildren)
+        return_first_child(aRange, theTokens, theChildren)
       end
 
       # rule 'arr' => %w([ sequence ])
@@ -55,8 +55,8 @@ module Rley # This module is used as a namespace
       end
 
       # rule 'sequence' => ['list']
-      def reduce_sequence_0(_aProd, _range, _tokens, theChildren)
-        return_first_child(_range, _tokens, theChildren)
+      def reduce_sequence_0(_aProd, aRange, theTokens, theChildren)
+        return_first_child(aRange, theTokens, theChildren)
       end
 
       # rule 'sequence' => []
@@ -187,15 +187,15 @@ module Rley # Open this namespace to avoid module qualifier prefixes
         # Event: visit P => . arr | 0 0
         # Event: visit .P | 0 0
 
-        # it 'should accept a first visit event' do
-          # stack = get_stack(subject)
+        it 'should accept a first visit event' do
+          stack = get_stack(subject)
 
-          # next_event('visit P. | 0 7')
-          # expect(stack.size).to eq(1)
-          # # stack: [P[0, 7]]
-          # expect(stack.last.range).to eq(create_range(0, 7))
-          # expect(stack.last.children).to be_nil
-        # end
+          next_event('visit P. | 0 7')
+          expect(stack.size).to eq(1)
+          # stack: [P[0, 7]]
+          expect(stack.last.range).to eq(create_range(0, 7))
+          expect(stack.last.children).to be_nil
+        end
 
         it 'should build a tree for an empty array' do
           stack = get_stack(subject)

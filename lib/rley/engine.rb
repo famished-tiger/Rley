@@ -22,11 +22,9 @@ module Rley # This module is used as a namespace
     attr_reader :grammar
 
     # Constructor.
-    # @param &aBlock [Proc, Lambda] Code block for setting the configuration.
-    def initialize(&aConfigBlock)
+    def initialize()
       @configuration = EngineConfig.new
-
-       yield configuration if block_given?
+      yield configuration if block_given?
     end
 
     # Factory method.
@@ -48,12 +46,11 @@ module Rley # This module is used as a namespace
     def parse(aTokenizer)
       tokens = []
       aTokenizer.each do |a_token|
-        if a_token
-          term_name = a_token.terminal
-          term_symb = grammar.name2symbol[term_name]
-          a_token.instance_variable_set(:@terminal, term_symb)
-          tokens << a_token
-        end
+        next unless a_token
+        term_name = a_token.terminal
+        term_symb = grammar.name2symbol[term_name]
+        a_token.instance_variable_set(:@terminal, term_symb)
+        tokens << a_token
       end
       parser = build_parser(grammar)
       return parser.parse(tokens)
@@ -89,14 +86,14 @@ module Rley # This module is used as a namespace
     # Convert raw parse result into a parse forest representation
     # @param aRawParse [Parser::GFGParsing]
     # def to_pforest(aRawParse)
-      # factory = ParseRep::ParseForestFactory.new(aRawParse)
-      # if configuration.repr_builder == :default
-        # result = factory.create(nil)
-      # else
-        # result = factory.create(configuration.repr_builder)
-      # end
+    #   factory = ParseRep::ParseForestFactory.new(aRawParse)
+    #   if configuration.repr_builder == :default
+    #     result = factory.create(nil)
+    #   else
+    #     result = factory.create(configuration.repr_builder)
+    #   end
 
-      # return result
+    #   return result
     # end
 
     # Build a visitor for the given parse tree
@@ -109,7 +106,7 @@ module Rley # This module is used as a namespace
     # @param aPTree[SPPF::ParseForest]
     # @return [ParseForestVisitor]
     # def pforest_visitor(aPForest)
-      # return Rley::ParseForestVisitor.new(aPForest)
+    #   return Rley::ParseForestVisitor.new(aPForest)
     # end
 
     protected
@@ -119,4 +116,3 @@ module Rley # This module is used as a namespace
     end
   end # class
 end # module
-

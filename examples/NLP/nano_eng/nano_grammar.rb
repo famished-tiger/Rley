@@ -43,7 +43,7 @@ builder = Rley::Syntax::GrammarBuilder.new do
   rule 'Ord' => 'Ordinal_number'
   rule 'Ord' =>  []  
   rule 'Nominal' => 'Noun'
-  rule 'Nominal' => %[Nominal Noun]
+  rule 'Nominal' => %w[Nominal Noun]
   rule 'Nominal' => %w[Nominal GerundVP]
   rule 'Nominal' => %w[Nominal RelClause]
   rule 'PP' => %w[Preposition NP]  
@@ -52,7 +52,6 @@ builder = Rley::Syntax::GrammarBuilder.new do
   rule 'GerundVP' => %w[GerundV NP PP]
   rule 'GerundVP' => %w[GerundV PP]
   rule 'RelClause' => %w[Relative_pronoun VP]
-
 end
 
 # And now build the grammar...

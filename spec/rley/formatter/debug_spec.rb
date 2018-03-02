@@ -13,9 +13,8 @@ require_relative '../../../lib/rley/formatter/debug'
 module Rley # Re-open the module to get rid of qualified names
   module Formatter
     describe Debug do
-
-    # Factory method. Build a production with the given sequence    
-    # of symbols as its rhs.
+      # Factory method. Build a production with the given sequence    
+      # of symbols as its rhs.
       let(:grammar_abc) do
         sandbox = Object.new
         sandbox.extend(GrammarABCHelper)

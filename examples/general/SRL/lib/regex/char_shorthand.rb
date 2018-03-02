@@ -1,9 +1,8 @@
 # File: char_shorthand.rb
 
-require_relative "atomic_expression"	# Access the superclass
+require_relative 'atomic_expression' # Access the superclass
 
 module Regex # This module is used as a namespace
-
   # A pre-defined character class is in essence a name for a built-in, standard character class.
   class CharShorthand < AtomicExpression
     # A constant Hash that defines all the predefined character shorthands.
@@ -18,7 +17,7 @@ module Regex # This module is used as a namespace
       'S' => '[^ \t\r\n\f]',
       'w' => '[0-9a-zA-Z_]',
       'W' => '[^0-9a-zA-Z_]'
-    }
+    }.freeze
 
     # An one-letter abbreviation
     attr_reader(:shortname)
@@ -29,23 +28,23 @@ module Regex # This module is used as a namespace
     end
 
     protected
-  
+
     # Conversion method re-definition.
     # Purpose: Return the String representation of the expression.
     def text_repr()
       return "\\#{shortname}"
     end
 
-  private
+    private
+
     # Return the validated short name.
     def valid_shortname(aShortname)
-      raise StandardError, "Unknown predefined character class \\#{aShortname}" unless StandardCClasses.include? aShortname
+      msg = "Unknown predefined character class \\#{aShortname}"
+      raise StandardError, msg unless StandardCClasses.include? aShortname
 
       return aShortname
     end
-
   end # class
-
 end # module
 
 # End of file

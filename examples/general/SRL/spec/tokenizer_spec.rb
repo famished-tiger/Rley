@@ -12,11 +12,9 @@ module SRL
       end
     end
   
-  
     subject { Tokenizer.new('') }    
     
     context 'Initialization:' do
-
       it 'should be initialized with a text to tokenize and a grammar' do
         expect { Tokenizer.new('anything') }.not_to raise_error
       end
@@ -66,8 +64,8 @@ module SRL
         input = 'literally "hello"'
         subject.scanner.string = input
         expectations = [
-          ['LITERALLY', 'literally'],
-          ['STRING_LIT', 'hello']
+          %w[LITERALLY literally],
+          %w[STRING_LIT hello]
         ]
         match_expectations(subject, expectations)
       end    
@@ -78,10 +76,10 @@ module SRL
         input = 'letter a to f'
         subject.scanner.string = input
         expectations = [
-          ['LETTER', 'letter'],
-          ['LETTER_LIT', 'a'],
-          ['TO', 'to'],
-          ['LETTER_LIT', 'f']
+          %w[LETTER letter],
+          %w[LETTER_LIT a],
+          %w[TO to],
+          %w[LETTER_LIT f]
         ]
         match_expectations(subject, expectations)
       end    
@@ -92,9 +90,9 @@ module SRL
         input = 'exactly 4 Times'
         subject.scanner.string = input
         expectations = [
-          ['EXACTLY', 'exactly'],
-          ['DIGIT_LIT', '4'],
-          ['TIMES', 'Times']
+          %w[EXACTLY exactly],
+          %w[DIGIT_LIT 4],
+          %w[TIMES Times]
         ]
         match_expectations(subject, expectations)
       end
@@ -103,11 +101,11 @@ module SRL
         input = 'Between 2 AND 4 times'
         subject.scanner.string = input
         expectations = [
-          ['BETWEEN', 'Between'],
-          ['DIGIT_LIT', '2'],
-          ['AND', 'AND'],
-          ['DIGIT_LIT', '4'],
-          ['TIMES', 'times']
+          %w[BETWEEN Between],
+          %w[DIGIT_LIT 2],
+          %w[AND AND],
+          %w[DIGIT_LIT 4],
+          %w[TIMES times]
         ]
         match_expectations(subject, expectations)
       end
@@ -116,9 +114,9 @@ module SRL
         input = 'Once or MORE'
         subject.scanner.string = input
         expectations = [
-          ['ONCE', 'Once'],
-          ['OR', 'or'],
-          ['MORE', 'MORE']
+          %w[ONCE Once],
+          %w[OR or],
+          %w[MORE MORE]
         ]
         match_expectations(subject, expectations)
       end
@@ -127,9 +125,9 @@ module SRL
         input = 'never or more'
         subject.scanner.string = input
         expectations = [
-          ['NEVER', 'never'],
-          ['OR', 'or'],
-          ['MORE', 'more']
+          %w[NEVER never],
+          %w[OR or],
+          %w[MORE more]
         ]
         match_expectations(subject, expectations)
       end 
@@ -138,10 +136,10 @@ module SRL
         input = 'at least 10 times'
         subject.scanner.string = input
         expectations = [
-          ['AT', 'at'],
-          ['LEAST', 'least'],
-          ['INTEGER', '10'],
-          ['TIMES', 'times']
+          %w[AT at],
+          %w[LEAST least],
+          %w[INTEGER 10],
+          %w[TIMES times]
         ]
         match_expectations(subject, expectations)
       end      

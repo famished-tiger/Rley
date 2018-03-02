@@ -16,7 +16,7 @@ module Rley # Module used as a namespace
 
       # Returns the result of invoking reason.to_s.
       def message()
-        return self.to_s
+        return to_s
       end
 
       # Return this reason's class name and message

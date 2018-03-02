@@ -26,13 +26,13 @@ class CalcASTBuilder < Rley::ParseRep::ASTBaseBuilder
   end
   
   # rule 'expression' => 'simple_expression'
-  def reduce_expression_0(_aProd, _range, _tokens, theChildren)
-    return_first_child(_range, _tokens, theChildren)
+  def reduce_expression_0(_production, aRange, theTokens, theChildren)
+    return_first_child(aRange, theTokens, theChildren)
   end
 
   # rule 'simple_expression' => 'term'
-  def reduce_simple_expression_0(_aProd, _range, _tokens, theChildren)
-    return_first_child(_range, _tokens, theChildren)
+  def reduce_simple_expression_0(_production, aRange, theTokens, theChildren)
+    return_first_child(aRange, theTokens, theChildren)
   end          
 
   # rule 'simple_expression' => %w[simple_expression add_operator term]
@@ -41,8 +41,8 @@ class CalcASTBuilder < Rley::ParseRep::ASTBaseBuilder
   end
   
   # rule 'term' => 'factor' 
-  def reduce_term_0(_aProd, _range, _tokens, theChildren)
-    return_first_child(_range, _tokens, theChildren)
+  def reduce_term_0(_production, aRange, theTokens, theChildren)
+    return_first_child(aRange, theTokens, theChildren)
   end  
 
   # rule 'term' => %w[term mul_operator factor]
@@ -51,13 +51,13 @@ class CalcASTBuilder < Rley::ParseRep::ASTBaseBuilder
   end
   
   # rule 'factor' => 'NUMBER'
-  def reduce_factor_0(_aProd, _range, _tokens, theChildren)
-    return_first_child(_range, _tokens, theChildren)
+  def reduce_factor_0(_aProd, aRange, theTokens, theChildren)
+    return_first_child(aRange, theTokens, theChildren)
   end
   
   # # rule 'factor' => %w[LPAREN expression RPAREN]
-  def reduce_factor_1(_aProd, _range, _tokens, theChildren)
-    return_second_child(_range, _tokens, theChildren)
+  def reduce_factor_1(_aProd, aRange, theTokens, theChildren)
+    return_second_child(aRange, theTokens, theChildren)
   end   
 
   # rule 'add_operator' => 'PLUS'

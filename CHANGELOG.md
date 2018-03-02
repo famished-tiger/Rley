@@ -1,3 +1,6 @@
+### 0.6.01 / 2018-02-25
+* [FIX] Code re-styling to remove most style offenses found by Rubocop 0.52.1
+
 ### 0.6.00 / 2018-02-25
 Version bump. Highlights: new programming interface through facade object, improved AST generation. 
 * [NEW] Class `Rley::Engine`: Implementation of Facade design pattern to reach more convenient interface.

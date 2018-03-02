@@ -45,7 +45,7 @@ def pkg_files(aPackage)
     'spec/**/*.rb'
   ]
   aPackage.files = file_list
-  aPackage.test_files = Dir[ 'spec/**/*_spec.rb' ]
+  aPackage.test_files = Dir['spec/**/*_spec.rb']
   aPackage.require_path = 'lib'
 end
 

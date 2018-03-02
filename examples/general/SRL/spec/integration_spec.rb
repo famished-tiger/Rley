@@ -12,7 +12,7 @@ describe 'Integration tests:' do
   def regexp_repr(aResult)
     # Generate an abstract syntax parse tree from the parse result
     tree = @engine.convert(aResult)
-    regexp = tree.root
+    tree.root
   end
   
   before(:each) do
@@ -196,7 +196,7 @@ describe 'Integration tests:' do
   end # context
 
   context 'Parsing concatenation:' do
-    it "should reject dangling comma" do
+    it 'should reject dangling comma' do
       source = 'literally "a",'
       result = parse(source)
       expect(result).not_to be_success
@@ -212,7 +212,7 @@ describe 'Integration tests:' do
       expect(regexp.to_str).to eq('(?:sample|(?:\d+))')
     end
 
-    it "should parse a long sequence of patterns" do
+    it 'should parse a long sequence of patterns' do
       source = <<-ENDS
       any of (any character, one of "._%-+") once or more,
       literally "@",
@@ -225,8 +225,9 @@ ENDS
       expect(result).to be_success
 
       regexp = regexp_repr(result)
-      # SRL expect: (?:\w|[\._%\-\+])+(?:@)(?:[0-9]|[a-z]|[\.\-])+(?:\.)[a-z]{2,}
-      expect(regexp.to_str).to eq('(?:\w|[._%\-+])+@(?:\d|[a-z]|[.\-])+\.[a-z]{2,}')
+      # SRL: (?:\w|[\._%\-\+])+(?:@)(?:[0-9]|[a-z]|[\.\-])+(?:\.)[a-z]{2,}
+      expectation = '(?:\w|[._%\-+])+@(?:\d|[a-z]|[.\-])+\.[a-z]{2,}'
+      expect(regexp.to_str).to eq(expectation)
     end
   end # context
 
@@ -345,7 +346,8 @@ ENDS
     end  
   
     it 'should parse complex anonymous capturing group' do
-      result = parse('capture(any of (literally "sample", (digit once or more)))')
+      source = 'capture(any of (literally "sample", (digit once or more)))'
+      result = parse(source)
       expect(result).to be_success
 
       regexp = regexp_repr(result)
@@ -361,7 +363,11 @@ ENDS
     end
 
     it 'should parse complex named capturing group' do
-      result = parse('capture(any of (literally "sample", (digit once or more))) as "foo"')
+      source = <<-END_SRL
+capture(any of (literally "sample", (digit once or more)))
+  as "foo"      
+END_SRL
+      result = parse(source)
       expect(result).to be_success
 
       regexp = regexp_repr(result)
@@ -382,7 +388,8 @@ ENDS
     end   
 
     it 'should parse complex named until capturing group' do
-      result = parse('capture (anything once or more) as "foo" until literally "m"')
+      source = 'capture (anything once or more) as "foo" until literally "m"'
+      result = parse(source)
       expect(result).to be_success
 
       regexp = regexp_repr(result)
@@ -423,7 +430,7 @@ ENDS
       expect(regexp.to_str).to eq('^match$')
     end
 
-    it "should accept anchor with a sequence of patterns" do
+    it 'should accept anchor with a sequence of patterns' do
       source = <<-ENDS
       begin with any of (digit, letter, one of ".-") once or more,
       literally ".",
@@ -434,10 +441,8 @@ ENDS
       expect(result).to be_success
 
       regexp = regexp_repr(result)
-      # SRL expect: (?:\w|[\._%\-\+])+(?:@)(?:[0-9]|[a-z]|[\.\-])+(?:\.)[a-z]{2,}
+      # SRL: (?:\w|[\._%\-\+])+(?:@)(?:[0-9]|[a-z]|[\.\-])+(?:\.)[a-z]{2,}
       expect(regexp.to_str).to eq('^(?:\d|[a-z]|[.\-])+\.[a-z]{2,}$')
     end
   end # context
 end # describe
-
-

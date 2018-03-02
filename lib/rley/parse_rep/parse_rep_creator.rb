@@ -26,7 +26,7 @@ module Rley # This module is used as a namespace
             # puts "EVENT #{event[0]} #{event[1]}"
             a_builder.receive_event(*event)
           end
-        rescue StopIteration
+        rescue StopIteration => exc
           # Do nothing
         end
 

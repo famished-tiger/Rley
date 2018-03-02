@@ -76,7 +76,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           subject.push_entry(entry2)
           expect(subject.entries4term(t_b)).to eq([entry1, entry2])
         end
-        
+
         it 'should list the expected terminals' do
           subject.push_entry(entry1)
           subject.push_entry(entry2)
@@ -90,20 +90,20 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           subject.push_entry(entry3)
           expect(subject.entries4n_term(nt_rep_c)).to eq([entry3])
         end
-        
+
         it 'should provide human-readable representation of itself' do
           # Case 1: empty set
           pattern_empty = /^#<Rley::Parser::ParseEntrySet:\d+ @entries=\[\]>$/
           expect(subject.inspect).to match(pattern_empty)
-          
+
           # Case 2: non-empty set
           subject.push_entry(entry1)
           prefix = /^#<Rley::Parser::ParseEntrySet:\d+ @entries=\[#<Rley/
           expect(subject.inspect).to match(prefix)
-          pattern_entry = /ParseEntry:\d+ @vertex=<Rley::GFG::ItemVertex:\d+/          
+          pattern_entry = /ParseEntry:\d+ @vertex=<Rley::GFG::ItemVertex:\d+/
           expect(subject.inspect).to match(pattern_entry)
           suffix = /=> a \. b b Repetition> @origin=2 @antecedents=\[\]>\]>$/
-          expect(subject.inspect).to match(suffix)          
+          expect(subject.inspect).to match(suffix)
         end
 
 =begin

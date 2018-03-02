@@ -19,7 +19,7 @@ module Rley # This module is used as a namespace
       def initialize(anIO)
         super(anIO)
         @indentation = 0
-        @sibling_flags = [ false ]
+        @sibling_flags = [false]
       end
 
       # Method called by a ParseTreeVisitor to which the formatter subscribed.

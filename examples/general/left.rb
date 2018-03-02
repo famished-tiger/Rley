@@ -8,8 +8,8 @@ builder = Rley::Syntax::GrammarBuilder.new do
   add_terminals('DOT')
   
   # Grammar with left recursive rule.
-	rule 'l_dots' => []
-	rule 'l_dots' => %w[l_dots DOT]  
+  rule 'l_dots' => []
+  rule 'l_dots' => %w[l_dots DOT]  
 end
 
 # And now, let's build the grammar...
@@ -17,12 +17,12 @@ grammar = builder.grammar
 
 # Highly simplified tokenizer implementation.
 def tokenizer(aText, aGrammar)
-	tokens = aText.scan(/\./).map do |dot|
-	  terminal = aGrammar.name2symbol['DOT']
-	  Rley::Lexical::Token.new(dot, terminal)
-	end
+  tokens = aText.scan(/\./).map do |dot|
+    terminal = aGrammar.name2symbol['DOT']
+    Rley::Lexical::Token.new(dot, terminal)
+  end
 
-	return tokens
+  return tokens
 end
 
 input_to_parse = '.' * 500 # Input = 500 consecutive dots

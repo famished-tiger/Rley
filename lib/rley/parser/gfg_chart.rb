@@ -13,7 +13,7 @@ module Rley # This module is used as a namespace
       attr_reader(:sets)
 
       # @param tokenCount [Integer] The number of lexemes in the input to parse.
-      # @param aGFGraph [GFG::GrmFlowGraph] The GFG for the grammar in use.       
+      # @param aGFGraph [GFG::GrmFlowGraph] The GFG for the grammar in use.
       def initialize(tokenCount, aGFGraph)
         @sets = Array.new(tokenCount + 1) { |_| ParseEntrySet.new }
         push_entry(aGFGraph.start_vertex, 0, 0, :start_rule)
@@ -74,11 +74,11 @@ module Rley # This module is used as a namespace
         # Retrieve all the end entries (i.e. of the form
         last_entries = sets[last_index].entries.select(&:end_entry?)
         # last_entries.each_with_index do |entry, index|
-          # if entry.nil?
-            # puts "Nil entry at index #{index}"
-          # else
-            # puts entry
-          # end
+        #  if entry.nil?
+        #    puts "Nil entry at index #{index}"
+        #  else
+        #    puts entry
+        #  end
         # end
 
         # ... now find the end vertex for start symbol and with origin at zero.

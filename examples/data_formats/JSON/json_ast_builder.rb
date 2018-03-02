@@ -9,12 +9,12 @@ require_relative 'json_ast_nodes'
 # nodes) and using a step by step approach.
 class JSONASTBuilder < Rley::ParseRep::ParseTreeBuilder 
   Terminal2NodeClass = {
-                         'false' => JSONBooleanNode,
-                         'true' => JSONBooleanNode,
-                         'null' => JSONNullNode,
-                         'string' => JSONStringNode,
-                         'number' => JSONNumberNode
-                       }.freeze
+    'false' => JSONBooleanNode,
+    'true' => JSONBooleanNode,
+    'null' => JSONNullNode,
+    'string' => JSONStringNode,
+    'number' => JSONNumberNode
+  }.freeze
 
   protected
   
@@ -28,8 +28,8 @@ class JSONASTBuilder < Rley::ParseRep::ParseTreeBuilder
     JSONTerminalNode
   end
   
-  def reduce_JSON_text_0(_aProd, _range, _tokens, theChildren)
-    return_first_child(_range, _tokens, theChildren)
+  def reduce_JSON_text_0(_aProd, aRange, theTokens, theChildren)
+    return_first_child(aRange, theTokens, theChildren)
   end
   
   # rule 'object' => %w[begin-object member-list end-object]

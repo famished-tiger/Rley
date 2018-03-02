@@ -163,7 +163,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           event_expectations(event17, expectations)
 
           event18 = walker.next
-          expectations = [:revisit, 'T. | 1', 4]  # Re-visiting end vertex
+          expectations = [:revisit, 'T. | 1', 4] # Re-visiting end vertex
           event_expectations(event18, expectations)
 
           # No lazy walk: don't jump directly after corresponding start vertex

@@ -8,7 +8,6 @@ require_relative 'calc_ast_nodes'
 # (say, a parse tree) from simpler objects (terminal and non-terminal
 # nodes) and using a step by step approach.
 class CalcASTBuilder < Rley::ParseRep::ASTBaseBuilder
-
   Terminal2NodeClass = {
     # Lexical ambiguity: minus sign represents two very concepts:
     # The unary negation operator on one hand, the binary substraction operator
@@ -28,7 +27,6 @@ class CalcASTBuilder < Rley::ParseRep::ASTBaseBuilder
     Terminal2NodeClass
   end
 
-
   def reduce_binary_operator(theChildren)
     operator_node = theChildren[1]
     operator_node.children << theChildren[0]
@@ -47,7 +45,7 @@ class CalcASTBuilder < Rley::ParseRep::ASTBaseBuilder
   end
 
   # rule 'factor' => %w[simple_factor POWER simple_factor]]
-  def reduce_factor_1(aProduction, aRange, theTokens, theChildren)
+  def reduce_factor_1(_production, aRange, _tokens, theChildren)
     result = PowerNode.new(theChildren[1].symbol, aRange)
     result.children << theChildren[0]
     result.children << theChildren[2]
@@ -56,7 +54,7 @@ class CalcASTBuilder < Rley::ParseRep::ASTBaseBuilder
   end
 
   # rule 'simple_factor' => %[sign scalar]
-  def reduce_simple_factor_0(aProduction, aRange, theTokens, theChildren)
+  def reduce_simple_factor_0(_production, _range, _tokens, theChildren)
     first_child = theChildren[0]
     result = if first_child.kind_of?(CalcNegateNode)
                -theChildren[1]
@@ -68,7 +66,7 @@ class CalcASTBuilder < Rley::ParseRep::ASTBaseBuilder
   end
 
   # rule 'simple_factor' => %w[unary_function in_parenthesis]
-  def reduce_simple_factor_1(aProduction, aRange, theTokens, theChildren)
+  def reduce_simple_factor_1(_production, aRange, _tokens, theChildren)
     func = CalcUnaryFunction.new(theChildren[0].symbol, aRange.low)
     func.func_name = theChildren[0].value
     func.children << theChildren[1]
@@ -76,15 +74,15 @@ class CalcASTBuilder < Rley::ParseRep::ASTBaseBuilder
   end
 
   # rule 'simple_factor' => %w[MINUS in_parenthesis]
-  def reduce_simple_factor_2(aProduction, aRange, _tokens, theChildren)
+  def reduce_simple_factor_2(_production, aRange, _tokens, theChildren)
     negation = CalcNegateNode.new(theChildren[0].symbol, aRange.low)
     negation.children << theChildren[1]
     return negation
   end
 
-   # rule 'in_parenthesis' => %w[LPAREN expression RPAREN]
-  def reduce_in_parenthesis_0(_production, _range, _tokens, theChildren)
-    return_second_child(_range, _tokens, theChildren)
+  # rule 'in_parenthesis' => %w[LPAREN expression RPAREN]
+  def reduce_in_parenthesis_0(_production, aRange, theTokens, theChildren)
+    return_second_child(aRange, theTokens, theChildren)
   end
 
   # rule 'add_operator' => 'PLUS'

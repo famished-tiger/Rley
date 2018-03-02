@@ -78,6 +78,9 @@ Metrics/ModuleLength:
 Metrics/PerceivedComplexity:
   Enabled: true
   Max: 50
+  
+Naming/MethodName:
+  Enabled: false
  
 NonNilCheck:
   Enabled: false
@@ -101,4 +104,8 @@ VariableName:
   Enabled: false
 
 VariableNumber:
-  Enabled: false  
+  Enabled: false
+  
+Style/CommentedKeyword:
+  Enabled: false
+  

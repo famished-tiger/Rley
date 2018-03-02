@@ -37,6 +37,8 @@ describe 'Calculator' do
   end
 
   context 'Parsing valid expressions' do
+    let(:epsilon) { 0.0000000001 }
+  
     it 'should evaluate simple integer literals' do
       expect_expr('2').to eq(2)
     end
@@ -169,10 +171,10 @@ describe 'Calculator' do
     end     
 
     it 'should evaluate exponential of expressions' do
-      expect_expr('exp(-1)').to eq(1/Math::E)    
+      expect_expr('exp(-1)').to eq(1 / Math::E)    
       expect_expr('exp(0)').to eq(1)
       expect_expr('exp(1)').to eq(Math::E)
-      expect_expr('exp(2)').to be_within(0.0000000001).of(Math::E * Math::E)
+      expect_expr('exp(2)').to be_within(epsilon).of(Math::E * Math::E)
     end
 
     it 'should evaluate natural logarithm of expressions' do
@@ -193,42 +195,42 @@ describe 'Calculator' do
     
     it 'should compute the sinus of an expression' do
       expect_expr('sin(0)').to eq(0)
-      expect_expr('sin(PI/6)').to be_within(0.0000000001).of(0.5)
+      expect_expr('sin(PI/6)').to be_within(epsilon).of(0.5)
       expect_expr('sin(PI/2)').to eq(1)
     end
     
     it 'should compute the cosinus of an expression' do
       expect_expr('cos(0)').to eq(1)
-      expect_expr('cos(PI/3)').to be_within(0.0000000001).of(0.5)
-      expect_expr('cos(PI/2)').to be_within(0.0000000001).of(0)
+      expect_expr('cos(PI/3)').to be_within(epsilon).of(0.5)
+      expect_expr('cos(PI/2)').to be_within(epsilon).of(0)
     end 
 
     it 'should compute the tangent of an expression' do
       expect_expr('tan(0)').to eq(0)
-      expect_expr('tan(PI/4)').to be_within(0.0000000001).of(1)
-      expect_expr('tan(5*PI/12)').to be_within(0.0000000001).of(2 + Math.sqrt(3))
+      expect_expr('tan(PI/4)').to be_within(epsilon).of(1)
+      expect_expr('tan(5*PI/12)').to be_within(epsilon).of(2 + Math.sqrt(3))
     end    
  
     # Inverse trigonometric functions
     
     it 'should compute the arcsinus of an expression' do
       expect_expr('asin(0)').to eq(0)
-      expect_expr('asin(0.5)').to be_within(0.0000000001).of(Math::PI/6)
-      expect_expr('asin(1)').to eq(Math::PI/2)
+      expect_expr('asin(0.5)').to be_within(epsilon).of(Math::PI / 6)
+      expect_expr('asin(1)').to eq(Math::PI / 2)
     end
     
     it 'should compute the arccosinus of an expression' do
       expect_expr('acos(1)').to eq(0)
-      expect_expr('acos(0.5)').to be_within(0.0000000001).of(Math::PI/3)
-      expect_expr('acos(0)').to be_within(0.0000000001).of(Math::PI/2)
+      expect_expr('acos(0.5)').to be_within(epsilon).of(Math::PI / 3)
+      expect_expr('acos(0)').to be_within(epsilon).of(Math::PI / 2)
     end 
 
     it 'should compute the tangent of an expression' do
       expect_expr('atan(0)').to eq(0)
-      expect_expr('atan(1)').to be_within(0.0000000001).of(Math::PI/4)
-      expect_expr('atan(2 + sqrt(3))').to be_within(0.0000000001).of(5*Math::PI/12)
+      pi = Math::PI
+      expect_expr('atan(1)').to be_within(epsilon).of(pi / 4)
+      expect_expr('atan(2 + sqrt(3))').to be_within(epsilon).of(5 * pi / 12)
     end    
-  
   end # context
 end # describe
 # End of file

@@ -13,7 +13,6 @@ require_relative '../../../lib/rley/formatter/asciitree'
 module Rley # Re-open the module to get rid of qualified names
   module Formatter
     describe Asciitree do
-
       # Factory method. Build a production with the given sequence
       # of symbols as its rhs.
       let(:grammar_abc) do

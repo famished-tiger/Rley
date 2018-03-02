@@ -1,5 +1,5 @@
 inherit_from:
-  - ../.rubocop.yml 
+  - ../../../.rubocop.yml 
 
 Metrics/AbcSize:
   Max: 60
@@ -8,6 +8,9 @@ Metrics/BlockLength:
   # Long blocks are frequent in spec files...
   Max: 200
   CountComments: false
+  
+Metrics/LineLength:
+  Max: 120
   
 Style/ClassVars:
   Enabled: false

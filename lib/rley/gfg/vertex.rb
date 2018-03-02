@@ -35,7 +35,7 @@ module Rley # This module is used as a namespace
         result = '#<'
         result << selfie
         edges.each { |e| result << e.inspect }
-        result << specific_inspect()
+        result << specific_inspect
         result << '>'
         
         return result
@@ -45,8 +45,8 @@ module Rley # This module is used as a namespace
       # vertex without the edges.
       # @return [String]      
       def selfie()
-        result = "#{self.class.name}:#{self.object_id}"
-        result << %Q[ label="#{self.label}"]
+        result = "#{self.class.name}:#{object_id}"
+        result << %Q( label="#{label}")
         return result
       end
       

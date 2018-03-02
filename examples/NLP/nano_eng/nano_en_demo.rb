@@ -26,8 +26,8 @@ engine.build_grammar do
   rule 'NP' => 'Pronoun'
   rule 'NP' => 'Proper-Noun'
   rule 'NP' => %w[Determiner Nominal]
-  rule 'Nominal' => %[Noun]
-  rule 'Nominal' => %[Nominal Noun]
+  rule 'Nominal' => %w[Noun]
+  rule 'Nominal' => %w[Nominal Noun]
   rule 'VP' => 'Verb'
   rule 'VP' => %w[Verb NP]
   rule 'VP' => %w[Verb NP PP]

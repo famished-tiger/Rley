@@ -79,14 +79,10 @@ input_to_parse = 'John saw Mary with a telescope'
 # input_to_parse = 'the dog saw a man in the park' # This one is ambiguous
 # Convert input text into a sequence of token objects...
 tokens = tokenizer(input_to_parse)
-result = engine.parse(tokens)
 
-# Use Benchmark mix-in
-include Benchmark
-
-bm(6) do |meter|
-  meter.report("Parse 100 times") { 100.times { engine.parse(tokens) } }
-  meter.report("Parse 1000 times") { 1000.times { engine.parse(tokens) } }
-  meter.report("Parse 10000 times") { 10000.times { engine.parse(tokens) } }
-  meter.report("Parse 1000000 times") { 100000.times { engine.parse(tokens) } }
+Benchmark.bm(6) do |meter|
+  meter.report('Parse 100 times') { 100.times { engine.parse(tokens) } }
+  meter.report('Parse 1000 times') { 1000.times { engine.parse(tokens) } }
+  meter.report('Parse 10000 times') { 10000.times { engine.parse(tokens) } }
+  meter.report('Parse 1000000 times') { 100000.times { engine.parse(tokens) } }
 end

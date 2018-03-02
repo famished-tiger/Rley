@@ -25,7 +25,7 @@ module Rley # This module is used as a namespace
       # set of parse entries.
       # @return [String]
       def inspect()
-        result = "#<#{self.class.name}:#{self.object_id}"
+        result = "#<#{self.class.name}:#{object_id}"
         result << ' @entries=['
         entries.each { |e| result << e.inspect }
         result << ']>'

@@ -31,8 +31,8 @@ module Rley # This module is used as a namespace
       # production.
       # @return [String]
       def inspect()
-        result = selfie()
-        result << " @antecedents=["
+        result = selfie
+        result << ' @antecedents=['
         antecedents.each do |antec|
           result << antec.selfie
         end
@@ -147,7 +147,7 @@ module Rley # This module is used as a namespace
       # Returns a human-readable and partial representation of itself.
       # @return [String]
       def selfie()
-        result = "#<#{self.class.name}:#{self.object_id}"
+        result = "#<#{self.class.name}:#{object_id}"
         result << " @vertex=<#{vertex.class.name}:#{vertex.object_id}"
         result << " label=#{vertex.label}>"
         result << " @origin=#{origin}"

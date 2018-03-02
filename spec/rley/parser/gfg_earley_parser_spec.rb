@@ -288,7 +288,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           builder.add_terminals(t_x)
           builder.add_production('Ss' => %w[A A x])
           builder.add_production('A' => [])
-          tokens = [ Lexical::Token.new('x', t_x) ]
+          tokens = [Lexical::Token.new('x', t_x)]
 
           instance = GFGEarleyParser.new(builder.grammar)
           expect { instance.parse(tokens) }.not_to raise_error

@@ -9,11 +9,11 @@ module Rley # This module is used as a namespace
   module Parser # This module is used as a namespace
     class GFGParsing
       # The link to the grammar flow graph
-      # @return [GFG::GrmFlowGraph] The GFG that drives the parsing      
+      # @return [GFG::GrmFlowGraph] The GFG that drives the parsing
       attr_reader(:gf_graph)
 
       # The link to the chart object
-      # @return [GFGChart]     
+      # @return [GFGChart]
       attr_reader(:chart)
 
       # The sequence of input token to parse
@@ -54,16 +54,16 @@ module Rley # This module is used as a namespace
         pos = aPosition
         size_before = chart[pos].size
         apply_rule(anEntry, start_vertex, pos, pos, :call_rule)
-        
+
         if next_symbol.nullable? && anEntry.dotted_entry?
           size_after = chart[pos].size
           # ...apply the Nullable rule
           nullable_rule(anEntry, aPosition) if size_after == size_before
-        end        
+        end
       end
-      
+
       # Let the current sigma set be the ith parse entry set.
-      # This method is invoked when a dotted entry is added 
+      # This method is invoked when a dotted entry is added
       # to the parse entry set of the from [A => alpha . B beta, k]
       # and B is nullable
       # Then the entry [A => alpha B . beta, k] is added to the current
@@ -78,8 +78,8 @@ module Rley # This module is used as a namespace
 
         # first pos == origin
         # second pos == position
-        apply_rule(end_entry, next_vertex, anEntry.origin, pos, :nullable_rule)        
-      end      
+        apply_rule(end_entry, next_vertex, anEntry.origin, pos, :nullable_rule)
+      end
 
       # Let the current sigma set be the ith parse entry set.
       # This method is invoked when an entry is added to a parse entry set
@@ -156,7 +156,7 @@ module Rley # This module is used as a namespace
             apply_rule(ntry, vertex_after_terminal, origin, pos, :scan_rule)
           end
         end
-        
+
         return true
       end
 
@@ -165,7 +165,7 @@ module Rley # This module is used as a namespace
       def success?()
         return false if @failure_reason
         return chart.accepting_entry ? true : false
-      end      
+      end
 
       # Return true if there are more than one complete state
       # for the same lhs and same origin in any state set.
@@ -179,28 +179,28 @@ module Rley # This module is used as a namespace
       def parse_forest()
         msg = <<-END_MSG
  Method Rley::Parser::GFGParsing.parse_forest is deprecated, call
- Rley::Engine::to_pforest. It will be removed April 1st 
- or version 0.6.1 (whichever is first)       
+ Rley::Engine::to_pforest. It will be removed April 1st
+ or version 0.6.1 (whichever is first)
 END_MSG
-        # $stderr.puts(msg)      
+        # warn(msg)
         factory = ParseRep::ParseForestFactory.new(self)
 
         return factory.create
       end
-      
+
       # Factory method. Builds a ParseTree from the parse result.
       # @return [ParseTree]
       def parse_tree(aBuilder = nil)
         msg = <<-END_MSG
 Method Rley::Parser::GFGParsing.parse_tree is deprecated, call
-Rley::Engine::to_ptree. It will be removed April 1st 
-or version 0.6.1 (whichever is first)       
+Rley::Engine::to_ptree. It will be removed April 1st
+or version 0.6.1 (whichever is first)
 END_MSG
-        $stderr.puts(msg)
+        warn(msg)
         factory = ParseRep::ParseTreeFactory.new(self)
 
         return factory.create(aBuilder)
-      end      
+      end
 
       # Retrieve the very first parse entry added to the chart.
       # This entry corresponds to the start vertex of the GF graph
@@ -225,7 +225,7 @@ END_MSG
       # A notification that the parsing reached an end
       def done()
         # Parse not successful and no reason identified
-        # Assuming that parse failed because of a premature end      
+        # Assuming that parse failed because of a premature end
         premature_end unless success? || failure_reason
       end
 

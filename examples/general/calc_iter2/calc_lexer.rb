@@ -21,11 +21,9 @@ class CalcLexer
     'E' => 'E'
   }.freeze
   
-  @@unary_functions = [
-    'sin', 'cos', 'tan',
-    'asin', 'acos', 'atan',
-    'sqrt', 'cbrt', 'exp', 
-    'ln', 'log'
+  @@unary_functions = %w[
+    sin cos tan asin acos atan
+    sqrt cbrt exp ln log
   ].freeze
 
   class ScanError < StandardError; end

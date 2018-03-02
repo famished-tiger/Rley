@@ -139,12 +139,12 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           subject.vertices.each do |a_vertex|
             next unless a_vertex.kind_of?(ItemVertex)
             if a_vertex.next_symbol.kind_of?(Syntax::NonTerminal)
-              expect(a_vertex.shortcut).not_to be_nil            
+              expect(a_vertex.shortcut).not_to be_nil
               my_d_item = a_vertex.dotted_item
-              
+
               # Retrieve dotted item of shortcut successor
               other_d_item = a_vertex.shortcut.successor.dotted_item
-              
+
               # Now the checks...
               expect(my_d_item.production).to eq(other_d_item.production)
               expect(my_d_item.position).to eq(other_d_item.prev_position)
@@ -154,7 +154,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           end
         end
       end # context
-      
+
       context 'Provided services:' do
         let(:problematic_grammar) do
           # Based on grammar example in book
@@ -166,14 +166,14 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           builder.add_production('A' => 'a')
           # There is no edge between .B and B => B . b => non-generative
           builder.add_production('B' => %w[B b])
-          
+
           # Non-terminal symbol C is unreachable
-          builder.add_production('C' => 'c')  
+          builder.add_production('C' => 'c')
 
           # And now build the grammar...
-          builder.grammar       
+          builder.grammar
         end
-      
+
         it 'should provide depth-first traversal' do
           result = []
           subject.traverse_df(subject.start_vertex) do |vertex|
@@ -196,16 +196,16 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           ]
           expect(result).to eq(expected)
         end
-        
+
         it 'should provide human-readable representation of itself' do
           prefix = /^#<Rley::GFG::GrmFlowGraph:\d+ @vertices=\[/
           expect(subject.inspect).to match(prefix)
-          pattern = /@vertices=\[#<Rley::GFG::StartVertex:\d+ label="\.S"/          
+          pattern = /@vertices=\[#<Rley::GFG::StartVertex:\d+ label="\.S"/
           expect(subject.inspect).to match(pattern)
-          suffix = /]>$/          
-          expect(subject.inspect).to match(suffix)          
-        end        
-        
+          suffix = /]>$/
+          expect(subject.inspect).to match(suffix)
+        end
+
         it 'should perform a diagnosis of a correct grammar' do
           expect { subject.diagnose }.not_to raise_error
           grammar_abc.non_terminals.each do |nterm|
@@ -213,22 +213,22 @@ module Rley # Open this namespace to avoid module qualifier prefixes
             expect(nterm).not_to be_unreachable
           end
         end
-        
+
         it 'should detect when a non-terminal is unreachable' do
           grammar = problematic_grammar
           items = build_items_for_grammar(grammar)
 
-          graph = GrmFlowGraph.new(items)       
+          graph = GrmFlowGraph.new(items)
           expect { graph.diagnose }.not_to raise_error
           grammar.non_terminals.each do |nterm|
             expect(nterm).not_to be_undefined
           end
-          
+
           unreachable = grammar.non_terminals.select(&:unreachable?)
           expect(unreachable.size).to eq(1)
           expect(unreachable[0].name).to eq('C')
-        end        
-      end # context      
+        end
+      end # context
     end # describe
   end # module
 end # module
