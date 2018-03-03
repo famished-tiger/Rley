@@ -33,8 +33,5 @@ error reporting), great care was taken about their modularity.
 ### Shared Packed Parse Forest
 This directory will contain code showing how to use and manipulate SPPFs.
 
-### Simple Regex Language
-This sample project hosts a parser for the [Simple Regex Language](https://simple-regex.com/). SRL allows people that aren't familiar with regular expressions to create them via the much more readable language SRL.
-
 ### Recursive rules
 The files `left.rb` and `right.rb` show how to define left- and right-recursive rules respectively. These examples were used to benchmark the parsing. Although `Rley` can handle right-recursive rules, one should avoid deeply-nested right-recursive rule calls. The reason is that in these situations the number of possible parse states increases rapidly and affects severely the parsing speed. There are optimization techniques addressing the issue e.g. [Leo's optimization](http://www.sciencedirect.com/science/article/pii/030439759190180A) that may eventually be implemented in Rley provided that they don't put limits on the NLP capabilities. Here is another link about [Leo's optimization](http://loup-vaillant.fr/tutorials/earley-parsing/right-recursion)

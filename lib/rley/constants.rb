@@ -3,7 +3,7 @@
 
 module Rley # Module used as a namespace
   # The version number of the gem.
-  Version = '0.6.01'.freeze
+  Version = '0.6.02'.freeze
 
   # Brief description of the gem.
   Description = "Ruby implementation of the Earley's parsing algorithm".freeze

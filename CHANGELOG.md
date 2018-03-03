@@ -1,4 +1,8 @@
-### 0.6.01 / 2018-02-25
+### 0.6.02 / 2018-03-03
+* [FIX] File `examples/general/NLP/engtagger.rb` ode re-styling to remove most style offenses found by Rubocop 0.52.1
+* [DELETE] All files `examples/general/SRL` are removed. It will become a new gem by itself.
+
+### 0.6.01 / 2018-03-03
 * [FIX] Code re-styling to remove most style offenses found by Rubocop 0.52.1
 
 ### 0.6.00 / 2018-02-25
