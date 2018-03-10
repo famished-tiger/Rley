@@ -14,8 +14,8 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           expect { NoInput.new }.not_to raise_error
         end
 
-        it 'should know the error position' do
-          expect(subject.position).to eq(0)
+        it 'should know the error token rank' do
+          expect(subject.rank).to eq(0)
         end
       end # context
 
@@ -50,7 +50,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
         end
 
         it 'should know the error position' do
-          expect(subject.position).to eq(3)
+          expect(subject.rank).to eq(3)
         end
 
         it 'should know the expected terminals' do

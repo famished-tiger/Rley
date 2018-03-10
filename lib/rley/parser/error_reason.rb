@@ -4,22 +4,22 @@ module Rley # Module used as a namespace
     # the likely cause of a parse error
     # detected by Rley.
     class ErrorReason
-      # The position of the offending input token
-      attr_reader(:position)
+      # @!attribute [r] rank
+      #   @return [Fixnum] The rank number of the offending input token  
+      attr_reader(:rank)
 
-      # The failing production
-      attr_reader(:production)
-
-      def initialize(aPosition)
-        @position = aPosition
+      # Constructor
+      # @param aPosition [Fixnum] The rank number of the offending input token
+      def initialize(aRank)
+        @rank = aRank
       end
 
-      # Returns the result of invoking reason.to_s.
+      # @return [String] the result of invoking reason.to_s
       def message()
         return to_s
       end
 
-      # Return this reason's class name and message
+      # @return [String] Return this reason's class name and message
       def inspect
         "#{self.class.name}: #{message}"
       end
@@ -49,14 +49,19 @@ module Rley # Module used as a namespace
       # The terminal symbols expected when error was occurred
       attr_reader(:expected_terminals)
 
-      def initialize(aPosition, lastToken, expectedTerminals)
-        super(aPosition)
+      def initialize(aRank, lastToken, expectedTerminals)
+        super(aRank)
         raise StandardError, 'Internal error: nil token' if lastToken.nil?
         @last_token = lastToken.dup
         @expected_terminals = expectedTerminals.dup
       end
 
       protected
+      
+      def position()
+        return last_token.position if last_token.respond_to?(:position)
+        rank + 1
+      end
       
       # Emit a text explaining the expected terminal symbols
       def expectations
@@ -76,7 +81,7 @@ module Rley # Module used as a namespace
     class UnexpectedToken < ExpectationNotMet
       # Returns the reason's message.
       def to_s
-        err_msg = "Syntax error at or near token #{position + 1} "
+        err_msg = "Syntax error at or near token #{position} "
         err_msg << ">>>#{last_token.lexeme}<<<\n"
         err_msg << expectations
         err_msg << ", found a '#{last_token.terminal.name}' instead."
@@ -91,7 +96,7 @@ module Rley # Module used as a namespace
       # Returns the reason's message.
       def to_s
         err_msg = "Premature end of input after '#{last_token.lexeme}'"
-        err_msg << " at position #{position + 1}\n"
+        err_msg << " at position #{position}\n"
         err_msg << "#{expectations}."
 
         return err_msg

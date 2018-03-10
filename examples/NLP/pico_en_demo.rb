@@ -1,4 +1,5 @@
 require 'rley' # Load Rley library
+require 'strscan'
 
 
 ########################################
@@ -55,16 +56,40 @@ Lexicon = {
   'with' => 'Preposition'
 }.freeze
 
+Position = Struct.new(:line, :column) do
+  def to_s()
+    "line #{line}, column #{column}"
+  end
+end
+
+class NLPToken < Rley::Lexical::Token
+  attr_reader(:position)
+  
+  def initialize(theLexeme, aTerminal, aPosition)
+    super(theLexeme, aTerminal)
+    @position = aPosition
+  end
+end
+
 ########################################
 # Step 4. Create a tokenizer
 # A tokenizer reads the input string and converts it into a sequence of tokens.
 # Remark: Rley doesn't provide tokenizer functionality.
 # Highly simplified tokenizer implementation
 def tokenizer(aTextToParse)
-  tokens = aTextToParse.scan(/\S+/).map do |word|
+  scanner = StringScanner.new(aTextToParse)
+  tokens = []
+  
+  loop do
+    scanner.skip(/\s+/)
+    curr_pos = scanner.pos
+    word = scanner.scan(/\S+/)
+    break unless word
+
     term_name = Lexicon[word]
     raise StandardError, "Word '#{word}' not found in lexicon" if term_name.nil?
-    Rley::Lexical::Token.new(word, term_name)
+    pos = Position.new(1, curr_pos + 1)
+    tokens << NLPToken.new(word, term_name, pos)
   end
 
   return tokens
@@ -73,7 +98,7 @@ end
 
 ########################################
 # Step 5. Parse the input
-input_to_parse = 'John saw Mary with a telescope'
+input_to_parse = 'John saw Mary with a '
 # input_to_parse = 'the dog saw a man in the park' # This one is ambiguous
 # Convert input text into a sequence of token objects...
 tokens = tokenizer(input_to_parse)
@@ -84,7 +109,7 @@ unless result.success?
   puts result.failure_reason.message
   exit(1)
 end
-
+ 
 ########################################
 # Step 6. Generating a parse tree from parse result
 ptree = engine.to_ptree(result)

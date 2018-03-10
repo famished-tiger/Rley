@@ -6,7 +6,7 @@
 [![Gem Version](https://badge.fury.io/rb/rley.svg)](http://badge.fury.io/rb/rley)
 [![Dependency Status](https://gemnasium.com/famished-tiger/Rley.svg)](https://gemnasium.com/famished-tiger/Rley)
 [![Inline docs](http://inch-ci.org/github/famished-tiger/Rley.svg?branch=master)](http://inch-ci.org/github/famished-tiger/Rley)
-[![License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat)](https://github.com/famished-tiger/Rley/blob/master/LICENSE.txt)
+[![License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat)](https://github.com/famished-tiger/SRL-Ruby/blob/master/LICENSE.txt)
 
 A Ruby library for constructing general parsers for _any_ context-free language.  
 
@@ -38,7 +38,7 @@ handle
 
 In short, the foundations of Rley are strong enough to be useful in a large
 application range such as:  
-* computer languages,  
+* computer languages -e.g. [Simple Regex Language](https://github.com/famished-tiger/SRL-Ruby) - ,  
 * artificial intelligence and  
 * Natural Language Processing.
 
@@ -56,7 +56,8 @@ Rley supports the following Ruby implementations:
 - MRI 2.1  
 - MRI 2.2  
 - MRI 2.3
-- MRI 2.4  
+- MRI 2.4
+- MRI 2.5  
 - JRuby 9.1+  
 
 ---
@@ -374,7 +375,7 @@ ask it to generate a message.
 
 Re-running the example with the error, results in the error message:
 ```
-  Syntax error at or near token 2 >>>Mary<<<
+  Syntax error at or near token line 1, column 6 >>>Mary<<<
   Expected one 'Verb', found a 'Proper-Noun' instead.
 ```
 
@@ -401,12 +402,10 @@ Let's experiment again with the original sentence but without the word
 This time, the following output is displayed:
 ```
   Parsing successful? false
-  Premature end of input after 'a' at position 5
+  Premature end of input after 'a' at position line 1, column 20
   Expected one 'Noun'.
 ```
 Again, the resulting error message is user-friendly.  
-Remark: currently, Rley reports an error position as the index of the  
-input token with which the error was detected.
 
 
 ## Examples

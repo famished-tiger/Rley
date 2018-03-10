@@ -1,5 +1,11 @@
+### 0.6.03 / 2018-03-10
+* [CHANGE] File `lib/parser/error_reason.rb` Improved error location reporting
+* [CHANGE] File `README.md` updated to reflect the improved error location reporting.
+* [CHANGE] File `.travis.yml`: Added Ruby 2.5 build environment in Travis CI
+* [CHANGE] File `appveyor.yml`: Added Ruby 2.5 build environment in Appveyor CI
+
 ### 0.6.02 / 2018-03-03
-* [FIX] File `examples/general/NLP/engtagger.rb` ode re-styling to remove most style offenses found by Rubocop 0.52.1
+* [FIX] File `examples/general/NLP/engtagger.rb` code re-styling to remove most style offenses found by Rubocop 0.52.1
 * [DELETE] All files `examples/general/SRL` are removed. It will become a new gem by itself.
 
 ### 0.6.01 / 2018-03-03
