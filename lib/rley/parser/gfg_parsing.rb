@@ -61,18 +61,50 @@ module Rley # This module is used as a namespace
           nullable_rule(anEntry, aPosition) if size_after == size_before
         end
       end
-
+      
       # Let the current sigma set be the ith parse entry set.
       # This method is invoked when a dotted entry is added
       # to the parse entry set of the from [A => alpha . B beta, k]
       # and B is nullable
-      # Then the entry [A => alpha B . beta, k] is added to the current
-      # sigma set.
+      # Then the following entries are added to the current sigma set:
+      # [.B, i]
+      # [B => ., i] TODO: what if indirectly nullable?
+      # [B., i]
+      # [A => alpha B . beta, k]
+      def nullable_rule(anEntry, aPosition)
+        next_symbol = anEntry.next_symbol
+        pos = aPosition
+        start = gf_graph.start_vertex_for[next_symbol]
+        start_entry = apply_rule(anEntry, start, pos, pos, :nullable_rule)
+		
+        end_vertex = gf_graph.end_vertex_for[next_symbol]
+        end_entry = push_entry(end_vertex, pos, pos, :nullable_rule)		
+		
+        start.edges.each do |edge| 
+          succ = edge.successor # succ always an ItemVertex
+          next if succ.dotted_item.production.generative?
+          succ_entry = apply_rule(start_entry, succ, pos, pos, :nullable_rule)
+          apply_rule(succ_entry, end_vertex, pos, pos, :nullable_rule)
+        end
+		
+        curr_vertex = anEntry.vertex
+        next_vertex = curr_vertex.shortcut.successor
+        apply_rule(end_entry, next_vertex, anEntry.origin, pos, :nullable_rule)
+      end
+      
+=begin
+      # Let the current sigma set be the ith parse entry set.
+      # This method is invoked when a dotted entry is added
+      # to the parse entry set of the from [A => alpha . B beta, k]
+      # and B is nullable
+      # Then the following entries are added to current sigma set:
+      # [B., i]
+      # [A => alpha B . beta, k]
       def nullable_rule(anEntry, aPosition)
         next_symbol = anEntry.next_symbol
         end_vertex = gf_graph.end_vertex_for[next_symbol]
         pos = aPosition
-        end_entry = push_entry(end_vertex, anEntry.origin, pos, :nullable_rule)
+        end_entry = push_entry(end_vertex, pos, pos, :nullable_rule) # Fixed
         curr_vertex = anEntry.vertex
         next_vertex = curr_vertex.shortcut.successor
 
@@ -80,7 +112,7 @@ module Rley # This module is used as a namespace
         # second pos == position
         apply_rule(end_entry, next_vertex, anEntry.origin, pos, :nullable_rule)
       end
-
+=end
       # Let the current sigma set be the ith parse entry set.
       # This method is invoked when an entry is added to a parse entry set
       # and the entry is of the form [.B, i].
@@ -249,7 +281,6 @@ END_MSG
       def unexpected_token(aPosition)
         unexpected = tokens[aPosition]
         expected = chart.sets[aPosition].expected_terminals
-
         reason = UnexpectedToken.new(aPosition, unexpected, expected)
         faulty(reason)
       end

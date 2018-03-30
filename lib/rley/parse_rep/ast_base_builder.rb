@@ -68,7 +68,7 @@ module Rley # This module is used as a namespace
       # Simply return an epsilon symbol
       # @param _range [Lexical::TokenRange]
       # @param _tokens [Array<Lexical::Token>]
-      # @param _hildren [Array<Object>]       
+      # @param _children [Array<Object>]       
       def return_epsilon(_range, _tokens, _children)
         return nil
       end
@@ -84,7 +84,7 @@ module Rley # This module is used as a namespace
 
       # Factory method for creating a node object for the given
       # input token.
-      # @param aTerminal [Syntax::Production] Relevant production rule
+      # @param aProduction [Syntax::Production] Relevant production rule
       # @param aTerminal [Syntax::Terminal] Terminal associated with the token
       # @param aTokenPosition [Integer] Position of token in the input stream
       # @param aToken [Lexical::Token] The input token

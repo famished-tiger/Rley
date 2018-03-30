@@ -8,7 +8,7 @@ module GrammarABCHelper
     builder = Rley::Syntax::GrammarBuilder.new do
       add_terminals('a', 'b', 'c')
       rule 'S' => 'A'
-      rule 'A' => %w[a A c]
+      rule 'A' => 'a A c'
       rule 'A' => 'b'
     end
 

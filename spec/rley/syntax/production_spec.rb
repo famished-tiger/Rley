@@ -22,6 +22,14 @@ module Rley # Open this namespace to avoid module qualifier prefixes
         it 'should be created with a non-terminal and a symbol sequence' do
           expect { Production.new(sentence, sequence) }.not_to raise_error
         end
+        
+        it 'should complain when its rhs is nil' do
+          err = StandardError
+          msg_prefix = 'Right side of a production of the kind '
+          msg_suffix = "'Sentence' => ... is nil." 
+          msg = msg_prefix + msg_suffix
+          expect { Production.new(sentence, nil) }.to raise_error(err, msg)
+        end
 
         it 'should know its lhs' do
           expect(subject.lhs).to eq(sentence)

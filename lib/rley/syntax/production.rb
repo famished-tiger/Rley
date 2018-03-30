@@ -35,7 +35,7 @@ module Rley # This module is used as a namespace
       # @param theSymbols [list<Terminal | NonTerminal>] symbols of rhs.      
       def initialize(aNonTerminal, theSymbols)
         @lhs = valid_lhs(aNonTerminal)
-        @rhs = SymbolSeq.new(theSymbols)       
+        @rhs = valid_rhs(theSymbols)       
       end
 
       # Is the rhs empty?
@@ -82,6 +82,16 @@ module Rley # This module is used as a namespace
         end
 
         return aNonTerminal
+      end
+      
+      def valid_rhs(theSymbols)
+        if theSymbols.nil?
+          msg_prefix = 'Right side of a production of the kind '
+          msg_suffix = "'#{lhs.name}' => ... is nil."
+          raise StandardError, msg_prefix + msg_suffix    
+        end 
+      
+        return SymbolSeq.new(theSymbols)
       end
     end # class
   end # module

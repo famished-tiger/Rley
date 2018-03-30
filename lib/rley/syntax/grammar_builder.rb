@@ -73,13 +73,14 @@ module Rley # This module is used as a namespace
           lhs = get_nonterminal(lhs_name)
           case rhs_repr
             when Array
-              rhs_constituents = rhs_repr.map { |name| get_nonterminal(name) }
+              rhs_members = rhs_repr.map { |name| get_nonterminal(name) }
             when String
-              rhs_constituents = [get_nonterminal(rhs_repr)]
+              # rhs_members = [get_nonterminal(rhs_repr)]
+              rhs_members = rhs_repr.scan(/\S+/).map { |name| get_nonterminal(name) }
             when Terminal
-              rhs_constituents = [rhs_repr]
+              rhs_members = [rhs_repr]
           end
-          new_prod = Production.new(lhs, rhs_constituents)
+          new_prod = Production.new(lhs, rhs_members)
           productions << new_prod
         end
         

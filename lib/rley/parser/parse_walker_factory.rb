@@ -63,6 +63,8 @@ module Rley # This module is used as a namespace
             receiver << event unless event.nil?
 
             if ctx.curr_entry.orphan? # No antecedent?...
+              err_msg = "No antecedent for #{ctx.curr_entry} at rank #{ctx.entry_set_index}"
+              raise StandardError, err_msg unless ctx.curr_entry.start_entry?
               break if ctx.backtrack_points.empty?
               receiver << use_backtrack_point(ctx)
               receiver << visit_entry(ctx.curr_entry, ctx)

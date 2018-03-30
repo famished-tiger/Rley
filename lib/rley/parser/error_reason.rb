@@ -9,7 +9,7 @@ module Rley # Module used as a namespace
       attr_reader(:rank)
 
       # Constructor
-      # @param aPosition [Fixnum] The rank number of the offending input token
+      # @param aRank [Fixnum] The sequence number of the offending input token.
       def initialize(aRank)
         @rank = aRank
       end

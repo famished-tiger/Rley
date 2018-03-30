@@ -21,13 +21,13 @@ engine.build_grammar do
   add_terminals('Determiner', 'Preposition')
 
   # Here we define the productions (= grammar rules)
-  rule 'S' => %w[NP VP]
+  rule 'S' => 'NP VP'
   rule 'NP' => 'Proper-Noun'
-  rule 'NP' => %w[Determiner Noun]
-  rule 'NP' => %w[Determiner Noun PP]
-  rule 'VP' => %w[Verb NP]
-  rule 'VP' => %w[Verb NP PP]
-  rule 'PP' => %w[Preposition NP]
+  rule 'NP' => 'Determiner Noun'
+  rule 'NP' => 'Determiner Noun PP'
+  rule 'VP' => 'Verb NP'
+  rule 'VP' => 'Verb NP PP'
+  rule 'PP' => 'Preposition NP'
 end
 
 ########################################
@@ -98,7 +98,7 @@ end
 
 ########################################
 # Step 5. Parse the input
-input_to_parse = 'John saw Mary with a '
+input_to_parse = 'John saw Mary with a telescope'
 # input_to_parse = 'the dog saw a man in the park' # This one is ambiguous
 # Convert input text into a sequence of token objects...
 tokens = tokenizer(input_to_parse)

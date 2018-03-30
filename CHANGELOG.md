@@ -1,3 +1,12 @@
+### 0.6.04 / 2018-03-30
+* [CHANGE] Method `GrammarBuilder#add_production` Simplified rule entry syntax
+* [CHANGE] File `examples/NML/pico_en_demo.rb` updated to reflect the simplified rule syntax.
+* [CHANGE] File `README.md` updated to reflect the simplified rule syntax.
+* [CHANGE] Struct EngineConfig added the diganose field.
+* [FIX] Method `Production#initialize`: Now raises an exception when rhs is nil
+* [FIX] Method `ParseTreeBuilder#create_tree`: Now raises an exception when root node of tree is nil
+* [FIX] Method `GFGParsing#nullable_rule`: Nasty bug with antecedent link fixed.
+
 ### 0.6.03 / 2018-03-10
 * [CHANGE] File `lib/parser/error_reason.rb` Improved error location reporting
 * [CHANGE] File `README.md` updated to reflect the improved error location reporting.

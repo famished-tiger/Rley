@@ -5,12 +5,14 @@ require_relative './parse_rep/parse_tree_factory'
 module Rley # This module is used as a namespace
   EngineConfig = Struct.new(
     :parse_repr,
-    :repr_builder
+    :repr_builder,
+    :diagnose
   ) do
     def initialize()
       super()
       self.parse_repr = :parse_tree
       self.repr_builder = :default
+      self.diagnose = false
     end
   end
 
@@ -18,7 +20,12 @@ module Rley # This module is used as a namespace
   # an Engine object provides a higher-level interface that shields
   # Rley client code from the lower-level classes.
   class Engine
+    # @!attribute [r] configuration
+    #   @return [EngineConfig] the engine's configuration 
     attr_reader :configuration
+    
+    # @!attribute [r] grammar
+    #   @return [Rley::Syntax::Grammar] the grammar of the language to parse    
     attr_reader :grammar
 
     # Constructor.
@@ -28,7 +35,7 @@ module Rley # This module is used as a namespace
     end
 
     # Factory method.
-    # @param &aBlock [Proc, Lambda] Code block for creating the grammar.
+    # @param aBlock [Proc, Lambda] Code block for creating the grammar.
     def build_grammar(&aBlock)
       builder = Rley::Syntax::GrammarBuilder.new(&aBlock)
       @grammar = builder.grammar
@@ -53,6 +60,7 @@ module Rley # This module is used as a namespace
         tokens << a_token
       end
       parser = build_parser(grammar)
+      parser.gf_graph.diagnose if configuration.diagnose
       return parser.parse(tokens)
     end
 

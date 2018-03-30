@@ -97,10 +97,18 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           expect(new_prod.lhs).to eq(subject['A'])
           expect_rhs = [subject['a'], subject['A'], subject['c']]
           expect(new_prod.rhs.members).to eq(expect_rhs)
+          
+          # Try another syntax
+          subject.add_production('A' => 'a A c')
+          expect(subject.productions.size).to eq(3)
+          new_prod = subject.productions.last
+          expect(new_prod.lhs).to eq(subject['A'])
+          expect_rhs = [subject['a'], subject['A'], subject['c']]
+          expect(new_prod.rhs.members).to eq(expect_rhs)          
 
           # GrammarBuilder#rule is an alias of add_production
           subject.rule('A' => ['b'])
-          expect(subject.productions.size).to eq(3)
+          expect(subject.productions.size).to eq(4)
           new_prod = subject.productions.last
           expect(new_prod.lhs).to eq(subject['A'])
           expect(new_prod.rhs[0]).to eq(subject['b'])
