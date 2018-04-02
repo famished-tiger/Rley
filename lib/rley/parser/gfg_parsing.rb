@@ -61,7 +61,7 @@ module Rley # This module is used as a namespace
           nullable_rule(anEntry, aPosition) if size_after == size_before
         end
       end
-      
+
       # Let the current sigma set be the ith parse entry set.
       # This method is invoked when a dotted entry is added
       # to the parse entry set of the from [A => alpha . B beta, k]
@@ -76,43 +76,22 @@ module Rley # This module is used as a namespace
         pos = aPosition
         start = gf_graph.start_vertex_for[next_symbol]
         start_entry = apply_rule(anEntry, start, pos, pos, :nullable_rule)
-		
+
         end_vertex = gf_graph.end_vertex_for[next_symbol]
-        end_entry = push_entry(end_vertex, pos, pos, :nullable_rule)		
-		
-        start.edges.each do |edge| 
+
+        start.edges.each do |edge|
           succ = edge.successor # succ always an ItemVertex
           next if succ.dotted_item.production.generative?
           succ_entry = apply_rule(start_entry, succ, pos, pos, :nullable_rule)
           apply_rule(succ_entry, end_vertex, pos, pos, :nullable_rule)
         end
-		
-        curr_vertex = anEntry.vertex
-        next_vertex = curr_vertex.shortcut.successor
-        apply_rule(end_entry, next_vertex, anEntry.origin, pos, :nullable_rule)
-      end
-      
-=begin
-      # Let the current sigma set be the ith parse entry set.
-      # This method is invoked when a dotted entry is added
-      # to the parse entry set of the from [A => alpha . B beta, k]
-      # and B is nullable
-      # Then the following entries are added to current sigma set:
-      # [B., i]
-      # [A => alpha B . beta, k]
-      def nullable_rule(anEntry, aPosition)
-        next_symbol = anEntry.next_symbol
-        end_vertex = gf_graph.end_vertex_for[next_symbol]
-        pos = aPosition
-        end_entry = push_entry(end_vertex, pos, pos, :nullable_rule) # Fixed
-        curr_vertex = anEntry.vertex
-        next_vertex = curr_vertex.shortcut.successor
 
-        # first pos == origin
-        # second pos == position
+        curr_vertex = anEntry.vertex
+        next_vertex = curr_vertex.shortcut.successor
+        end_entry = push_entry(end_vertex, pos, pos, :nullable_rule)        
         apply_rule(end_entry, next_vertex, anEntry.origin, pos, :nullable_rule)
       end
-=end
+
       # Let the current sigma set be the ith parse entry set.
       # This method is invoked when an entry is added to a parse entry set
       # and the entry is of the form [.B, i].
@@ -211,7 +190,7 @@ module Rley # This module is used as a namespace
       def parse_forest()
         msg = <<-END_MSG
  Method Rley::Parser::GFGParsing.parse_forest is deprecated, call
- Rley::Engine::to_pforest. It will be removed April 1st
+ Rley::Engine::to_pforest. It will be removed June 1st
  or version 0.6.1 (whichever is first)
 END_MSG
         # warn(msg)
@@ -261,6 +240,15 @@ END_MSG
         premature_end unless success? || failure_reason
       end
 
+      # Clean and normalize the object.
+      # Call this method when the parsing is complete.
+      def tidy_up!()
+        antecedence.each_key do |entry|
+          antecedence[entry].uniq!
+        end
+      end
+
+
       private
 
       # Parse error detected: all input tokens were consumed and
@@ -287,8 +275,42 @@ END_MSG
 
       def apply_rule(antecedentEntry, aVertex, anOrigin, aPosition, aRuleId)
         consequent = push_entry(aVertex, anOrigin, aPosition, aRuleId)
+
         antecedence[consequent] << antecedentEntry
+
+        # Invariant checks
+        antecedents = antecedence[consequent]
+        case aVertex
+          when Rley::GFG::EndVertex
+            # Rule: has 1..* antecedents, all of them are exit items
+            antecedents.each do |antec|
+              next if antec.exit_entry?
+              msg_prefix = "Parse entry #{consequent}"
+              msg_suffix = " has for antecedent #{antec}"              
+              raise StandardError, msg_prefix + msg_suffix
+            end
+          
+          when Rley::GFG::ItemVertex
+            # Rule: has exactly one antecedent
+            # if antecedents.size > 1
+              # msg_prefix = "Parse entry #{consequent} | #{aPosition}"
+              # msg = " has more than one antecedent:\n"
+              # msg_suffix = antecedents.map(&:to_s).join("\n")
+              # raise(StandardError, msg_prefix + msg + msg_suffix)
+            # end
+            
+          when Rley::GFG::StartVertex
+            # Rule: has 0..* antecedents, all of them are item vertices but not exit items
+            antecedents.each do |antec|
+              next if antec.dotted_entry? && !antec.end_entry?
+              msg_prefix = "Parse entry #{consequent}"
+              msg_suffix = " has for antecedent #{antec}"              
+              raise StandardError, msg_prefix + msg_suffix
+            end            
+        end
+
         consequent.add_antecedent(antecedentEntry)
+        return consequent
       end
 
       # Push a parse entry (vertex + origin) to the

@@ -254,7 +254,7 @@ SNIPPET
           end_entry = subject.chart[1].last
           expect(end_entry.vertex.label).to eq('S => A .')
           expect(end_entry.origin).to eq(0)
-          expect(subject.antecedence.fetch(end_entry)).to eq([exit_entry]) 
+          expect(subject.antecedence.fetch(end_entry)).to eq([exit_entry])
         end
 =begin
 

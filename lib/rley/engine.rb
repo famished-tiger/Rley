@@ -61,7 +61,10 @@ module Rley # This module is used as a namespace
       end
       parser = build_parser(grammar)
       parser.gf_graph.diagnose if configuration.diagnose
-      return parser.parse(tokens)
+      result = parser.parse(tokens)
+      result.tidy_up!
+      
+      return result
     end
 
     # Convert raw parse result into a more convenient representation

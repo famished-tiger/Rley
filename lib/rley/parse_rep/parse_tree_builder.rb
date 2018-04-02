@@ -101,8 +101,11 @@ module Rley # This module is used as a namespace
             non_terminal = entry2nonterm(anEntry)
             # Create raw node and push onto stack
             push_raw_node(range, non_terminal)
-          # when :revisit
-          #  # TODO: design specification
+
+          when :backtrack
+            msg_prefix = 'Ambiguous parse detected at '
+            msg_suffix = "entry: #{anEntry}, index: #{anIndex}"
+            raise StandardError, msg_prefix + msg_suffix
           else
             raise NotImplementedError, "Cannot handle event #{anEvent}"
         end
@@ -135,10 +138,14 @@ module Rley # This module is used as a namespace
               # (pattern: N => alpha+ . beta+)
               process_middle_entry(anEntry, anIndex)
             end
+          when :backtrack
+            msg_prefix = 'Ambiguous parse detected at '
+            msg_suffix = "entry: #{anEntry}, index: #{anIndex}"
+            raise StandardError, msg_prefix + msg_suffix
           else
             msg_prefix = "Internal Error '#{anEvent}', "
-            $stderr.puts msg_prefix + "entry: #{anEntry}, index: #{anIndex}"
-            raise NotImplementedError
+            msg_suffix = "entry: #{anEntry}, index: #{anIndex}"
+            raise NotImplementedError, msg_prefix + msg_suffix
         end
       end
 
