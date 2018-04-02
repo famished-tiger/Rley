@@ -43,7 +43,7 @@ module Rley # This module is used as a namespace
 
       # Add a link to an antecedent parse entry
       def add_antecedent(anAntecedent)
-        antecedents << anAntecedent
+        antecedents << anAntecedent unless antecedents.include?(anAntecedent)
       end
 
       # Equality comparison. A parse entry behaves as a value object.
