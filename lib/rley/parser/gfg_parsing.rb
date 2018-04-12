@@ -199,20 +199,6 @@ END_MSG
         return factory.create
       end
 
-      # Factory method. Builds a ParseTree from the parse result.
-      # @return [ParseTree]
-      def parse_tree(aBuilder = nil)
-        msg = <<-END_MSG
-Method Rley::Parser::GFGParsing.parse_tree is deprecated, call
-Rley::Engine::to_ptree. It will be removed April 1st
-or version 0.6.1 (whichever is first)
-END_MSG
-        warn(msg)
-        factory = ParseRep::ParseTreeFactory.new(self)
-
-        return factory.create(aBuilder)
-      end
-
       # Retrieve the very first parse entry added to the chart.
       # This entry corresponds to the start vertex of the GF graph
       # with origin equal to zero.

@@ -24,8 +24,8 @@ module Rley # This module is used as a namespace
     end # Struct
 
 
-    # The purpose of a ParseTreeBuilder is to build piece by piece a CST
-    # (Concrete Syntax Tree) from a sequence of input tokens and
+    # The purpose of a ParseTreeBuilder is to build piece by piece 
+    # a parse tree from a sequence of input tokens and
     # visit events produced by walking over a GFGParsing object.
     # Uses the Builder GoF pattern.
     # The Builder pattern creates a complex object
@@ -35,7 +35,7 @@ module Rley # This module is used as a namespace
       # @return [Array<Token>] The sequence of input tokens
       attr_reader(:tokens)
 
-      # Link to CST object (being) built.
+      # Link to Parse tree object (being) built.
       attr_reader(:result)
 
 
@@ -46,6 +46,11 @@ module Rley # This module is used as a namespace
         @stack = []
         @dummy_node = Object.new.freeze
       end
+      
+      # Notify the builder that the construction is over
+      def done!()
+        result.done!
+      end      
 
       # Receive events resulting from a visit of GFGParsing object.
       # These events are produced by a specialized Enumerator created

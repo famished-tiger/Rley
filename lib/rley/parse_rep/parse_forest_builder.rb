@@ -40,6 +40,11 @@ module Rley # This module is used as a namespace
         @entry2node = {}
         @entry2path_to_alt = {}
       end
+      
+      # Notify the builder that the construction is over
+      def done!()
+        result.done!
+      end
 
       def receive_event(anEvent, anEntry, anIndex)
         # puts "Event: #{anEvent} #{anEntry} #{anIndex}"

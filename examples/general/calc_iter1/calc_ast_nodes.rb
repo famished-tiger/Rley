@@ -22,6 +22,10 @@ CalcTerminalNode = Struct.new(:token, :value, :position) do
     return value
   end
   
+  def done!()
+    # Do nothing
+  end
+  
   # Part of the 'visitee' role in Visitor design pattern.
   # @param aVisitor[ParseTreeVisitor] the visitor
   def accept(aVisitor)
@@ -49,6 +53,10 @@ class CalcCompositeNode
     @symbol = aSymbol
     @children = []    
   end
+  
+  def done!()
+    # Do nothing
+  end  
 
   # Part of the 'visitee' role in Visitor design pattern.
   # @param aVisitor[ParseTreeVisitor] the visitor

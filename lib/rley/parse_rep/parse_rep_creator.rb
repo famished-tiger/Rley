@@ -29,6 +29,8 @@ module Rley # This module is used as a namespace
         rescue StopIteration => exc
           # Do nothing
         end
+        
+        a_builder.done!
 
         return a_builder.result
       end

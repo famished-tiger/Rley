@@ -13,6 +13,10 @@ module Rley # This module is used as a namespace
         @symbol = aSymbol
         @range = Lexical::TokenRange.new(aRange)
       end
+      
+      # Notify the builder that the construction is over
+      def done!()
+      end
 
       # Assign a value from given range to each  undefined range bound
       def range=(aRange)

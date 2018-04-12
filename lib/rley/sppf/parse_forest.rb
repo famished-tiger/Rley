@@ -29,6 +29,10 @@ module Rley # This module is used as a namespace
         @is_ambiguous = false
       end
       
+      # Notification that the SPPF construction is over
+      def done!()
+      end
+      
       # Returns true if the given node is present in the forest.
       def include?(aNode)
         return key2node.include?(aNode)
