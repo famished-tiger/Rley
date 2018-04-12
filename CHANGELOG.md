@@ -1,3 +1,13 @@
+### 0.6.06 / 2018-04-12
+* [ADDED] Method `done!`: added to classes involved parse tree and parse forest creation. This method signals the end of parsing.
+* [CHANGE] Method `ParseTreeBuilder#process_item_entry`: added an explicit message in case of ambiguous parse.
+* [REMOVED] Deprecated method `GFGParsing#parse_tree`, to generate parse trees use the `Engine` class.
+
+### 0.6.05 / 2018-04-02
+* [CHANGE] Method `ParseTreeBuilder#process_end_entry`: added an explicit message in case of ambiguous parse.
+* [CHANGE] Method `ParseTreeBuilder#process_item_entry`: added an explicit message in case of ambiguous parse.
+* [FIX] Method `ParseEntry#add_antecedent` now checks for the unicity of antecedent entries.
+
 ### 0.6.04 / 2018-03-30
 * [CHANGE] Method `GrammarBuilder#add_production` Simplified rule entry syntax
 * [CHANGE] File `examples/NML/pico_en_demo.rb` updated to reflect the simplified rule syntax.
