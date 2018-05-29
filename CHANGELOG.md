@@ -1,3 +1,8 @@
+### 0.6.07 / 2018-05-29
+* [CHANGE] Method `GFGEarleyParser#parse` doesn't assume that the exact sequence of tokens to be known in advance.
+* [FIXED] Method `GFGParsing#nullable_rule`: in very specific cases a wrong parse entry was added to the parse chart.
+* [FIXED] File `examples/general/left.rb` is working back.
+
 ### 0.6.06 / 2018-04-12
 * [ADDED] Method `done!`: added to classes involved parse tree and parse forest creation. This method signals the end of parsing.
 * [CHANGE] Method `ParseTreeBuilder#process_item_entry`: added an explicit message in case of ambiguous parse.

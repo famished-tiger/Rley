@@ -33,11 +33,10 @@ module Rley # This module is used as a namespace
 
       # Constructor
       # @param theGFG [GFG::GrmFlowGraph] the Grammar Flow Graph
-      # @param theTokens [Array<Token>] the array of input tokens
-      def initialize(theGFG, theTokens)
+      def initialize(theGFG)
         @gf_graph = theGFG
-        @tokens = theTokens.dup
-        @chart = GFGChart.new(tokens.size, gf_graph)
+        @tokens = []
+        @chart = GFGChart.new(gf_graph)
         @antecedence = Hash.new { |hash, key| hash[key] = [] }
         antecedence[chart[0].first]
       end
@@ -57,7 +56,7 @@ module Rley # This module is used as a namespace
 
         if next_symbol.nullable? && anEntry.dotted_entry?
           size_after = chart[pos].size
-          # ...apply the Nullable rule
+          # ...apply the Nullable rule, if not already invoked for this entry
           nullable_rule(anEntry, aPosition) if size_after == size_before
         end
       end
@@ -81,14 +80,15 @@ module Rley # This module is used as a namespace
 
         start.edges.each do |edge|
           succ = edge.successor # succ always an ItemVertex
-          next if succ.dotted_item.production.generative?
-          succ_entry = apply_rule(start_entry, succ, pos, pos, :nullable_rule)
-          apply_rule(succ_entry, end_vertex, pos, pos, :nullable_rule)
+          if succ.dotted_item.production.nullable?
+            succ_entry = apply_rule(start_entry, succ, pos, pos, :nullable_rule)
+            apply_rule(succ_entry, end_vertex, pos, pos, :nullable_rule)
+          end
         end
 
         curr_vertex = anEntry.vertex
         next_vertex = curr_vertex.shortcut.successor
-        end_entry = push_entry(end_vertex, pos, pos, :nullable_rule)        
+        end_entry = push_entry(end_vertex, pos, pos, :nullable_rule)
         apply_rule(end_entry, next_vertex, anEntry.origin, pos, :nullable_rule)
       end
 
@@ -144,10 +144,11 @@ module Rley # This module is used as a namespace
       #     [A => α . t γ, i]
       #     and allow them to cross the edge, adding the node on the back side
       #     of the edge as an entry to the next sigma set:
-      #       add an entry to the next sigma set [A => α t . γ, i]
+      #       add an entry to the next sigma set [A => α t . γ, i + 1]
       # returns true if next token matches the expectations, false otherwise.
-      def scan_rule(aPosition)
-        terminal = tokens[aPosition].terminal
+      def scan_rule(aPosition, aToken)
+        tokens << aToken
+        terminal = aToken.terminal
 
         # Retrieve all the entries that expect the given terminal
         expecting_term = chart[aPosition].entries4term(terminal)
@@ -271,11 +272,11 @@ END_MSG
             # Rule: has 1..* antecedents, all of them are exit items
             antecedents.each do |antec|
               next if antec.exit_entry?
-              msg_prefix = "Parse entry #{consequent}"
-              msg_suffix = " has for antecedent #{antec}"              
+              msg_prefix = "End vertex parse entry #{consequent}"
+              msg_suffix = " has for antecedent #{antec}"
               raise StandardError, msg_prefix + msg_suffix
             end
-          
+
           when Rley::GFG::ItemVertex
             # Rule: has exactly one antecedent
             # if antecedents.size > 1
@@ -284,15 +285,15 @@ END_MSG
               # msg_suffix = antecedents.map(&:to_s).join("\n")
               # raise(StandardError, msg_prefix + msg + msg_suffix)
             # end
-            
+
           when Rley::GFG::StartVertex
             # Rule: has 0..* antecedents, all of them are item vertices but not exit items
             antecedents.each do |antec|
               next if antec.dotted_entry? && !antec.end_entry?
               msg_prefix = "Parse entry #{consequent}"
-              msg_suffix = " has for antecedent #{antec}"              
+              msg_suffix = " has for antecedent #{antec}"
               raise StandardError, msg_prefix + msg_suffix
-            end            
+            end
         end
 
         consequent.add_antecedent(antecedentEntry)

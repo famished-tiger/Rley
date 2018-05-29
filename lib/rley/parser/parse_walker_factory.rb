@@ -52,6 +52,8 @@ module Rley # This module is used as a namespace
       # @return [Enumerator] yields visit events when walking over the
       #   parse result
       def build_walker(acceptingEntry, maxIndex, lazyWalk = false)
+        msg = 'Internal error: nil entry argument'
+        raise StandardError, msg if acceptingEntry.nil?
         # Local context for the enumerator
         ctx = init_context(acceptingEntry, maxIndex, lazyWalk)
 

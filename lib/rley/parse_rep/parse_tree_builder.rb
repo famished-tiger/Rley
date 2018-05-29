@@ -47,7 +47,7 @@ module Rley # This module is used as a namespace
         @dummy_node = Object.new.freeze
       end
       
-      # Notify the builder that the construction is over
+      # Notify the builder that the parse tree construction is complete.
       def done!()
         result.done!
       end      
@@ -77,7 +77,7 @@ module Rley # This module is used as a namespace
 
       # Return the stack
       def stack()
-        return @stack
+        @stack
       end
 
       # Overriding method.
@@ -92,7 +92,7 @@ module Rley # This module is used as a namespace
 
       # Return the top of stack element.
       def tos()
-        return @stack.last
+        @stack.last
       end
 
       # Handler for visit events for ParseEntry matching N. pattern

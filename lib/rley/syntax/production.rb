@@ -15,15 +15,19 @@ module Rley # This module is used as a namespace
 
       # @return [NonTerminal] The left-hand side of the rule.
       attr_reader(:lhs)
-      
-      # @return [String] 
+
+      # @return [String]
       #   The name of the production rule. It must be unique in a grammar.
       attr_accessor(:name)
-      
-      # @return [Boolean] A production is generative when all of its 
+
+      # @return [Boolean] A production is generative when all of its
       # rhs members are generative (that is, they can each generate/derive
       # a non-empty string of terminals).
-      attr_writer(:generative)      
+      attr_writer(:generative)
+
+      # @return [Boolean] A production is nullable when all of its
+      #   rhs members are nullable.
+      attr_writer(:nullable)
 
       # Provide common alternate names to lhs and rhs accessors
 
@@ -32,10 +36,10 @@ module Rley # This module is used as a namespace
 
       # Create a Production instance.
       # @param aNonTerminal [NonTerminal] The left-hand side of the rule.
-      # @param theSymbols [list<Terminal | NonTerminal>] symbols of rhs.      
+      # @param theSymbols [list<Terminal | NonTerminal>] symbols of rhs.
       def initialize(aNonTerminal, theSymbols)
         @lhs = valid_lhs(aNonTerminal)
-        @rhs = valid_rhs(theSymbols)       
+        @rhs = valid_rhs(theSymbols)
       end
 
       # Is the rhs empty?
@@ -43,16 +47,21 @@ module Rley # This module is used as a namespace
       def empty?()
         return rhs.empty?
       end
-      
-      # Return true iff the production is generative      
+
+      # Return true iff the production is generative
       def generative?()
         if @generative.nil?
         end
-        
+
         return @generative
       end
 
-      # Returns a string containing a human-readable representation of the 
+      # @return [Boolen] true iff the production is nullable
+      def nullable?()
+        return @nullable
+      end
+
+      # Returns a string containing a human-readable representation of the
       # production.
       # @return [String]
       def inspect()
@@ -63,7 +72,7 @@ module Rley # This module is used as a namespace
         result << " @generative=#{@generative}>"
         return result
       end
-      
+
       # A setter for the production name
       # @param aName [String] the name of the production
       def as(aName)
@@ -83,14 +92,14 @@ module Rley # This module is used as a namespace
 
         return aNonTerminal
       end
-      
+
       def valid_rhs(theSymbols)
         if theSymbols.nil?
           msg_prefix = 'Right side of a production of the kind '
           msg_suffix = "'#{lhs.name}' => ... is nil."
-          raise StandardError, msg_prefix + msg_suffix    
-        end 
-      
+          raise StandardError, msg_prefix + msg_suffix
+        end
+
         return SymbolSeq.new(theSymbols)
       end
     end # class

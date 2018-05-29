@@ -21,14 +21,14 @@ module Rley # This module is used as a namespace
       def terminal2node()
         raise NotImplementedError
       end
-      
+
       # Method to override in subclass.
       # Default class for representing terminal nodes.
       # @return [Class]
       def terminalnode_class()
         PTree::TerminalNode
       end
-      
+
       # Default method name to invoke when production
       # with given name is invoked.
       # Override this method for other method naming convention.
@@ -51,7 +51,7 @@ module Rley # This module is used as a namespace
       # Simply return the second child node
       # @param _range [Lexical::TokenRange]
       # @param _tokens [Array<Lexical::Token>]
-      # @param theChildren [Array<Object>]      
+      # @param theChildren [Array<Object>]
       def return_second_child(_range, _tokens, theChildren)
         return theChildren[1]
       end
@@ -60,7 +60,7 @@ module Rley # This module is used as a namespace
       # Simply return the last child node
       # @param _range [Lexical::TokenRange]
       # @param _tokens [Array<Lexical::Token>]
-      # @param theChildren [Array<Object>]      
+      # @param theChildren [Array<Object>]
       def return_last_child(_range, _tokens, theChildren)
         return theChildren[-1]
       end
@@ -68,13 +68,13 @@ module Rley # This module is used as a namespace
       # Simply return an epsilon symbol
       # @param _range [Lexical::TokenRange]
       # @param _tokens [Array<Lexical::Token>]
-      # @param _children [Array<Object>]       
+      # @param _children [Array<Object>]
       def return_epsilon(_range, _tokens, _children)
         return nil
       end
-      
+
       protected
-     
+
       # Overriding method.
       # Create a parse tree object with given
       # node as root node.
@@ -98,7 +98,7 @@ module Rley # This module is used as a namespace
 
         return node
       end
- 
+
       # Method to override.
       # Factory method for creating a parent node object.
       # @param aProduction [Production] Production rule
@@ -119,7 +119,7 @@ module Rley # This module is used as a namespace
                    else
                     msg = "Don't know production '#{aProduction.name}'"
                     raise StandardError, msg
-                 end            
+                 end
         end
         return node
       end

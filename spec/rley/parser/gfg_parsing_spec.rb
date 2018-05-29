@@ -41,10 +41,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
         builder.grammar
       end
 
-      let(:grm1_tokens) do
-        build_token_sequence(%w[a a b c c], grm1)
-      end
-
+      let(:grm1_tokens) { build_token_sequence(%w[a a b c c], grm1) }
       let(:grm1_token_b) { build_token_sequence(['b'], grm1) }
 
       # Helper method. Create an array of dotted items
@@ -55,18 +52,15 @@ module Rley # Open this namespace to avoid module qualifier prefixes
       let(:output) { StringIO.new('', 'w') }
 
       # Default instantiation rule
-      subject do
-        GFGParsing.new(sample_gfg, grm1_tokens)
-      end
+      subject { GFGParsing.new(sample_gfg) }
 
       context 'Initialization:' do
-        it 'should be created with a GFG, tokens' do
-          expect { GFGParsing.new(sample_gfg, grm1_tokens) }
-            .not_to raise_error
+        it 'should be created with a GFG' do
+          expect { GFGParsing.new(sample_gfg) }.not_to raise_error
         end
 
-        it 'should know the input tokens' do
-          expect(subject.tokens).to eq(grm1_tokens)
+        it 'should have an empty tokens array' do
+          expect(subject.tokens).to be_empty
         end
 
         it 'should know its chart object' do
@@ -107,11 +101,9 @@ SNIPPET
 
         # Utility method to initialize the second entry set...
         def seed_second_set()
-          # Cheating: we change surreptitiously the tokens to scan...
-          subject.instance_variable_set(:@tokens, grm1_token_b)
-
+          # Cheating: we change the tokens to scan...
           # Seeding second entry set...
-          subject.scan_rule(0)
+          subject.scan_rule(0, grm1_token_b[0])
         end
 
         # Utility method used to invoke the private method 'push_entry'
@@ -120,19 +112,19 @@ SNIPPET
         end
 
         it 'should push a parse entry to a given chart entry set' do
-          expect(subject.chart[1]).to be_empty
+          expect(subject.chart.sets[1]).to be_nil
           a_vertex = sample_gfg.find_vertex('A => a . A c')
 
-          push_entry(subject, a_vertex, 1, 1, :scanning)
+          push_entry(subject, a_vertex, 1, 1, :scan_rule)
           expect(subject.chart[1].size).to eq(1)
           expect(subject.chart[1].first.vertex).to eq(a_vertex)
 
           # Pushing twice the same state must be no-op
-          push_entry(subject, a_vertex, 1, 1, :scanning)
+          push_entry(subject, a_vertex, 1, 1, :scan_rule)
           expect(subject.chart[1].size).to eq(1)
 
           # Pushing to another entry set
-          push_entry(subject, a_vertex, 1, 2, :scanning)
+          push_entry(subject, a_vertex, 1, 2, :scan_rule)
           expect(subject.chart[2].size).to eq(1)
         end
 
@@ -191,8 +183,8 @@ SNIPPET
           # ['A => . a A c', 'A => . b']
           fourth_entry = subject.chart[0].entries[3] # 'A => . a A c'
 
-          expect(subject.chart[1]).to be_empty
-          subject.scan_rule(0)
+          expect(subject.chart.sets[1]).to be_nil
+          subject.scan_rule(0, grm1_tokens[0])
           # Given that the scanned token is 'a'...
           # Then a new entry is added in next entry set
           expect(subject.chart[1].size).to eq(1)
@@ -316,9 +308,15 @@ SNIPPET
           tokens = expr_tokenizer('2 + 3 * 4', b_expr_grammar)
           parser.parse(tokens)
         end
+        
+        it 'should indicate whether a parse succeeded' do
+          expect(subject.success?).to be_truthy
+        end
 
         it 'should build a parse forest' do
-          expect { subject.parse_forest }.not_to raise_error
+          if subject.success?
+            expect { subject.parse_forest }.not_to raise_error
+          end
         end
 =begin
         it 'should create the root of a parse forest' do

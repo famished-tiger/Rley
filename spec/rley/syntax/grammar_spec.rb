@@ -246,6 +246,13 @@ module Rley # Open this namespace to avoid module qualifier prefixes
             expect(nterm).to be_nullable
           end
         end
+        
+        it 'should mark its nullable productions' do
+          # Given the above productions, here are our expectations:
+          expectations = [true, false, false, true]
+          actuals = subject.rules.map(&:nullable?)
+          expect(actuals).to eq(expectations)
+        end        
       end # context
     end # describe
   end # module

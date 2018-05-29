@@ -47,38 +47,50 @@ module Rley # Open this namespace to avoid module qualifier prefixes
       let(:items_from_grammar) { build_items_for_grammar(grammar_abc) }
       let(:sample_gfg) { GFG::GrmFlowGraph.new(items_from_grammar) }
       let(:sample_start_symbol) { sample_gfg.start_vertex.non_terminal }
+      let(:second_vertex) { sample_gfg.start_vertex.edges[0].successor }
 
 
       # Default instantiation rule
-      subject { GFGChart.new(count_token, sample_gfg) }
+      subject { GFGChart.new(sample_gfg) }
 
 
       context 'Initialization:' do
         it 'should be created with start vertex, token count' do
-          expect { GFGChart.new(count_token, sample_gfg) }
-            .not_to raise_error
+          expect { GFGChart.new(sample_gfg) }.not_to raise_error
         end
 
-        it 'should have correct entry set count' do
-          expect(subject.sets.size).to eq(count_token + 1)
+        it 'should have one entry set' do
+          expect(subject.sets.size).to eq(1)
         end
 
         it 'should know the start symbol' do
           expect(subject.start_symbol).to eq(sample_start_symbol)
         end
-        
+
         it 'should know the initial parse entry' do
           expect(subject.initial_entry.vertex).to eq(sample_gfg.start_vertex)
           expect(subject.initial_entry.origin).to eq(0)
         end
-=begin
+      end # context
 
-        it 'should know the start dotted rule' do
-          expect(subject.start_dotted_rule).to eq(dotted_rule)
+      context 'Provided services:' do
+        it 'should accept the pushing of a parse entry in existing set' do
+          expect(subject.sets[0].entries.size).to eq(1)        
+          subject.push_entry(second_vertex, 0, 0, :scan_rule)
+          expect(subject.sets[0].entries.size).to eq(2)
+        end
+        
+        it 'should accept the pushing of a parse entry in new set' do
+          expect(subject.sets[0].entries.size).to eq(1)       
+          subject.push_entry(second_vertex, 0, 1, :scan_rule)
+          expect(subject.sets[0].entries.size).to eq(1)
+          expect(subject.sets.size).to eq(2)
+          expect(subject.sets[1].entries.size).to eq(1)
         end
 
-
-=end
+        it 'should retrieve an existing set at given position' do
+          expect(subject[0]).to eq(subject.sets[0])
+        end        
       end # context
     end # describe
   end # module

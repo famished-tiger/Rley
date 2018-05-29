@@ -22,35 +22,39 @@ module Rley # This module is used as a namespace
       # tokenizer/scanner/lexer.
       # @return [GFGParsing] an object that embeds the parse results.
       def parse(aTokenSequence)
-        result = GFGParsing.new(gf_graph, aTokenSequence)
-        last_token_index = aTokenSequence.size
-        if last_token_index.zero? && !grammar.start_symbol.nullable?
+        result = GFGParsing.new(gf_graph)
+        token_count = aTokenSequence.size
+        if token_count.zero? && !grammar.start_symbol.nullable?
           return unexpected_empty_input(result)
         end
 
-        (0..last_token_index).each do |i|
-          result.chart[i].each do |entry|
-            # Is entry of the form? [A => alpha . B beta, k]...
-            next_symbol = entry.next_symbol
-            if next_symbol && next_symbol.kind_of?(Syntax::NonTerminal)
-              # ...apply the Call rule
-              call_rule(result, entry, i)
-            end
-
-            exit_rule(result, entry, i) if entry.exit_entry?
-            start_rule(result, entry, i) if entry.start_entry?
-            end_rule(result, entry, i) if entry.end_entry?
-          end
-          if i < last_token_index
-            scan_success = scan_rule(result, i)
-            break unless scan_success
-          end
+        aTokenSequence.each_with_index do |token, i|
+          parse_for_token(result, i)
+          scan_success = scan_rule(result, i, token)
+          break unless scan_success
         end
+        parse_for_token(result, token_count) unless result.failure_reason
+
         result.done # End of parsing process
         return result
       end
 
       private
+
+      def parse_for_token(result, index)
+        result.chart[index].each do |entry|
+          # Is entry of the form? [A => alpha . B beta, k]...
+          next_symbol = entry.next_symbol
+          if next_symbol && next_symbol.kind_of?(Syntax::NonTerminal)
+            # ...apply the Call rule
+            call_rule(result, entry, index)
+          end
+
+          exit_rule(result, entry, index) if entry.exit_entry?
+          start_rule(result, entry, index) if entry.start_entry?
+          end_rule(result, entry, index) if entry.end_entry?
+        end
+      end
 
       # Let the current sigma set be the ith parse entry set.
       # This method is invoked when an entry is added to the parse entry set
@@ -95,17 +99,17 @@ module Rley # This module is used as a namespace
       #     [A => α . t γ, i]
       #     and allow them to cross the edge, adding the node on the back side
       #     of the edge as an entry to the next sigma set:
-      #       add an entry to the next sigma set [A => α t . γ, i]
-      def scan_rule(aParsing, aPosition)
-        aParsing.scan_rule(aPosition)
+      #       add an entry to the next sigma set [A => α t . γ, i + 1]
+      def scan_rule(aParsing, aPosition, aToken)
+        aParsing.scan_rule(aPosition, aToken)
       end
-      
+
       # Parse error detected: no input tokens provided while the grammar
       # forbids this this.
       def unexpected_empty_input(aParsing)
         aParsing.faulty(NoInput.new)
         return aParsing
-      end 
+      end
     end # class
   end # module
 end # module

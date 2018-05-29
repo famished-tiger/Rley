@@ -214,20 +214,36 @@ module Rley # This module is used as a namespace
           filtered_rules.reject! { |prod| prod.lhs.nullable? }
           nullable_sets[i] = nullable_sets[i - 1].merge(new_nullables)
         end
+        
+        mark_nullable
       end
 
       # Return the set of nonterminals which have one of their
       # production rules empty
       def direct_nullable()
-        nullable = Set.new
+        nullables = Set.new
         # Direct nullable nonterminals correspond to empty productions
         rules.each do |prod|
           next unless prod.empty?
           prod.lhs.nullable = true
-          nullable << prod.lhs
+          nullables << prod.lhs
         end
 
-        return nullable
+        return nullables
+      end
+      
+      
+      # For each prodction determine whether it is nullable or not.
+      # A nullable production is a production that can match an empty string.      
+      def mark_nullable
+        rules.each do |prod|
+          if prod.empty?
+            prod.nullable = true
+          else
+            # If all rhs members are all nullable, then rule is nullable
+            prod.nullable = prod.rhs.members.all?(&:nullable?)
+          end
+        end
       end
 
       def add_symbol(aSymbol)
