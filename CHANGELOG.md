@@ -1,3 +1,12 @@
+### 0.6.08 / 2018-06-24
+* [NEW] Methods `Engine#to_pforest`, `Engine#pforest_visitor` added.
+* [NEW] Class `SPPF::AlternativeNode` Added method `accept` to support Visitor pattern.
+* [NEW] Class `SPPF::EpsilonNode` Added method `accept` to support Visitor pattern.
+* [CHANGE] Class `ParseForestVisitor` vastly reworked, now supports visits of cyclic structure.
+* [CHANGE] Class `Formatter::Debug`: Supports now visit events for both parse trees and forests.
+* [CHANGE] File `examples/NLP/nano_eng/nano_en_demo.rb` Added demo steps to show how to produce a parse forest.
+
+
 ### 0.6.07 / 2018-05-29
 * [CHANGE] Method `GFGEarleyParser#parse` doesn't assume that the exact sequence of tokens to be known in advance.
 * [FIXED] Method `GFGParsing#nullable_rule`: in very specific cases a wrong parse entry was added to the parse chart.

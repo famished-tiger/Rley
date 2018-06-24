@@ -7,6 +7,8 @@ module Rley # This module is used as a namespace
     class CompositeNode < SPPFNode
       # @return [Array<SPFFNode>] Sub-nodes (children).
       attr_reader(:subnodes)
+      
+      alias children subnodes      
 
       # Constructor
       # @param aRange [Lexical::TokenRange]      

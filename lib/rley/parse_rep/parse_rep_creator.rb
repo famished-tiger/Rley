@@ -5,7 +5,8 @@ module Rley # This module is used as a namespace
     # Utility class that helps to create a representation of a parse from
     # a given Parsing object.
     class ParseRepCreator
-      # @return [GFGParsing] Link to Parsing object (= results of recognizer)
+      # @return [Rley::Parser::GFGParsing] 
+      #  Link to Parsing object (= results of recognizer)
       attr_reader(:parsing)
       
       # Constructor. Creates and initialize a ParseRepCreator instance.
@@ -15,7 +16,8 @@ module Rley # This module is used as a namespace
       end      
       
       # Factory method that produces the representation of the parse.
-      # @return [ParseTree] The parse representation.
+      # @return [Rley::PTree::ParseTree, Rley::SPPF::ParseForest] 
+      #   The parse representation.
       def create(aBuilder = nil)
         a_walker = walker(parsing)
         a_builder = builder(parsing, aBuilder)

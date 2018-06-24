@@ -3,7 +3,6 @@ require_relative '../spec_helper'
 
 require_relative '../../lib/rley/lexical/token'
 require_relative '../../lib/rley/parse_rep/cst_builder'
-require_relative '../../lib/rley/parse_tree_visitor'
 
 # Load the class under test
 require_relative '../../lib/rley/engine'
@@ -93,10 +92,10 @@ module Rley # Open this namespace to avoid module qualifier prefixes
         add_sample_grammar(instance)
         instance
       end
-      
+
       let(:sample_tokenizer) do
         sample_text = 'a a b c c'
-        ABCTokenizer.new(sample_text)      
+        ABCTokenizer.new(sample_text)
       end
 
       it 'should build default parse trees' do
@@ -107,18 +106,45 @@ module Rley # Open this namespace to avoid module qualifier prefixes
 
       it 'should build custom parse trees' do
         # Cheating: we point to default tree builder (CST)
-        subject.configuration.repr_builder = ParseRep::CSTBuilder        
+        subject.configuration.repr_builder = ParseRep::CSTBuilder
         raw_result = subject.parse(sample_tokenizer)
         ptree = subject.convert(raw_result)
         expect(ptree).to be_kind_of(PTree::ParseTree)
       end
-      
+
       it 'should provide a parse visitor' do
         raw_result = subject.parse(sample_tokenizer)
         ptree = subject.to_ptree(raw_result)
         visitor = subject.ptree_visitor(ptree)
         expect(visitor).to be_kind_of(ParseTreeVisitor)
-      end    
+      end
+    end # context
+
+    context 'Parse forest manipulation:' do
+      subject do
+        instance = Engine.new
+        add_sample_grammar(instance)
+        instance
+      end
+
+      let(:sample_tokenizer) do
+        sample_text = 'a a b c c'
+        ABCTokenizer.new(sample_text)
+      end
+      
+      it 'should build parse forest' do
+        raw_result = subject.parse(sample_tokenizer)
+        pforest = subject.to_pforest(raw_result)
+        expect(pforest).to be_kind_of(SPPF::ParseForest)
+      end      
+      
+      it 'should provide a parse visitor' do
+        raw_result = subject.parse(sample_tokenizer)
+        ptree = subject.to_pforest(raw_result)
+        visitor = subject.pforest_visitor(ptree)
+        expect(visitor).to be_kind_of(ParseForestVisitor)
+      end
+
     end # context
   end # describe
 end # module

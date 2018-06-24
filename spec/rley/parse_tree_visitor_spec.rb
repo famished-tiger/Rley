@@ -1,9 +1,10 @@
 require_relative '../spec_helper'
 
-require_relative './support/grammar_abc_helper'
 require_relative '../../lib/rley/lexical/token'
 require_relative '../../lib/rley/parser/gfg_earley_parser'
 require_relative '../../lib/rley/engine'
+require_relative './support/grammar_abc_helper'
+require_relative './support/grammar_sppf_helper'
 # Load the class under test
 require_relative '../../lib/rley/parse_tree_visitor'
 

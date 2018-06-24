@@ -1,0 +1,36 @@
+  digraph gfg {
+  size="7,9.5";
+  page="8.5,11";
+  ratio = fill;
+
+    node_33213800[shape=box, fontsize=18.0, label="Phi[0, 4]"];
+    node_33213220[shape=box, fontsize=18.0, label="S[0, 4]"];
+    node_33212740[shape=box, fontsize=18.0, label="Alt(S => a T .)[0, 4]"];
+    node_33201460[shape=box, fontsize=18.0, label="a[0, 1]"];
+    node_33212740 -> node_33201460[taillabel = "0"];
+    node_33212140[shape=box, fontsize=18.0, label="T[1, 4]"];
+    node_33210840[shape=box, fontsize=18.0, label="b[1, 2]"];
+    node_33212140 -> node_33210840[taillabel = "0"];
+    node_33211280[shape=box, fontsize=18.0, label="b[2, 3]"];
+    node_33212140 -> node_33211280[taillabel = "1"];
+    node_33211760[shape=box, fontsize=18.0, label="b[3, 4]"];
+    node_33212140 -> node_33211760[taillabel = "2"];
+    node_33212740 -> node_33212140[taillabel = "1"];
+    node_33213220 -> node_33212740[taillabel = "0"];
+    node_33199640[shape=box, fontsize=18.0, label="Alt(S => A T .)[0, 4]"];
+    node_33198560[shape=box, fontsize=18.0, label="A[0, 1]"];
+    node_33198100[shape=box, fontsize=18.0, label="Alt(A => a .)[0, 1]"];
+    node_33198100 -> node_33201460[taillabel = "0"];
+    node_33198560 -> node_33198100[taillabel = "0"];
+    node_33195580[shape=box, fontsize=18.0, label="Alt(A => B A .)[0, 1]"];
+    node_33194460[shape=box, fontsize=18.0, label="B[0, 0]"];
+    node_33194180[shape=box, fontsize=18.0, label="_[0, 0]"];
+    node_33194460 -> node_33194180[taillabel = "0"];
+    node_33195580 -> node_33194460[taillabel = "0"];
+    node_33195580 -> node_33198560[taillabel = "1"];
+    node_33198560 -> node_33195580[taillabel = "1"];
+    node_33199640 -> node_33198560[taillabel = "0"];
+    node_33199640 -> node_33212140[taillabel = "1"];
+    node_33213220 -> node_33199640[taillabel = "1"];
+    node_33213800 -> node_33213220[taillabel = "0"];
+}

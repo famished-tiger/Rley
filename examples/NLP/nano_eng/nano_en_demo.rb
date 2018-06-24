@@ -1,12 +1,13 @@
 require 'rley' # Load Rley library
 
 ########################################
-# Step 0. Instantiate facade object of Rley library.
+# Step 1. Instantiate facade object of Rley library.
 # It provides a unified, higher-level interface
 engine = Rley::Engine.new
 
+
 ########################################
-# Step 1. Define a grammar for a nano English-like language
+# Step 2. Define a grammar for a nano English-like language
 # based on example from Jurafski & Martin book (chapter 8 of the book).
 # Bird, Steven, Edward Loper and Ewan Klein: "Speech and Language Processing";
 # 2009, Pearson Education, Inc., ISBN 978-0135041963
@@ -37,7 +38,7 @@ engine.build_grammar do
 end
 
 ########################################
-# Step 2. Creating a lexicon
+# Step 3. Creating a lexicon
 # To simplify things, lexicon is implemented as a Hash with pairs of the form:
 # word => terminal symbol name
 Lexicon = {
@@ -63,7 +64,7 @@ Lexicon = {
 }.freeze
 
 ########################################
-# Step 3. Creating a tokenizer
+# Step 4. Creating a tokenizer
 # A tokenizer reads the input string and converts it into a sequence of tokens
 # Highly simplified tokenizer implementation.
 def tokenizer(aTextToParse)
@@ -79,13 +80,11 @@ end
 ########################################
 # Step 5. Parsing the input
 input_to_parse = 'John saw Mary'
-# input_to_parse = 'John saw Mary with a telescope'
-# input_to_parse = 'the dog saw a man in the park' # This one is ambiguous
 # Convert input text into a sequence of token objects...
 tokens = tokenizer(input_to_parse)
 result = engine.parse(tokens)
 
-puts "Parsing successful? #{result.success?}"
+puts "Parsing '#{input_to_parse}' successful? #{result.success?}"
 unless result.success?
   puts result.failure_reason.message
   exit(1)
@@ -94,20 +93,38 @@ end
 ########################################
 # Step 6. Generating a parse tree from parse result
 ptree = engine.convert(result)
-
-# Let's create a parse tree visitor
 visitor = engine.ptree_visitor(ptree)
-
-# Let's create a formatter (i.e. visit event listener)
-# renderer = Rley::Formatter::Debug.new($stdout)
-
+renderer = Rley::Formatter::Debug.new($stdout)
 # Let's create a formatter that will render the parse tree with characters
-renderer = Rley::Formatter::Asciitree.new($stdout)
+# renderer = Rley::Formatter::Asciitree.new($stdout)
 
 # Let's create a formatter that will render the parse tree in labelled
 # bracket notation
 # renderer = Rley::Formatter::BracketNotation.new($stdout)
 
-# Subscribe the formatter to the visitor's event and launch the visit
 renderer.render(visitor)
+
+
+########################################
+# Redoing Step 5 and 6 with an ambiguous sentence
+input_to_parse = 'John saw Mary with a telescope'
+# input_to_parse = 'the dog saw a man in the park' # This one is also ambiguous
+# Convert input text into a sequence of token objects...
+tokens = tokenizer(input_to_parse)
+result = engine.parse(tokens)
+
+puts ''
+puts "Parsing '#{input_to_parse}' successful? #{result.success?}"
+unless result.success?
+  puts result.failure_reason.message
+  exit(1)
+end
+
+########################################
+# Step 6. Generating a parse forest from parse result
+pforest = engine.to_pforest(result)
+visitor = engine.pforest_visitor(pforest)
+renderer = Rley::Formatter::Debug.new($stdout)
+renderer.render(visitor)
+
 # End of file

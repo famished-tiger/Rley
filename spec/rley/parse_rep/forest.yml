@@ -1,0 +1,135 @@
+--- !ruby/object:Rley::SPPF::ParseForest
+root: !ruby/object:Rley::SPPF::NonTerminalNode
+  range: !ruby/object:Rley::Lexical::TokenRange
+    low: 0
+    high: 4
+  subnodes:
+  - !ruby/object:Rley::SPPF::NonTerminalNode
+    range: !ruby/object:Rley::Lexical::TokenRange
+      low: 0
+      high: 4
+    subnodes:
+    - !ruby/object:Rley::SPPF::AlternativeNode
+      range: !ruby/object:Rley::Lexical::TokenRange
+        low: 0
+        high: 4
+      subnodes:
+      - &2 !ruby/object:Rley::SPPF::TokenNode
+        range: !ruby/object:Rley::Lexical::TokenRange
+          low: 0
+          high: 1
+        token: !ruby/object:Rley::Lexical::Token
+          lexeme: a
+          terminal: !ruby/object:Rley::Syntax::Terminal
+            name: a
+            generative: true
+        key: a[0, 1]
+      - &5 !ruby/object:Rley::SPPF::NonTerminalNode
+        range: !ruby/object:Rley::Lexical::TokenRange
+          low: 1
+          high: 4
+        subnodes:
+        - &9 !ruby/object:Rley::SPPF::TokenNode
+          range: !ruby/object:Rley::Lexical::TokenRange
+            low: 1
+            high: 2
+          token: !ruby/object:Rley::Lexical::Token
+            lexeme: b
+            terminal: &1 !ruby/object:Rley::Syntax::Terminal
+              name: b
+              generative: true
+          key: b[1, 2]
+        - &8 !ruby/object:Rley::SPPF::TokenNode
+          range: !ruby/object:Rley::Lexical::TokenRange
+            low: 2
+            high: 3
+          token: !ruby/object:Rley::Lexical::Token
+            lexeme: b
+            terminal: *1
+          key: b[2, 3]
+        - &7 !ruby/object:Rley::SPPF::TokenNode
+          range: !ruby/object:Rley::Lexical::TokenRange
+            low: 3
+            high: 4
+          token: !ruby/object:Rley::Lexical::Token
+            lexeme: b
+            terminal: *1
+          key: b[3, 4]
+        symbol: !ruby/object:Rley::Syntax::NonTerminal
+          name: T
+          undefined: false
+          generative: true
+          nullable: false
+        refinement: :and
+      label: S => a T .
+      symbol: &6 !ruby/object:Rley::Syntax::NonTerminal
+        name: S
+        undefined: false
+        generative: true
+        nullable: false
+    - !ruby/object:Rley::SPPF::AlternativeNode
+      range: !ruby/object:Rley::Lexical::TokenRange
+        low: 0
+        high: 4
+      subnodes:
+      - &3 !ruby/object:Rley::SPPF::NonTerminalNode
+        range: !ruby/object:Rley::Lexical::TokenRange
+          low: 0
+          high: 1
+        subnodes:
+        - !ruby/object:Rley::SPPF::AlternativeNode
+          range: !ruby/object:Rley::Lexical::TokenRange
+            low: 0
+            high: 1
+          subnodes:
+          - *2
+          label: A => a .
+          symbol: &4 !ruby/object:Rley::Syntax::NonTerminal
+            name: A
+            undefined: false
+            generative: true
+            nullable: false
+        - !ruby/object:Rley::SPPF::AlternativeNode
+          range: !ruby/object:Rley::Lexical::TokenRange
+            low: 0
+            high: 1
+          subnodes:
+          - !ruby/object:Rley::SPPF::NonTerminalNode
+            range: !ruby/object:Rley::Lexical::TokenRange
+              low: 0
+              high: 0
+            subnodes:
+            - &10 !ruby/object:Rley::SPPF::EpsilonNode
+              range: !ruby/object:Rley::Lexical::TokenRange
+                low: 0
+                high: 0
+              key: _[0, 0]
+            symbol: !ruby/object:Rley::Syntax::NonTerminal
+              name: B
+              undefined: false
+              generative: false
+              nullable: true
+            refinement: :and
+          - *3
+          label: A => B A .
+          symbol: *4
+        symbol: *4
+        refinement: :or
+      - *5
+      label: S => A T .
+      symbol: *6
+    symbol: *6
+    refinement: :or
+  symbol: !ruby/object:Rley::Syntax::NonTerminal
+    name: Phi
+    undefined: false
+    generative: true
+    nullable: false
+  refinement: :and
+key2node:
+  b[3, 4]: *7
+  b[2, 3]: *8
+  b[1, 2]: *9
+  a[0, 1]: *2
+  _[0, 0]: *10
+is_ambiguous: true

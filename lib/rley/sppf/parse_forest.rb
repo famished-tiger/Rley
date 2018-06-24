@@ -30,7 +30,7 @@ module Rley # This module is used as a namespace
       end
       
       # Notification that the SPPF construction is over
-      def done!()
+      def done!
       end
       
       # Returns true if the given node is present in the forest.
@@ -43,6 +43,17 @@ module Rley # This module is used as a namespace
       def ambiguous?()
         return @is_ambiguous
       end
+      
+      # Create an Enumerator that helps to iterate over the possible parse trees. 
+      # That enumerator will generate a parse tree when called with `next` method.
+      # @return [Enumerator]
+      def to_ptree_enum()
+         # How to implement?
+         # One visits the forest => beware of dependency
+         # At each visited item create a corresponding  tree node.
+         # At end of visit & stack not empty
+         # Re-generate another ptree
+      end      
 
       # Part of the 'visitee' role in the Visitor design pattern.
       #   A visitee is expected to accept the visit from a visitor object

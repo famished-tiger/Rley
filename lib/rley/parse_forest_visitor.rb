@@ -1,25 +1,56 @@
+# require 'pry'
+require 'prime'
+
 module Rley # This module is used as a namespace
+  module SPPF # This module is used as a namespace
+    # Monkey-patching
+    class CompositeNode
+      attr_reader(:signatures)
+
+      # Associate for each edge between this node and each subnode
+      # an unique prime number (called a signature).
+      def add_edge_signatures(prime_enumerator)
+        @signatures = subnodes.map { |_| prime_enumerator.next }
+      end
+
+      def signature_exist?()
+        @signatures.nil? ? false : true
+      end
+    end # class
+  end # module
+
   # A visitor class dedicated in the visit of a parse forest.
   # It combines the Visitor and Observer patterns.
   class ParseForestVisitor
-    # Link to the parse forest to visit
+    # @return [SPPF::ParseForest] Link to the parse forest to visit
     attr_reader(:pforest)
 
-    # List of objects that subscribed to the visit event notification.
+    # @return [Array<Object>]
+    #   List of objects that subscribed to the visit event notification.
     attr_reader(:subscribers)
 
-    # A Hash with pairs of the form: Node => node visit data
-    attr_reader(:agenda)
+    # @return [Enumerator]
+    # Enumerator that generates a sequence of prime numbers
+    attr_reader(:prime_enum)
 
-    # Indicates the kind of forest traversal to perform: :post_order, :pre-order
-    attr_reader(:traversal)
+    # @return [Array<SPPF::CompositeNode, Integer>]
+    #   Stack of [node, path signature]
+    # path signature: an integer value that represents the set of edges used
+    # in traversal
+    attr_reader(:legs)
+
+    # @return [Hash{SPPF::CompositeNode, Array<Integer>}]
+    #   Keep trace from which path(s) a given node was accessed
+    attr_reader(:node_accesses)
 
     # Build a visitor for the given pforest.
-    # @param aParseForest [ParseForest] the parse tree to visit.
-    def initialize(aParseForest, aTraversalStrategy = :post_order)
+    # @param aParseForest [SPPF::ParseForest] the parse tree to visit.
+    def initialize(aParseForest)
       @pforest = aParseForest
       @subscribers = []
-      @traversal = aTraversalStrategy
+      @prime_enum = Prime.instance.each
+      @legs = []
+      @node_accesses = Hash.new { |h, key| h[key] = Array.new }
     end
 
     # Add a subscriber for the visit event notifications.
@@ -47,16 +78,28 @@ module Rley # This module is used as a namespace
     end
 
     # Visit event. The visitor is about to visit the given non terminal node.
-    # @param aNonTerminalNode [NonTerminalNode] the node to visit.
-    def visit_nonterminal(aNonTerminalNode)
-      if @traversal == :post_order
-        broadcast(:before_non_terminal, aNonTerminalNode)
-        traverse_children(aNonTerminalNode)
-      else
-        traverse_children(aNonTerminalNode)
-        broadcast(:before_non_terminal, aNonTerminalNode)
+    # @param nonTerminalNd [NonTerminalNode] the node to visit.
+    def visit_nonterminal(nonTerminalNd)
+      broadcast(:before_non_terminal, nonTerminalNd)
+     unless nonTerminalNd.signature_exist?
+       nonTerminalNd.add_edge_signatures(prime_enum)
+     end
+      traverse_children(nonTerminalNd)
+      broadcast(:after_non_terminal, nonTerminalNd)
+    end
+
+    # TODO: control the logic of this method.
+    # Visit event. The visitor is visiting the
+    # given alternative node.
+    # @param alternativeNd [AlternativeNode] the alternative node to visit.
+    def visit_alternative(alternativeNd)
+      broadcast(:before_alternative, alternativeNd)
+      unless alternativeNd.signature_exist?
+        alternativeNd.add_edge_signatures(prime_enum)
       end
-      broadcast(:after_non_terminal, aNonTerminalNode)
+
+      traverse_children(alternativeNd)
+      broadcast(:after_alternative, alternativeNd)
     end
 
     # Visit event. The visitor is visiting the
@@ -67,12 +110,20 @@ module Rley # This module is used as a namespace
       broadcast(:after_terminal, aTerminalNode)
     end
 
+    # Visit event. The visitor is visiting the
+    # given epsilon node.
+    # @param anEpsilonNode [EpsilonNode] the terminal to visit.
+    def visit_epsilon(anEpsilonNode)
+      broadcast(:before_epsilon, anEpsilonNode)
+      broadcast(:after_epsilon, anEpsilonNode)
+    end
+
     # Visit event. The visitor has completed its visit of the given
     # non-terminal node.
     # @param aNonTerminalNode [NonTerminalNode] the node to visit.
-    def end_visit_nonterminal(aNonTerminalNode)
-      broadcast(:after_non_terminal, aNonTerminalNode)
-    end
+    # def end_visit_nonterminal(aNonTerminalNode)
+      # broadcast(:after_non_terminal, aNonTerminalNode)
+    # end
 
     # Visit event. The visitor has completed the visit of the pforest.
     # @param aParseForest [ParseForest] the pforest to visit.
@@ -87,24 +138,57 @@ module Rley # This module is used as a namespace
     # @param aParentNode [NonTeminalNode] the (non-terminal) parent node.
     def traverse_children(aParentNode)
       children = aParentNode.children
-      broadcast(:before_children, aParentNode, children)
+      broadcast(:before_subnodes, aParentNode, children)
 
       # Let's proceed with the visit of children
-      children.each { |a_node| a_node.accept(self) }
+      children.each_with_index do |a_node, i|
+        edge_sign = aParentNode.signatures[i]
+        if a_node.kind_of?(SPPF::CompositeNode)
+          push_node(a_node, edge_sign)
+          access_paths = node_accesses[a_node]
+          last_path = legs.last[-1]
+          path_reused = access_paths.include?(last_path)
+          unless path_reused
+            node_accesses[a_node].push(last_path)
+            a_node.accept(self)
+          end
+          pop_node
+        else
+          a_node.accept(self)
+        end
+      end
 
-      broadcast(:after_children, aParentNode, children)
+      broadcast(:after_subnodes, aParentNode, children)
     end
 
     # Send a notification to all subscribers.
     # @param msg [Symbol] event to notify
     # @param args [Array] arguments of the notification.
     def broadcast(msg, *args)
-      subscribers.each do |a_subscriber|
-        next unless a_subscriber.respond_to?(msg)
-        a_subscriber.send(msg, *args)
+      subscribers.each do |subscr|
+        next unless subscr.respond_to?(msg) || subscr.respond_to?(:accept_all)
+        subscr.send(msg, *args)
       end
+    end
+
+    def push_node(aCompositeNode, anEdgeSignature)
+      if legs.empty?
+        legs << [aCompositeNode, anEdgeSignature]
+      else
+        path_signature = legs.last[-1]
+        # binding.pry if anEdgeSignature == 37 && path_signature != 230
+        if (path_signature % anEdgeSignature).zero?
+          legs << [aCompositeNode, path_signature]
+        else
+          legs << [aCompositeNode, path_signature * anEdgeSignature]
+        end
+      end
+    end
+
+    def pop_node
+      return if legs.empty?
+      legs.pop
     end
   end # class
 end # module
-
 # End of file

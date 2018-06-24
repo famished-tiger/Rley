@@ -42,7 +42,6 @@ module Rley # Open this namespace to avoid module qualifier prefixes
         parser.parse(sample_tokens)
       end
 
-
       subject do
         ParseForestFactory.new(sample_result)
       end
@@ -54,7 +53,6 @@ module Rley # Open this namespace to avoid module qualifier prefixes
         end
         return text_parts.join('/')
       end
-
 
       context 'Initialization:' do
         it 'should be created with a GFGParsing' do
@@ -70,13 +68,6 @@ module Rley # Open this namespace to avoid module qualifier prefixes
         it 'should build a parse forest' do
           forest = subject.create
           expect(forest).to be_kind_of(SPPF::ParseForest)
-=begin
-          require 'yaml'
-          require_relative '../../../exp/lab/forest_representation'
-          File.open("forest.yml", "w") { |f| YAML.dump(forest, f) }
-          pen = ForestRepresentation.new
-          pen.generate_graph(forest, File.open("forest.dot", "w"))
-=end
         end
       end # context
     end # describe

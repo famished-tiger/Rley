@@ -17,77 +17,27 @@ module Rley # This module is used as a namespace
         super(anIO)
         @indentation = 0
       end
-
-      # Method called by a ParseTreeVisitor to which the formatter subscribed.
-      # Notification of a visit event: the visitor is about to visit the given
-      # parse tree
-      # @param _ptree [ParseTree]
-      def before_ptree(_ptree)
-        output_event(__method__, indentation)
-        indent
+      
+      # Indicates that this formatter accepts all visit events
+      # provided their names start with 'before_' or 'after_'
+      # @return [Boolean]
+      def accept_all
+        return true
       end
-
-      # Method called by a ParseTreeVisitor to which the formatter subscribed.
-      # Notification of a visit event: the visitor is about to visit
-      # a non-terminal node
-      # @param _nonterm [NonTerminalNode]
-      def before_non_terminal(_nonterm)
-        output_event(__method__, indentation)
-        indent
-      end
-
-      # Method called by a ParseTreeVisitor to which the formatter subscribed.
-      # Notification of a visit event: the visitor is about to visit
-      # the children of a non-terminal node
-      # @param _parent [NonTerminalNode]
-      # @param _children [Array] array of children nodes
-      def before_subnodes(_parent, _children)
-        output_event(__method__, indentation)
-        indent
-      end
-
-      # Method called by a ParseTreeVisitor to which the formatter subscribed.
-      # Notification of a visit event: the visitor is about to visit
-      # a terminal node
-      # @param _term [TerminalNode]
-      def before_terminal(_term)
-        output_event(__method__, indentation)
-      end
-
-      # Method called by a ParseTreeVisitor to which the formatter subscribed.
-      # Notification of a visit event: the visitor completed the visit of
-      # a terminal node.
-      # @param _term [TerminalNode]
-      def after_terminal(_term)
-        output_event(__method__, indentation)
-      end
-
-      # Method called by a ParseTreeVisitor to which the formatter subscribed.
-      # Notification of a visit event: the visitor completed the visit of
-      # a non-terminal node
-      # @param _nonterm [NonTerminalNode]
-      def after_non_terminal(_nonterm)
-        dedent
-        output_event(__method__, indentation)
-      end
-
-      # Method called by a ParseTreeVisitor to which the formatter subscribed.
-      # Notification of a visit event: the visitor completed the visit of
-      # the children of a non-terminal node.
-      # @param _parent [NonTerminalNode]
-      # @param _children [Array] array of children nodes
-      def after_subnodes(_parent, _children)
-        dedent
-        output_event(__method__, indentation)
-      end
-
-      # Method called by a ParseTreeVisitor to which the formatter subscribed.
-      # Notification of a visit event: the visitor completed the visit
-      # of the given parse tree
-      # @param _ptree [ParseTree]
-      def after_ptree(_ptree)
-        dedent
-        output_event(__method__, indentation)
+      
+      # Ghost method pattern.
+      def method_missing(mth, *args)    
+        mth_name = mth.to_s         
+        case mth_name
+          when /^before_/
+            output_event(mth_name, indentation)
+            indent unless mth_name == 'before_terminal'
+          when /^after_/
+            dedent unless mth_name == 'after_terminal'
+            output_event(mth_name, indentation)
+          else
+            super(mth, args)
+        end
       end
 
       private

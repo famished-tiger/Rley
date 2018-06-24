@@ -20,9 +20,9 @@ module Rley # This module is used as a namespace
         @root = theRootNode
       end
       
-      # Notify the builder that the construction is over.
-      # This method can be overriden
-      def done!()
+      # Notification from the builder telling that the parse tree construction
+      # is over. This method can be overriden.
+      def done!
         @root.done!
       end
 

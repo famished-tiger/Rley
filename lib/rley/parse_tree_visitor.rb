@@ -97,9 +97,9 @@ module Rley # This module is used as a namespace
     # @param msg [Symbol] event to notify
     # @param args [Array] arguments of the notification.
     def broadcast(msg, *args)
-      subscribers.each do |a_subscriber|
-        next unless a_subscriber.respond_to?(msg)
-        a_subscriber.send(msg, *args)
+      subscribers.each do |subscr|
+        next unless subscr.respond_to?(msg) || subscr.respond_to?(:accept_all)
+        subscr.send(msg, *args)
       end
     end
   end # class
