@@ -139,6 +139,10 @@ module Rley # This module is used as a namespace
               if first_time
                 stack.push(Branching.new(visitee, curr_edge))
                 curr_edge = stack.last.next_edge
+              elsif curr_edge.nil?
+                # Error probably caused by missing terminal symbol object
+                msg = "Undefined grammar symbol #{visitee.label.sub(/^\./, '')}"
+                raise StandardError, msg
               else
                 # Skip both start and end vertices
                 # Retrieve the corresponding return edge

@@ -1,3 +1,6 @@
+### 0.6.09 / 2018-10-20
+* [FIXED] Method `GrmFlowGraph#traverse_df` now returns a meaningful message when the grammar uses a terminal symbol without declaring it first.
+
 ### 0.6.08 / 2018-06-24
 * [NEW] Methods `Engine#to_pforest`, `Engine#pforest_visitor` added.
 * [NEW] Class `SPPF::AlternativeNode` Added method `accept` to support Visitor pattern.
