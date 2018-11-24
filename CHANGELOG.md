@@ -1,3 +1,13 @@
+### 0.7.00 / 2018-11-24  
+- Version bump. Core class `Token` is changed.
+
+* [NEW] Structure `Lexical::Position` to hold the line, column position of a token.
+* [NEW] Class `BaseTokenizer`: Provides basic tokenizer operations to customized through subclassing.
+* [CHANGE] Class `Lexical::Token`: Attribute `position` added.
+* [CHANGE] Method `Lexical::Token#initialize`: Add a third argument for specifying the position of the token.
+* [CHANGE] Many classes and examples updated to conform to `Token` class change.   
+* [FIX] Missing methods in class `JSONPair` added.
+
 ### 0.6.09 / 2018-10-20
 * [FIXED] Method `GrmFlowGraph#traverse_df` now returns a meaningful message when the grammar uses a terminal symbol without declaring it first.
 

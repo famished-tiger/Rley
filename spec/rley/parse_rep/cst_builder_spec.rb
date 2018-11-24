@@ -23,7 +23,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
       end
 
       let(:sample_tokens) do
-        expr_tokenizer('2 + 3 * 4', sample_grammar)
+        expr_tokenizer('2 + 3 * 4')
       end
 
       subject { CSTBuilder.new(sample_tokens) }
@@ -357,7 +357,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
         # Event: visit P => . arr | 0 0
         #   Event: visit .P | 0 0
         it 'should build a tree for an empty array' do
-          empty_arr_tokens = arr_int_tokenizer('[ ]', array_grammar)
+          empty_arr_tokens = arr_int_tokenizer('[ ]')
           @instance = CSTBuilder.new(empty_arr_tokens)
           init_walker(@parser, empty_arr_tokens)
           stack = get_stack(@instance)

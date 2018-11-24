@@ -21,19 +21,28 @@ module GrammarAmbig01Helper
   end
 
   # Highly simplified tokenizer implementation.
-  def tokenizer_ambig01(aText, aGrammar)
-    tokens = aText.scan(/\S+/).map do |lexeme|
+  def tokenizer_ambig01(aText)
+    scanner = StringScanner.new(aText)
+    tokens = []
+    
+    loop do
+      scanner.skip(/\s+/)
+      curr_pos = scanner.pos
+      lexeme = scanner.scan(/\S+/)
+      break unless lexeme
       case lexeme
         when '+', '*'
-          terminal = aGrammar.name2symbol[lexeme]
+          terminal = lexeme
         when /^[-+]?\d+$/
-          terminal = aGrammar.name2symbol['integer']
+          terminal = 'integer'
         else
           msg = "Unknown input text '#{lexeme}'"
           raise StandardError, msg
       end
-      Rley::Lexical::Token.new(lexeme, terminal)
-    end
+
+      pos = Rley::Lexical::Position.new(1, curr_pos + 1)
+      tokens << Rley::Lexical::Token.new(lexeme, terminal, pos)      
+    end    
 
     return tokens
   end

@@ -12,10 +12,13 @@ module Rley # Open this namespace to avoid module qualifier prefixes
   module SPPF # Open this namespace to avoid module qualifier prefixes
     describe TokenNode do
       let(:sample_symbol) { Syntax::Terminal.new('Noun') }
-      let(:sample_token) { Lexical::Token.new('language', sample_symbol) }
-      let(:sample_position) { 3 } 
+      let(:sample_position) { Lexical::Position.new(3, 4) }
+      let(:sample_token) do 
+        Lexical::Token.new('language', sample_symbol, sample_position) 
+      end
+      let(:sample_rank) { 3 }
 
-      subject { TokenNode.new(sample_token, sample_position) }
+      subject { TokenNode.new(sample_token, sample_rank) }
 
       context 'Initialization:' do
         it 'should know its token' do
@@ -23,9 +26,9 @@ module Rley # Open this namespace to avoid module qualifier prefixes
         end
 
         it 'should know its token range' do
-          expect(subject.origin).to eq(sample_position)
-          expect(subject.range.low).to eq(sample_position)
-          expect(subject.range.high).to eq(sample_position + 1)
+          expect(subject.origin).to eq(sample_rank)
+          expect(subject.range.low).to eq(sample_rank)
+          expect(subject.range.high).to eq(sample_rank + 1)
         end
       end # context
       

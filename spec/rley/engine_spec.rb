@@ -49,10 +49,11 @@ module Rley # Open this namespace to avoid module qualifier prefixes
       end
 
       def each()
+        pos = Rley::Lexical::Position.new(1, 1) # Dummy position
         lexemes = @input.scan(/\S/)
         lexemes.each do |ch|
           if ch =~ /[abc]/
-            yield Rley::Lexical::Token.new(ch, ch)
+            yield Rley::Lexical::Token.new(ch, ch, pos)
           else
              raise StandardError, "Invalid character #{ch}"
           end

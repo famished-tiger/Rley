@@ -1,5 +1,13 @@
 module Rley # This module is used as a namespace
   module Lexical # This module is used as a namespace
+    # A Position is the location of a lexeme within a source file.
+    Position = Struct.new(:line, :column) do
+      def to_s
+        "line #{line}, column #{column}"
+      end
+    end
+  
+  
     # In Rley, a (lexical) token is an object created by a lexer (tokenizer)
     # and passed to the parser. Such token an object is created when a lexer
     # detects that a sequence of characters(a lexeme) from the input stream
@@ -17,15 +25,19 @@ module Rley # This module is used as a namespace
 
       # @return [Syntax::Terminal] Terminal symbol corresponding to the lexeme.
       attr_reader(:terminal)
+      
+      # @return [Position] The position of the lexeme in the source file.      
+      attr_reader(:position)
 
       # Constructor.
       # @param theLexeme [String] the lexeme (= piece of text from input)
-      # @param aTerminal [Syntax::Terminal]
+      # @param aTerminal [Syntax::Terminal, String]
       #   The terminal symbol corresponding to the lexeme.
-      def initialize(theLexeme, aTerminal)
+      def initialize(theLexeme, aTerminal, aPosition)
         raise 'Internal error: nil terminal symbol detected' if aTerminal.nil?
         @lexeme = theLexeme
         @terminal = aTerminal
+        @position = aPosition
       end
     end # class
   end # module

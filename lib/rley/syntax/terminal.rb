@@ -14,15 +14,19 @@ module Rley # This module is used as a namespace
       end
       
       # Return true iff the symbol is a terminal
-      def terminal?()
+      def terminal?
         return true
       end
       
       # @return [false] Return true if the symbol derives
       # the empty string. As terminal symbol corresponds to a input token
       # it is by definition non-nullable.
-      def nullable?() 
+      def nullable?
         false
+      end
+      
+      def to_s
+        name
       end
     end # class
   end # module

@@ -62,7 +62,8 @@ module Rley # Open this namespace to avoid module qualifier prefixes
     describe UnexpectedToken do
       let(:err_lexeme) { '-' }
       let(:err_terminal) { Syntax::Terminal.new('MINUS') }
-      let(:err_token) { Lexical::Token.new(err_lexeme, err_terminal) }
+      let(:pos) { Lexical::Position.new(3, 4) }
+      let(:err_token) { Lexical::Token.new(err_lexeme, err_terminal, pos) }
       let(:terminals) do
         %w[PLUS LPAREN].map { |name| Syntax::Terminal.new(name) }
       end
@@ -81,7 +82,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
       context 'Provided services:' do
         it 'should emit a message' do
           text = <<MESSAGE_END
-Syntax error at or near token 4 >>>-<<<
+Syntax error at or near token line 3, column 4 >>>-<<<
 Expected one of: ['PLUS', 'LPAREN'], found a 'MINUS' instead.
 MESSAGE_END
           expect(subject.to_s).to eq(text.chomp)
@@ -93,7 +94,8 @@ MESSAGE_END
     describe PrematureInputEnd do
       let(:err_lexeme) { '+' }
       let(:err_terminal) { Syntax::Terminal.new('PLUS') }
-      let(:err_token) { Lexical::Token.new(err_lexeme, err_terminal) }
+      let(:pos) { Lexical::Position.new(3, 4) }
+      let(:err_token) { Lexical::Token.new(err_lexeme, err_terminal, pos) }
       let(:terminals) do
         %w[INT LPAREN].map { |name| Syntax::Terminal.new(name) }
       end
@@ -112,7 +114,7 @@ MESSAGE_END
       context 'Provided services:' do
         it 'should emit a message' do
           text = <<MESSAGE_END
-Premature end of input after '+' at position 4
+Premature end of input after '+' at position line 3, column 4
 Expected one of: ['INT', 'LPAREN'].
 MESSAGE_END
           expect(subject.to_s).to eq(text.chomp)

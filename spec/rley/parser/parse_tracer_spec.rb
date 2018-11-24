@@ -15,11 +15,12 @@ module Rley # Open this namespace to avoid module qualifier prefixes
   module Parser # Open this namespace to avoid module qualifier prefixes
     describe ParseTracer do
       let(:output) { StringIO.new('', 'w') }
+      let(:tpos) { Lexical::Position.new(3, 4) }
 
       let(:token_seq) do
         literals = %w[I saw John with a dog]
-        literals.map do |lexeme| 
-          Lexical::Token.new(lexeme, double('fake-terminal')) 
+        literals.map do |lexeme|
+          Lexical::Token.new(lexeme, double('fake-terminal'), tpos)
         end
       end
 

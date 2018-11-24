@@ -56,21 +56,6 @@ Lexicon = {
   'with' => 'Preposition'
 }.freeze
 
-Position = Struct.new(:line, :column) do
-  def to_s()
-    "line #{line}, column #{column}"
-  end
-end
-
-class NLPToken < Rley::Lexical::Token
-  attr_reader(:position)
-  
-  def initialize(theLexeme, aTerminal, aPosition)
-    super(theLexeme, aTerminal)
-    @position = aPosition
-  end
-end
-
 ########################################
 # Step 4. Create a tokenizer
 # A tokenizer reads the input string and converts it into a sequence of tokens.
@@ -88,8 +73,8 @@ def tokenizer(aTextToParse)
 
     term_name = Lexicon[word]
     raise StandardError, "Word '#{word}' not found in lexicon" if term_name.nil?
-    pos = Position.new(1, curr_pos + 1)
-    tokens << NLPToken.new(word, term_name, pos)
+    pos = Rley::Lexical::Position.new(1, curr_pos + 1)
+    tokens << Rley::Lexical::Token.new(word, term_name, pos)
   end
 
   return tokens

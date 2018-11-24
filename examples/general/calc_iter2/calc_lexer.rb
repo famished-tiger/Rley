@@ -75,7 +75,8 @@ class CalcLexer
   end
   
   def build_token(aSymbolName, aLexeme)
-    return Rley::Lexical::Token.new(aLexeme, aSymbolName)    
+    pos = Rley::Lexical::Position.new(1, scanner.pos)
+    return Rley::Lexical::Token.new(aLexeme, aSymbolName, pos)    
   end
 
   def skip_whitespaces()

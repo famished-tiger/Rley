@@ -63,10 +63,13 @@ Lexicon = {
 # Rley doesn't provide tokenizer functionality.
 # (Highly simplified tokenizer implementation).
 def tokenizer(aTextToParse)
+  offset = -1
   tokens = aTextToParse.scan(/\S+/).map do |word|
     term_name = Lexicon[word]
     raise StandardError, "Word '#{word}' not found in lexicon" if term_name.nil?
-    Rley::Lexical::Token.new(word, term_name)
+    pos = Rley::Lexical::Position.new(1, offset + 1)
+    offset += word.length 
+    Rley::Lexical::Token.new(word, term_name, pos)
   end
 
   return tokens

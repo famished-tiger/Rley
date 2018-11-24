@@ -29,7 +29,8 @@ module AmbiguousGrammarHelper
           msg = "Unknown input text '#{lexeme}'"
           raise StandardError, msg
       end
-      Rley::Lexical::Token.new(lexeme, terminal)
+      pos = Rley::Lexical::Position.new(3, 4) # dummy pos
+      Rley::Lexical::Token.new(lexeme, terminal, pos)
     end
 
     return tokens

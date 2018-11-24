@@ -285,7 +285,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
 
         let(:sentence_tokens) do
           sentence = 'I prefer a morning flight'
-          tokenizer_l0(sentence, grammar_l0)
+          tokenizer_l0(sentence)
         end
 
         let(:sentence_result) do

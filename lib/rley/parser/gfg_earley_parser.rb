@@ -30,6 +30,10 @@ module Rley # This module is used as a namespace
 
         aTokenSequence.each_with_index do |token, i|
           parse_for_token(result, i)
+          if token.terminal.kind_of?(String)
+            symb = grammar.name2symbol[token.terminal]
+            token.instance_variable_set(:@terminal, symb)
+          end
           scan_success = scan_rule(result, i, token)
           break unless scan_success
         end

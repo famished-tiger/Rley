@@ -1,5 +1,6 @@
 # Load the builder class
 require_relative '../../../lib/rley/syntax/grammar_builder'
+require_relative '../../../lib/support/base_tokenizer'
 require_relative '../../../lib/rley/lexical/token'
 
 
@@ -12,36 +13,60 @@ class GrammarPBHelper
   def grammar()
     @grammar ||= begin
       builder = Rley::Syntax::GrammarBuilder.new do
-        t_int = Rley::Syntax::Literal.new('int', /[-+]?\d+/)
-        t_plus = Rley::Syntax::VerbatimSymbol.new('+')
-        t_lparen = Rley::Syntax::VerbatimSymbol.new('(')
-        t_rparen = Rley::Syntax::VerbatimSymbol.new(')')
-        add_terminals(t_int, t_plus, t_lparen, t_rparen)
+        add_terminals('int', '+', '(', ')')
         rule 'S' => 'E'
         rule 'E' => 'int'
-        rule 'E' => %w[( E + E )]
-        rule 'E' => %w[E + E]
+        rule 'E' => '( E + E )'
+        rule 'E' => 'E + E'
       end
       builder.grammar
     end
   end
 
-  # Basic expression tokenizer
-  def tokenize(aText)
-    tokens = aText.scan(/\S+/).map do |lexeme|
-      case lexeme
-        when '+', '(', ')'
-          terminal = @grammar.name2symbol[lexeme]
-        when /^[-+]?\d+$/
-          terminal = @grammar.name2symbol['int']
-        else
-          msg = "Unknown input text '#{lexeme}'"
-          raise StandardError, msg
-      end
-      Rley::Lexical::Token.new(lexeme, terminal)
-    end
+  # # Basic expression tokenizer
+  # def tokenize(aText)
+    # tokens = aText.scan(/\S+/).map do |lexeme|
+      # case lexeme
+        # when '+', '(', ')'
+          # terminal = @grammar.name2symbol[lexeme]
+        # when /^[-+]?\d+$/
+          # terminal = @grammar.name2symbol['int']
+        # else
+          # msg = "Unknown input text '#{lexeme}'"
+          # raise StandardError, msg
+      # end
+      # pos = Rley::Lexical::Position.new(1, 4) # Dummy position
+      # Rley::Lexical::Token.new(lexeme, terminal, pos)
+    # end
 
-    return tokens
+    # return tokens
+  # end
+  
+  
+  class PB_Tokenizer < BaseTokenizer
+
+    protected
+
+    def recognize_token()
+      token = nil
+
+      if (lexeme = scanner.scan(/[\(\)]/)) # Single characters
+        # Delimiters, separators => single character token
+        token = build_token(lexeme, lexeme)
+      elsif (lexeme = scanner.scan(/(?:\+)(?=\s|$)/)) # Single char occurring alone
+        token = build_token(lexeme, lexeme)
+       elsif (lexeme = scanner.scan(/[+-]?[0-9]+/))
+        token = build_token('int', lexeme)
+      end
+    end
+  end # class
+
+  # Basic tokenizer
+  # @return [Array<Rley::Lexical::Token>]
+  def tokenize(aText)
+    tokenizer = PB_Tokenizer.new(aText)
+    tokenizer.tokens
   end
-end # module
+  
+end # class
 # End of file

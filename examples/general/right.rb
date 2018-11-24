@@ -17,9 +17,12 @@ grammar = builder.grammar
 
 # Highly simplified tokenizer implementation.
 def tokenizer(aText, aGrammar)
+  index = 0
   tokens = aText.scan(/\./).map do |dot|
     terminal = aGrammar.name2symbol['DOT']
-    Rley::Lexical::Token.new(dot, terminal)
+    index += 1
+    pos = Rley::Lexical::Position.new(1, index)
+    Rley::Lexical::Token.new(dot, terminal, pos)
   end
 
   return tokens

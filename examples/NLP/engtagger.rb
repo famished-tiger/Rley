@@ -147,10 +147,13 @@ lexicon = clean_text(text)
 tokens = tagged.scan(GET_TAG).map { |tag, word| [word, tag.upcase] }
 
 def tokenizer(lexicon, tokens)
+  pos = -1
   rley_tokens = []
   lexicon.each_with_index do |word, i|
     term_name = tokens[i].last
-    rley_tokens << Rley::Lexical::Token.new(word, term_name)
+    rank = Rley::Lexical::Position.new(1, pos + 1)
+    pos += word.length + 1 # Assuming one space between words.
+    rley_tokens << Rley::Lexical::Token.new(word, term_name, pos)
   end
   return rley_tokens
 end

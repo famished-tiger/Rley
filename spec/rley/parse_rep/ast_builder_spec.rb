@@ -94,7 +94,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
       end
 
       let(:sample_tokens) do
-        arr_int_tokenizer('[2 , 3, 5 ]', sample_grammar)
+        arr_int_tokenizer('[2 , 3, 5 ]')
       end
 
       subject { ASTBuilder.new(sample_tokens) }

@@ -84,7 +84,7 @@ module Rley # Module used as a namespace
         err_msg = "Syntax error at or near token #{position} "
         err_msg << ">>>#{last_token.lexeme}<<<\n"
         err_msg << expectations
-        err_msg << ", found a '#{last_token.terminal.name}' instead."
+        err_msg << ", found a '#{last_token.terminal}' instead."
 
         return err_msg
       end

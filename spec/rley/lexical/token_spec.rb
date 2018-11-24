@@ -9,14 +9,15 @@ module Rley # Open this namespace to avoid module qualifier prefixes
   module Lexical # Open this namespace to avoid module qualifier prefixes
     describe Token do
       let(:lexeme) { '"some text"' }
-      let(:sample_terminal) { Syntax::Terminal.new('if') }
+      let(:a_terminal) { Syntax::Terminal.new('if') }
+      let(:a_pos) { Position.new(3, 4) }
 
       context 'Initialization:' do
         # Default instantiation rule
-        subject { Token.new(lexeme, sample_terminal) }
+        subject { Token.new(lexeme, a_terminal, a_pos) }
 
-        it 'should be created with a lexeme and a terminal argument' do
-          expect { Token.new(lexeme, sample_terminal) }.not_to raise_error
+        it 'should be created with a lexeme, a terminal and position' do
+          expect { Token.new(lexeme, a_terminal, a_pos) }.not_to raise_error
         end
 
         it 'should know its lexeme' do
@@ -24,8 +25,12 @@ module Rley # Open this namespace to avoid module qualifier prefixes
         end
 
         it 'should know its terminal' do
-          expect(subject.terminal).to eq(sample_terminal)
+          expect(subject.terminal).to eq(a_terminal)
         end
+        
+        it 'should know its terminal' do
+          expect(subject.position).to eq(a_pos)
+        end        
       end # context
     end # describe
   end # module

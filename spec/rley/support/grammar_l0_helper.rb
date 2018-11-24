@@ -66,14 +66,22 @@ module GrammarL0Helper
   end
 
   # Highly simplified tokenizer implementation.
-  def tokenizer_l0(aText, aGrammar)
-    tokens = aText.scan(/\S+/).map do |word|
+  def tokenizer_l0(aText)
+    scanner = StringScanner.new(aText)
+    tokens = []
+    
+    loop do
+      scanner.skip(/\s+/)
+      curr_pos = scanner.pos
+      word = scanner.scan(/\S+/)
+      break unless word
+
       term_name = lexicon_l0[word]
       if term_name.nil?
         raise StandardError, "Word '#{word}' not found in lexicon"
       end
-      terminal = aGrammar.name2symbol[term_name]
-      Rley::Lexical::Token.new(word, terminal)
+      pos = Rley::Lexical::Position.new(1, curr_pos + 1)
+      tokens << Rley::Lexical::Token.new(word, term_name, pos)      
     end
 
     return tokens

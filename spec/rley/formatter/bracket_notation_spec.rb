@@ -30,7 +30,8 @@ module Rley # Re-open the module to get rid of qualified names
       # Helper method that mimicks the output of a tokenizer
       # for the language specified by grammar_abc
       let(:grm_abc_tokens1) do
-        %w[a a b c c].map { |ch| Lexical::Token.new(ch, ch) }
+        pos = Lexical::Position.new(1, 2) # Dummy position
+        %w[a a b c c].map { |ch| Lexical::Token.new(ch, ch, pos) }
       end
 
       # Factory method that builds a sample parse tree.

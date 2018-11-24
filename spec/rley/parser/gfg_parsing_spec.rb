@@ -305,7 +305,7 @@ SNIPPET
 
         subject do
           parser = GFGEarleyParser.new(b_expr_grammar)
-          tokens = expr_tokenizer('2 + 3 * 4', b_expr_grammar)
+          tokens = expr_tokenizer('2 + 3 * 4')
           parser.parse(tokens)
         end
         

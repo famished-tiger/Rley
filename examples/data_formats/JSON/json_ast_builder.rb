@@ -7,7 +7,7 @@ require_relative 'json_ast_nodes'
 # The Builder pattern creates a complex object
 # (say, a parse tree) from simpler objects (terminal and non-terminal
 # nodes) and using a step by step approach.
-class JSONASTBuilder < Rley::ParseRep::ParseTreeBuilder 
+class JSONASTBuilder < Rley::ParseRep::ASTBaseBuilder 
   Terminal2NodeClass = {
     'false' => JSONBooleanNode,
     'true' => JSONBooleanNode,
@@ -63,7 +63,7 @@ class JSONASTBuilder < Rley::ParseRep::ParseTreeBuilder
     return JSONPair.new(theChildren[0], theChildren[2], aProduction.lhs)
   end
 
-  # rule 'object' => %w[begin-object member-list end-object]
+  # rule 'array' => %w[begin-array array-items end-array]
   def reduce_array_0(aProduction, _range, _tokens, theChildren)
     second_child = theChildren[1]
     second_child.symbol = aProduction.lhs

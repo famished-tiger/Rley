@@ -288,7 +288,8 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           builder.add_terminals(t_x)
           builder.add_production('Ss' => %w[A A x])
           builder.add_production('A' => [])
-          tokens = [Lexical::Token.new('x', t_x)]
+          pos = Lexical::Position.new(1, 1)
+          tokens = [Lexical::Token.new('x', t_x, pos)]
 
           instance = GFGEarleyParser.new(builder.grammar)
           expect { instance.parse(tokens) }.not_to raise_error
@@ -299,8 +300,8 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           expected = [
             '.Ss | 0',              # Initialization
             "Ss => . A A 'x' | 0",  # start rule
-            '.A | 0',               # call rule         
-            'A => . | 0',           # start rule             
+            '.A | 0',               # call rule
+            'A => . | 0',           # start rule
             'A. | 0',               # exit rule
             "Ss => A . A 'x' | 0",  # end rule
             "Ss => A A . 'x' | 0"   # end rule
@@ -559,7 +560,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           parse_result = subject.parse(wrong)
           expect(parse_result.success?).to eq(false)
           err_msg = <<-MSG
-Syntax error at or near token 3 >>>c<<<
+Syntax error at or near token line 1, column 5 >>>c<<<
 Expected one of: ['a', 'b'], found a 'c' instead.
 MSG
           expect(parse_result.failure_reason.message).to eq(err_msg.chomp)
@@ -590,34 +591,35 @@ MSG
             'S => . E | 0',               # start rule
             '.E | 0',                     # call rule
             'E => . int | 0',             # start rule
-            "E => . '(' E '+' E ')' | 0", # start rule
-            "E => . E '+' E | 0"          # start rule
+            "E => . ( E + E ) | 0", # start rule
+            "E => . E + E | 0"          # start rule
           ]
           compare_entry_texts(parse_result.chart[0], expected)
 
           ###################### S(1) == 1 . +
           # Expectation chart[1]:
           expected = [
-            'E => int . | 0',             # scan '1'
-            'E. | 0',                     # exit rule
-            'S => E . | 0',               # end rule
-            "E => E . '+' E | 0",         # end rule
-            'S. | 0'                      # exit rule
+            'E => int . | 0',         # scan '1'
+            'E. | 0',                 # exit rule
+            'S => E . | 0',           # end rule
+            'E => E . + E | 0',       # end rule
+            'S. | 0'                  # exit rule
           ]
           compare_entry_texts(parse_result.chart[1], expected)
 
           ###################### S(2) == 1 + .
           # Expectation chart[2]:
           expected = [
-            "E => E '+' . E | 0",         # scan '+'
-            '.E | 2',                     # exit rule
-            'E => . int | 2',             # start rule
-            "E => . '(' E '+' E ')' | 2", # start rule
-            "E => . E '+' E | 2"          # start rule
+            'E => E + . E | 0',       # scan '+'
+            '.E | 2',                 # exit rule
+            'E => . int | 2',         # start rule
+            'E => . ( E + E ) | 2',   # start rule
+            'E => . E + E | 2'        # start rule
           ]
           compare_entry_texts(parse_result.chart[2], expected)
 
-          err_msg = "Premature end of input after '+' at position 2"
+          err_msg = "Premature end of input after '+' at position line 1, "
+          err_msg << "column 3"
           err_msg << "\nExpected one of: ['int', '(']."
           expect(parse_result.failure_reason.message).to eq(err_msg)
         end
@@ -636,76 +638,76 @@ MSG
           ###################### S(0) == . 7 + 8 + 9
           # Expectation chart[0]:
           expected = [
-            '.S | 0',                     # initialization
-            'S => . E | 0',               # start rule
-            '.E | 0',                     # call rule
-            'E => . int | 0',             # start rule
-            "E => . '(' E '+' E ')' | 0", # start rule
-            "E => . E '+' E | 0"          # start rule
+            '.S | 0',               # initialization
+            'S => . E | 0',         # start rule
+            '.E | 0',               # call rule
+            'E => . int | 0',       # start rule
+            'E => . ( E + E ) | 0', # start rule
+            'E => . E + E | 0'      # start rule
           ]
           compare_entry_texts(parse_result.chart[0], expected)
 
           ###################### S(1) == 7 . + 8 + 9
           # Expectation chart[1]:
           expected = [
-            'E => int . | 0',             # scan '7'
-            'E. | 0',                     # exit rule
-            'S => E . | 0',               # end rule
-            "E => E . '+' E | 0",         # end rule
-            'S. | 0'                      # exit rule
+            'E => int . | 0',       # scan '7'
+            'E. | 0',               # exit rule
+            'S => E . | 0',         # end rule
+            'E => E . + E | 0',     # end rule
+            'S. | 0'                # exit rule
           ]
           compare_entry_texts(parse_result.chart[1], expected)
 
           ###################### S(2) == 7 + . 8 + 9
           # Expectation chart[2]:
           expected = [
-            "E => E '+' . E | 0",         # scan '+'
-            '.E | 2',                     # exit rule
-            'E => . int | 2',             # start rule
-            "E => . '(' E '+' E ')' | 2", # start rule
-            "E => . E '+' E | 2"          # start rule
+            'E => E + . E | 0',       # scan '+'
+            '.E | 2',                 # exit rule
+            'E => . int | 2',         # start rule
+            'E => . ( E + E ) | 2',   # start rule
+            'E => . E + E | 2'        # start rule
           ]
           compare_entry_texts(parse_result.chart[2], expected)
 
           ###################### S(3) == 7 + 8 . + 9
           # Expectation chart[3]:
           expected = [
-            'E => int . | 2',             # scan '8'
-            'E. | 2',                     # exit rule
-            "E => E '+' E . | 0",         # end rule
-            "E => E . '+' E | 2",         # end rule
-            'E. | 0',                     # exit rule
-            'S => E . | 0',               # end rule
-            "E => E . '+' E | 0",         # end rule
-            'S. | 0'                      # exit rule
+            'E => int . | 2',         # scan '8'
+            'E. | 2',                 # exit rule
+            'E => E + E . | 0',       # end rule
+            'E => E . + E | 2',       # end rule
+            'E. | 0',                 # exit rule
+            'S => E . | 0',           # end rule
+            'E => E . + E | 0',       # end rule
+            'S. | 0'                  # exit rule
           ]
           compare_entry_texts(parse_result.chart[3], expected)
 
           ###################### S(4) == 7 + 8 + . 9
           # Expectation chart[4]:
           expected = [
-            "E => E '+' . E | 2",         # scan '+'
-            "E => E '+' . E | 0",         # scan '+'
-            '.E | 4',                     # exit rule
-            'E => . int | 4',             # start rule
-            "E => . '(' E '+' E ')' | 4", # start rule
-            "E => . E '+' E | 4"          # start rule
+            'E => E + . E | 2',       # scan '+'
+            'E => E + . E | 0',       # scan '+'
+            '.E | 4',                 # exit rule
+            'E => . int | 4',         # start rule
+            'E => . ( E + E ) | 4',   # start rule
+            'E => . E + E | 4'        # start rule
           ]
           compare_entry_texts(parse_result.chart[4], expected)
 
           ###################### S(5) == 7 + 8 + 9 .
           # Expectation chart[5]:
           expected = [
-            'E => int . | 4',             # scan '9'
-            'E. | 4',                     # exit rule
-            "E => E '+' E . | 2",         # end rule
-            "E => E '+' E . | 0",         # end rule
-            "E => E . '+' E | 4",         # exit rule (not shown in paper)
-            'E. | 2',                     # exit rule
-            'E. | 0',                     # exit rule
-            "E => E . '+' E | 2",         # end rule
-            'S => E . | 0',               # end rule
-            "E => E . '+' E | 0",         # end rule
+            'E => int . | 4',         # scan '9'
+            'E. | 4',                 # exit rule
+            'E => E + E . | 2',       # end rule
+            'E => E + E . | 0',       # end rule
+            'E => E . + E | 4',       # exit rule (not shown in paper)
+            'E. | 2',                 # exit rule
+            'E. | 0',                 # exit rule
+            'E => E . + E | 2',       # end rule
+            'S => E . | 0',           # end rule
+            'E => E . + E | 0',       # end rule
             'S. | 0'
           ]
           compare_entry_texts(parse_result.chart[5], expected)

@@ -61,7 +61,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
 
         let(:expr_tokens) do
           sentence = '2 + 3 * 4'
-          tokenizer_ambig01(sentence, grammar_ambig01)
+          tokenizer_ambig01(sentence)
         end
 
         let(:sentence_result) do

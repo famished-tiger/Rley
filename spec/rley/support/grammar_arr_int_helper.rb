@@ -23,29 +23,30 @@ module GrammarArrIntHelper
   end
 
   # Basic tokenizer for array of integers
-  def arr_int_tokenizer(aText, aGrammar)
-    tokens = []
+  def arr_int_tokenizer(aText)
     scanner = StringScanner.new(aText)
-
-    until scanner.eos?
+    tokens = []
+    
+    loop do
       scanner.skip(/\s+/)
-      lexeme = scanner.scan(/[\[,\]]/)
-      if lexeme
-        terminal = aGrammar.name2symbol[lexeme]
-        tokens << Rley::Lexical::Token.new(lexeme, terminal)
-        next
-      end
-      lexeme = scanner.scan(/^[-+]?\d+/)
-      if lexeme
-        terminal = aGrammar.name2symbol['integer']
-        tokens << Rley::Lexical::Token.new(lexeme, terminal)
+      curr_ch = scanner.peek(1)
+      break if curr_ch.nil? || curr_ch.empty?
+      curr_pos = scanner.pos
+      
+      if (lexeme = scanner.scan(/[\[\],]/))
+        terminal = lexeme
+      elsif (lexeme = scanner.scan(/[-+]?\d+/))
+        terminal = 'integer'
       else
         msg = "Unknown input text '#{lexeme}'"
         raise StandardError, msg
       end
+
+      pos = Rley::Lexical::Position.new(1, curr_pos + 1)
+      tokens << Rley::Lexical::Token.new(lexeme, terminal, pos)      
     end
 
-    return tokens
+    return tokens    
   end
 end # module
 # End of file

@@ -42,13 +42,13 @@ class CalcLexer
     skip_whitespaces
     curr_ch = scanner.peek(1)
     return nil if curr_ch.nil?
-    
+
     token = nil
 
     if '()+/'.include? curr_ch
       # Single character token
       token = build_token(@@lexeme2name[curr_ch], scanner.getch)
-      
+
     elsif (lexeme = scanner.scan(/\*\*/))
       token = build_token(@@lexeme2name[lexeme], lexeme)
     elsif (lexeme = scanner.scan(/\*/))
@@ -66,9 +66,10 @@ class CalcLexer
 
     return token
   end
-  
+
   def build_token(aSymbolName, aLexeme)
-    return Rley::Lexical::Token.new(aLexeme, aSymbolName)    
+    pos = Rley::Lexical::Position.new(1, scanner.pos)
+    return Rley::Lexical::Token.new(aLexeme, aSymbolName, pos)
   end
 
   def skip_whitespaces()
