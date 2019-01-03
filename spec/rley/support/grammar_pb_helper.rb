@@ -22,41 +22,18 @@ class GrammarPBHelper
       builder.grammar
     end
   end
-
-  # # Basic expression tokenizer
-  # def tokenize(aText)
-    # tokens = aText.scan(/\S+/).map do |lexeme|
-      # case lexeme
-        # when '+', '(', ')'
-          # terminal = @grammar.name2symbol[lexeme]
-        # when /^[-+]?\d+$/
-          # terminal = @grammar.name2symbol['int']
-        # else
-          # msg = "Unknown input text '#{lexeme}'"
-          # raise StandardError, msg
-      # end
-      # pos = Rley::Lexical::Position.new(1, 4) # Dummy position
-      # Rley::Lexical::Token.new(lexeme, terminal, pos)
-    # end
-
-    # return tokens
-  # end
-  
   
   class PB_Tokenizer < BaseTokenizer
-
     protected
 
     def recognize_token()
-      token = nil
-
       if (lexeme = scanner.scan(/[\(\)]/)) # Single characters
         # Delimiters, separators => single character token
-        token = build_token(lexeme, lexeme)
-      elsif (lexeme = scanner.scan(/(?:\+)(?=\s|$)/)) # Single char occurring alone
-        token = build_token(lexeme, lexeme)
-       elsif (lexeme = scanner.scan(/[+-]?[0-9]+/))
-        token = build_token('int', lexeme)
+        build_token(lexeme, lexeme)
+      elsif (lexeme = scanner.scan(/(?:\+)(?=\s|$)/)) # Isolated char
+        build_token(lexeme, lexeme)
+      elsif (lexeme = scanner.scan(/[+-]?[0-9]+/))
+        build_token('int', lexeme)
       end
     end
   end # class

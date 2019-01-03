@@ -314,9 +314,7 @@ SNIPPET
         end
 
         it 'should build a parse forest' do
-          if subject.success?
-            expect { subject.parse_forest }.not_to raise_error
-          end
+          expect { subject.parse_forest }.not_to raise_error if subject.success?
         end
 =begin
         it 'should create the root of a parse forest' do

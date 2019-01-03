@@ -30,7 +30,9 @@ module Rley # This module is used as a namespace
       def shortcut=(aShortcut)
         unless aShortcut.kind_of?(ShortcutEdge)
           raise StandardError, 'Invalid shortcut argument'
+
         end
+        
 =begin
         unless next_symbol && next_symbol.kind_of?(Syntax::NonTerminal)
           raise StandardError, 'Invalid shortcut usage'

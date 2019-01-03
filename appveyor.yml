@@ -2,16 +2,18 @@ version: '{build}'
 max_jobs: 3
 environment:
   matrix:
-  - Ruby_version: 200
-  - Ruby_version: 200-x64
-  - Ruby_version: 21
-  - Ruby_version: 21-x64
-  - Ruby_version: 22
-  - Ruby_version: 22-x64
-  - Ruby_version: 23
+  - Ruby_version: 25-x64   
+  - Ruby_version: 24-x64  
   - Ruby_version: 23-x64
+  - Ruby_version: 22-x64
+  - Ruby_version: 21-x64
+  - Ruby_version: 200-x64
+  - Ruby_version: 25   
   - Ruby_version: 24  
-  - Ruby_version: 24-x64 
+  - Ruby_version: 23
+  - Ruby_version: 22
+  - Ruby_version: 21
+  - Ruby_version: 200  
 
 install:
   - set PATH=C:\Ruby%Ruby_version%\bin;%PATH%

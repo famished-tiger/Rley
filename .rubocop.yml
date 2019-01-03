@@ -1,20 +1,20 @@
 AllCops:
   Exclude:
     - 'features/**/*'
-    - 'exp/**/*'    
+    - 'exp/**/*'
     - 'gems/**/*'
     - 'refs/**/*'
-    
+
 # This is disabled because some demos use UTF-8
 AsciiComments:
   Enabled: false
-  
+
 Attr:
   Enabled: false
-  
+
 BlockComments:
   Enabled: false
-  
+
 CaseIndentation:
   EnforcedStyle: end
   IndentOneStep: true
@@ -23,89 +23,106 @@ CaseIndentation:
 # Which is contrary to modelling practice.
 ClassCheck:
   Enabled: false
-  
+
 ClassLength:
   Max: 250
-  CountComments: false  
+  CountComments: false
 
-ConstantName:  
+ConstantName:
   Enabled: false
-  
+
 CyclomaticComplexity:
   Enabled: false
-  
-DefWithParentheses:  
+
+DefWithParentheses:
   Enabled: false
-  
+
 Documentation:
   Enabled: false
-  
+
 EmptyLines:
-  Enabled: false 
+  Enabled: false
 
 Encoding:
   Enabled: false
-  
+
 EndOfLine:
   Enabled: false
 #  SupportedStyles: lf
-  
-  
-IndentationWidth :
+
+
+IndentationWidth:
   Enabled: false
   
-# Disable this because it produces false negatives
-Naming/HeredocDelimiterNaming:
+Layout/BlockAlignment:
+  Enabled: false
+
+Layout/ClosingHeredocIndentation:
   Enabled: false
   
 # Enabled after end of support of Rubies < 2.3
 Layout/IndentHeredoc:
   Enabled: false
 
+Layout/SpaceInsideArrayLiteralBrackets:
+  Enabled: false  
+  
 Metrics/AbcSize:
   Max: 50
-  
+
 # Avoid methods longer than 50 lines of code
 Metrics/MethodLength:
   Max: 50
-  CountComments: false 
+  CountComments: false
 
-# Avoid modules longer than 200 lines of code 
+# Avoid modules longer than 200 lines of code
 Metrics/ModuleLength:
   CountComments: false
-  Max: 200  
+  Max: 200
 
 Metrics/PerceivedComplexity:
   Enabled: true
   Max: 50
   
+# Disable this because it produces false negatives
+Naming/HeredocDelimiterNaming:
+  Enabled: false
+
 Naming/MethodName:
   Enabled: false
- 
+
+Naming/UncommunicativeMethodParamName:
+  Enabled: false
+
 NonNilCheck:
   Enabled: false
 
 NumericLiterals:
   Enabled: false
-  
+
 RaiseArgs:
   Enabled: false
-  
+
 RedundantReturn:
   Enabled: false
 
-SpaceInsideBrackets:
+Style/CommentedKeyword:
+  Enabled: false
+  
+Style/ConditionalAssignment:  
+  Enabled: false
+  
+Style/Lambda:
+  Enabled: false
+  
+Style/MissingRespondToMissing:
   Enabled: false
 
 TrailingWhitespace:
   Enabled: false
-  
+
 VariableName:
   Enabled: false
 
 VariableNumber:
   Enabled: false
-  
-Style/CommentedKeyword:
-  Enabled: false
-  

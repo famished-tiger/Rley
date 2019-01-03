@@ -138,6 +138,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
         it 'should have shortcut edges' do
           subject.vertices.each do |a_vertex|
             next unless a_vertex.kind_of?(ItemVertex)
+
             if a_vertex.next_symbol.kind_of?(Syntax::NonTerminal)
               expect(a_vertex.shortcut).not_to be_nil
               my_d_item = a_vertex.dotted_item

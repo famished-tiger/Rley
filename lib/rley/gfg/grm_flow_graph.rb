@@ -153,6 +153,7 @@ module Rley # This module is used as a namespace
               if stack.last.done?
                 popped = stack.pop
                 break if stack.empty?
+                
                 # puts "Popped!"
                 return_key = popped.in_edge.key.sub(/^CALL/, 'RET')
                 curr_edge = visitee.edges.find { |e| e.key == return_key }
@@ -197,6 +198,7 @@ module Rley # This module is used as a namespace
         curr_prod = nil
         theDottedItems.each_with_index do |d_item, index_item|
           next unless curr_prod.nil? || curr_prod != d_item.production
+          
           # Another production found...
           curr_prod = d_item.production
           if curr_prod.empty?

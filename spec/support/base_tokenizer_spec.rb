@@ -27,21 +27,19 @@ describe BaseTokenizer do
       @@lexeme2name = {
         '(' => 'LPAREN',
         ')' => 'RPAREN',
-        '+' => 'PLUS',
+        '+' => 'PLUS'
       }.freeze
 
       protected
 
       def recognize_token()
-        token = nil
-
         if (lexeme = scanner.scan(/[\(\)]/)) # Single characters
           # Delimiters, separators => single character token
-          token = build_token(@@lexeme2name[lexeme], lexeme)
-        elsif (lexeme = scanner.scan(/(?:\+)(?=\s)/)) # Single char occurring alone
-          token = build_token(@@lexeme2name[lexeme], lexeme)
-         elsif (lexeme = scanner.scan(/[+-]?[0-9]+/))
-          token = build_token('int', lexeme)
+          build_token(@@lexeme2name[lexeme], lexeme)
+        elsif (lexeme = scanner.scan(/(?:\+)(?=\s)/)) # Isolated char
+          build_token(@@lexeme2name[lexeme], lexeme)
+        elsif (lexeme = scanner.scan(/[+-]?[0-9]+/))
+          build_token('int', lexeme)
         end
       end
     end # class

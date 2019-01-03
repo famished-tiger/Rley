@@ -30,11 +30,11 @@ module Rley # This module is used as a namespace
   # Rley client code from the lower-level classes.
   class Engine
     # @!attribute [r] configuration
-    # @return [EngineConfig] the engine's configuration 
+    # @return [EngineConfig] the engine's configuration
     attr_reader :configuration
-    
+
     # @!attribute [r] grammar
-    # @return [Rley::Syntax::Grammar] the grammar of the language to parse    
+    # @return [Rley::Syntax::Grammar] the grammar of the language to parse
     attr_reader :grammar
 
     # Constructor.
@@ -54,17 +54,17 @@ module Rley # This module is used as a namespace
     #   instance = Engine.new
     #   instance.build_grammar do
     #     add_terminals('LBRACKET', 'RBRACKET', 'COMMA', 'INTEGER')
-    #     add_production('start' => 'array')    
+    #     add_production('start' => 'array')
     #     add_production('array' => 'LBRACKET elements RBRACKET')
     #     add_production('array' => 'LBRACKET RBRACKET')
     #     add_production('elements' => 'elements COMMA INTEGER')
-    #     add_production('elements' => 'INTEGER')    
+    #     add_production('elements' => 'INTEGER')
     #   end
     def build_grammar(&aBlock)
       builder = Rley::Syntax::GrammarBuilder.new(&aBlock)
       @grammar = builder.grammar
     end
-    
+
     # Use the given grammar.
     # @param aGrammar [Rley::Syntax::Grammar]
     # @return [Rley::Syntax::Grammar] the grammar of the language to parse.
@@ -79,6 +79,7 @@ module Rley # This module is used as a namespace
       tokens = []
       aTokenizer.each do |a_token|
         next unless a_token
+
         term_name = a_token.terminal
         term_symb = grammar.name2symbol[term_name]
         a_token.instance_variable_set(:@terminal, term_symb)
@@ -88,7 +89,7 @@ module Rley # This module is used as a namespace
       parser.gf_graph.diagnose if configuration.diagnose
       result = parser.parse(tokens)
       result.tidy_up!
-      
+
       return result
     end
 

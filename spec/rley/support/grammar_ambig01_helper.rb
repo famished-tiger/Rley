@@ -24,12 +24,13 @@ module GrammarAmbig01Helper
   def tokenizer_ambig01(aText)
     scanner = StringScanner.new(aText)
     tokens = []
-    
+
     loop do
       scanner.skip(/\s+/)
       curr_pos = scanner.pos
       lexeme = scanner.scan(/\S+/)
       break unless lexeme
+
       case lexeme
         when '+', '*'
           terminal = lexeme
@@ -41,8 +42,8 @@ module GrammarAmbig01Helper
       end
 
       pos = Rley::Lexical::Position.new(1, curr_pos + 1)
-      tokens << Rley::Lexical::Token.new(lexeme, terminal, pos)      
-    end    
+      tokens << Rley::Lexical::Token.new(lexeme, terminal, pos)
+    end
 
     return tokens
   end

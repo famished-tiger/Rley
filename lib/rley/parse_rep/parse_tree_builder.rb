@@ -85,6 +85,7 @@ module Rley # This module is used as a namespace
       # node as root node.
       def create_tree(aRootNode)
         raise StandardError, 'Root node of parse tree is nil!' if aRootNode.nil?
+        
         return Rley::PTree::ParseTree.new(aRootNode)
       end      
 

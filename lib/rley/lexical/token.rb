@@ -6,8 +6,8 @@ module Rley # This module is used as a namespace
         "line #{line}, column #{column}"
       end
     end
-  
-  
+
+
     # In Rley, a (lexical) token is an object created by a lexer (tokenizer)
     # and passed to the parser. Such token an object is created when a lexer
     # detects that a sequence of characters(a lexeme) from the input stream
@@ -25,8 +25,8 @@ module Rley # This module is used as a namespace
 
       # @return [Syntax::Terminal] Terminal symbol corresponding to the lexeme.
       attr_reader(:terminal)
-      
-      # @return [Position] The position of the lexeme in the source file.      
+
+      # @return [Position] The position of the lexeme in the source file.
       attr_reader(:position)
 
       # Constructor.
@@ -35,6 +35,7 @@ module Rley # This module is used as a namespace
       #   The terminal symbol corresponding to the lexeme.
       def initialize(theLexeme, aTerminal, aPosition)
         raise 'Internal error: nil terminal symbol detected' if aTerminal.nil?
+
         @lexeme = theLexeme
         @terminal = aTerminal
         @position = aPosition

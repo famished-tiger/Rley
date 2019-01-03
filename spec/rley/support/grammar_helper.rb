@@ -23,8 +23,8 @@ module GrammarHelper
             token = Rley::Lexical::Token.new(literal, terminal, pos)
           end
       end
-        col += lexeme.length + 1
-        token
+      col += lexeme.length + 1
+      token
     end
 
     return tokens.flatten

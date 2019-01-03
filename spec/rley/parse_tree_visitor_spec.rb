@@ -235,7 +235,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
         big_a_3 = big_a_2_children[1]
         big_a_3_children = big_a_3.subnodes
         expectations = [
-          [:before_ptree, [grm_abc_ptree1]],
+          [:before_ptree, [grm_abc_ptree1]]
           # TODO: fix this test
           # [:before_subnodes, [root, children]],          
           # [:before_non_terminal, [root]],

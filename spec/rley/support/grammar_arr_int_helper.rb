@@ -26,13 +26,14 @@ module GrammarArrIntHelper
   def arr_int_tokenizer(aText)
     scanner = StringScanner.new(aText)
     tokens = []
-    
+
     loop do
       scanner.skip(/\s+/)
       curr_ch = scanner.peek(1)
       break if curr_ch.nil? || curr_ch.empty?
+
       curr_pos = scanner.pos
-      
+
       if (lexeme = scanner.scan(/[\[\],]/))
         terminal = lexeme
       elsif (lexeme = scanner.scan(/[-+]?\d+/))
@@ -43,10 +44,10 @@ module GrammarArrIntHelper
       end
 
       pos = Rley::Lexical::Position.new(1, curr_pos + 1)
-      tokens << Rley::Lexical::Token.new(lexeme, terminal, pos)      
+      tokens << Rley::Lexical::Token.new(lexeme, terminal, pos)
     end
 
-    return tokens    
+    return tokens
   end
 end # module
 # End of file

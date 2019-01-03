@@ -176,6 +176,7 @@ module Rley # This module is used as a namespace
       # followed the syntax specified by the grammar)
       def success?()
         return false if @failure_reason
+        
         return chart.accepting_entry ? true : false
       end
 
@@ -272,6 +273,7 @@ END_MSG
             # Rule: has 1..* antecedents, all of them are exit items
             antecedents.each do |antec|
               next if antec.exit_entry?
+
               msg_prefix = "End vertex parse entry #{consequent}"
               msg_suffix = " has for antecedent #{antec}"
               raise StandardError, msg_prefix + msg_suffix
@@ -280,16 +282,18 @@ END_MSG
           when Rley::GFG::ItemVertex
             # Rule: has exactly one antecedent
             # if antecedents.size > 1
-              # msg_prefix = "Parse entry #{consequent} | #{aPosition}"
-              # msg = " has more than one antecedent:\n"
-              # msg_suffix = antecedents.map(&:to_s).join("\n")
-              # raise(StandardError, msg_prefix + msg + msg_suffix)
+            #   msg_prefix = "Parse entry #{consequent} | #{aPosition}"
+            #   msg = " has more than one antecedent:\n"
+            #   msg_suffix = antecedents.map(&:to_s).join("\n")
+            #   raise(StandardError, msg_prefix + msg + msg_suffix)
             # end
 
           when Rley::GFG::StartVertex
-            # Rule: has 0..* antecedents, all of them are item vertices but not exit items
+            # Rule: has 0..* antecedents, all of them are
+            # item vertices but not exit items
             antecedents.each do |antec|
               next if antec.dotted_entry? && !antec.end_entry?
+
               msg_prefix = "Parse entry #{consequent}"
               msg_suffix = " has for antecedent #{antec}"
               raise StandardError, msg_prefix + msg_suffix
@@ -304,6 +308,7 @@ END_MSG
       # chart entry with given index if it isn't yet in the chart entry.
       def push_entry(aVertex, anOrigin, aChartIndex, aReason)
         raise StandardError, 'Vertex may not be nil' if aVertex.nil?
+
         chart.push_entry(aVertex, anOrigin, aChartIndex, aReason)
       end
 

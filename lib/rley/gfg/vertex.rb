@@ -46,7 +46,7 @@ module Rley # This module is used as a namespace
       # @return [String]      
       def selfie()
         result = "#{self.class.name}:#{object_id}"
-        result << %Q( label="#{label}")
+        result << %( label="#{label}")
         return result
       end
       
@@ -69,6 +69,7 @@ module Rley # This module is used as a namespace
       # unless this method is overridden in subclasses
       def check_add_edge(anEdge)
         raise StandardError, 'At most one edge accepted' unless edges.empty?
+        
         return anEdge
       end
       

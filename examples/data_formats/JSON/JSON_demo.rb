@@ -28,6 +28,7 @@ case cli_options[:format]
   when :minify
     msg = "minify format works for 'cst' representation only"
     raise StandardError, msg if tree_rep == :ast
+
     renderer = JSONMinifier.new($stdout)
   when :ruby
     msg = "ruby format works for 'ast' representation only"

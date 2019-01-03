@@ -68,10 +68,10 @@ Lexicon = {
 # Step 4. Creating a tokenizer
 # A tokenizer reads the input string and converts it into a sequence of tokens
 # Highly simplified tokenizer implementation.
-def tokenizer(aTextToParse) 
+def tokenizer(aTextToParse)
   scanner = StringScanner.new(aTextToParse)
   tokens = []
-  
+
   loop do
     scanner.skip(/\s+/)
     curr_pos = scanner.pos
@@ -80,11 +80,12 @@ def tokenizer(aTextToParse)
 
     term_name = Lexicon[word]
     raise StandardError, "Word '#{word}' not found in lexicon" if term_name.nil?
+
     pos = Rley::Lexical::Position.new(1, curr_pos + 1)
     tokens << Rley::Lexical::Token.new(word, term_name, pos)
   end
 
-  return tokens  
+  return tokens
 end
 
 

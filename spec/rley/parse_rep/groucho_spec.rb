@@ -54,6 +54,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           if term_name.nil?
             raise StandardError, "Word '#{word}' not found in lexicon"
           end
+
           terminal = aGrammar.name2symbol[term_name]
           Rley::Lexical::Token.new(word, terminal, pos)
         end
@@ -98,10 +99,10 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           child = subject.curr_parent.subnodes.first
           expect(child.to_string(0)).to eq(anExpectation)
       end
-      
+
       def root_children
-          subject.result.root.subnodes    
-      end      
+          subject.result.root.subnodes
+      end
 
 
       before(:each) do
@@ -125,7 +126,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
 
           next_event(:visit, 'VP. | 1') # Event 3
           expected_curr_path('S[0, 7]/VP[1, 7]')
-          # Root node should have one child          
+          # Root node should have one child
           expect(root_children.size).to eq(1)
           expect(root_children.first.to_string(0)).to eq('VP[1, 7]')
 
@@ -139,16 +140,16 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           # Root node should have two children
           expect(root_children.size).to eq(2)
           expect(root_children.first.to_string(0)).to eq('NP[0, 1]')
-          
+
           18.times do
             event = @walker.next
             subject.receive_event(*event)
           end
-         
+
           next_event(:revisit, 'NP. | 0') # Event 48
           expected_curr_path('S[0, 7]')
-          # Root node should still have two children          
-          expect(root_children.size).to eq(2)         
+          # Root node should still have two children
+          expect(root_children.size).to eq(2)
         end
       end # context
     end # describe

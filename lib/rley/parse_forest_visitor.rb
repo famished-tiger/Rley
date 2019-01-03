@@ -50,7 +50,7 @@ module Rley # This module is used as a namespace
       @subscribers = []
       @prime_enum = Prime.instance.each
       @legs = []
-      @node_accesses = Hash.new { |h, key| h[key] = Array.new }
+      @node_accesses = Hash.new { |h, key| h[key] = [] }
     end
 
     # Add a subscriber for the visit event notifications.
@@ -81,9 +81,9 @@ module Rley # This module is used as a namespace
     # @param nonTerminalNd [NonTerminalNode] the node to visit.
     def visit_nonterminal(nonTerminalNd)
       broadcast(:before_non_terminal, nonTerminalNd)
-     unless nonTerminalNd.signature_exist?
-       nonTerminalNd.add_edge_signatures(prime_enum)
-     end
+      unless nonTerminalNd.signature_exist?
+        nonTerminalNd.add_edge_signatures(prime_enum)
+      end
       traverse_children(nonTerminalNd)
       broadcast(:after_non_terminal, nonTerminalNd)
     end
@@ -122,7 +122,7 @@ module Rley # This module is used as a namespace
     # non-terminal node.
     # @param aNonTerminalNode [NonTerminalNode] the node to visit.
     # def end_visit_nonterminal(aNonTerminalNode)
-      # broadcast(:after_non_terminal, aNonTerminalNode)
+    #   broadcast(:after_non_terminal, aNonTerminalNode)
     # end
 
     # Visit event. The visitor has completed the visit of the pforest.
@@ -167,6 +167,7 @@ module Rley # This module is used as a namespace
     def broadcast(msg, *args)
       subscribers.each do |subscr|
         next unless subscr.respond_to?(msg) || subscr.respond_to?(:accept_all)
+        
         subscr.send(msg, *args)
       end
     end
@@ -187,6 +188,7 @@ module Rley # This module is used as a namespace
 
     def pop_node
       return if legs.empty?
+      
       legs.pop
     end
   end # class

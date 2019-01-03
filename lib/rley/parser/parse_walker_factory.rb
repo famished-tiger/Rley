@@ -54,6 +54,7 @@ module Rley # This module is used as a namespace
       def build_walker(acceptingEntry, maxIndex, lazyWalk = false)
         msg = 'Internal error: nil entry argument'
         raise StandardError, msg if acceptingEntry.nil?
+
         # Local context for the enumerator
         ctx = init_context(acceptingEntry, maxIndex, lazyWalk)
 
@@ -65,9 +66,12 @@ module Rley # This module is used as a namespace
             receiver << event unless event.nil?
 
             if ctx.curr_entry.orphan? # No antecedent?...
-              err_msg = "No antecedent for #{ctx.curr_entry} at rank #{ctx.entry_set_index}"
+              msg_prefix = "No antecedent for #{ctx.curr_entry}"
+              msg_suffix = "at rank #{ctx.entry_set_index}"
+              err_msg = msg_prefix + ' ' + msg_suffix
               raise StandardError, err_msg unless ctx.curr_entry.start_entry?
               break if ctx.backtrack_points.empty?
+
               receiver << use_backtrack_point(ctx)
               receiver << visit_entry(ctx.curr_entry, ctx)
             end
@@ -187,6 +191,7 @@ module Rley # This module is used as a namespace
           # Pop top of stack
           err_msg = 'Return stack empty!'
           raise ScriptError, err_msg if aContext.return_stack.empty?
+
           aContext.return_stack.pop
           # puts "Pop from return stack matching entry #{new_entry}"
         elsif traversed_edge.kind_of?(GFG::ScanEdge)
@@ -264,6 +269,7 @@ module Rley # This module is used as a namespace
       # to a item vertex
       def select_calling_entry(aContext)
         raise ScriptError, 'Empty return stack' if aContext.return_stack.empty?
+
         # Retrieve top of stack
         tos = aContext.return_stack.pop
         tos_dotted_item = tos.vertex.dotted_item

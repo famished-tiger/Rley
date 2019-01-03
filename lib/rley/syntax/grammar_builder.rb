@@ -75,8 +75,8 @@ module Rley # This module is used as a namespace
             when Array
               rhs_members = rhs_repr.map { |name| get_nonterminal(name) }
             when String
-              # rhs_members = [get_nonterminal(rhs_repr)]
-              rhs_members = rhs_repr.scan(/\S+/).map { |name| get_nonterminal(name) }
+              rhs_lexemes = rhs_repr.scan(/\S+/)
+              rhs_members = rhs_lexemes.map { |name| get_nonterminal(name) }
             when Terminal
               rhs_members = [rhs_repr]
           end

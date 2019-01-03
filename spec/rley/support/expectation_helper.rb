@@ -7,7 +7,8 @@ module ExpectationHelper
   # Helper method. Compare the data from all the parse entries
   # of a given ParseEntrySet with an array of expectation strings.
   def compare_entry_texts(anEntrySet, expectations)
-    raise StandardError, "Nil entry set" if anEntrySet.nil?
+    raise StandardError, 'Nil entry set' if anEntrySet.nil?
+
     (0...expectations.size).each do |i|
       expect(anEntrySet.entries[i].to_s).to eq(expectations[i])
     end

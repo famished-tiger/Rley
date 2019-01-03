@@ -15,6 +15,7 @@ module Rley # This module is used as a namespace
     # @param aParseTree [ParseTree] the parse tree to visit.
     def initialize(aParseTree, aTraversalStrategy = :post_order)
       raise StandardError if aParseTree.nil?
+
       @ptree = aParseTree
       @subscribers = []
       @traversal = aTraversalStrategy
@@ -99,6 +100,7 @@ module Rley # This module is used as a namespace
     def broadcast(msg, *args)
       subscribers.each do |subscr|
         next unless subscr.respond_to?(msg) || subscr.respond_to?(:accept_all)
+
         subscr.send(msg, *args)
       end
     end

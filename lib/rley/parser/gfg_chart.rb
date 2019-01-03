@@ -13,7 +13,7 @@ module Rley # This module is used as a namespace
       attr_reader(:sets)
 
       # @param aGFGraph [GFG::GrmFlowGraph] The GFG for the grammar in use.
-      def initialize( aGFGraph)
+      def initialize(aGFGraph)
         @sets = [ ParseEntrySet.new ]
         push_entry(aGFGraph.start_vertex, 0, 0, :start_rule)
       end
@@ -45,7 +45,7 @@ module Rley # This module is used as a namespace
       # Push a parse entry for the chart entry with given index
       # @param anIndex [Integer] The rank of the token in the input stream.
       # @return [ParseEntry] the passed parse entry if it is pushed
-      def push_entry(aVertex, anOrigin, anIndex, _reason)
+      def push_entry(aVertex, anOrigin, anIndex, reason)
         # puts "push_entry:"
         # puts "  aVertex #{aVertex.inspect}"
         # puts "  anOrigin: #{anOrigin}"
@@ -53,8 +53,9 @@ module Rley # This module is used as a namespace
         # puts "  _reason: #{_reason}"
         new_entry = ParseEntry.new(aVertex, anOrigin)
         if anIndex == sets.size
-          err_msg = "Internal error: unexpected push reason #{_reason}"
-          raise StandardError, err_msg if _reason != :scan_rule
+          err_msg = "Internal error: unexpected push reason #{reason}"
+          raise StandardError, err_msg if reason != :scan_rule
+          
           add_entry_set 
         end
         pushed = self[anIndex].push_entry(new_entry)
@@ -98,7 +99,6 @@ module Rley # This module is used as a namespace
       def add_entry_set()
          @sets << ParseEntrySet.new
       end
-
     end # class
   end # module
 end # module

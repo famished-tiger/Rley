@@ -1,3 +1,12 @@
+### 0.7.01 / 2019-01-03  
+- Maintenance release.
+
+* [CHANGE] Code re-styling to please Rubocop 0.62.0.
+* [CHANGE] File `.travis.yml`: updated Ruby versions.
+* [CHANGE] File `appveyor.yml` updated Ruby versions.
+* [CHANGE] File `README.me` removal obsolete icon.
+* [CHANGE] File `LICENSE.txt` Updated copyright years.
+
 ### 0.7.00 / 2018-11-24  
 - Version bump. Core class `Token` is changed.
 

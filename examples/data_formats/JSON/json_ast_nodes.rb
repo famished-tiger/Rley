@@ -29,6 +29,7 @@ JSONTerminalNode = Struct.new(:token, :value, :position) do
   end
   
   def done!
+    # Do nothing  
   end
 end
 
@@ -76,6 +77,7 @@ class JSONCompositeNode
   end
   
   def done!
+    # Do nothing  
   end
 
   alias subnodes children
@@ -123,6 +125,7 @@ class JSONPair
   end
   
   def done!
+    # Do nothing
   end
   
   def to_ruby

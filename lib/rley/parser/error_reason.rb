@@ -5,7 +5,7 @@ module Rley # Module used as a namespace
     # detected by Rley.
     class ErrorReason
       # @!attribute [r] rank
-      #   @return [Fixnum] The rank number of the offending input token  
+      #   @return [Fixnum] The rank number of the offending input token
       attr_reader(:rank)
 
       # Constructor
@@ -45,27 +45,29 @@ module Rley # Module used as a namespace
     class ExpectationNotMet < ErrorReason
       # The last input token read when error was detected
       attr_reader(:last_token)
-      
+
       # The terminal symbols expected when error was occurred
       attr_reader(:expected_terminals)
 
       def initialize(aRank, lastToken, expectedTerminals)
         super(aRank)
         raise StandardError, 'Internal error: nil token' if lastToken.nil?
+
         @last_token = lastToken.dup
         @expected_terminals = expectedTerminals.dup
       end
 
       protected
-      
+
       def position()
         return last_token.position if last_token.respond_to?(:position)
+
         rank + 1
       end
-      
+
       # Emit a text explaining the expected terminal symbols
       def expectations
-        term_names = expected_terminals.map(&:name)      
+        term_names = expected_terminals.map(&:name)
         explain = 'Expected one '
         explain << if expected_terminals.size > 1
                      "of: ['#{term_names.join("', '")}']"
@@ -92,7 +94,7 @@ module Rley # Module used as a namespace
 
     # This parse error occurs when all input tokens were consumed
     # but the parser still expected one or more tokens from the input.
-    class PrematureInputEnd < ExpectationNotMet    
+    class PrematureInputEnd < ExpectationNotMet
       # Returns the reason's message.
       def to_s
         err_msg = "Premature end of input after '#{last_token.lexeme}'"

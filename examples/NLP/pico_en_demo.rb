@@ -64,7 +64,7 @@ Lexicon = {
 def tokenizer(aTextToParse)
   scanner = StringScanner.new(aTextToParse)
   tokens = []
-  
+
   loop do
     scanner.skip(/\s+/)
     curr_pos = scanner.pos
@@ -73,6 +73,7 @@ def tokenizer(aTextToParse)
 
     term_name = Lexicon[word]
     raise StandardError, "Word '#{word}' not found in lexicon" if term_name.nil?
+
     pos = Rley::Lexical::Position.new(1, curr_pos + 1)
     tokens << Rley::Lexical::Token.new(word, term_name, pos)
   end
@@ -94,7 +95,7 @@ unless result.success?
   puts result.failure_reason.message
   exit(1)
 end
- 
+
 ########################################
 # Step 6. Generating a parse tree from parse result
 ptree = engine.to_ptree(result)

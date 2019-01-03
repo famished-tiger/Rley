@@ -24,12 +24,13 @@ module GrammarBExprHelper
   def expr_tokenizer(aText)
     scanner = StringScanner.new(aText)
     tokens = []
-    
+
     loop do
       scanner.skip(/\s+/)
       curr_pos = scanner.pos
       lexeme = scanner.scan(/\S+/)
       break unless lexeme
+
       case lexeme
         when '+', '*'
           terminal = lexeme
@@ -41,10 +42,10 @@ module GrammarBExprHelper
       end
 
       pos = Rley::Lexical::Position.new(1, curr_pos + 1)
-      tokens << Rley::Lexical::Token.new(lexeme, terminal, pos)      
-    end    
+      tokens << Rley::Lexical::Token.new(lexeme, terminal, pos)
+    end
 
-    return tokens 
+    return tokens
   end
 end # module
 # End of file

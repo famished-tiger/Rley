@@ -69,7 +69,7 @@ module GrammarL0Helper
   def tokenizer_l0(aText)
     scanner = StringScanner.new(aText)
     tokens = []
-    
+
     loop do
       scanner.skip(/\s+/)
       curr_pos = scanner.pos
@@ -80,8 +80,9 @@ module GrammarL0Helper
       if term_name.nil?
         raise StandardError, "Word '#{word}' not found in lexicon"
       end
+
       pos = Rley::Lexical::Position.new(1, curr_pos + 1)
-      tokens << Rley::Lexical::Token.new(word, term_name, pos)      
+      tokens << Rley::Lexical::Token.new(word, term_name, pos)
     end
 
     return tokens

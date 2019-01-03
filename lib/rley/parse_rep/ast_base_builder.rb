@@ -17,7 +17,7 @@ module Rley # This module is used as a namespace
       # @return [Hash{String => Class}, Hash{String => Hash{String => Class}}]
       #   Returned hash contains pairs of the form:
       #   terminal name => Class implementing the terminal tokens
-      #   terminal name => Hash with pairs: rule name => Class
+      #   terminal name => Hash with pairs: production name => Class
       def terminal2node()
         raise NotImplementedError
       end

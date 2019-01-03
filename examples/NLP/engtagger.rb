@@ -2,12 +2,13 @@ require 'rley'
 require 'engtagger' # Load POS (Part-Of-Speech) tagger EngTagger
 
 # REGEX to remove XML tags from Engtagger output
-GET_TAG = /<(.+?)>(.*?)<.+?>/
+GET_TAG = /<(.+?)>(.*?)<.+?>/.freeze
 
 # Text tokenizer
 # Taken directly from Engtagger, will ensure uniform indexing while parsing
 def clean_text(text)
     return false unless valid_text(text)
+
     text = text.toutf8
     cleaned_text = text
     tokenized = []
@@ -48,13 +49,14 @@ def split_sentences(array)
                 va wash wis wisc wy wyo usafa alta man ont que sask yuk]
     month  = %w[jan feb mar apr may jun jul aug sep sept oct nov dec]
     misc   = %w[vs etc no esp]
-    abbr = Hash.new
+    abbr = {}
     [people, army, inst, place, comp, state, month, misc].flatten.each do |i|
       abbr[i] = true
     end
-    words = Array.new
+    words = []
     tokenized.each_with_index do |_t, i|
-      if tokenized[i + 1] && tokenized [i + 1] =~ /[A-Z\W]/ && tokenized[i] =~ /\A(.+)\.\z/
+      if tokenized[i + 1] &&
+         tokenized [i + 1] =~ /[A-Z\W]/ && tokenized[i] =~ /\A(.+)\.\z/
         w = $1
         # Don't separate the period off words that
         # meet any of the following conditions:
@@ -62,8 +64,9 @@ def split_sentences(array)
         # 1. It is defined in one of the lists above
         # 2. It is only one letter long: Alfred E. Sloan
         # 3. It has a repeating letter-dot: U.S.A. or J.C. Penney
-        unless abbr[w.downcase] || w =~ /\A[a-z]\z/i || w =~ /[a-z](?:\.[a-z])+\z/i
-          words <<  w
+        unless abbr[w.downcase] ||
+               w =~ /\A[a-z]\z/i || w =~ /[a-z](?:\.[a-z])+\z/i
+          words << w
           words << '.'
           next
         end
@@ -83,15 +86,20 @@ end
 def split_punct(text)
     # If there's no punctuation, return immediately
     return [text] if /\A\w+\z/ =~ text
+
     # Sanity checks
     text = text.gsub(/\W{10,}/o, ' ')
 
     # Put quotes into a standard format
     text = text.gsub(/`(?!`)(?=.*\w)/o, '` ') # Shift left quotes off text
     text = text.gsub(/"(?=.*\w)/o, ' `` ') # Convert left quotes to ``
-    text = text.gsub(/(\W|^)'(?=.*\w)/o) { $1 ? $1 + ' ` ' : ' ` ' } # Convert left quote to `
+
+    # Convert left quote to `
+    text = text.gsub(/(\W|^)'(?=.*\w)/o) { $1 ? $1 + ' ` ' : ' ` ' }
     text = text.gsub(/"/, " '' ") # Convert (remaining) quotes to ''
-    text = text.gsub(/(\w)'(?!')(?=\W|$)/o, "\\1 ' ") # Separate right single quotes
+
+    # Separate right single quotes
+    text = text.gsub(/(\w)'(?!')(?=\W|$)/o, "\\1 ' ")
 
     # Handle all other punctuation
     text = text.gsub(/--+/o, ' - ') # Convert and separate dashes
@@ -99,10 +107,13 @@ def split_punct(text)
     text = text.gsub(/:/o, ' :') # Shift semicolon off
     text = text.gsub(/(\.\.\.+)/o, ' \1 ') # Shift ellipses off
     text = text.gsub(/([\(\[\{\}\]\)])/o, ' \1 ') # Shift off brackets
-    text = text.gsub(/([\!\?#\$%;~|])/o, ' \1 ') # Shift off other ``standard'' punctuation
+
+    # Shift off other ``standard'' punctuation
+    text = text.gsub(/([\!\?#\$%;~|])/o, ' \1 ')
 
     # English-specific contractions
-    text = text.gsub(/([A-Za-z])'([dms])\b/o, "\\1 '\\2") # Separate off 'd 'm 's
+    # Separate off 'd 'm 's
+    text = text.gsub(/([A-Za-z])'([dms])\b/o, "\\1 '\\2")
     text = text.gsub(/n't\b/o, " n't") # Separate off n't
     text = text.gsub(/'(ve|ll|re)\b/o, " '\\1") # Separate off 've, 'll, 're
     result = text.split(' ')
@@ -139,7 +150,7 @@ tgr = EngTagger.new
 tagged = tgr.add_tags(text)
 
 # Generte tokenied lexicon of input text
-# Instead of creating a lexicon dictionary, 
+# Instead of creating a lexicon dictionary,
 # we would simply generate one each time on the fly for the current text only.
 lexicon = clean_text(text)
 
@@ -153,7 +164,7 @@ def tokenizer(lexicon, tokens)
     term_name = tokens[i].last
     rank = Rley::Lexical::Position.new(1, pos + 1)
     pos += word.length + 1 # Assuming one space between words.
-    rley_tokens << Rley::Lexical::Token.new(word, term_name, pos)
+    rley_tokens << Rley::Lexical::Token.new(word, term_name, rank)
   end
   return rley_tokens
 end

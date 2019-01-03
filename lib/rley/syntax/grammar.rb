@@ -26,7 +26,7 @@ module Rley # This module is used as a namespace
       attr_reader(:symbols)
 
       # A Hash that maps symbol names to their grammar symbols
-      # @return [Hash{String => GrmSymbol}] 
+      # @return [Hash{String => GrmSymbol}]
       attr_reader(:name2symbol)
 
       # @param theProductions [Array<Production>] productions of the grammar.
@@ -62,6 +62,7 @@ module Rley # This module is used as a namespace
       def validate_productions(theProductions)
         msg = 'A grammar must have at least one production'
         raise StandardError, msg if theProductions.nil? || theProductions.empty?
+
         return theProductions
       end
 
@@ -133,6 +134,7 @@ module Rley # This module is used as a namespace
 
           rules.each do |a_rule|
             next unless a_rule.generative?.nil?
+
             if a_rule.empty?
               a_rule.generative = false
               curr_marked << a_rule
@@ -146,6 +148,7 @@ module Rley # This module is used as a namespace
               break unless symbol.generative?
             end
             next if last_considered.generative?.nil?
+
             a_rule.generative = last_considered.generative?
             curr_marked << a_rule
             could_mark_nterm_generative(a_rule)
@@ -211,30 +214,31 @@ module Rley # This module is used as a namespace
             end
           end
           break if new_nullables.empty?
+
           filtered_rules.reject! { |prod| prod.lhs.nullable? }
           nullable_sets[i] = nullable_sets[i - 1].merge(new_nullables)
         end
-        
+
         mark_nullable
       end
 
       # Return the set of nonterminals which have one of their
       # production rules empty
-      def direct_nullable()
+      def direct_nullable
         nullables = Set.new
         # Direct nullable nonterminals correspond to empty productions
         rules.each do |prod|
           next unless prod.empty?
+
           prod.lhs.nullable = true
           nullables << prod.lhs
         end
 
         return nullables
       end
-      
-      
+
       # For each prodction determine whether it is nullable or not.
-      # A nullable production is a production that can match an empty string.      
+      # A nullable production is a production that can match an empty string.
       def mark_nullable
         rules.each do |prod|
           if prod.empty?

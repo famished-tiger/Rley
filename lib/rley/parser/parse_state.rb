@@ -16,7 +16,7 @@ module Rley # This module is used as a namespace
       def ==(other)
         return true if object_id == other.object_id
 
-        result = (dotted_rule == other.dotted_rule) && 
+        result = (dotted_rule == other.dotted_rule) &&
                  (origin == other.origin)
 
         return result
@@ -43,6 +43,7 @@ module Rley # This module is used as a namespace
         return false if other == self
 
         return false unless origin == other.origin
+
         other_production = other.dotted_rule.production
         return false unless dotted_rule.production == other_production
 

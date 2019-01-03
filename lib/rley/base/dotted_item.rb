@@ -113,8 +113,10 @@ module Rley # This module is used as a namespace
       # @return [Boolean]
       def successor_of?(another)
         return false if production != another.production
+
         to_the_left = prev_position
         return false if to_the_left.nil?
+
         return to_the_left == another.position
       end
 

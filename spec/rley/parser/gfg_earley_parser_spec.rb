@@ -587,12 +587,12 @@ MSG
           ###################### S(0) == . 1 +
           # Expectation chart[0]:
           expected = [
-            '.S | 0',                     # initialization
-            'S => . E | 0',               # start rule
-            '.E | 0',                     # call rule
-            'E => . int | 0',             # start rule
-            "E => . ( E + E ) | 0", # start rule
-            "E => . E + E | 0"          # start rule
+            '.S | 0',               # initialization
+            'S => . E | 0',         # start rule
+            '.E | 0',               # call rule
+            'E => . int | 0',       # start rule
+            'E => . ( E + E ) | 0', # start rule
+            'E => . E + E | 0'      # start rule
           ]
           compare_entry_texts(parse_result.chart[0], expected)
 
@@ -619,7 +619,7 @@ MSG
           compare_entry_texts(parse_result.chart[2], expected)
 
           err_msg = "Premature end of input after '+' at position line 1, "
-          err_msg << "column 3"
+          err_msg << 'column 3'
           err_msg << "\nExpected one of: ['int', '(']."
           expect(parse_result.failure_reason.message).to eq(err_msg)
         end

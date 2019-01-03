@@ -5,7 +5,7 @@ require 'rley' # Load Rley library
 
 ########################################
 # Step 0. Instantiate facade object of Rley library.
-# It provides a unified, higher-level interface 
+# It provides a unified, higher-level interface
 engine = Rley::Engine.new
 
 ########################################
@@ -67,8 +67,9 @@ def tokenizer(aTextToParse)
   tokens = aTextToParse.scan(/\S+/).map do |word|
     term_name = Lexicon[word]
     raise StandardError, "Word '#{word}' not found in lexicon" if term_name.nil?
+
     pos = Rley::Lexical::Position.new(1, offset + 1)
-    offset += word.length 
+    offset += word.length
     Rley::Lexical::Token.new(word, term_name, pos)
   end
 

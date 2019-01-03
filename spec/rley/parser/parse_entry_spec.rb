@@ -199,7 +199,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
         
         it 'should be inspectable' do
           subject.add_antecedent(subject) # Cheat for the good cause...
-          expected = '.sentence | 3'
+          # expected = '.sentence | 3'
           prefix = /^#<Rley::Parser::ParseEntry:\d+ @vertex/
           expect(subject.inspect).to match(prefix)
           pattern = /@vertex=<Rley::GFG::StartVertex:\d+ label=\.sentence/

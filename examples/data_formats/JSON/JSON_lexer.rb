@@ -67,6 +67,7 @@ class JSONLexer
           end_delimiter = scanner.getch
           err_msg = 'No closing quotes (") found'
           raise ScanError.new(err_msg) if end_delimiter.nil?
+
           token = build_token(value, 'string')
 
         when /[-0-9]/ # Start character of number literal found
@@ -85,7 +86,7 @@ class JSONLexer
 
     return token
   end
-  
+
   def build_token(lexeme, token)
     pos = Rley::Lexical::Position.new(lineno, scanner.pos - line_start)
     Rley::Lexical::Token.new(lexeme, token, pos)

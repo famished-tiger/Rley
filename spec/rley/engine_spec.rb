@@ -17,10 +17,11 @@ module Rley # Open this namespace to avoid module qualifier prefixes
       end
 
       it 'could be created with block argument' do
-        expect { Engine.new do |config|
+        expect do 
+                 Engine.new do |config|
                    config.parse_repr = :raw
                  end
-               }.not_to raise_error
+               end.not_to raise_error
       end
 
       it "shouldn't have a link to a grammar yet" do
@@ -145,7 +146,6 @@ module Rley # Open this namespace to avoid module qualifier prefixes
         visitor = subject.pforest_visitor(ptree)
         expect(visitor).to be_kind_of(ParseForestVisitor)
       end
-
     end # context
   end # describe
 end # module
