@@ -1,10 +1,14 @@
+### 0.7.02 / 2019-01-13
+- Removed Ruby versions older than 2.3 in CI testing because of breaking changes by Bundler 2.0
+* [CHANGE] Files `Gemfile`, `.travis.yml`, `appveyor.yml` updated.
+
 ### 0.7.01 / 2019-01-03  
 - Maintenance release.
 
 * [CHANGE] Code re-styling to please Rubocop 0.62.0.
 * [CHANGE] File `.travis.yml`: updated Ruby versions.
 * [CHANGE] File `appveyor.yml` updated Ruby versions.
-* [CHANGE] File `README.me` removal obsolete icon.
+* [CHANGE] File `README.me` removal obsolete badge.
 * [CHANGE] File `LICENSE.txt` Updated copyright years.
 
 ### 0.7.00 / 2018-11-24  

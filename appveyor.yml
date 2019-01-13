@@ -1,25 +1,30 @@
 version: '{build}'
-max_jobs: 3
+max_jobs: 5
 environment:
   matrix:
-  #- Ruby_version: 25-x64   
-  - Ruby_version: 24-x64  
+  - Ruby_version: 25-x64
+  - Ruby_version: 24-x64
   - Ruby_version: 23-x64
-  - Ruby_version: 22-x64
-  - Ruby_version: 21-x64
-  - Ruby_version: 200-x64
-  #- Ruby_version: 25   
-  - Ruby_version: 24  
+  - Ruby_version: 25
+  - Ruby_version: 24
   - Ruby_version: 23
-  - Ruby_version: 22
-  - Ruby_version: 21
-  - Ruby_version: 200  
+
+# These are failing
+#  - Ruby_version: 26
+#  - Ruby_version: 26-x64
 
 install:
   - set PATH=C:\Ruby%Ruby_version%\bin;%PATH%
+  - gem update --system
+  - gem install bundler
   - bundle install --retry=3 --clean --force
 
 build: off
+
+before_test:
+  - ruby -v
+  - gem -v
+  - bundle -v
 
 test_script:
   - bundle exec rake
