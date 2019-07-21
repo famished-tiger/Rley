@@ -48,7 +48,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
 
       context 'Provided services:' do
         it 'should accept the addition of an entry' do
-          # Case: first time e,try addition
+          # Case: first time entry addition
           expect(subject.push_entry(entry1)).to eq(entry1)
           expect(subject).not_to be_empty
 

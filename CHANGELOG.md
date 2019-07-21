@@ -1,3 +1,10 @@
+### 0.7.03 / 2019-07-21
+- Minor refactoring for parsing speed improvement.
+* [CHANGE] Replacing comparison with object_id by `equal?` method
+* [CHANGE] Method `ParseEntry#hash` added
+* [CHANGE] Class `ParseEntrySet` added new Hash attribute in order to speed up membership testing.
+
+
 ### 0.7.02 / 2019-01-13
 - Removed Ruby versions older than 2.3 in CI testing because of breaking changes by Bundler 2.0
 * [CHANGE] Files `Gemfile`, `.travis.yml`, `appveyor.yml` updated.

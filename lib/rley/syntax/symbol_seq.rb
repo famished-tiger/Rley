@@ -21,7 +21,7 @@ module Rley # This module is used as a namespace
       # @param other [SymbolSeq|Array]
       # @return [Boolean]
       def ==(other)
-        return true if other.object_id == object_id
+        return true if equal?(other)
 
         case other
           when SymbolSeq then result = other.members == members

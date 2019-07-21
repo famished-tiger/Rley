@@ -48,10 +48,15 @@ module Rley # This module is used as a namespace
 
       # Equality comparison. A parse entry behaves as a value object.
       def ==(other)
-        return true if object_id == other.object_id
+        return true if equal? other
 
         result = (vertex == other.vertex) && (origin == other.origin)
         return result
+      end
+      
+      def hash
+        @my_hash ||= "#{vertex.object_id}-#{origin}".hash
+        @my_hash
       end
 
       # Returns true iff the vertex is a start vertex (i.e. of the form: .X)

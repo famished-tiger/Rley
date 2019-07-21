@@ -1,4 +1,5 @@
 require 'forwardable' # For the Delegation pattern
+require 'set'
 
 require_relative '../syntax/terminal'
 require_relative '../syntax/non_terminal'
@@ -11,12 +12,16 @@ module Rley # This module is used as a namespace
       extend Forwardable
       def_delegators :entries, :empty?, :size, :first, :last, :pop, :each
 
-      # @return [Array<ParseEntry>] The set of parse entries
+      # @return [Array<ParseEntry>] The array of parse entries
       attr_reader :entries
+      
+      # @return [Hash] A Hash with pairs { hash of ParseEntry => ParseEntry }
+      attr_reader :membership      
 
       # Constructor.
       def initialize()
         @entries = []
+        @membership = {}
         @entries4term = Hash.new { |hash, key| hash[key] = [] }
         @entries4n_term = Hash.new { |hash, key| hash[key] = [] }
       end
@@ -55,11 +60,14 @@ module Rley # This module is used as a namespace
       # @return [ParseEntry] the passed parse entry if it pushes it
       def push_entry(anEntry)
         # TODO: control overhead next line
-        match = entries.find { |entry| entry == anEntry }
+        #match = entries.find { |entry| entry == anEntry }
+        entry_key = anEntry.hash
+        match = membership.fetch(entry_key, false)
         if match
           result = match
         else
           @entries << anEntry
+          membership[entry_key] = anEntry
           expecting = anEntry.next_symbol
           add_lookup4symbol(anEntry) if expecting
           result = anEntry

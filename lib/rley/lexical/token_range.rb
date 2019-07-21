@@ -28,7 +28,7 @@ module Rley # This module is used as a namespace
       # @param other [TokenRange, Range, Hash, Array<Integer>]
       # @return [Boolean]
       def ==(other)
-        return true if object_id == other.object_id
+        return true if equal?(other)
 
         case other
           when Hash

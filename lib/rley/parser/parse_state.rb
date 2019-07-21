@@ -14,7 +14,7 @@ module Rley # This module is used as a namespace
 
       # Equality comparison. A parse state behaves as a value object.
       def ==(other)
-        return true if object_id == other.object_id
+        return true if equal?(other)
 
         result = (dotted_rule == other.dotted_rule) &&
                  (origin == other.origin)
