@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative 'dotted_item'
 
 module Rley # This module is used as a namespace

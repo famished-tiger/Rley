@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Classes that implement nodes of Abstract Syntax Trees (AST) representing
 # calculator parse results.
 

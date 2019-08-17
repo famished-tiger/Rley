@@ -2,16 +2,18 @@ version: '{build}'
 max_jobs: 5
 environment:
   matrix:
+  - Ruby_version: 26-x64  
   - Ruby_version: 25-x64
   - Ruby_version: 24-x64
   - Ruby_version: 23-x64
+  - Ruby_version: 26
   - Ruby_version: 25
   - Ruby_version: 24
   - Ruby_version: 23
 
 # These are failing
-#  - Ruby_version: 26
-#  - Ruby_version: 26-x64
+#  
+#  
 
 install:
   - set PATH=C:\Ruby%Ruby_version%\bin;%PATH%

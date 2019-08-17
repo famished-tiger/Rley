@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Rley # This module is used as a namespace
   module GFG # This module is used as a namespace
     # Abstract class. Represents a vertex in a grammar flow graph
@@ -32,7 +34,7 @@ module Rley # This module is used as a namespace
       # vertex.
       # @return [String]
       def inspect()
-        result = '#<'
+        result = +'#<'
         result << selfie
         edges.each { |e| result << e.inspect }
         result << specific_inspect
@@ -45,7 +47,7 @@ module Rley # This module is used as a namespace
       # vertex without the edges.
       # @return [String]      
       def selfie()
-        result = "#{self.class.name}:#{object_id}"
+        result = +"#{self.class.name}:#{object_id}"
         result << %( label="#{label}")
         return result
       end

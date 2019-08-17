@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # File: rley_error.rb
 
 module Rley # Module used as a namespace

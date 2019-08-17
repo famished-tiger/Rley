@@ -1,4 +1,4 @@
-# encoding: utf-8
+# frozen_string_literal: true
 
 # File: rley.gemspec
 # Gem specification file for the Rley project.
@@ -67,7 +67,7 @@ RLEY_GEMSPEC = Gem::Specification.new do |pkg|
   pkg.add_development_dependency 'rubygems', '~> 2.0', '>= 2.0.0'
   pkg.add_development_dependency 'simplecov', '~> 0.1', '>= 0.1.0'  
   pkg.license = 'MIT'
-  pkg.required_ruby_version = '>= 2.0.0'
+  pkg.required_ruby_version = '>= 2.3.0'
 end
 
 if $PROGRAM_NAME == __FILE__

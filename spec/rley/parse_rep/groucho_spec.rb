@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Purpose: to test the parse forest generation for an emblematic
 # ambiguous sentence
 # Based on example found at: http://www.nltk.org/book_1ed/ch08.html

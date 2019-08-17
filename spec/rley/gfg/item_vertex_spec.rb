@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative '../../spec_helper'
 require_relative '../../../lib/rley/syntax/terminal'
 require_relative '../../../lib/rley/syntax/non_terminal'

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative 'parse_entry'
 require_relative 'parse_entry_set'
 

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative 'calc_ast_nodes'
 
 # The purpose of a CalcASTBuilder is to build piece by piece an AST

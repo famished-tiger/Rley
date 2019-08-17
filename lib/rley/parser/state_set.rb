@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'forwardable' # Delegation
 
 module Rley # This module is used as a namespace

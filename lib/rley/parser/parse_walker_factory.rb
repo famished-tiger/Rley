@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'set'
 require_relative '../gfg/call_edge'
 require_relative '../gfg/scan_edge'

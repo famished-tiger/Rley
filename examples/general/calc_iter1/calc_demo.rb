@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative 'calc_lexer'
 require_relative 'calc_ast_builder'
 

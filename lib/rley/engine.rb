@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative './syntax/grammar_builder'
 require_relative './parser/gfg_earley_parser'
 require_relative './parse_tree_visitor'
@@ -15,7 +17,6 @@ module Rley # This module is used as a namespace
     :repr_builder,
     :diagnose
   ) do
-
     # Constructor with default initialization.
     def initialize()
       super()

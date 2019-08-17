@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative '../gfg/start_vertex'
 require_relative '../gfg/end_vertex'
 require_relative '../gfg/item_vertex'
@@ -55,8 +57,7 @@ module Rley # This module is used as a namespace
       end
       
       def hash
-        @my_hash ||= "#{vertex.object_id}-#{origin}".hash
-        @my_hash
+        @hash ||= "#{vertex.object_id}-#{origin}".hash
       end
 
       # Returns true iff the vertex is a start vertex (i.e. of the form: .X)
@@ -152,7 +153,7 @@ module Rley # This module is used as a namespace
       # Returns a human-readable and partial representation of itself.
       # @return [String]
       def selfie()
-        result = "#<#{self.class.name}:#{object_id}"
+        result = +"#<#{self.class.name}:#{object_id}"
         result << " @vertex=<#{vertex.class.name}:#{vertex.object_id}"
         result << " label=#{vertex.label}>"
         result << " @origin=#{origin}"

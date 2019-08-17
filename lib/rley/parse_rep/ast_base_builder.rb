@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative '../ptree/parse_tree'
 require_relative 'parse_tree_builder'
 

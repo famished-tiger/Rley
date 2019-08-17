@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Rley # This module is used as a namespace
   # Namespace dedicated to parse tree formatters.
   module Formatter

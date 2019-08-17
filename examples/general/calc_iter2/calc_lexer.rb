@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # File: calc_lexer.rb
 # Lexer for a basic arithmetical expression parser
 require 'strscan'

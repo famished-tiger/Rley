@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Rley # This module is used as a namespace
   module GFG # This module is used as a namespace
     # Abstract class. Represents an edge in a grammar flow graph.

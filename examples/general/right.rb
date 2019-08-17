@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Purpose: define a grammar with right-recursive rule
 require 'rley' # Load Rley library
 

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative '../syntax/terminal'
 require_relative '../syntax/non_terminal'
 require_relative '../gfg/end_vertex'

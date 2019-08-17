@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rspec' # Use the RSpec framework
 require_relative '../calc_lexer'
 require_relative '../calc_grammar'

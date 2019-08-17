@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative '../syntax/grammar'
 require_relative 'grm_items_builder' # Use mix-in module
 

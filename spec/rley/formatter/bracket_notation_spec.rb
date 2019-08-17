@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative '../../spec_helper'
 require 'stringio'
 
@@ -54,13 +56,13 @@ module Rley # Re-open the module to get rid of qualified names
         ptree   
       end
   
-      let(:destination) { StringIO.new('', 'w') }
+      let(:destination) { StringIO.new(+'', 'w') }
       subject { BracketNotation.new(destination) }
 
       context 'Standard creation & initialization:' do
         it 'should be initialized with an IO argument' do
           expect do 
-            BracketNotation.new(StringIO.new('', 'w')) 
+            BracketNotation.new(StringIO.new(+'', 'w')) 
           end.not_to raise_error
         end
         

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative 'parse_rep_creator'
 require_relative 'parse_forest_builder'
 

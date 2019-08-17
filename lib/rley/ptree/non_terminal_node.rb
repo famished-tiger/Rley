@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative 'parse_tree_node' # Load superclass
 
 module Rley # This module is used as a namespace
@@ -23,7 +25,7 @@ module Rley # This module is used as a namespace
         connector = '+- '
         selfie = super(indentation)
         prefix = "\n" + (' ' * connector.size * indentation) + connector
-        subnodes_repr = subnodes.reduce('') do |sub_result, subnode|
+        subnodes_repr = subnodes.reduce(+'') do |sub_result, subnode|
           sub_result << prefix + subnode.to_string(indentation + 1) 
         end
         

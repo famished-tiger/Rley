@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Rley # Module used as a namespace
   module Parser # This module is used as a namespace
     # Abstract class. An instance represents an explanation describing
@@ -68,7 +70,7 @@ module Rley # Module used as a namespace
       # Emit a text explaining the expected terminal symbols
       def expectations
         term_names = expected_terminals.map(&:name)
-        explain = 'Expected one '
+        explain = +'Expected one '
         explain << if expected_terminals.size > 1
                      "of: ['#{term_names.join("', '")}']"
                    else
@@ -83,7 +85,7 @@ module Rley # Module used as a namespace
     class UnexpectedToken < ExpectationNotMet
       # Returns the reason's message.
       def to_s
-        err_msg = "Syntax error at or near token #{position} "
+        err_msg = +"Syntax error at or near token #{position} "
         err_msg << ">>>#{last_token.lexeme}<<<\n"
         err_msg << expectations
         err_msg << ", found a '#{last_token.terminal}' instead."
@@ -97,7 +99,7 @@ module Rley # Module used as a namespace
     class PrematureInputEnd < ExpectationNotMet
       # Returns the reason's message.
       def to_s
-        err_msg = "Premature end of input after '#{last_token.lexeme}'"
+        err_msg = +"Premature end of input after '#{last_token.lexeme}'"
         err_msg << " at position #{position}\n"
         err_msg << "#{expectations}."
 

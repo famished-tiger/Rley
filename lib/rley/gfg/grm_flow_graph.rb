@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'set'
 require_relative 'start_vertex'
 require_relative 'end_vertex'
@@ -63,7 +65,7 @@ module Rley # This module is used as a namespace
       # production.
       # @return [String]
       def inspect()
-        result = "#<#{self.class.name}:#{object_id}"
+        result = +"#<#{self.class.name}:#{object_id}"
         result << ' @vertices=['
         list = vertices.map { |v| "#<#{v.selfie}>" }
         result << list.join(', ')
@@ -290,7 +292,7 @@ module Rley # This module is used as a namespace
           end
 
           prev_symbol = current_item.prev_symbol
-          if prev_symbol && prev_symbol.kind_of?(Syntax::NonTerminal)
+          if prev_symbol&.kind_of?(Syntax::NonTerminal)
             build_shortcut_edge(prev_vertex, new_vertex)
           end
           prev_vertex = new_vertex

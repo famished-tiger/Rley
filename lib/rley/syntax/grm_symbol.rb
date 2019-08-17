@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Rley # This module is used as a namespace
   module Syntax # This module is used as a namespace
     # Abstract class for grammar symbols.

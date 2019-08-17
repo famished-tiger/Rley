@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative '../parser/parse_walker_factory'
 
 module Rley # This module is used as a namespace

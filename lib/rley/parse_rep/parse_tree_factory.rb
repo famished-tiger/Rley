@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative 'parse_rep_creator'
 # require_relative 'parse_tree_builder' # TODO remove this line
 require_relative 'cst_builder'

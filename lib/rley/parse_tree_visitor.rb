@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Rley # This module is used as a namespace
   # A visitor class dedicated in the visit of a parse tree.
   # It combines the Visitor and Observer patterns.

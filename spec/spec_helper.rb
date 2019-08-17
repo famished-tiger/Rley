@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # File: spec_helper.rb
 # Purpose: utility file that is loaded by all our RSpec files
 

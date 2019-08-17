@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Rley # This module is used as a namespace
   module Lexical # This module is used as a namespace
     # A Position is the location of a lexeme within a source file.

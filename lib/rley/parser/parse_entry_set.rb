@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'forwardable' # For the Delegation pattern
 require 'set'
 
@@ -30,7 +32,7 @@ module Rley # This module is used as a namespace
       # set of parse entries.
       # @return [String]
       def inspect()
-        result = "#<#{self.class.name}:#{object_id}"
+        result = +"#<#{self.class.name}:#{object_id}"
         result << ' @entries=['
         entries.each { |e| result << e.inspect }
         result << ']>'
@@ -59,13 +61,9 @@ module Rley # This module is used as a namespace
       # @param anEntry [ParseEntry] the parse entry to push.
       # @return [ParseEntry] the passed parse entry if it pushes it
       def push_entry(anEntry)
-        # TODO: control overhead next line
-        #match = entries.find { |entry| entry == anEntry }
         entry_key = anEntry.hash
-        match = membership.fetch(entry_key, false)
-        if match
-          result = match
-        else
+        result = membership.fetch(entry_key, false)
+        unless result
           @entries << anEntry
           membership[entry_key] = anEntry
           expecting = anEntry.next_symbol
@@ -105,12 +103,10 @@ module Rley # This module is used as a namespace
 
       def add_lookup4symbol(anEntry)
         symb = anEntry.next_symbol
-        case symb
-          when Syntax::Terminal
-            @entries4term[symb] << anEntry
-
-          when Syntax::NonTerminal
-            @entries4n_term[symb] << anEntry
+        if symb.kind_of?(Syntax::Terminal)
+          @entries4term[symb] << anEntry
+        else
+          @entries4n_term[symb] << anEntry
         end
       end
     end # class

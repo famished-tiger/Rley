@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rley' # Load Rley library
 require 'strscan'
 

@@ -1,9 +1,16 @@
+### 0.7.04 / 2019-08-17
+- Rley recognizer is about 25% faster than previous version. Kudos to the people 
+behind the *magic_frozen_string_literal* gem. 
+- Code refactoring to use string frozen magic comments (as a consequence, Rley runs only on Rubies 2.3 or newer).  
+- Code restyling to please rubocop 0.7.40. 
+- [CHANGE] Class `ParseEntrySet`: minor code optimization
+
+
 ### 0.7.03 / 2019-07-21
 - Minor refactoring for parsing speed improvement.
 * [CHANGE] Replacing comparison with object_id by `equal?` method
 * [CHANGE] Method `ParseEntry#hash` added
 * [CHANGE] Class `ParseEntrySet` added new Hash attribute in order to speed up membership testing.
-
 
 ### 0.7.02 / 2019-01-13
 - Removed Ruby versions older than 2.3 in CI testing because of breaking changes by Bundler 2.0

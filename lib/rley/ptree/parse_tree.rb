@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative 'terminal_node'
 require_relative 'non_terminal_node'
 
@@ -33,7 +35,7 @@ module Rley # This module is used as a namespace
         aVisitor.start_visit_ptree(self)
 
         # Let's proceed with the visit of nodes
-        root.accept(aVisitor) if root
+        root&.accept(aVisitor)
 
         aVisitor.end_visit_ptree(self)
       end

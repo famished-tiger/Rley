@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative 'composite_node'
 
 module Rley # This module is used as a namespace

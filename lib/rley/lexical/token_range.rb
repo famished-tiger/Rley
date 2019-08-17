@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Rley # This module is used as a namespace
   module Lexical # This module is used as a namespace
     # A token range (also called an extent) represents an interval 

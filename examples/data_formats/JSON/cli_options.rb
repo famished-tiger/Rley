@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'optparse'
 
 # A Hash specialization that collects the command-line options

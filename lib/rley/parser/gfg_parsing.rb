@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative 'gfg_chart'
 require_relative 'error_reason'
 require_relative 'parse_entry_tracker'
@@ -34,6 +36,7 @@ module Rley # This module is used as a namespace
       # Constructor
       # @param theGFG [GFG::GrmFlowGraph] the Grammar Flow Graph
       def initialize(theGFG)
+        super()
         @gf_graph = theGFG
         @tokens = []
         @chart = GFGChart.new(gf_graph)
@@ -266,8 +269,11 @@ END_MSG
 
         antecedence[consequent] << antecedentEntry
 
+
+=begin
         # Invariant checks
         antecedents = antecedence[consequent]
+        
         case aVertex
           when Rley::GFG::EndVertex
             # Rule: has 1..* antecedents, all of them are exit items
@@ -299,7 +305,7 @@ END_MSG
               raise StandardError, msg_prefix + msg_suffix
             end
         end
-
+=end
         consequent.add_antecedent(antecedentEntry)
         return consequent
       end

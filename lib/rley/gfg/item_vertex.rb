@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative '../syntax/non_terminal'
 require_relative 'vertex'
 
@@ -30,20 +32,8 @@ module Rley # This module is used as a namespace
       def shortcut=(aShortcut)
         unless aShortcut.kind_of?(ShortcutEdge)
           raise StandardError, 'Invalid shortcut argument'
-
-        end
-        
-=begin
-        unless next_symbol && next_symbol.kind_of?(Syntax::NonTerminal)
-          raise StandardError, 'Invalid shortcut usage'
         end
 
-        shortcut_d_item = aShortcut.successor.dotted_item
-        unless (dotted_item.production == shortcut_d_item.production) &&
-          (dotted_item.position == shortcut_d_item.prev_position)
-          raise StandardError, 'Shortcut refers to wrong vertex'
-        end
-=end
         @shortcut = aShortcut
       end
 

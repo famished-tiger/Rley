@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # File: benchmark_pico_en.rb
 # Purpose: benchmark the parse speed
 require 'benchmark'

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'forwardable'
 
 module Rley # This module is used as a namespace
@@ -38,7 +40,7 @@ module Rley # This module is used as a namespace
       # sequence of symbols.
       # @return [String]
       def inspect()
-        result = "#<#{self.class.name}:#{object_id}"
+        result = +"#<#{self.class.name}:#{object_id}"
         symbol_names = members.map(&:name)
         result << " @members=#{symbol_names}>"
         return result

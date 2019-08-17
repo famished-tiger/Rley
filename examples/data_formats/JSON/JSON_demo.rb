@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative 'cli_options'
 require_relative 'json_lexer'
 require_relative 'json_minifier'

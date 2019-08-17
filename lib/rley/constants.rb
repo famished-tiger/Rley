@@ -1,12 +1,14 @@
+# frozen_string_literal: true
+
 # File: constants.rb
 # Purpose: definition of Rley constants.
 
 module Rley # Module used as a namespace
   # The version number of the gem.
-  Version = '0.7.03'.freeze
+  Version = '0.7.04'
 
   # Brief description of the gem.
-  Description = "Ruby implementation of the Earley's parsing algorithm".freeze
+  Description = "Ruby implementation of the Earley's parsing algorithm"
 
   # Constant Rley::RootDir contains the absolute path of Rley's
   # start directory. Note: it also ends with a slash character.

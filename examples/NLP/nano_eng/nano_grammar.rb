@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Grammar for a simple subset of English language
 # It is called nano-English because it has a more elaborate
 # grammar than pico-English but remains still tiny compared to "real" English

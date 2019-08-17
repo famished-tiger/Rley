@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Rley # This module is used as a namespace
   module Parser # This module is used as a namespace
     # Helper class that keeps track of the parse states used

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Grammar for simple arithmetical expressions
 require 'rley' # Load the gem
 

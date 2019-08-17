@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative 'base_formatter'
 
 
@@ -100,7 +102,7 @@ module Rley # This module is used as a namespace
       def path_prefix()
         return '' if ranks.empty?
 
-        prefix = ''
+        prefix = +''
         @ranks.each_with_index do |rank, i|
           next if i.zero?
 

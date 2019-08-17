@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Grammar for JSON data representation
 require 'rley' # Load the gem
 

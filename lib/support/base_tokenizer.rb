@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'strscan'
 require_relative '../rley/lexical/token'
 
@@ -66,9 +68,9 @@ class BaseTokenizer
       col = scanner.pos - aLexeme.size - @line_start + 1
       pos = Rley::Lexical::Position.new(@lineno, col)
       token = Rley::Lexical::Token.new(value, aSymbolName, pos)
-    rescue StandardError => exc
+    rescue StandardError => e
       puts "Failing with '#{aSymbolName}' and '#{aLexeme}'"
-      raise exc
+      raise e
     end
 
     return token

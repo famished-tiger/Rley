@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative '../../spec_helper'
 require 'stringio'
 require_relative '../../../lib/rley/syntax/verbatim_symbol'
@@ -53,7 +55,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
       let(:plus) { Syntax::VerbatimSymbol.new('+') }
       let(:star) { Syntax::VerbatimSymbol.new('*') }
       let(:integer) do
-        integer_pattern = /[-+]?[0-9]+/	# Decimal notation
+        integer_pattern = /[-+]?[0-9]+/ # Decimal notation
         Syntax::Literal.new('integer', integer_pattern)
       end
       let(:prod_P) { Syntax::Production.new(nt_P, [nt_S]) }
@@ -149,7 +151,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           expected = [
             'A => b . | 2',      # scan 'b'
             'A. | 2',            # exit rule
-            'A => a A . c | 1',  # end rule
+            'A => a A . c | 1'   # end rule
           ]
           entry_set_3 = parse_result.chart[3]
           expect(entry_set_3.entries.size).to eq(3)
@@ -406,7 +408,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
             'P => S . | 0',       # end rule
             "S => S . '+' S | 0", # end rule
             "S => S . '*' S | 0", # end rule
-            'P. | 0',             # exit rule
+            'P. | 0'              # exit rule
           ]
           compare_entry_texts(parse_result.chart[3], expected)
 
@@ -549,7 +551,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
             'E => E . + E | 2',   # end rule
             'S => E . | 0',       # end rule
             'E => E . + E | 0',   # end rule
-            'S. | 0',             # exit rule
+            'S. | 0'              # exit rule
           ]
           compare_entry_texts(parse_result.chart[5], expected)
         end
@@ -618,7 +620,7 @@ MSG
           ]
           compare_entry_texts(parse_result.chart[2], expected)
 
-          err_msg = "Premature end of input after '+' at position line 1, "
+          err_msg = +"Premature end of input after '+' at position line 1, "
           err_msg << 'column 3'
           err_msg << "\nExpected one of: ['int', '(']."
           expect(parse_result.failure_reason.message).to eq(err_msg)

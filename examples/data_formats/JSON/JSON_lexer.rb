@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # File: json_lexer.rb
 # Lexer for the JSON data format
 require 'rley' # Load the gem

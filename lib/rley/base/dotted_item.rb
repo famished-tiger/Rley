@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Rley # This module is used as a namespace
   module Base # This module is used as a namespace
     # A dotted item is a parse state for a given production/grammar rule
@@ -38,7 +40,7 @@ module Rley # This module is used as a namespace
       def to_s()
         prefix = "#{production.lhs} => "
         text_values = production.rhs.map(&:to_s)
-        if position < 0
+        if position.negative?
           text_values << '.'
         else
           text_values.insert(position, '.')
@@ -61,7 +63,7 @@ module Rley # This module is used as a namespace
       # A dotted item is called a reduce item if the dot is at the end.
       # @return [Boolean]
       def reduce_item?()
-        return position < 0 # Either -1 or -2
+        return position.negative? # Either -1 or -2
       end
 
       # The non-terminal symbol that is on the left-side of the production
@@ -88,23 +90,26 @@ module Rley # This module is used as a namespace
       # nil is returned if the dot is at the end
       # @return [Syntax::GrmSymbol, NilClass]
       def next_symbol()
-        return position < 0 ? nil : production.rhs[position]
+        return position.negative? ? nil : production.rhs[position]
       end
 
       # Calculate the position of the dot if were moved by
       # one step on the left.
       # @return [Integer]
       def prev_position()
-        case position
-          when -2, 0
-            result = nil
-          when -1
-            result = production.rhs.size == 1 ? 0 : production.rhs.size - 1
-          else
-            result = position - 1
+        unless @k_prev_position
+          case position
+            when -2, 0
+              result = nil
+            when -1
+              result = production.rhs.size == 1 ? 0 : production.rhs.size - 1
+            else
+              result = position - 1
+          end
+          @k_prev_position = [result]
         end
 
-        return result
+        @k_prev_position[0]
       end
 
       # Return true if this dotted item has a dot one place
@@ -126,7 +131,7 @@ module Rley # This module is used as a namespace
       # Return the given position after its validation.
       def valid_position(aPosition)
         rhs_size = production.rhs.size
-        if aPosition < 0 || aPosition > rhs_size
+        if aPosition.negative? || aPosition > rhs_size
           raise StandardError, 'Out of bound index'
         end
 

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative '../lexical/token_range'
 require_relative '../syntax/terminal'
 require_relative '../syntax/non_terminal'
@@ -24,7 +26,7 @@ module Rley # This module is used as a namespace
     end # Struct
 
 
-    # The purpose of a ParseTreeBuilder is to build piece by piece 
+    # The purpose of a ParseTreeBuilder is to build piece by piece
     # a parse tree from a sequence of input tokens and
     # visit events produced by walking over a GFGParsing object.
     # Uses the Builder GoF pattern.
@@ -46,11 +48,11 @@ module Rley # This module is used as a namespace
         @stack = []
         @dummy_node = Object.new.freeze
       end
-      
+
       # Notify the builder that the parse tree construction is complete.
       def done!()
         result.done!
-      end      
+      end
 
       # Receive events resulting from a visit of GFGParsing object.
       # These events are produced by a specialized Enumerator created
@@ -76,18 +78,16 @@ module Rley # This module is used as a namespace
       protected
 
       # Return the stack
-      def stack()
-        @stack
-      end
+      attr_reader(:stack)
 
       # Overriding method.
       # Create a parse tree object with given
       # node as root node.
       def create_tree(aRootNode)
         raise StandardError, 'Root node of parse tree is nil!' if aRootNode.nil?
-        
+
         return Rley::PTree::ParseTree.new(aRootNode)
-      end      
+      end
 
       private
 
@@ -134,7 +134,7 @@ module Rley # This module is used as a namespace
         case anEvent
           when :visit, :revisit
             dot_pos = anEntry.vertex.dotted_item.position
-            if dot_pos.zero? || dot_pos < 0
+            if dot_pos.zero? || dot_pos.negative?
               # Check for pattern: N => alpha* .
               process_exit_entry(anEntry, anIndex) if anEntry.exit_entry?
 
@@ -239,7 +239,7 @@ module Rley # This module is used as a namespace
       # array at that position.
       # If the position is nil, then the node will be placed at the position of
       # the rightmost nil element in children array.
-      def place_TOS_child(aNode, aRHSPos)       
+      def place_TOS_child(aNode, aRHSPos)
         if aRHSPos.nil?
           # Retrieve index of most rightmost nil child...
           pos = tos.children.rindex { |child| child == @dummy_node }
@@ -247,7 +247,7 @@ module Rley # This module is used as a namespace
         else
           pos = aRHSPos
         end
-        
+
         tos.children[pos] = aNode
       end
 

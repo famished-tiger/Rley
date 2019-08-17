@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'set'
 require_relative 'terminal'
 require_relative 'non_terminal'

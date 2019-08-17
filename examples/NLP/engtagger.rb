@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rley'
 require 'engtagger' # Load POS (Part-Of-Speech) tagger EngTagger
 

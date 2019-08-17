@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative 'symbol_seq'
 
 module Rley # This module is used as a namespace
@@ -65,7 +67,7 @@ module Rley # This module is used as a namespace
       # production.
       # @return [String]
       def inspect()
-        result = "#<#{self.class.name}:#{object_id}"
+        result = +"#<#{self.class.name}:#{object_id}"
         result << " @name=\"#{name}\""
         result << " @lhs=#{lhs.name}"
         result << " @rhs=#{rhs.inspect}"

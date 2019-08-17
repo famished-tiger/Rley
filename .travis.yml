@@ -9,9 +9,9 @@ script:
   - bundle exec rake
   
 rvm:
-  - 2.6.0
-  - 2.5.3
-  - 2.4.5
+  - 2.6.3
+  - 2.5.5
+  - 2.4.6
   - 2.3.8
   - ruby-head
   - jruby-9.1.9.0
@@ -19,7 +19,6 @@ rvm:
   
 matrix:
   allow_failures:
-    - rvm: 2.6.0
     - rvm: ruby-head
     - rvm: jruby-head
 

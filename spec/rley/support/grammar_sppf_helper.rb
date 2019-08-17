@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Load the builder class
 require_relative '../../../lib/rley/syntax/grammar_builder'
 
