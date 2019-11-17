@@ -1,9 +1,14 @@
+### 0.7.05 / 2019-11-117
+- [FIX] Method `GFGParsing#nullable_rule`: issue with nullable productions having at least one member in their rhs.
+
 ### 0.7.04 / 2019-08-17
 - Rley recognizer is about 25% faster than previous version. Kudos to the people 
 behind the *magic_frozen_string_literal* gem. 
 - Code refactoring to use string frozen magic comments (as a consequence, Rley runs only on Rubies 2.3 or newer).  
 - Code restyling to please rubocop 0.7.40. 
 - [CHANGE] Class `ParseEntrySet`: minor code optimization
+- [CHANGE] File `README.md` removed allusion to Ruby 2.0.x up to 2.2.x.
+- [CHANGE] File `README.md` added Ruby 2.6.x up as supported version.
 
 
 ### 0.7.03 / 2019-07-21

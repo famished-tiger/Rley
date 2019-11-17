@@ -44,6 +44,7 @@ module Rley # This module is used as a namespace
       end
 
       # Add a link to an antecedent parse entry
+      # @param anAntecedent[ParseEntry]
       def add_antecedent(anAntecedent)
         antecedents << anAntecedent unless antecedents.include?(anAntecedent)
       end

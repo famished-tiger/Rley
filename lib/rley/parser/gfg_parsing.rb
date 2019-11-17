@@ -15,7 +15,7 @@ module Rley # This module is used as a namespace
       attr_reader(:gf_graph)
 
       # The link to the chart object
-      # @return [GFGChart]
+      # @return [Parser::GFGChart]
       attr_reader(:chart)
 
       # The sequence of input token to parse
@@ -74,6 +74,11 @@ module Rley # This module is used as a namespace
       # [B., i]
       # [A => alpha B . beta, k]
       def nullable_rule(anEntry, aPosition)
+        # Terminology:
+        # .B : start node
+        # B => . rhs : entry node
+        # B => rhs . : exit node
+        # B. : end node
         next_symbol = anEntry.next_symbol
         pos = aPosition
         start = gf_graph.start_vertex_for[next_symbol]
@@ -85,6 +90,7 @@ module Rley # This module is used as a namespace
           succ = edge.successor # succ always an ItemVertex
           if succ.dotted_item.production.nullable?
             succ_entry = apply_rule(start_entry, succ, pos, pos, :nullable_rule)
+            next unless succ_entry.exit_entry?
             apply_rule(succ_entry, end_vertex, pos, pos, :nullable_rule)
           end
         end
@@ -179,7 +185,7 @@ module Rley # This module is used as a namespace
       # followed the syntax specified by the grammar)
       def success?()
         return false if @failure_reason
-        
+
         return chart.accepting_entry ? true : false
       end
 
@@ -239,6 +245,27 @@ END_MSG
         end
       end
 
+      def count_states
+        chart.count_states
+      end
+
+      def count_entries
+        chart.count_entries
+      end
+
+      def count_edges
+        chart.count_edges
+      end
+
+      # @return [String] A human readable representation of itself.
+      def to_s()
+        result = +''
+        result << "success? #{success?}\n"
+        result << "chart:\n"
+        result << chart.to_s
+
+        result
+      end
 
       private
 
@@ -273,7 +300,7 @@ END_MSG
 =begin
         # Invariant checks
         antecedents = antecedence[consequent]
-        
+
         case aVertex
           when Rley::GFG::EndVertex
             # Rule: has 1..* antecedents, all of them are exit items

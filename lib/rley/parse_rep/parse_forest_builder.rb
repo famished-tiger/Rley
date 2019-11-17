@@ -89,6 +89,7 @@ module Rley # This module is used as a namespace
           when :backtrack
             # Restore path
             @curr_path = entry2path_to_alt[anEntry].dup
+            raise StandardError, "path is nil for #{anEntry}" if curr_path.nil?
 
           when :revisit
             # Retrieve the already existing node corresponding
@@ -151,6 +152,7 @@ module Rley # This module is used as a namespace
           when :backtrack
             # Restore path
             @curr_path = entry2path_to_alt[anEntry].dup
+            raise StandardError, 'path is nil' if curr_path.nil?
             create_alternative_node(anEntry)
 
           when :revisit

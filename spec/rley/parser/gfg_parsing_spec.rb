@@ -27,7 +27,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
       include GrammarABCHelper # Mix-in module with builder for grammar abc
       include GrammarBExprHelper # Mix-in with builder for simple expressions
       include GrammarHelper # Mix-in with method for creating token sequence
-      
+
       # Helper method. Create an array of dotted items
       # from the given grammar
       def build_items_for_grammar(aGrammar)
@@ -166,7 +166,7 @@ SNIPPET
           expect(subject.chart[0].size).to eq(3)
           # Last entry is: (.A, 0)
           dot_A_entry = subject.chart[0].last
-          
+
           subject.start_rule(dot_A_entry, 0)
 
           # Expectations: two entries:
@@ -196,7 +196,7 @@ SNIPPET
           expect(last_entry.vertex.label).to eq('A => a . A c')
           expect(last_entry.origin).to eq(0)
           antecedence = subject.antecedence
-          expect(antecedence.fetch(last_entry)).to eq([fourth_entry])          
+          expect(antecedence.fetch(last_entry)).to eq([fourth_entry])
         end
 
         it 'should apply the exit rule correctly' do
@@ -221,7 +221,7 @@ SNIPPET
           exit_entry = subject.chart[1].last
           expect(exit_entry.vertex.label).to eq('A.')
           expect(exit_entry.origin).to eq(0)
-          expect(subject.antecedence.fetch(exit_entry)).to eq([last_entry]) 
+          expect(subject.antecedence.fetch(exit_entry)).to eq([last_entry])
         end
 
         it 'should apply the end rule correctly' do
@@ -250,6 +250,7 @@ SNIPPET
           expect(end_entry.origin).to eq(0)
           expect(subject.antecedence.fetch(end_entry)).to eq([exit_entry])
         end
+
 =begin
 
 
@@ -284,18 +285,7 @@ SNIPPET
 =end
       end # context
 
-      context 'Parse forest building:' do
-        let(:sample_grammar1) do
-          builder = grammar_abc_builder
-          builder.grammar
-        end
-
-        let(:token_seq1) do
-          %w[a a b c c].map do |letter|
-            Lexical::Token.new(letter, sample_grammar1.name2symbol[letter])
-          end
-        end
-
+      context 'Provided services:' do
         let(:b_expr_grammar) do
           builder = grammar_expr_builder
           builder.grammar
@@ -310,7 +300,44 @@ SNIPPET
           tokens = expr_tokenizer('2 + 3 * 4')
           parser.parse(tokens)
         end
-        
+
+        it 'should give a text representation of itself' do
+          repr = subject.to_s
+          expect(repr).to match /^success\? true/
+          
+          # Let's test the last chart state only          
+          expectation = <<REPR
+State[5]
+  T => integer . | 4
+  T. | 4
+  M => M * T . | 2
+  M. | 2
+  S => S + M . | 0
+  M => M . * T | 2
+  S. | 0
+  P => S . | 0
+  S => S . + M | 0
+  P. | 0
+REPR
+        end
+      end # context
+
+      context 'Parse forest building:' do
+        let(:b_expr_grammar) do
+          builder = grammar_expr_builder
+          builder.grammar
+        end
+
+        def grm_symbol(aSymbolName)
+          b_expr_grammar.name2symbol[aSymbolName]
+        end
+
+        subject do
+          parser = GFGEarleyParser.new(b_expr_grammar)
+          tokens = expr_tokenizer('3 * 4')
+          parser.parse(tokens)
+        end
+
         it 'should indicate whether a parse succeeded' do
           expect(subject.success?).to be_truthy
         end
@@ -318,239 +345,6 @@ SNIPPET
         it 'should build a parse forest' do
           expect { subject.parse_forest }.not_to raise_error if subject.success?
         end
-=begin
-        it 'should create the root of a parse forest' do
-          (entry_tracker, builder) = prepare_parse_forest(subject)
-          # The root node should correspond to the start symbol and
-          # its direct children should correspond to rhs of start production
-          expected_text = <<-SNIPPET
-P[0, 5]
-+- S[0, 5]
-SNIPPET
-          root_text = builder.root.to_string(0)
-          expect(root_text).to eq(expected_text.chomp)
-
-          expect(entry_tracker.entry_set_index).to eq(subject.tokens.size)
-          expected_entry = 'P => S . | 0'
-          expect(entry_tracker.parse_entry.to_s).to eq(expected_entry)
-          expect(builder.current_node.to_string(0)).to eq('S[0, 5]')
-        end
-=end
-=begin
-        it 'should use a reduce item for a matched non-terminal' do
-          # Setup
-          (entry_tracker, builder) = prepare_parse_tree(subject)
-          # Same entry as in previous example
-
-          # Given matched symbol is S[0, 5]
-          # And its reduce item is S => S + M . | 0
-          # Then add child nodes corresponding to the rhs symbols
-          # And make M[?, 5] the current symbol
-          subject.insert_matched_symbol(entry_tracker, builder)
-          expected_text = <<-SNIPPET
-P[0, 5]
-+- S[0, 5]
-   +- S[0, ?]
-   +- +[?, ?]: '(nil)'
-   +- M[?, 5]
-SNIPPET
-          root_text = builder.root.to_string(0)
-          expect(root_text).to eq(expected_text.chomp)
-          expected_entry = 'S => S + M . | 0'
-          expect(entry_tracker.parse_entry.to_s).to eq(expected_entry)
-          expect(entry_tracker.entry_set_index).to eq(5)
-          expect(builder.current_node.to_string(0)).to eq('M[?, 5]')
-
-          # Second similar test
-
-          # Given matched symbol is M[?, 5]
-          # And its reduce item is M => M * T . | 2
-          # Then add child nodes corresponding to the rhs symbols
-          # And make T[?, 5] the current symbol
-          subject.insert_matched_symbol(entry_tracker, builder)
-          expected_text = <<-SNIPPET
-P[0, 5]
-+- S[0, 5]
-   +- S[0, ?]
-   +- +[?, ?]: '(nil)'
-   +- M[2, 5]
-      +- M[2, ?]
-      +- *[?, ?]: '(nil)'
-      +- T[?, 5]
-SNIPPET
-          root_text = builder.root.to_string(0)
-          expect(root_text).to eq(expected_text.chomp)
-          expected_entry = 'M => M * T . | 2'
-          expect(entry_tracker.parse_entry.to_s).to eq(expected_entry)
-          expect(entry_tracker.entry_set_index).to eq(5)
-          expect(builder.current_node.to_string(0)).to eq('T[?, 5]')
-        end
-
-
-
-        it 'should use a previous item for a terminal symbol' do
-          # Setup
-          (entry_tracker, builder) = prepare_parse_tree(subject)
-          3.times do
-            subject.insert_matched_symbol(entry_tracker, builder)
-          end
-
-          # Given matched symbol is T[?, 5]
-          # And its reduce item is T => integer . | 4
-          # Then add child node corresponding to the rhs symbol
-          # And make integer[4, 5]: '(nil)' the current symbol
-          expected_text = <<-SNIPPET
-P[0, 5]
-+- S[0, 5]
-   +- S[0, ?]
-   +- +[?, ?]: '(nil)'
-   +- M[2, 5]
-      +- M[2, ?]
-      +- *[?, ?]: '(nil)'
-      +- T[4, 5]
-         +- integer[4, 5]: '(nil)'
-SNIPPET
-          root_text = builder.root.to_string(0)
-          expect(root_text).to eq(expected_text.chomp)
-          expected_entry = 'T => integer . | 4'
-          expect(entry_tracker.parse_entry.to_s).to eq(expected_entry)
-          expect(entry_tracker.entry_set_index).to eq(5)
-          integer_repr = "integer[4, 5]: '(nil)'"
-          expect(builder.current_node.to_string(0)).to eq(integer_repr)
-
-          # Given current tree symbol is integer[4, 5]: '(nil)'
-          # And its previous item is T => . integer | 4
-          # Then attach the token to the terminal node
-          # And decrement the entry index by one
-          # Make *[?, ?]: '(nil)' the current symbol
-          subject.insert_matched_symbol(entry_tracker, builder)
-          expected_text = <<-SNIPPET
-P[0, 5]
-+- S[0, 5]
-   +- S[0, ?]
-   +- +[?, ?]: '(nil)'
-   +- M[2, 5]
-      +- M[2, ?]
-      +- *[?, ?]: '(nil)'
-      +- T[4, 5]
-         +- integer[4, 5]: '4'
-SNIPPET
-          root_text = builder.root.to_string(0)
-          expect(root_text).to eq(expected_text.chomp)
-          expected_entry = 'T => . integer | 4'
-          expect(entry_tracker.parse_entry.to_s).to eq(expected_entry)
-          expect(entry_tracker.entry_set_index).to eq(4)
-          next_symbol = "*[?, ?]: '(nil)'"
-          expect(builder.current_node.to_string(0)).to eq(next_symbol)
-        end
-
-        it 'should handle [no symbol before dot, terminal tree node] case' do
-          # Setup
-          (entry_tracker, builder) = prepare_parse_tree(subject)
-          4.times do
-            subject.insert_matched_symbol(entry_tracker, builder)
-          end
-
-          # Given current tree symbol is *[?, ?]: '(nil)'
-          # And current dotted item is T => . integer | 4
-          # When one retrieves the parse entry expecting the T
-          # Then new parse entry is changed to: M => M * . T | 2
-          subject.insert_matched_symbol(entry_tracker, builder)
-
-          expected_text = <<-SNIPPET
-P[0, 5]
-+- S[0, 5]
-   +- S[0, ?]
-   +- +[?, ?]: '(nil)'
-   +- M[2, 5]
-      +- M[2, ?]
-      +- *[?, ?]: '(nil)'
-      +- T[4, 5]
-         +- integer[4, 5]: '4'
-SNIPPET
-          root_text = builder.root.to_string(0)
-          expect(root_text).to eq(expected_text.chomp)
-          expected_entry = 'M => M * . T | 2'
-          expect(entry_tracker.parse_entry.to_s).to eq(expected_entry)
-          expect(entry_tracker.entry_set_index).to eq(4)
-          next_symbol = "*[?, ?]: '(nil)'"
-          expect(builder.current_node.to_string(0)).to eq(next_symbol)
-
-          subject.insert_matched_symbol(entry_tracker, builder)
-          next_symbol = 'M[2, ?]'
-          expect(builder.current_node.to_string(0)).to eq(next_symbol)
-        end
-
-        it 'should handle the end of parse tree generation' do
-          # Begin setup
-          is_done = false
-          (entry_tracker, builder) = prepare_parse_tree(subject)
-          16.times do
-            is_done = subject.insert_matched_symbol(entry_tracker, builder)
-          end
-
-          expected_text = <<-SNIPPET
-P[0, 5]
-+- S[0, 5]
-   +- S[0, 1]
-      +- M[0, 1]
-         +- T[0, 1]
-            +- integer[0, 1]: '2'
-   +- +[1, 2]: '+'
-   +- M[2, 5]
-      +- M[2, 3]
-         +- T[2, 3]
-            +- integer[2, 3]: '3'
-      +- *[3, 4]: '*'
-      +- T[4, 5]
-         +- integer[4, 5]: '4'
-SNIPPET
-          root_text = builder.root.to_string(0)
-          expect(root_text).to eq(expected_text.chomp)
-
-          expected_entry = 'T => . integer | 0'
-          expect(entry_tracker.parse_entry.to_s).to eq(expected_entry)
-          expect(entry_tracker.entry_set_index).to eq(0)
-          expect(is_done).to eq(true)
-        end
-
-
-
-        it 'should build the parse tree for a simple non-ambiguous grammar' do
-          parser = EarleyParser.new(sample_grammar1)
-          instance = parser.parse(token_seq1)
-          ptree = instance.parse_tree
-          expect(ptree).to be_kind_of(PTree::ParseTree)
-        end
-
-        it 'should build the parse tree for a simple expression grammar' do
-          parser = EarleyParser.new(b_expr_grammar)
-          tokens = expr_tokenizer('2 + 3 * 4', b_expr_grammar)
-          instance = parser.parse(tokens)
-          ptree = instance.parse_tree
-          expect(ptree).to be_kind_of(PTree::ParseTree)
-
-          # Expect parse tree:
-          expected_text = <<-SNIPPET
-P[0, 5]
-+- S[0, 5]
-   +- S[0, 1]
-      +- M[0, 1]
-         +- T[0, 1]
-            +- integer[0, 1]: '2'
-   +- +[1, 2]: '+'
-   +- M[2, 5]
-      +- M[2, 3]
-         +- T[2, 3]
-            +- integer[2, 3]: '3'
-      +- *[3, 4]: '*'
-      +- T[4, 5]
-         +- integer[4, 5]: '4'
-SNIPPET
-          actual = ptree.root.to_string(0)
-          expect(actual).to eq(expected_text.chomp)
-        end
-=end
       end # context
     end # describe
   end # module

@@ -57,8 +57,8 @@ module Rley # This module is used as a namespace
         if anIndex == sets.size
           err_msg = "Internal error: unexpected push reason #{reason}"
           raise StandardError, err_msg if reason != :scan_rule
-          
-          add_entry_set 
+
+          add_entry_set
         end
         pushed = self[anIndex].push_entry(new_entry)
 
@@ -93,7 +93,39 @@ module Rley # This module is used as a namespace
           entry.origin.zero? && entry.vertex.non_terminal == start_symbol
         end
 
-        return success_entries.first
+        success_entries.first
+      end
+      
+      # @return [Integer] The number of states.
+      def count_states
+        sets.size
+      end
+
+      # @return [Integer] The total number of entries.
+      def count_entries
+        sets.reduce(0) do |sub_result, a_set|
+          sub_result += a_set.size
+        end
+      end
+
+      # @return [Integer] The total number of edges.
+      def count_edges
+        sets.reduce(0) do |sub_result, a_set|
+          sub_result += a_set.count_edges
+        end
+      end
+
+      # @ return [String] A human-readable representation of the chart.
+      def to_s
+        result = +''
+        sets.each_with_index do |a_set, i|
+          result << "State[#{i}]\n"
+          a_set.entries.each do |item|
+            result << '  ' + item.to_s + "\n"
+          end
+        end
+        
+        result
       end
 
       private

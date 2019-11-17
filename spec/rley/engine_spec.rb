@@ -101,6 +101,23 @@ module Rley # Open this namespace to avoid module qualifier prefixes
         sample_text = 'a a b c c'
         ABCTokenizer.new(sample_text)
       end
+      
+      it 'should build a parse tree even for a nullable production' do
+        instance = Engine.new
+        instance.build_grammar do
+          add_terminals('a', 'b', 'c')
+          add_production 'S' => 'A BC'
+          add_production 'A' => 'a'
+          add_production 'BC' => 'B_opt C_opt'
+          add_production 'B_opt' => 'b'
+          add_production 'B_opt' => []
+          add_production 'C_opt' => 'c'
+          add_production 'C_opt' => []            
+        end
+        input = ABCTokenizer.new('a')
+        raw_result = instance.parse(input)
+        expect { instance.to_ptree(raw_result) }.not_to raise_error
+      end      
 
       it 'should build default parse trees' do
         raw_result = subject.parse(sample_tokenizer)
@@ -135,6 +152,23 @@ module Rley # Open this namespace to avoid module qualifier prefixes
         sample_text = 'a a b c c'
         ABCTokenizer.new(sample_text)
       end
+      
+      it 'should build a parse forest even for a nullable production' do
+        instance = Engine.new
+        instance.build_grammar do
+          add_terminals('a', 'b', 'c')
+          add_production 'S' => 'A BC'
+          add_production 'A' => 'a'
+          add_production 'BC' => 'B_opt C_opt'
+          add_production 'B_opt' => 'b'
+          add_production 'B_opt' => []
+          add_production 'C_opt' => 'c'
+          add_production 'C_opt' => []            
+        end
+        input = ABCTokenizer.new('a')
+        raw_result = instance.parse(input)
+        expect { instance.to_pforest(raw_result) }.not_to raise_error
+      end       
       
       it 'should build parse forest' do
         raw_result = subject.parse(sample_tokenizer)

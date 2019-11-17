@@ -25,7 +25,7 @@ module Rley # This module is used as a namespace
       # @return [String] Input substring that is an instance of the terminal.
       attr_reader(:lexeme)
 
-      # @return [Syntax::Terminal] Terminal symbol corresponding to the lexeme.
+      # @return [String] The name of terminal symbol matching the lexeme.
       attr_reader(:terminal)
 
       # @return [Position] The position of the lexeme in the source file.

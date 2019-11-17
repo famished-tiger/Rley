@@ -286,10 +286,11 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           # A => ;
           t_x = Syntax::VerbatimSymbol.new('x')
 
-          builder = Syntax::GrammarBuilder.new
-          builder.add_terminals(t_x)
-          builder.add_production('Ss' => %w[A A x])
-          builder.add_production('A' => [])
+          builder = Syntax::GrammarBuilder.new do
+            add_terminals(t_x)
+            rule 'Ss' => 'A A x'
+            rule 'A' => []
+          end
           pos = Lexical::Position.new(1, 1)
           tokens = [Lexical::Token.new('x', t_x, pos)]
 

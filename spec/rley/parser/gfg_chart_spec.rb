@@ -77,13 +77,13 @@ module Rley # Open this namespace to avoid module qualifier prefixes
 
       context 'Provided services:' do
         it 'should accept the pushing of a parse entry in existing set' do
-          expect(subject.sets[0].entries.size).to eq(1)        
+          expect(subject.sets[0].entries.size).to eq(1)
           subject.push_entry(second_vertex, 0, 0, :scan_rule)
           expect(subject.sets[0].entries.size).to eq(2)
         end
-        
+
         it 'should accept the pushing of a parse entry in new set' do
-          expect(subject.sets[0].entries.size).to eq(1)       
+          expect(subject.sets[0].entries.size).to eq(1)
           subject.push_entry(second_vertex, 0, 1, :scan_rule)
           expect(subject.sets[0].entries.size).to eq(1)
           expect(subject.sets.size).to eq(2)
@@ -92,7 +92,18 @@ module Rley # Open this namespace to avoid module qualifier prefixes
 
         it 'should retrieve an existing set at given position' do
           expect(subject[0]).to eq(subject.sets[0])
-        end        
+        end
+
+        it 'should a user-friendly text representation of itself' do
+          subject.push_entry(second_vertex, 0, 1, :scan_rule)
+          representation = <<REPR
+State[0]
+  .S | 0
+State[1]
+  S => . A | 0
+REPR
+          expect(subject.to_s).to eq(representation)
+        end
       end # context
     end # describe
   end # module

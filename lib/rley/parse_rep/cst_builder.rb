@@ -42,7 +42,9 @@ module Rley # This module is used as a namespace
       # @param theChildren [Array] Children nodes (one per rhs symbol)
       def new_parent_node(aProduction, aRange, _tokens, theChildren)
         node = Rley::PTree::NonTerminalNode.new(aProduction.lhs, aRange)
-        theChildren.reverse_each { |child| node.add_subnode(child) }
+        if theChildren
+          theChildren.reverse_each { |child| node.add_subnode(child) }
+        end
         return node
       end
     end # class

@@ -98,6 +98,12 @@ module Rley # This module is used as a namespace
       def expected_terminals()
         return @entries4term.keys
       end
+      
+      def count_edges
+        entries.reduce(0) do |sub_result, entry|
+          sub_result += entry.vertex.edges.size
+        end
+      end
 
       private
 

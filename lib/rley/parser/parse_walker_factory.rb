@@ -176,7 +176,7 @@ module Rley # This module is used as a namespace
                     select_antecedent(aContext)
                   end
 
-        return entries
+        entries
       end
 
       # Handle the case of an entry having one antecedent only
@@ -213,6 +213,7 @@ module Rley # This module is used as a namespace
         case aContext.curr_entry.vertex
           when GFG::EndVertex
             # puts "Add backtrack point stack #{aContext.curr_entry}"
+            # aContext.curr_entry.antecedents.each { |antec| puts "\t#{antec}" }
             bp = add_backtrack_point(aContext)
             new_entry = bp.visitee.antecedents[bp.antecedent_index]
 
