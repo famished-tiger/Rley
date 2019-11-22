@@ -1,4 +1,7 @@
-### 0.7.05 / 2019-11-117
+### 0.7.06 / 2019-11-22
+- [FIX] Method `ParseForestBuilder#process_end_entry`: Added a guard expression to prevent nil error.
+
+### 0.7.05 / 2019-11-17
 - [FIX] Method `GFGParsing#nullable_rule`: issue with nullable productions having at least one member in their rhs.
 
 ### 0.7.04 / 2019-08-17

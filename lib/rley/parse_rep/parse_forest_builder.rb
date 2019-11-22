@@ -42,7 +42,7 @@ module Rley # This module is used as a namespace
         @entry2node = {}
         @entry2path_to_alt = {}
       end
-      
+
       # Notify the builder that the construction is over
       def done!()
         result.done!
@@ -65,19 +65,20 @@ module Rley # This module is used as a namespace
 
       # Return the current_parent node
       def curr_parent()
-        return curr_path.last
+        curr_path.last
       end
 
       private
 
       def process_start_entry(_anEvent, _anEntry, _anIndex)
         curr_path.pop
+        raise StandardError, "path is nil for #{anEntry}" if curr_path.nil?
       end
 
       def process_end_entry(anEvent, anEntry, anIndex)
         case anEvent
           when :visit
-            # create a node with the non-terminal
+            # create a forest node with the non-terminal
             #   with same right extent as curr_entry_set_index
             # add the new node as first child of current_parent
             # append the new node to the curr_path
@@ -92,14 +93,15 @@ module Rley # This module is used as a namespace
             raise StandardError, "path is nil for #{anEntry}" if curr_path.nil?
 
           when :revisit
-            # Retrieve the already existing node corresponding
+            # Retrieve the already existing forest node corresponding
             # to re-visited entry
             popular = @entry2node[anEntry]
 
             # Share with parent (if needed)...
-            children = curr_parent.subnodes
-            curr_parent.add_subnode(popular) unless children.include? popular
-
+            if curr_parent
+              children = curr_parent.subnodes
+              curr_parent.add_subnode(popular) unless children.include? popular
+            end
           else
             raise NotImplementedError
         end
@@ -242,6 +244,7 @@ module Rley # This module is used as a namespace
       # Add the given node as sub-node of current parent node
       # Optionally add the node to the current path
       def add_subnode(aNode, addToPath = true)
+        raise StandardError, 'node is nil' if aNode.nil?
         curr_parent.add_subnode(aNode) unless curr_path.empty?
         curr_path << aNode if addToPath
       end

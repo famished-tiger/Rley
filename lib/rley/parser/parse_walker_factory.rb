@@ -242,7 +242,7 @@ module Rley # This module is used as a namespace
         bp.visitee = aContext.curr_entry
         bp.antecedent_index = 0
         aContext.backtrack_points << bp
-
+        # puts "Backtrack size after addition #{aContext.backtrack_points.size}"
         return bp
       end
 
@@ -260,6 +260,7 @@ module Rley # This module is used as a namespace
           aContext.backtrack_points.pop
         end
         # puts "Backtracking to #{bp.visitee}"
+        # puts "Backtrack size after backtracking #{aContext.backtrack_points.size}"
 
         # Emit a backtrack event
         return [:backtrack, bp.visitee, aContext.entry_set_index]
