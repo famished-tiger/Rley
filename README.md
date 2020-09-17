@@ -90,7 +90,7 @@ directory
 
     # Let's create a facade object called 'engine'
     # It provides a unified, higher-level interface
-    engine = Rley.Engine.new
+    engine = Rley::Engine.new
 ```
 
 
