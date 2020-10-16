@@ -155,6 +155,7 @@ module Rley # This module is used as a namespace
             # Restore path
             @curr_path = entry2path_to_alt[anEntry].dup
             raise StandardError, 'path is nil' if curr_path.nil?
+
             create_alternative_node(anEntry)
 
           when :revisit
@@ -245,6 +246,7 @@ module Rley # This module is used as a namespace
       # Optionally add the node to the current path
       def add_subnode(aNode, addToPath = true)
         raise StandardError, 'node is nil' if aNode.nil?
+
         curr_parent.add_subnode(aNode) unless curr_path.empty?
         curr_path << aNode if addToPath
       end

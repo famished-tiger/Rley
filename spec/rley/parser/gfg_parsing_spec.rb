@@ -252,9 +252,6 @@ SNIPPET
         end
 
 =begin
-
-
-
         it 'should retrieve the parse states that expect a given terminal' do
           item1 = DottedItem.new(prod_A1, 2)
           item2 = DottedItem.new(prod_A1, 1)
@@ -303,7 +300,7 @@ SNIPPET
 
         it 'should give a text representation of itself' do
           repr = subject.to_s
-          expect(repr).to match /^success\? true/
+          expect(repr).to match(/^success\? true/)
           
           # Let's test the last chart state only          
           expectation = <<REPR

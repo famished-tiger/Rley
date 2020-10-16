@@ -53,20 +53,20 @@ EndOfLine:
 
 IndentationWidth:
   Enabled: false
-  
+
 Layout/BlockAlignment:
   Enabled: false
 
 Layout/ClosingHeredocIndentation:
   Enabled: false
-  
-# Enabled after end of support of Rubies < 2.3
-Layout/IndentHeredoc:
+
+
+Layout/HeredocIndentation:
   Enabled: false
 
 Layout/SpaceInsideArrayLiteralBrackets:
-  Enabled: false  
-  
+  Enabled: false
+
 Metrics/AbcSize:
   Max: 50
 
@@ -83,7 +83,10 @@ Metrics/ModuleLength:
 Metrics/PerceivedComplexity:
   Enabled: true
   Max: 50
-  
+
+Naming/ClassAndModuleCamelCase:
+  Enabled: false
+
 # Disable this because it produces false negatives
 Naming/HeredocDelimiterNaming:
   Enabled: false
@@ -91,7 +94,7 @@ Naming/HeredocDelimiterNaming:
 Naming/MethodName:
   Enabled: false
 
-Naming/UncommunicativeMethodParamName:
+Naming/MethodParameterName:
   Enabled: false
 
 NonNilCheck:
@@ -108,13 +111,16 @@ RedundantReturn:
 
 Style/CommentedKeyword:
   Enabled: false
-  
-Style/ConditionalAssignment:  
+
+Style/ConditionalAssignment:
   Enabled: false
-  
+
+Style/IfUnlessModifier:
+  Enabled: false
+
 Style/Lambda:
   Enabled: false
-  
+
 Style/MissingRespondToMissing:
   Enabled: false
 

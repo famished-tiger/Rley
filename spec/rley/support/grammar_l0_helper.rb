@@ -78,13 +78,11 @@ module GrammarL0Helper
       word = scanner.scan(/\S+/)
       break unless word
 
-      term_name = lexicon_l0[word]
-      if term_name.nil?
-        raise StandardError, "Word '#{word}' not found in lexicon"
-      end
+      term = lexicon_l0[word]
+      raise StandardError, "Word '#{word}' not found in lexicon" if term.nil?
 
       pos = Rley::Lexical::Position.new(1, curr_pos + 1)
-      tokens << Rley::Lexical::Token.new(word, term_name, pos)
+      tokens << Rley::Lexical::Token.new(word, term, pos)
     end
 
     return tokens

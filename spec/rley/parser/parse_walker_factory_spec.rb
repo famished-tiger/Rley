@@ -47,13 +47,13 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           # contains a hidden left recursion and a cycle
           builder = Syntax::GrammarBuilder.new do
             add_terminals('a', 'b')
-            rule'Phi' => 'S'
-            rule'S' => %w[A T]
-            rule'S' => %w[a T]
-            rule'A' => 'a'
-            rule'A' => %w[B A]
-            rule'B' => []
-            rule'T' => %w[b b b]
+            rule 'Phi' => 'S'
+            rule 'S' => %w[A T]
+            rule 'S' => %w[a T]
+            rule 'A' => 'a'
+            rule 'A' => %w[B A]
+            rule 'B' => []
+            rule 'T' => %w[b b b]
           end
           builder.grammar
       end

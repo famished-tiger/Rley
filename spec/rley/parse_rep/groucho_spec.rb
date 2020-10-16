@@ -52,12 +52,10 @@ module Rley # Open this namespace to avoid module qualifier prefixes
       def tokenizer(aText, aGrammar)
         pos = Rley::Lexical::Position.new(1, 2) # Dummy position
         tokens = aText.scan(/\S+/).map do |word|
-          term_name = Groucho_lexicon[word]
-          if term_name.nil?
-            raise StandardError, "Word '#{word}' not found in lexicon"
-          end
+          term = Groucho_lexicon[word]
+          raise StandardError, "Word '#{word}' not found in lexicon" if term.nil?
 
-          terminal = aGrammar.name2symbol[term_name]
+          terminal = aGrammar.name2symbol[term]
           Rley::Lexical::Token.new(word, terminal, pos)
         end
 

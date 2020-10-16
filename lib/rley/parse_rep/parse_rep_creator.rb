@@ -32,11 +32,11 @@ module Rley # This module is used as a namespace
           end
         rescue StopIteration
           # Do nothing: gobble the exception
-        rescue StandardError => exc
-          if exc.message =~ /^Ambiguous/
+        rescue StandardError => e
+          if e.message =~ /^Ambiguous/
             $stderr.puts parsing
           end
-          raise exc
+          raise e
         end
         
         a_builder.done!

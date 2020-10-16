@@ -1,3 +1,6 @@
+### 0.7.07 / 2020-11-16
+- Code restyling to please rubocop 0.93.1
+
 ### 0.7.06 / 2019-11-22
 - [FIX] Method `ParseForestBuilder#process_end_entry`: Added a guard expression to prevent nil error.
 

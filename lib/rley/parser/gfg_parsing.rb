@@ -91,6 +91,7 @@ module Rley # This module is used as a namespace
           if succ.dotted_item.production.nullable?
             succ_entry = apply_rule(start_entry, succ, pos, pos, :nullable_rule)
             next unless succ_entry.exit_entry?
+
             apply_rule(succ_entry, end_vertex, pos, pos, :nullable_rule)
           end
         end
