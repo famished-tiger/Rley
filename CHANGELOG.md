@@ -1,5 +1,6 @@
 ### 0.7.07 / 2020-11-16
 - Code restyling to please rubocop 0.93.1
+* [CHANGE] File `.travis.yml`: updated Ruby versions, drop support for Ruby 2.3.x
 
 ### 0.7.06 / 2019-11-22
 - [FIX] Method `ParseForestBuilder#process_end_entry`: Added a guard expression to prevent nil error.

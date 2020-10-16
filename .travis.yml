@@ -9,13 +9,13 @@ script:
   - bundle exec rake
   
 rvm:
-  - 2.6.3
-  - 2.5.5
-  - 2.4.6
-  - 2.3.8
+  - 2.7.1
+  - 2.6.6
+  - 2.5.8
+  - 2.4.10
   - ruby-head
-  - jruby-9.1.9.0
-  - jruby-head
+  - jruby-head 
+before_install: gem install bundler -v 2.0.2  
   
 matrix:
   allow_failures:
