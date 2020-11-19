@@ -446,6 +446,7 @@ actively curated by Andrei Beliankou (aka arbox).
 ##  Thanks to:
 * Professor Keshav Pingali, one of the creators of the Grammar Flow Graph parsing approach for his encouraging e-mail exchange.
 * [Arjun Menon](https://github.com/arjunmenon) for his NLP example that uses `engtagger` gem.
+* [Gui Heurich](https://github.com/GuiHeurich) for spotting a mistake in the code sample in `README` file.
 
 ## Grammar Flow Graph
 Since the Grammar Flow Graph parsing approach is quite new, it has not yet taken a place in
@@ -458,5 +459,5 @@ standard parser textbooks. Here are a few references (and links) of papers on GF
 
 Copyright
 ---------
-Copyright (c) 2014-2018, Dimitri Geshef.  
+Copyright (c) 2014-2020, Dimitri Geshef.  
 __Rley__ is released under the MIT License see [LICENSE.txt](https://github.com/famished-tiger/Rley/blob/master/LICENSE.txt) for details.
