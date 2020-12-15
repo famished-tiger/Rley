@@ -36,7 +36,7 @@ module MiniKraken
           expect(subject.next_serial_num).to be_zero
         end
 
-        it "should have its resultant attribute un-initialized" do
+        it 'should have its resultant attribute un-initialized' do
           expect(subject.resultant).to be_nil
         end
       end # context
@@ -79,20 +79,20 @@ module MiniKraken
         it 'should allow the enqueuing of multiple associations for same i_name' do
           subject.enqueue_association(x_assoc)
 
-          x_assoc_2 = Core::Association.new('x', double('something'))
-          expect { subject.enqueue_association(x_assoc_2) }.not_to raise_error
+          x_assoc_b = Core::Association.new('x', double('something'))
+          expect { subject.enqueue_association(x_assoc_b) }.not_to raise_error
           expect(subject.i_name2moves.size).to eq(1)
           expect(subject.move_queue.size).to eq(2)
           expect(subject.i_name2moves['x']).to be_kind_of(Array)
           expect(subject.i_name2moves['x'].size).to eq(2)
           expect(subject.i_name2moves['x'].last).to eq(1)
-          expect(subject.move_queue.pop).to eq(x_assoc_2)
+          expect(subject.move_queue.pop).to eq(x_assoc_b)
         end
 
         it 'should allow the removal of the association at TOS position' do
           subject.enqueue_association(x_assoc)
-          x_assoc_2 = Core::Association.new('x', double('something'))
-          subject.enqueue_association(x_assoc_2)
+          x_assoc_b = Core::Association.new('x', double('something'))
+          subject.enqueue_association(x_assoc_b)
           expect(subject.move_queue.size).to eq(2)
           expect(subject.i_name2moves.size).to eq(1)
 
@@ -207,12 +207,12 @@ module MiniKraken
           subject.enqueue_association(x_assoc)
           subject.enqueue_association(y_assoc)
 
-          x_assoc_2 = Core::Association.new('x', double('something'))
-          subject.enqueue_association(x_assoc_2)
+          x_assoc_b = Core::Association.new('x', double('something'))
+          subject.enqueue_association(x_assoc_b)
           expect(subject.associations_for('z')).to be_empty
           expect(subject.associations_for('y').size).to eq(1)
           expect(subject.associations_for('x').size).to eq(2)
-           expect(subject.associations_for('x').last).to eq(x_assoc_2)
+          expect(subject.associations_for('x').last).to eq(x_assoc_b)
         end
 
         it 'should retrieve association for a given i_name (1 fusion)' do
@@ -222,7 +222,7 @@ module MiniKraken
           expect(subject.associations_for('z', true).size).to eq(0)
 
           x_z_var = LogVar.new('x_z')
-          fusion = Fusion.new(x_z_var.i_name, ['x', 'z'])
+          fusion = Fusion.new(x_z_var.i_name, %w[x z])
           subject.enqueue_fusion(fusion)
           expect(subject.associations_for('z', true).size).to eq(1)
           x_z_assoc = Core::Association.new(x_z_var.i_name, var_ref('y'))
@@ -255,7 +255,7 @@ module MiniKraken
 
           subject.enqueue_association(x_assoc)
           subject.enqueue_association(y_assoc)
-          serial_num = subject.place_bt_point
+          subject.place_bt_point
           subject.enqueue_association(z_assoc)
           subject.enqueue_association(x_assoc2)
           expect(subject.i_name2moves['x'].size).to eq(2)

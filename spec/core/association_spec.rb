@@ -23,7 +23,6 @@ module MiniKraken
         end
 
         it 'should be initialized with a variable and a value' do
-          var = LogVar.new('p')
           expect { Association.new(LogVar.new('p'), pea) }.not_to raise_error
         end
 
@@ -40,7 +39,7 @@ module MiniKraken
         let(:ctx) { Context.new }
 
         it 'should tell whether the associated value is pinned' do
-          ctx.add_vars(['q', 'x'])
+          ctx.add_vars(%w[q x])
 
           expect(subject).to be_pinned(ctx)
           instance = Association.new(ctx.lookup('q'), LogVarRef.new('x'))
@@ -48,16 +47,16 @@ module MiniKraken
         end
 
         it 'should tell whether the associated value is floating' do
-          ctx.add_vars(['q', 'x'])
+          ctx.add_vars(%w[q x])
 
           expect(subject).not_to be_floating(ctx)
         end
-        
+
         it 'should retrieve the dependencies in its value' do
           expect(subject.dependencies(ctx)).to be_empty
 
-          ctx.add_vars(['q', 'x'])          
-          instance = Association.new(ctx.lookup('q'), LogVarRef.new('x'))    
+          ctx.add_vars(%w[q x])
+          instance = Association.new(ctx.lookup('q'), LogVarRef.new('x'))
           expect(instance.dependencies(ctx).size).to eq(1)
         end
       end # context

@@ -15,7 +15,7 @@ module MiniKraken
       include MiniKraken::FactoryAtomic # Use mix-in module
 
       let(:pea) { k_symbol(:pea) }
-      let(:q_assoc) { Association.new('q', pea) }      
+      let(:q_assoc) { Association.new('q', pea) }
       subject { AssociationCopy.new('q_x', q_assoc) }
 
       context 'Initialization:' do
@@ -41,26 +41,26 @@ module MiniKraken
         let(:ctx) { Context.new }
 
         it 'should tell whether the associated value is pinned' do
-          ctx.add_vars(['q', 'x', 'q_x'])
+          ctx.add_vars(%w[q x q_x])
           expect(subject).to be_pinned(ctx)
-          
-          a = Association.new(ctx.lookup('q'), LogVarRef.new('x'))          
+
+          a = Association.new(ctx.lookup('q'), LogVarRef.new('x'))
           instance = AssociationCopy.new(ctx.lookup('q_x'), a)
           expect(instance).not_to be_pinned(ctx)
         end
 
         it 'should tell whether the associated value is floating' do
-          ctx.add_vars(['q', 'x', 'q_x'])
+          ctx.add_vars(%w[q x q_x])
 
           expect(subject).not_to be_floating(ctx)
         end
-        
+
         it 'should retrieve the dependencies in its value' do
           expect(subject.dependencies(ctx)).to be_empty
 
-          ctx.add_vars(['q', 'x', 'q_x'])          
+          ctx.add_vars(%w[q x q_x])
           a = Association.new(ctx.lookup('q'), LogVarRef.new('x'))
-          instance = AssociationCopy.new(ctx.lookup('q_x'), a)          
+          instance = AssociationCopy.new(ctx.lookup('q_x'), a)
           expect(instance.dependencies(ctx).size).to eq(1)
         end
       end # context

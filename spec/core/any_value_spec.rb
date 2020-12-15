@@ -21,27 +21,27 @@ module MiniKraken
           expect(subject.rank).to eq(some_rank)
         end
       end # context
-      
+
       context 'Provided services:' do
         it 'should compare itself to another instance' do
           expect(subject ==  AnyValue.new(some_rank)).to be_truthy
-          expect(subject ==  AnyValue.new(1)).to be_falsey          
+          expect(subject ==  AnyValue.new(1)).to be_falsey
         end
-        
+
         it 'should compare itself to an integer' do
-          expect(subject == some_rank).to be_truthy  
+          expect(subject == some_rank).to be_truthy
           expect(subject == 1).to be_falsey
         end
-        
+
         it 'should compare itself to a symbol' do
-          expect(subject == :_2).to be_truthy  
+          expect(subject == :_2).to be_truthy
           expect(subject == :_1).to be_falsey
-        end   
+        end
 
         it 'should know its text representation' do
           expect(subject.to_s).to eq('_2')
         end
-        
+
         it 'should know that it represents a non-pinned variable' do
           ctx = double('dummy-context')
           expect(subject).not_to be_pinned(ctx)
