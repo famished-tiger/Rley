@@ -13,19 +13,19 @@ module MiniKraken
           proc.call
         end
       end
-    
+
       let(:ctx) { Core::Context.new }
-      let(:callable) { -> { ctx.failed! }  }
+      let(:callable) { -> { ctx.failed! } }
       subject { DuckFiber.new(callable) }
 
       context 'Initialization:' do
         it 'could be initialized with a Proc' do
           expect { DuckFiber.new(-> { ctx.failed }) }.not_to raise_error
         end
-        
+
         it "could be initialized with an object that responds to 'call'" do
           expect { DuckFiber.new(callable) }.not_to raise_error
-        end        
+        end
 
         it 'should know its callable object' do
           expect(subject.callable).to eq(callable)

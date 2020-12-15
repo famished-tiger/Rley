@@ -4,11 +4,10 @@ require_relative '../spec_helper' # Use the RSpec framework
 
 require_relative '../../lib/mini_kraken/core/all_core'
 
-
 module MiniKraken
   module Core
     # Integration-in-the-small testing
-    describe "Core Classes" do
+    describe 'Core Classes' do
       let(:ctx) { Context.new }
 
       context 'Executing nullary goals:' do

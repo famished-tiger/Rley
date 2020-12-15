@@ -49,7 +49,7 @@ module MiniKraken
           expect(subject.symbol_table.current_scope.defns['x']).to be_kind_of(LogVar)
 
           # Case: multiple names
-          subject.add_vars(['y', 'z'])
+          subject.add_vars(%w[y z])
           expect(subject.symbol_table.current_scope.defns['y']).to be_kind_of(LogVar)
           expect(subject.symbol_table.current_scope.defns['z']).to be_kind_of(LogVar)
         end
@@ -90,10 +90,10 @@ module MiniKraken
           assoc_x = subject.associate('x', something)
           expect(subject.associations_for('x')).to eq([assoc_x])
           pre_queue_size = subject.blackboard.move_queue.size
-          fusion = subject.fuse(['q', 'x'])
+          fusion = subject.fuse(%w[q x])
 
           expect(fusion).to be_kind_of(Fusion)
-          expect(fusion.elements).to eq(['q', 'x'].map { |e| subject.lookup(e).i_name })
+          expect(fusion.elements).to eq(%w[q x].map { |e| subject.lookup(e).i_name })
           expect(subject.blackboard.move_queue.size).to eq(pre_queue_size + 2)
           expect(subject.cv2vars).to be_include(fusion.i_name)
           expect(subject.cv2vars[fusion.i_name]).to eq(fusion.elements)
@@ -104,9 +104,9 @@ module MiniKraken
 
         it 'should allow the search of an entry based on its name' do
           symb_tbl = subject.symbol_table
-          subject.add_vars(['q', 'x'])
+          subject.add_vars(%w[q x])
           symb_tbl.enter_scope(Core::Scope.new)
-          subject.add_vars(['q', 'y'])
+          subject.add_vars(%w[q y])
 
           # Search for unknown name
           expect(subject.lookup('z')).to be_nil
@@ -123,7 +123,7 @@ module MiniKraken
           subject.add_vars(%w[x y z])
 
           ref_y = LogVarRef.new('y')
-          assoc_x = subject.associate('x', ref_y)
+          subject.associate('x', ref_y)
           subject.send(:calc_ranking)
           expect(subject.ranking.size).to eq(2)
           i_name_y = subject.lookup('y').i_name
@@ -165,8 +165,7 @@ module MiniKraken
           expect(subject.blackboard.i_name2moves.keys.size).to eq(5)
           expect(subject.blackboard.move_queue.size).to eq(6)
           # require 'debug'
-          # expect { 
-          subject.leave_scope #}.not_to raise_error
+          expect { subject.leave_scope }.not_to raise_error
           # Expected state:
           # x => :foo
           # q => x'
@@ -201,7 +200,7 @@ module MiniKraken
           expect(sol['z']).to eq(:_2)
 
           foo = k_symbol(:foo)
-          assoc_x = subject.associate('x', foo)
+          subject.associate('x', foo)
           sol = subject.build_solution
           expect(sol.size).to eq(3)
           expect(sol['x']).to eq(foo)
@@ -209,7 +208,7 @@ module MiniKraken
           expect(sol['z']).to eq(:_1)
 
           bar = k_symbol(:bar)
-          assoc_y = subject.associate('y', bar)
+          subject.associate('y', bar)
           sol = subject.build_solution
           expect(sol.size).to eq(3)
           expect(sol['x']).to eq(foo)

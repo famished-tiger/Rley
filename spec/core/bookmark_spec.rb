@@ -16,7 +16,7 @@ module MiniKraken
         it 'should be initialized with a Symbol and an Integer' do
           expect { Bookmark.new(a_kind, one_ser_num) }.not_to raise_error
         end
-        
+
         it 'should know its kind' do
           expect(subject.kind).to eq(a_kind)
         end
