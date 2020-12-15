@@ -25,8 +25,7 @@ module MiniKraken
       # Convenience method to factor out repeated statements
       def solve(arg1, arg2)
         solver = subject.solver_for([arg1, arg2], ctx)
-        outcome = solver.resume
-        outcome
+        solver.resume
       end
 
       context 'Initialization:' do
@@ -52,12 +51,12 @@ module MiniKraken
         let(:succeeds) { Core::Goal.new(Core::Succeed.instance, []) }
         let(:var_q) { var('q') }
         let(:ref_q) { Core::LogVarRef.new('q') }
-        
+
         def unify(term1, term2)
            Core::Goal.new(Unify.instance, [term1, term2])
         end
-        
-        before(:each) { ctx.add_vars('q')  }
+
+        before(:each) { ctx.add_vars('q') }
 
         it 'should complain when one of its argument is not a goal' do
           err = StandardError
@@ -84,7 +83,7 @@ module MiniKraken
           expect(outcome.blackboard).to be_empty
           expect(solver.resume).to be_nil
         end
-        
+
         it 'should yield success and set associations' do
           solver = subject.solver_for([succeeds, unify(corn, ref_q)], ctx)
           outcome = solver.resume
@@ -97,7 +96,7 @@ module MiniKraken
           solver = subject.solver_for([fails, unify(corn, ref_q)], ctx)
           outcome = solver.resume
           expect(outcome).not_to be_success
-          expect(outcome.blackboard).to be_empty          
+          expect(outcome.blackboard).to be_empty
         end
 
         it 'should yield fails when sub-goals are incompatible' do
@@ -106,7 +105,7 @@ module MiniKraken
           solver = subject.solver_for([sub_goal1, sub_goal2], ctx)
           outcome = solver.resume
           expect(outcome).not_to be_success
-          expect(outcome.blackboard).to be_empty    
+          expect(outcome.blackboard).to be_empty
         end
 
         it 'should yield success when sub-goals are same and successful' do
@@ -117,7 +116,7 @@ module MiniKraken
           expect(outcome).to be_success
           expect(outcome.blackboard).not_to be_empty
           expect(outcome.associations_for('q').first.value).to eq(corn)
-        end        
+        end
       end # context
     end # describe
   end # module

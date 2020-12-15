@@ -30,9 +30,8 @@ module MiniKraken
       end # context
 
       context 'Provided services:' do
-
         let(:bean) { k_symbol(:bean) }
-        let(:corn) {k_symbol(:corn) }
+        let(:corn) { k_symbol(:corn) }
         let(:meal) { k_symbol(:meal) }
         let(:oil) { k_symbol(:oil) }
         let(:olive) { k_symbol(:olive) }
@@ -49,7 +48,7 @@ module MiniKraken
         let(:ref_y) { Core::LogVarRef.new('y') }
         let(:ctx) do
           e = Core::Context.new
-          e.add_vars(['q', 'x', 'y'])
+          e.add_vars(%w[q x y])
 
           e
         end
@@ -83,7 +82,7 @@ module MiniKraken
           outcome = solver.resume
           expect(outcome).to be_success
           sol = outcome.build_solution
-          expect(sol['q']).to eq(oil)          
+          expect(sol['q']).to eq(oil)
           expect(solver.resume).to be_nil
         end
 
@@ -140,9 +139,9 @@ module MiniKraken
           expect(solution1['y']).to eq(pea)
 
           # Second solution
-          outcome2 = solver.resume        
+          outcome2 = solver.resume
           expect(outcome2).to be_success
-          solution2 = outcome2.build_solution            
+          solution2 = outcome2.build_solution
           expect(solution2['x']).to eq(red)
           expect(solution2['y']).to eq(bean)
 

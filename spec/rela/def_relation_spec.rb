@@ -23,13 +23,13 @@ module MiniKraken
       let(:formal_t) { 't' }
       let(:t_ref) { Core::LogVarRef.new('t') }
       let(:equals_tea) { unify_goal(tea, t_ref) }
-      let(:equals_cup) { unify_goal(cup, t_ref) } 
+      let(:equals_cup) { unify_goal(cup, t_ref) }
       let(:goal_template) { disj2_goal(equals_tea, equals_cup) }
       let(:ctx) { Core::Context.new }
-      let(:uuid_pattern) do 
+      let(:uuid_pattern) do
         /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/
       end
-      
+
       subject { DefRelation.new('teacupo', goal_template, [formal_t]) }
 
       def unify_goal(term1, term2)
@@ -42,8 +42,8 @@ module MiniKraken
 
       context 'Initialization:' do
         it 'should be initialized with a name, a goal template, formal args' do
-          expect do 
-            DefRelation.new('teacupo', goal_template, [formal_t]) 
+          expect do
+            DefRelation.new('teacupo', goal_template, [formal_t])
           end.not_to raise_error
         end
 
@@ -54,29 +54,29 @@ module MiniKraken
         it 'should know its goal expression' do
           expect(subject.expression).to be_kind_of(Core::Goal)
           expect(subject.expression.relation).to eq(Disj2.instance)
-          
+
           g1 = subject.expression.actuals[0]
           expect(g1).to be_kind_of(Core::Goal)
           expect(g1.relation).to eq(Unify.instance)
           expect(g1.actuals[0]).to eq(tea)
           expect(g1.actuals[1]).to be_kind_of(Core::LogVarRef)
-          expect(g1.actuals[1].name).to match(/^t_/)          
+          expect(g1.actuals[1].name).to match(/^t_/)
           expect(g1.actuals[1].name).to match(uuid_pattern)
-          
+
           g2 = subject.expression.actuals[1]
           expect(g2).to be_kind_of(Core::Goal)
           expect(g2.relation).to eq(Unify.instance)
           expect(g2.actuals[0]).to eq(cup)
-          expect(g2.actuals[1]).to be_kind_of(Core::LogVarRef)          
-          expect(g2.actuals[1].name).to match(/^t_/)          
-          expect(g2.actuals[1].name).to match(uuid_pattern)         
+          expect(g2.actuals[1]).to be_kind_of(Core::LogVarRef)
+          expect(g2.actuals[1].name).to match(/^t_/)
+          expect(g2.actuals[1].name).to match(uuid_pattern)
         end
 
         it 'should know its formals' do
           expect(subject.formals[0]).to match(/^t_/)
           expect(subject.formals[0]).to match(uuid_pattern)
         end
-        
+
         it 'should bear an internal name' do
           expect { subject.i_name }.not_to raise_error
         end
@@ -97,7 +97,7 @@ module MiniKraken
           outcome = solver.resume
           expect(outcome).to be_nil
         end
-        
+
         it 'should provide solver for a multiple-nodes goal with ref actual' do
           expr = disj2_goal(equals_tea, equals_cup)
           defrel = DefRelation.new('teacupo', expr, [formal_t])
@@ -112,7 +112,7 @@ module MiniKraken
           end
           outcome = solver.resume
           expect(outcome).to be_nil
-        end                
+        end
       end # context
     end # describe
   end # module
