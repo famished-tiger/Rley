@@ -12,7 +12,7 @@ module MiniKraken
     def cons(obj1, obj2 = nil)
       Composite::List.cons(obj1, obj2)
     end
-    
+
     # Factory method that build a proper list with given elements
     def make_list(*elems)
       Composite::List.make_list(elems)

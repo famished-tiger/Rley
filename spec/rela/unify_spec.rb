@@ -31,7 +31,7 @@ module MiniKraken
       # Convenience method to factor out repeated statements
       def solve(arg1, arg2)
         solver = subject.solver_for([arg1, arg2], ctx)
-        outcome = solver.resume(ctx)
+        solver.resume(ctx)
       end
 
       before(:each) do
@@ -90,9 +90,9 @@ module MiniKraken
           expect(result).to be_success
           expect(result.blackboard).to be_empty
 
-          true_1 = k_boolean(false)
-          true_2 = k_boolean(false)
-          result = solve(true_1, true_2)
+          true_a = k_boolean(false)
+          true_b = k_boolean(false)
+          result = solve(true_a, true_b)
           expect(result).to be_success
           expect(result.blackboard).to be_empty
         end
@@ -153,7 +153,7 @@ module MiniKraken
         end
 
         it 'should unify null list with variable bound to null list' do
-          result = solve(null, q_ref) # q is bound to null list
+          solve(null, q_ref) # q is bound to null list
 
           # Attempting to unify again null list with same variable is OK
           result = solve(null, q_ref)
@@ -204,18 +204,18 @@ module MiniKraken
         end
 
         it "shoudn't unify two pairs with unequal atomic terms" do
-          pair1 = cons(pea, pea)
-          pair2 = cons(pea, pod)
-          result = solve(pair1, pair2)
+          pair_a = cons(pea, pea)
+          pair_b = cons(pea, pod)
+          result = solve(pair_a, pair_b)
 
           expect(result).to be_failure
         end
 
         it 'should unify two element lists with same atomic terms' do
           # Two element lists
-          list2_1 = make_list(pea, pea)
-          list2_2 = make_list(pea, pea2)
-          result = solve(list2_1, list2_2)
+          list_a = make_list(pea, pea)
+          list_b = make_list(pea, pea2)
+          result = solve(list_a, list_b)
 
           expect(result).to be_success
           expect(result.blackboard).to be_empty
@@ -223,17 +223,17 @@ module MiniKraken
 
         it "shoudn't unify two element lists with with unequal atomic terms" do
           # Two element lists
-          list2_1 = make_list(pea, pea)
-          list2_2 = make_list(pea, pod)
-          result = solve(list2_1, list2_2)
+          list_a = make_list(pea, pea)
+          list_b = make_list(pea, pod)
+          result = solve(list_a, list_b)
 
           expect(result).to be_failure
         end
 
         it 'should unify composites with one fresh variable' do
-          list_1 = make_list(pea, pod)
-          list_2 = make_list(pea, q_ref)
-          result = solve(list_1, list_2)
+          list_a = make_list(pea, pod)
+          list_b = make_list(pea, q_ref)
+          result = solve(list_a, list_b)
 
           expect(result).to be_success
           expect(result.blackboard.move_queue.size).to eq(1)
@@ -241,11 +241,11 @@ module MiniKraken
         end
 
         it 'should unify composites with redundant unification' do
-          list_1 = make_list(pea, pea2, pod)
+          list_a = make_list(pea, pea2, pod)
 
           # Twist: q is paired twice to :pea, which is OK
-          list_2 = make_list(q_ref, q_ref, pod)
-          result = solve(list_1, list_2)
+          list_b = make_list(q_ref, q_ref, pod)
+          result = solve(list_a, list_b)
 
           expect(result).to be_success
 
@@ -257,9 +257,9 @@ module MiniKraken
         it 'should unify composites with same variables at same positions' do
           # Case: q is a fresh variable
           q_ref2 = Core::LogVarRef.new('q') # Other ref to same variable
-          list_1 = make_list(pea, pod, q_ref)
-          list_2 = make_list(pea, pod, q_ref2)
-          result = solve(list_1, list_2)
+          list_a = make_list(pea, pod, q_ref)
+          list_b = make_list(pea, pod, q_ref2)
+          result = solve(list_a, list_b)
 
           expect(result).to be_success
           expect(result.blackboard).to be_empty # No association created
@@ -267,7 +267,7 @@ module MiniKraken
           # Case: q is a bound variable
           ctx.associate('q', pea)
           expect(ctx.blackboard.move_queue.size).to eq(1)
-          result = solve(list_1, list_2)
+          result = solve(list_a, list_b)
 
           expect(result).to be_success
           expect(ctx.blackboard.move_queue.size).to eq(1) # No new association
@@ -286,7 +286,7 @@ module MiniKraken
         end
 
         it 'should unify a left-handed bound variable to the same atomic t.' do
-          result = solve(q_ref, pea)
+          solve(q_ref, pea)
           result = solve(q_ref, pea) # Try to associate with 'pea' again...
           expect(result).to be_success
 
@@ -295,7 +295,7 @@ module MiniKraken
         end
 
         it 'should unify a right-handed bound variable to the same atomic t.' do
-          result = solve(pea, q_ref)
+          solve(pea, q_ref)
           result = solve(pea, q_ref) # Try to associate with 'pea' again...
           expect(result).to be_success
 
@@ -304,7 +304,7 @@ module MiniKraken
         end
 
         it "shouldn't unify a variable bound to another atomic term" do
-          result = solve(q_ref, pea) # q will be bound to :pea
+          solve(q_ref, pea) # q will be bound to :pea
 
           # Trying a second time with another value should fail...
           result = solve(q_ref, pod)
@@ -326,25 +326,25 @@ module MiniKraken
         end
 
         it 'should unify a bound variable again with equal composite' do
-          list_1 = make_list(cons(pea, pod), pea2)
-          list_2 = make_list(cons(pea2, pod), pea)
-          result = solve(q_ref, list_1)
+          list_a = make_list(cons(pea, pod), pea2)
+          list_b = make_list(cons(pea2, pod), pea)
+          result = solve(q_ref, list_a)
 
           expect(result).to be_success
           expect(result.blackboard).not_to be_empty
-          expect(ctx.associations_for('q').first.value).to eq(list_1)
+          expect(ctx.associations_for('q').first.value).to eq(list_a)
 
-          result = solve(q_ref, list_2)
+          result = solve(q_ref, list_b)
           expect(result).to be_success
           expect(ctx.associations_for('q').size).to eq(1)
         end
 
         it "shouldn't unify a bound variable to something different" do
-          list_1 = make_list(cons(pea, pod), pea2)
-          result = solve(q_ref, list_1)
+          list_a = make_list(cons(pea, pod), pea2)
+          solve(q_ref, list_a)
 
-          list_2 = make_list(cons(pod, pod), pea)
-          result = solve(q_ref, list_2)
+          list_b = make_list(cons(pod, pod), pea)
+          result = solve(q_ref, list_b)
           expect(result).to be_failure
         end
       end # context
@@ -352,7 +352,7 @@ module MiniKraken
       context 'Unifying variable with another one:' do
         it 'should unify one left-handed fresh variable to a bound variable' do
           liste = make_list(cons(pea, pod), pea2)
-          result = solve(q_ref, liste)
+          solve(q_ref, liste)
 
           ctx.add_vars('x')
           x_ref = Core::LogVarRef.new('x')
@@ -360,33 +360,10 @@ module MiniKraken
           queue = result.blackboard.move_queue
 
           expect(queue[-2]).to be_kind_of(Core::Fusion)
-          expect(queue[-1]).to be_kind_of(Core::AssociationCopy)          
+          expect(queue[-1]).to be_kind_of(Core::AssociationCopy)
           expect(queue[-1].value).to be_equal(liste)
         end
       end # context
-
-=begin
-  Composite can be:
-  nul,
-  one element proper list,
-  two elements improper list
-  two elements proper list
-  element can be:
-  atomic
-  composite
-  log var ref
-    fresh
-    fresh & fused
-    associated ground
-    associated not ground
-  null                       null
-  one element proper list    null
-  two elements improper list null
-  two elements proper list   null
-  one element proper list    one element proper list
-    (atomic)                  (atomic)
-    ((some-list))             ((some-list))
-=end
     end # describe
   end # module
 end # module
