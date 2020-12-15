@@ -1,32 +1,16 @@
 # frozen_string_literal: true
 
-# File: spec_helper.rb
-# Purpose: utility file that is loaded by all our RSpec files
-
-require 'simplecov'
-require 'coveralls'
-
-Coveralls.wear!
-
-SimpleCov.formatter = SimpleCov::Formatter::MultiFormatter.new(
-  [
-    SimpleCov::Formatter::HTMLFormatter,
-    Coveralls::SimpleCov::Formatter
-  ]
-)
-
-require 'pp'    # Use pretty-print for debugging purposes
 require 'rspec' # Use the RSpec framework
 
-
 RSpec.configure do |config|
+  # Enable flags like --only-failures and --next-failure
+  config.example_status_persistence_file_path = '.rspec_status'
+
   config.expect_with :rspec do |c|
-    # Disable the `should` syntax...
+    # Disable the `should` syntax
     c.syntax = :expect
   end
 
   # Display stack trace in case of failure
   config.full_backtrace = true
 end
-
-# End of file

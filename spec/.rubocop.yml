@@ -1,12 +1,13 @@
-inherit_from:
-  - ../.rubocop.yml 
+inherit_from: ../.rubocop.yml
 
-# Let's relax this cop to allow long RSpec 'describe', 'it' blocks
+# RSpec expectation lines can be very lenghty
+Layout/LineLength:
+  Max: 90
+
+# RSpec contexts can be very lenghty
 Metrics/BlockLength:
-  Max: 700
-  CountComments: false
-  
-# Avoid modules longer than 700 lines of code 
-ModuleLength:
-  CountComments: false
-  Max: 700
+  Max: 1000
+
+# RSpec modules can be very lenghty  
+Metrics/ModuleLength:
+  Max: 1000
