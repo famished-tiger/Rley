@@ -22,7 +22,7 @@ module MiniKraken
 
       context 'Provided services:' do
         let(:ctx) { Context.new }
-        
+
         it 'should unconditionally return a failure result' do
           solver = nil
           expect { solver = subject.solver_for([], ctx) }.not_to raise_error

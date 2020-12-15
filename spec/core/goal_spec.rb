@@ -14,12 +14,12 @@ module MiniKraken
       def initialize
         super('dummy', 2)
       end
-      
-      def solver_for(actuals, ctx)
+
+      def solver_for(_actuals, ctx)
         DuckFiber.new(-> { ctx.succeeded! })
       end
     end
-  
+
     describe Goal do
       let(:nullary_relation) { Fail.instance }
       let(:binary_relation) { DummyRelation.new }

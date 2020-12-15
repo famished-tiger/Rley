@@ -18,22 +18,22 @@ module MiniKraken
 
         it 'should know its name' do
           expect(subject.name).to eq('q')
-        end        
-        
+        end
+
         it 'should have a frozen label' do
           expect(subject.label).to be_frozen
         end
-        
+
         it 'should know its default internal name' do
           # By default: internal name == label
           expect(subject.i_name).to eq(subject.label)
-        end        
-        
+        end
+
         it 'should have a nil suffix' do
           expect(subject.suffix).to be_nil
         end
       end # context
-      
+
       context 'Provided service:' do
         let(:sample_suffix) { 'sample-suffix' }
         it 'should have a label equal to its user-defined name' do
@@ -44,19 +44,19 @@ module MiniKraken
           expect { subject.suffix = sample_suffix }.not_to raise_error
           expect(subject.suffix).to eq(sample_suffix)
         end
-        
+
         it 'should calculate its internal name' do
           # Rule: empty suffix => internal name == label
           subject.suffix = ''
           expect(subject.i_name).to eq(subject.label)
-          
+
           # Rule: suffix starting underscore: internal name = label + suffix
           subject.suffix = '_10'
-          expect(subject.i_name).to eq(subject.label + subject.suffix) 
+          expect(subject.i_name).to eq(subject.label + subject.suffix)
 
           # Rule: ... otherwise: internal name == suffix
           subject.suffix = sample_suffix
-           expect(subject.i_name).to eq(subject.suffix)
+          expect(subject.i_name).to eq(subject.suffix)
         end
       end # context
     end # describe

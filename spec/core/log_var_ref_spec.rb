@@ -40,26 +40,25 @@ module MiniKraken
           v = var('q')
           ctx.insert(v)
           expect(subject).to be_unbound(ctx)
-
-          ctx.associate('q',  double('something'))
+          ctx.associate('q', double('something'))
           expect(subject).not_to be_unbound(ctx)
         end
 
         it 'should know whether its variable is floating or not' do
-          ctx.add_vars(['q', 'x'])
+          ctx.add_vars(%w[q x])
           expect(subject).not_to be_floating(ctx)
 
           x_ref = LogVarRef.new('x')
-          ctx.associate('q',x_ref)
+          ctx.associate('q', x_ref)
           expect(subject).to be_floating(ctx)
         end
 
         it 'should know whether its variable is pinned or not' do
-          ctx.add_vars(['q', 'x'])
+          ctx.add_vars(%w[q x])
           expect(subject).not_to be_pinned(ctx)
 
           x_ref = LogVarRef.new('x')
-          ctx.associate('q',x_ref)
+          ctx.associate('q', x_ref)
           expect(subject).not_to be_pinned(ctx)
 
           ctx.associate('x', foo)
