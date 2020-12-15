@@ -13,11 +13,11 @@ module MiniKraken
         super(aName, 2)
         freeze
       end
-      
+
       def self.symmetric
-        define_method :commute_cond do |arg1, arg2, anEnv|
-          w1 = weight_arg(arg1, anEnv)
-          w2 = weight_arg(arg2, anEnv)
+        define_method :commute_cond do |arg1, arg2, ctx|
+          w1 = weight_arg(arg1, ctx)
+          w2 = weight_arg(arg2, ctx)
           if w2 > w1
             [arg2, arg1]
           else

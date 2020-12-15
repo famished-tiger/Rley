@@ -33,11 +33,11 @@ module MiniKraken
       def disjunction(g1, g2, ctx)
         # require 'debug'
         if g1.relation.kind_of?(Core::Fail) && g2.relation.kind_of?(Core::Fail)
-          Fiber.yield ctx.failed!       
+          Fiber.yield ctx.failed!
         else
           ctx.place_bt_point
           outcome1 = nil
-          outcome2 = nil        
+          outcome2 = nil
           f1 = g1.achieve(ctx)
           loop do
             outcome1 = f1.resume(ctx)

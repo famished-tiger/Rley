@@ -144,4 +144,3 @@ module MiniKraken
     Conde.instance.freeze
   end # module
 end # module
-

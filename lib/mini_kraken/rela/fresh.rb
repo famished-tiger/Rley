@@ -31,7 +31,7 @@ module MiniKraken
         end
 
         nested_goal = compose_goals(subgoals)
-        Core::Goal.new(self.instance, [var_names, nested_goal])
+        Core::Goal.new(instance, [var_names, nested_goal])
       end
 
       def self.compose_goals(subgoals)
@@ -63,8 +63,6 @@ module MiniKraken
         nested_goal
       end
 
-
-
       # @param actuals [Array<Array<KString>, Core::Term>] A two-elements array
       # First element is an array of variable names to create.
       # Second is a sub-goal object
@@ -80,20 +78,18 @@ module MiniKraken
           ctx.add_vars(k_names.value)
         else
           # ... Array of KString
-          names = k_names.map {|k_string| k_string.value }
+          names = k_names.map(&:value)
           ctx.add_vars(names)
         end
 
         # Wrap the subgoal's solver by an adapter
         orig_solver = subgoal.achieve(ctx)
-        adapter = Core::SolverAdapter.new(orig_solver) do |adp, ctx|
+        Core::SolverAdapter.new(orig_solver) do |adp, context|
           # puts "Adaptee #{adp.adaptee}"
-          result = adp.adaptee.resume(ctx)
-          ctx.leave_scope if result.nil?
+          result = adp.adaptee.resume(context)
+          context.leave_scope if result.nil?
           result
         end
-
-        adapter
       end
     end # class
 

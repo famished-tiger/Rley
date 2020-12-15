@@ -34,7 +34,7 @@ module MiniKraken
         # require 'debug'
         if g1.relation.kind_of?(Core::Fail) || g2.relation.kind_of?(Core::Fail)
           Fiber.yield ctx.failed!
-        else  
+        else
           outcome1 = outcome2 = nil
           fiber1 = g1.achieve(ctx)
 

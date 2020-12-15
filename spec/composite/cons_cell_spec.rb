@@ -164,7 +164,7 @@ module MiniKraken
           expect(lst.dependencies(ctx)).to be_empty
 
           # Case: multiple var refs
-          ctx.add_vars(['q', 'x'])
+          ctx.add_vars(%w[q x])
           q_ref = Core::LogVarRef.new('q')
           x_ref = Core::LogVarRef.new('x')
           list2 = ConsCell.new(ConsCell.new(q_ref, pea), ConsCell.new(x_ref))

@@ -59,10 +59,10 @@ module MiniKraken
             formals = [theFormals]
           when Array
             formals = theFormals
-        end      
+        end
         rela = Rela::DefRelation.new(relationName, aGoalExpr, formals)
         add_defrel(rela)
-        
+
        # start_defrel
 
         # formals = @defrel_formals.map { |name| Core::FormalArg.new(name) }

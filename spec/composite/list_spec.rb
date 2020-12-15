@@ -17,13 +17,13 @@ module MiniKraken
 
       context 'Module as a factory:' do
         subject { List }
-        
+
         it 'builds a pair wiht one argument (= one element proper list)' do
           pair = subject.cons(pea)
           expect(pair.car).to eq(pea)
-          expect(pair.cdr).to be_nil        
+          expect(pair.cdr).to be_nil
         end
-        
+
         it 'builds a pair with two explicit arguments' do
           pair = subject.cons(pea, pod)
           expect(pair.car).to eq(pea)

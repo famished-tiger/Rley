@@ -51,25 +51,25 @@ module MiniKraken
       def do_unification(arg1, arg2, ctx)
         table = [
           # cond1                        cond2                          selector
-          [ kind_of(Atomic::AtomicTerm), kind_of(Atomic::AtomicTerm),
+          [kind_of(Atomic::AtomicTerm), kind_of(Atomic::AtomicTerm),
             :unify_atomic_terms],
-          [ kind_of(Composite::CompositeTerm), kind_of(Atomic::AtomicTerm),
+          [kind_of(Composite::CompositeTerm), kind_of(Atomic::AtomicTerm),
             :unify_composite_atomic],
-          [ kind_of(Composite::CompositeTerm), kind_of(Composite::CompositeTerm),
+          [kind_of(Composite::CompositeTerm), kind_of(Composite::CompositeTerm),
             :unify_composite_terms],
-          [ kind_of(Core::LogVarRef), kind_of(Atomic::AtomicTerm),
+          [kind_of(Core::LogVarRef), kind_of(Atomic::AtomicTerm),
             :unify_ref_atomic],
-          [ kind_of(Core::LogVarRef), kind_of(Composite::CompositeTerm),
+          [kind_of(Core::LogVarRef), kind_of(Composite::CompositeTerm),
             :unify_ref_composite],
           [kind_of(Core::LogVarRef), kind_of(Core::LogVarRef),
             :unify_references]
         ]
-        
+
         # require 'debug'
 
         table.each do |(cond1, cond2, selector)|
           if cell_success(arg1, cond1, ctx) &&
-            cell_success(arg2, cond2, ctx)
+             cell_success(arg2, cond2, ctx)
             return send(selector, arg1, arg2, ctx)
           end
         end
@@ -116,7 +116,7 @@ module MiniKraken
       def cell_success(arg, cond, ctx)
         case cond
           when Class
-            arg.class == cond.class
+            arg.kind_of?(cond.class)
           when Proc
             cond.call(arg, ctx)
           else
@@ -149,7 +149,6 @@ module MiniKraken
       # @return [Core::Context] Updated context
       def unify_composite_terms(arg1, arg2, ctx)
         return ctx.succeeded! if arg1.null? && arg2.null?
-        # require 'debug'
 
         # We do parallel iteration
         visitor1 = Composite::ConsCellVisitor.df_visitor(arg1)
@@ -177,7 +176,7 @@ module MiniKraken
               when [Core::LogVarRef, Composite::ConsCell]
                 skip_children1 = false
                 skip_children2 = true
-                sub_result = do_unification(cell1, cell2, ctx)
+                do_unification(cell1, cell2, ctx)
             else
               skip_children1 = skip_children2 = false
               unification(cell1, cell2, ctx)
@@ -203,7 +202,7 @@ module MiniKraken
           assocs = ctx.associations_for(ref.name)
           first_assoc = assocs.first
           if first_assoc.kind_of?(Core::Association) &&
-            first_assoc.value.eql?(atomic)
+             first_assoc.value.eql?(atomic)
             # Trying to associate again to the same value is OK
             ctx.succeeded!
           else
@@ -220,19 +219,17 @@ module MiniKraken
       def unify_ref_composite(ref, composite, ctx)
         if ref.unbound?(ctx)
           ctx.associate(ref, composite)
-          ctx.succeeded!
         else
           # Assumption: ref has only one existing association...
           as = ctx.associations_for(ref.name)
           first_assoc = as.first.value
-          result = unification(first_assoc, composite, ctx)
+          unification(first_assoc, composite, ctx)
           return ctx if ctx.failure?
 
           # The association can be sometimes be redundant...
           ctx.associate(ref, composite) unless first_assoc.pinned?(ctx)
-          ctx.succeeded!
         end
-
+        ctx.succeeded!
         ctx
       end
 
@@ -243,6 +240,7 @@ module MiniKraken
       # @return [Core::Context] Updated context
       def unify_references(ref1, ref2, ctx)
         return ctx.succeeded! if ref1.name == ref2.name
+
         if ref1.unbound?(ctx) || ref2.unbound?(ctx)
           ctx.fuse([ref1.name, ref2.name])
           ctx.succeeded!
@@ -255,7 +253,6 @@ module MiniKraken
 
         ctx
       end
-
     end # class
   end # module
 end # module

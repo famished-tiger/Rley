@@ -8,7 +8,6 @@ module MiniKraken
     # A specialization of a relation that accepts only goal(s)
     # as its arguments.
     class GoalRelation < Core::Relation
-
       protected
 
       # Validate that actuals

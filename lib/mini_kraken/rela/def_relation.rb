@@ -24,8 +24,8 @@ module MiniKraken
       # @param theFormals [Array<String>]
       def initialize(aName, anExpression, theFormals)
         @formals = validated_formals(theFormals)
-        formal_vars = formals.map {|nm| Core::LogVarRef.new(nm) }
-        raw_expression = validated_expression(anExpression)        
+        formal_vars = formals.map { |nm| Core::LogVarRef.new(nm) }
+        raw_expression = validated_expression(anExpression)
         @expression = replace_expression(raw_expression, theFormals, formal_vars)
         super(aName, formals.size)
         freeze
@@ -51,13 +51,13 @@ module MiniKraken
 
         aGoalTemplate
       end
-      
+
       # With the given expression, create a new expression where
       # each allusion to original variable is replaced by the
       # by its corresponding actual value.
       def replace_expression(anExpression, original, actual)
         raw_pairs = original.zip(actual) # [original, actual]
-        anExpression.dup_cond(raw_pairs.to_h)      
+        anExpression.dup_cond(raw_pairs.to_h)
       end
     end # class
   end # module
