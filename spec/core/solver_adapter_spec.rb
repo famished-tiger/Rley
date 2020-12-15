@@ -15,9 +15,8 @@ module MiniKraken
       let(:ctx) { Context.new }
       let(:fib) { make_fiber(ctx, true, true, false, nil) }
       let(:blk) do
-        ->(adapter, aContext) do
-          result = adapter.adaptee.resume
-          result
+        lambda do |adapter, _context|
+          adapter.adaptee.resume
         end
       end
       subject { SolverAdapter.new(fib, &blk) }
@@ -52,18 +51,18 @@ module MiniKraken
       end # context
 
       context 'Provided services:' do
-        it 'should respond to the resume message' do       
+        it 'should respond to the resume message' do
           result = subject.resume(ctx)
           expect(result).to be_success
-          
-          result = subject.resume(ctx)
-          expect(result).to be_success  
 
           result = subject.resume(ctx)
-          expect(result).to be_failure 
+          expect(result).to be_success
 
           result = subject.resume(ctx)
-          expect(result).to be_nil       
+          expect(result).to be_failure
+
+          result = subject.resume(ctx)
+          expect(result).to be_nil
         end
       end # context
     end # describe

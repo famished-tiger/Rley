@@ -15,10 +15,10 @@ module MiniKraken
         it 'should be initialized with a name and an arity' do
           expect { Specification.new('cons', Arity.new(2, 2)) }.not_to raise_error
         end
-        
+
         it 'should be initialized with a name and an integer' do
           expect { Specification.new('cons', 2) }.not_to raise_error
-        end        
+        end
 
         it 'should know its name' do
           expect(subject.name).to eq('cons')
@@ -28,15 +28,15 @@ module MiniKraken
           expect(subject.arity).to be_binary
         end
       end # context
-      
+
       context 'Provided services:' do
         it "should complain when number of arguments does't fit arity" do
           dummy_arg = double('dummy-stuff')
 
           err = StandardError
           err_msg = 'Count of arguments (1) is out of allowed range (2, 2).'
-          expect {subject.check_arity([dummy_arg]) }.to raise_error(err, err_msg)
-        end      
+          expect { subject.check_arity([dummy_arg]) }.to raise_error(err, err_msg)
+        end
       end
     end # describe
   end # module

@@ -86,7 +86,7 @@ module MiniKraken
           else
             k_names = Atomic::KString.new(names)
           end
-          fresh_goal = Core::Goal.new(Rela::Fresh.instance, [k_names, subgoal])              
+          Core::Goal.new(Rela::Fresh.instance, [k_names, subgoal])
         end
 
         def conj2(term1, term2)
@@ -152,23 +152,23 @@ module MiniKraken
 
         it 'should support conjunction of two succeed' do
           # Reasoned S2, frame 1:50
-          # (run* q (conj2 succeed succeed)) ;; => (_0)        
+          # (run* q (conj2 succeed succeed)) ;; => (_0)
           goal = conj2(succeeds, succeeds)
           instance = RunStarExpression.new('q', goal)
 
           result = instance.run
           expect(result.to_s).to eq('(_0)')
         end
-        
+
         it 'should support conjunction of one succeed and a successful goal' do
           # Reasoned S2, frame 1:51
-          # (run* q (conj2 succeed (== 'corn q)) ;; => ('corn)        
+          # (run* q (conj2 succeed (== 'corn q)) ;; => ('corn)
           subgoal = unify(corn, ref_q)
           instance = RunStarExpression.new('q', conj2(succeeds, subgoal))
 
           result = instance.run
           expect(result.to_s).to eq('(:corn)')
-        end        
+        end
 
         # TODO: add two solutions case
         # TODO: add fused variables

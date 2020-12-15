@@ -19,11 +19,11 @@ module MiniKraken
         it 'should be initialized with a specification and actuals' do
           expect { ParametrizedTerm.new(specif, [arg1, arg2]) }.not_to raise_error
         end
-        
+
         it 'should fail when number of arguments out of arity range' do
           err = StandardError
           err_msg = 'Count of arguments (3) is out of allowed range (2, 2).'
-          expect {ParametrizedTerm.new(specif, [arg1, arg2, arg3]) }.to raise_error(err, err_msg)        
+          expect { ParametrizedTerm.new(specif, [arg1, arg2, arg3]) }.to raise_error(err, err_msg)
         end
 
         it 'should know its specification' do

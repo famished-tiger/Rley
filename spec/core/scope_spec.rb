@@ -12,7 +12,7 @@ module MiniKraken
       include MiniKraken::FactoryAtomic # Use mix-in module
       let(:mother) { Scope.new }
       subject { Scope.new(mother) }
-      
+
       def var(aName)
         LogVar.new(aName)
       end
@@ -21,15 +21,15 @@ module MiniKraken
         it 'could be initialized without argument' do
           expect { Scope.new }.not_to raise_error
         end
-        
+
         it 'could be initialized with a parent scope' do
           expect { Scope.new(mother) }.not_to raise_error
-        end        
+        end
 
         it "shouldn't have definitions by default" do
           expect(subject.defns).to be_empty
         end
-        
+
         it 'should know its parent (if any)' do
           expect(subject.parent).to eq(mother)
         end
@@ -65,7 +65,7 @@ module MiniKraken
           expect(subject.defns['c']).to be_kind_of(Core::LogVar)
           err = StandardError
           err_msg = "Variable with name 'c' already exists."
-          expect{ subject.insert(var('c'))}.to raise_error(err, err_msg)
+          expect { subject.insert(var('c')) }.to raise_error(err, err_msg)
         end
       end # context
     end # describe

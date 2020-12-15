@@ -15,10 +15,10 @@ module MiniKraken
         it 'should be initialized with a name and an arity' do
           expect { Relation.new('caro', Arity.new(2, 2)) }.not_to raise_error
         end
-        
+
         it 'should be initialized with a name and an integer' do
           expect { Relation.new('caro', 2) }.not_to raise_error
-        end        
+        end
 
         it 'should know its name' do
           expect(subject.name).to eq('caro')

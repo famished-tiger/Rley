@@ -30,13 +30,13 @@ module MiniKraken
           # Solver should quack like a Fiber
           dummy_arg = double('dummy-stuff')
           result = solver.resume(dummy_arg)
-          expect(result).to eq(ctx)          
+          expect(result).to eq(ctx)
           expect(result).to be_success
 
           # Only one "solution", next 'resume' call should return nil
           result = solver.resume(dummy_arg)
           expect(result).to be_nil
-        end       
+        end
       end # context
     end # describe
   end # module

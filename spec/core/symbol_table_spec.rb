@@ -47,7 +47,7 @@ module MiniKraken
 
         it 'should allow the addition of several labels for same env' do
           i_name = subject.insert(var('q'))
-          expect(i_name).to match /^q_[0-9a-z]+$/
+          expect(i_name).to match(/^q_[0-9a-z]+$/)
 
           expect { subject.insert(var('x')) }.not_to raise_error
           expect(subject.name2scopes['x']).to be_kind_of(Array)
@@ -62,7 +62,6 @@ module MiniKraken
           expect(subject.current_scope).to eq(new_scope)
           expect(subject.current_scope.parent).to eq(subject.root)
           expect(subject.name2scopes['q']).to eq([subject.root])
-
         end
 
         it 'should allow the addition of same name in different scopes' do
@@ -125,15 +124,15 @@ module MiniKraken
           # Search for redefined name
           expect(subject.lookup_i_name(i_name_q2)).to eq(curr_scope.defns['q'])
         end
-        
+
         it 'should list all the variables defined in all the szcope chain' do
           subject.insert(var('q'))
           subject.enter_scope(Core::Scope.new)
           subject.insert(var('x'))
-          subject.enter_scope(Core::Scope.new)          
+          subject.enter_scope(Core::Scope.new)
           subject.insert(var('y'))
-          subject.insert(var('x'))          
-          
+          subject.insert(var('x'))
+
           vars = subject.all_variables
           expect(vars.map(&:name)).to eq(%w[q x y x])
         end

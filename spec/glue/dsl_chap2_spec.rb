@@ -23,12 +23,12 @@ module MiniKraken
 
         # '(:grape :raisin :pear)'
         let(:fruits) { cons(:grape, cons(:raisin, cons(:pear))) }
-        
-        let(:uuid_pattern) do 
-          /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/
-        end        
 
-        it 'accepts caro definition inspired from frame 2:6' do        
+        let(:uuid_pattern) do
+          /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/
+        end
+
+        it 'accepts caro definition inspired from frame 2:6' do
           # Reasoned S2, frame 2:6
           # (defrel (caro p a)
           #   (fresh (d)
@@ -36,10 +36,10 @@ module MiniKraken
 
           # As 'p' has a special meaning in Ruby, the argument has been renamed to 'r'
           caro_rel = defrel('caro', %w[r a], fresh('d', unify(cons(a, d), r)))
-          
+
           # Check side-effect from DSL
           expect(instance_variable_get(:@defrels)['caro']).to eq(caro_rel)
-          
+
           # Check results of defrel
           expect(caro_rel).to be_kind_of(Rela::DefRelation)
           expect(caro_rel.name).to eq('caro')
@@ -47,24 +47,24 @@ module MiniKraken
           expect(caro_rel.formals[0]).to match(/^r_/)
           expect(caro_rel.formals[0]).to match(uuid_pattern)
           expect(caro_rel.formals[1]).to match(/^a_/)
-          expect(caro_rel.formals[1]).to match(uuid_pattern)            
+          expect(caro_rel.formals[1]).to match(uuid_pattern)
           g_template = caro_rel.expression
-          
+
           # Checking the 'fresh' part
           expect(g_template).to be_kind_of(Core::Goal)
           expect(g_template.relation).to be_kind_of(Rela::Fresh)
           expect(g_template.actuals[0]).to eq('d')
           fresh_2nd_actual = g_template.actuals[1]
-          
+
           # Checking the (== (cons a d) r) sub-expression
           expect(fresh_2nd_actual).to be_kind_of(Core::Goal)
           expect(fresh_2nd_actual.relation.name).to eq('unify')
           expect(fresh_2nd_actual.actuals[0]).to be_kind_of(Composite::ConsCell)
           expect(fresh_2nd_actual.actuals[0].to_s).to match(/^\(a_[-0-9a-f]+ \. d\)$/)
           expect(fresh_2nd_actual.actuals[1]).to be_kind_of(Core::LogVarRef)
-          expect(fresh_2nd_actual.actuals[1].name).to match(/^r_[-0-9a-f]+$/)          
+          expect(fresh_2nd_actual.actuals[1].name).to match(/^r_[-0-9a-f]+$/)
         end
-       
+
         # In Scheme:
         # (defrel (caro p a)
         #   (fresh (d)
@@ -91,7 +91,7 @@ module MiniKraken
           result = run_star('q', caro(acorn, :a))
           expect(result.car).to eq(:_0)
         end
-        
+
         # IT FAILS
         it 'passes frame 2:5' do
           defrel_caro
@@ -134,7 +134,7 @@ module MiniKraken
           expect(cdro_rel).to be_kind_of(Rela::DefRelation)
           expect(cdro_rel.name).to eq('cdro')
           expect(cdro_rel.arity).to eq(2)
-          expect(cdro_rel.formals[0]).to match(/^r_[-0-9a-f]+$/)    
+          expect(cdro_rel.formals[0]).to match(/^r_[-0-9a-f]+$/)
           expect(cdro_rel.formals[1]).to match(/^d_[-0-9a-f]+$/)
           g_template = cdro_rel.expression
           expect(g_template.relation).to be_kind_of(Rela::Fresh)
@@ -215,12 +215,11 @@ module MiniKraken
           #     (== 'a x))) ;; l => ('(a c o r n))
 
           result = run_star('l', fresh('x',
-            [(cdro(l, corn)), # WRONG l => a c o r n (side effect from other tests)
+            [cdro(l, corn), # WRONG l => a c o r n (side effect from other tests)
               caro(l, x),
-              unify(:a, x)
-            ]))
+              unify(:a, x)]))
           expect(result.to_s).to eq('((:a :c :o :r :n))')
-        end        
+        end
       end # context
     end # describe
   end # module

@@ -94,11 +94,11 @@ module MiniKraken
         it 'should replace itself when its variable has an atomic value' do
           x_ref = LogVarRef.new('x')
           substitutions = { 'q' => x_ref, 'x' => foo }
-          
+
           # The substitutions are chained
           result = subject.dup_cond(substitutions)
           expect(result).to be_kind_of(Atomic::KSymbol)
-          expect(result).to eq(:foo)          
+          expect(result).to eq(:foo)
         end
       end # context
     end # describe
