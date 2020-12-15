@@ -25,8 +25,7 @@ module MiniKraken
       # Convenience method to factor out repeated statements
       def solve(arg1, arg2)
         solver = subject.solver_for([arg1, arg2], ctx)
-        outcome = solver.resume
-        outcome
+        solver.resume
       end
 
       context 'Initialization:' do
@@ -72,7 +71,7 @@ module MiniKraken
            Core::Goal.new(Disj2.instance, [term1, term2])
         end
 
-        before(:each) { ctx.add_vars('q')  }
+        before(:each) { ctx.add_vars('q') }
 
         it 'should create a solver' do
           subgoal = unify(ref_x, ref_q)
@@ -80,8 +79,8 @@ module MiniKraken
           solver = subject.solver_for(fresh_goal.actuals, ctx)
           expect(solver.resume(ctx)).to be_success
           current_scope = ctx.symbol_table.current_scope
-          expect(current_scope.defns.include? 'x').to be_truthy
-          expect(current_scope.parent.defns.include? 'q').to be_truthy
+          expect(current_scope.defns.include?('x')).to be_truthy
+          expect(current_scope.parent.defns.include?('q')).to be_truthy
           fusion = ctx.blackboard.move_queue.last
           expect(fusion).to be_kind_of(Core::Fusion)
           expect(solver.resume(ctx)).to be_nil
@@ -95,9 +94,9 @@ module MiniKraken
           solver = subject.solver_for(fresh_goal.actuals, ctx)
           expect(solver.resume(ctx)).to be_success
           current_scope = ctx.symbol_table.current_scope
-          expect(current_scope.defns.include? 'y').to be_truthy
-          expect(current_scope.parent.defns.include? 'x').to be_truthy
-          expect(current_scope.parent.parent.defns.include? 'q').to be_truthy
+          expect(current_scope.defns.include?('y')).to be_truthy
+          expect(current_scope.parent.defns.include?('x')).to be_truthy
+          expect(current_scope.parent.parent.defns.include?('q')).to be_truthy
           fusion = ctx.blackboard.move_queue.last
           expect(fusion).to be_kind_of(Core::Fusion)
           expect(solver.resume(ctx)).to be_nil
@@ -128,13 +127,13 @@ module MiniKraken
           #     (== '(,x ,y soup) r)))
 
           subgoals = [disj2(
-              conj2(unify(split, ref_x), unify(pea, ref_y)),
-              conj2(unify(red, ref_x), unify(bean, ref_y))),
-              unify(cons(ref_x, cons(ref_y, cons(soup))), ref_r)]
-          goal = Fresh.build_goal(['x', 'y'], subgoals)
+            conj2(unify(split, ref_x), unify(pea, ref_y)),
+            conj2(unify(red, ref_x), unify(bean, ref_y))),
+            unify(cons(ref_x, cons(ref_y, cons(soup))), ref_r)]
+          goal = Fresh.build_goal(%w[x y], subgoals)
           expect(goal).to be_kind_of(Core::Goal)
           expect(goal.relation).to be_kind_of(Fresh)
-          expect(goal.actuals[0]).to eq(['x', 'y']) # local variable names
+          expect(goal.actuals[0]).to eq(%w[x y]) # local variable names
           expect(goal.actuals[1]).to be_kind_of(Core::Goal)
 
           # Check that the created Conj2 is correct

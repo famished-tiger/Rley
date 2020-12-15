@@ -24,8 +24,7 @@ module MiniKraken
       # Convenience method to factor out repeated statements
       def solve(arg1, arg2)
         solver = subject.solver_for([arg1, arg2], ctx)
-        outcome = solver.resume
-        outcome
+        solver.resume
       end
 
       context 'Initialization:' do
@@ -47,18 +46,18 @@ module MiniKraken
         let(:pea) { k_symbol(:pea) }
         let(:corn) { k_symbol(:corn) }
         let(:oil) { k_symbol(:oil) }
-        let(:olive) { k_symbol(:olive) }        
+        let(:olive) { k_symbol(:olive) }
         let(:meal) { k_symbol(:meal) }
         let(:fails) { Core::Goal.new(Core::Fail.instance, []) }
         let(:succeeds) { Core::Goal.new(Core::Succeed.instance, []) }
         let(:var_q) { var('q') }
         let(:ref_q) { Core::LogVarRef.new('q') }
-        
+
         def unify(term1, term2)
            Core::Goal.new(Unify.instance, [term1, term2])
         end
-        
-        before(:each) { ctx.add_vars('q')  }
+
+        before(:each) { ctx.add_vars('q') }
 
         it 'should complain when one of its argument is not a goal' do
           err = StandardError
@@ -112,7 +111,6 @@ module MiniKraken
           expect(outcome2.associations_for('q').first.value).to eq(oil)
           expect(solver.resume).to be_nil
         end
-      
       end # context
     end # describe
   end # module
