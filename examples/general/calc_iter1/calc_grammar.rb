@@ -18,9 +18,9 @@ builder = Rley::Syntax::GrammarBuilder.new do
   rule 'factor' => 'NUMBER'
   rule 'factor' => %w[LPAREN expression RPAREN]
   rule 'add_operator' => 'PLUS'
-  rule 'add_operator' => 'MINUS'  
+  rule 'add_operator' => 'MINUS'
   rule 'mul_operator' => 'STAR'
-  rule 'mul_operator' => 'DIVIDE'   
+  rule 'mul_operator' => 'DIVIDE'
 end
 
 # And now build the grammar...

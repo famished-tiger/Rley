@@ -9,12 +9,8 @@ module Rley # This module is used as a namespace
     # Responsibilities:
     # - To know the successor vertex
     class EpsilonEdge < Edge
-      # The destination vertex of the edge .
+      # The destination vertex of the edge.
       attr_reader :successor
-
-      def initialize(thePredecessor, theSuccessor)
-        super(thePredecessor, theSuccessor)
-      end
     end # class
   end # module
 end # module

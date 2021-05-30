@@ -13,10 +13,10 @@ module Rley # This module is used as a namespace
       # @return [Syntax::NonTerminal] Link to lhs symbol
       attr_reader(:symbol)
 
-      # @param aVertex [GFG::ItemVertex] 
-      #   A GFG vertex that corresponds to a dotted item 
+      # @param aVertex [GFG::ItemVertex]
+      #   A GFG vertex that corresponds to a dotted item
       #   with the dot at the end) for the alternative under consideration.
-      # @param aRange [Lexical::TokenRange] 
+      # @param aRange [Lexical::TokenRange]
       #   A range of token indices corresponding to this node.
       def initialize(aVertex, aRange)
         super(aRange)
@@ -28,14 +28,14 @@ module Rley # This module is used as a namespace
       # Mainly used for diagnosis/debugging purposes.
       # @return [String]
       def to_string(indentation)
-        return "Alt(#{label})#{range.to_string(indentation)}"
+        "Alt(#{label})#{range.to_string(indentation)}"
       end
-      
+
       # Part of the 'visitee' role in Visitor design pattern.
       # @param aVisitor[ParseTreeVisitor] the visitor
       def accept(aVisitor)
         aVisitor.visit_alternative(self)
-      end      
+      end
     end # class
   end # module
 end # module

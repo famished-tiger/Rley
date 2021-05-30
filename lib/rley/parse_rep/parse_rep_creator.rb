@@ -7,18 +7,18 @@ module Rley # This module is used as a namespace
     # Utility class that helps to create a representation of a parse from
     # a given Parsing object.
     class ParseRepCreator
-      # @return [Rley::Parser::GFGParsing] 
+      # @return [Rley::Parser::GFGParsing]
       #  Link to Parsing object (= results of recognizer)
       attr_reader(:parsing)
-      
+
       # Constructor. Creates and initialize a ParseRepCreator instance.
       # @return [ParseRepCreator]
       def initialize(aParsingResult)
         @parsing = aParsingResult
-      end      
-      
+      end
+
       # Factory method that produces the representation of the parse.
-      # @return [Rley::PTree::ParseTree, Rley::SPPF::ParseForest] 
+      # @return [Rley::PTree::ParseTree, Rley::SPPF::ParseForest]
       #   The parse representation.
       def create(aBuilder = nil)
         a_walker = walker(parsing)
@@ -38,14 +38,14 @@ module Rley # This module is used as a namespace
           end
           raise e
         end
-        
+
         a_builder.done!
 
-        return a_builder.result
+        a_builder.result
       end
-      
+
       private
-      
+
       # Create a Parsing walker, that is, an object
       # that will iterate over the relevant nodes (= parsing entries)
       # of a GFGParsing
@@ -58,13 +58,11 @@ module Rley # This module is used as a namespace
 
       # By default, when a end vertex is re-visited don't jump
       # its corresponding start vertex.
-      def jump_to_start()
+      def jump_to_start
         false
       end
-      
     end # class
   end # module
 end # module
 
-# End of file 
-   
+# End of file

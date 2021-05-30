@@ -13,26 +13,26 @@ require_relative 'shortcut_edge'
 module Rley # This module is used as a namespace
   module GFG # This module is used as a namespace
     # A Grammar Flow Graph (GFG) represents the parsing states of productions
-    # rules from a context-free grammar. This representation is based on a 
-    # directed graph structure. The parsing process can then be re-formulated 
+    # rules from a context-free grammar. This representation is based on a
+    # directed graph structure. The parsing process can then be re-formulated
     # as a path problem in the graph. The theory behind GFGs can be found in
     # papers. The first article on GFG can be found here:
     # https://apps.cs.utexas.edu/tech_reports/reports/tr/TR-2102.pdf
-    # There are three types of vertex in a GFG: 
+    # There are three types of vertex in a GFG:
     # start vertex, end vertex and item vertex.
     # For each non-terminal symbol N of the grammar, there is:
     # a start vertex with label '.N'
     # an end vertex with label 'N.'
     # For each production rule of the grammar:
     # N => s1 s2 s3 (...) sk
-    # I.e. a rule with k grammar symbols in its right-handed side. 
+    # I.e. a rule with k grammar symbols in its right-handed side.
     # For such a rule there will be k + 1 item vertices. By convention,
     # the first item vertex is labelled as 'N => . s1 s2 s3 (...) sk'
     # the second item vertex is labelled as 'N => s1 . s2 s3 (...) sk'
     # the third item vertex is labelled as 'N => s1 s2 . s3 (...) sk'
     # and so on. In other words, the labels are obtained by moving a dot
-    # in successive positions in the rhs. The dot represents the 
-    # parse progress for the production rule. Symbols on the left of the 
+    # in successive positions in the rhs. The dot represents the
+    # parse progress for the production rule. Symbols on the left of the
     # dot represent the symbols that were successfully matched in the input.
     # A GFG has three types of directed edges linking the vertices.
     # call edge, return edge and scan edge.
@@ -60,24 +60,24 @@ module Rley # This module is used as a namespace
 
         build_graph(theDottedItems)
       end
-      
-      # Returns a string containing a human-readable representation of the 
+
+      # Returns a string containing a human-readable representation of the
       # production.
       # @return [String]
-      def inspect()
+      def inspect
         result = +"#<#{self.class.name}:#{object_id}"
         result << ' @vertices=['
         list = vertices.map { |v| "#<#{v.selfie}>" }
         result << list.join(', ')
         result << '] '
         edges = []
-        vertices.each do |v| 
+        vertices.each do |v|
           edges << v.edges do |e|
             result << "#{v.object_id} #{e.inspect}"
           end
         end
         result << "edges=[#{edges.join(",\n ")}]>"
-        return result
+        result
       end
 
       # Retrieve the vertex with given vertex label.
@@ -92,7 +92,7 @@ module Rley # This module is used as a namespace
       # If one wants to remove useless rules, then do first:
       # elimination of non-generating symbols
       # then elimination of unreachable symbols
-      def diagnose()
+      def diagnose
         mark_unreachable_symbols
       end
 
@@ -121,6 +121,7 @@ module Rley # This module is used as a namespace
       # @param aStartVertex [StartVertex] the depth-first traversal begins
       #   from here
       # @param _visitAction [Proc] block called when a new graph vertex is found
+      # rubocop: disable Lint/Loop
       def traverse_df(aStartVertex, &_visitAction)
         visited = Set.new
         stack = []
@@ -129,13 +130,13 @@ module Rley # This module is used as a namespace
 
         begin
           # print_vertex( 'Traversing', visitee)
-          
+
           first_time = !visited.include?(visitee)
           if first_time
             yield(visitee)
             visited << visitee
-          end         
-                      
+          end
+
           case visitee
             when Rley::GFG::StartVertex
               if first_time
@@ -155,12 +156,12 @@ module Rley # This module is used as a namespace
               if stack.last.done?
                 popped = stack.pop
                 break if stack.empty?
-                
+
                 # puts "Popped!"
                 return_key = popped.in_edge.key.sub(/^CALL/, 'RET')
                 curr_edge = visitee.edges.find { |e| e.key == return_key }
               else
-                curr_edge = stack.last.next_edge          
+                curr_edge = stack.last.next_edge
               end
 
             else
@@ -173,6 +174,7 @@ module Rley # This module is used as a namespace
         last_one = end_vertex_for[aStartVertex.non_terminal]
         yield(last_one) unless visited.include?(last_one)
       end
+      # rubocop: enable Lint/Loop
 
       private
 
@@ -183,16 +185,16 @@ module Rley # This module is used as a namespace
         @start_vertex = aVertex if vertices.empty?
         vertices << aVertex
       end
-      
+
       # For debugging purposes
       def print_vertex(aText, aVertex)
-        print aText + ' '
+        print "#{aText} "
         if aVertex.kind_of?(NonTerminalVertex)
           puts "#{aVertex.class} #{aVertex.non_terminal.name}"
         else
           p(aVertex.label)
-        end       
-      end      
+        end
+      end
 
       def build_graph(theDottedItems)
         build_all_starts_ends(theDottedItems)
@@ -200,7 +202,7 @@ module Rley # This module is used as a namespace
         curr_prod = nil
         theDottedItems.each_with_index do |d_item, index_item|
           next unless curr_prod.nil? || curr_prod != d_item.production
-          
+
           # Another production found...
           curr_prod = d_item.production
           if curr_prod.empty?
@@ -268,6 +270,7 @@ module Rley # This module is used as a namespace
       #     add a shortcut edge:
       # ( N => α[1] .A  α[n] ) -> ( N => α[1] A.  α[n] )
       def augment_graph(theDottedItems, firstItemPos)
+        # rubocop: disable Lint/RedundantSafeNavigation
         production = theDottedItems[firstItemPos].production
         max_index = production.rhs.size + 1
         prev_vertex = nil
@@ -298,6 +301,7 @@ module Rley # This module is used as a namespace
           prev_vertex = new_vertex
         end
       end
+      # rubocop: enable Lint/RedundantSafeNavigation
 
       # Create an entry edge for the given vertex
       def build_entry_edge(theVertex)
@@ -359,7 +363,7 @@ module Rley # This module is used as a namespace
       # Mark non-terminal symbols that cannot be derived from the start symbol.
       # In a GFG, a non-terminal symbol N is unreachable if there is no path
       # from the start symbol to the start node .N
-      def mark_unreachable_symbols()
+      def mark_unreachable_symbols
         # Mark all non-terminals as unreachable
         start_vertex_for.each_value do |a_vertex|
           a_vertex.non_terminal.unreachable = true

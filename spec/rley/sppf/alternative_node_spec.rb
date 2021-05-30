@@ -19,7 +19,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
       def range(low, high)
         return Lexical::TokenRange.new(low: low, high: high)
       end
-      
+
       let(:t_a) { Syntax::Terminal.new('A') }
       let(:t_b) { Syntax::Terminal.new('B') }
       let(:t_c) { Syntax::Terminal.new('C') }
@@ -29,7 +29,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
       end
       let(:sample_item) { Base::DottedItem.new(sample_prod, 3) }
       let(:sample_vertex) { GFG::ItemVertex.new(sample_item) }
-      let(:sample_range) { range(0, 3) }      
+      let(:sample_range) { range(0, 3) }
 
       subject { AlternativeNode.new(sample_vertex, sample_range) }
 
@@ -37,9 +37,9 @@ module Rley # Open this namespace to avoid module qualifier prefixes
         it 'should be created with a item vertex and a token range' do
           expect { AlternativeNode.new(sample_vertex, sample_range) }
             .not_to raise_error
-        end      
+        end
       end
-      
+
       context 'Initialization:' do
         it 'should know its token range' do
           expect(subject.range).to eq(sample_range)
@@ -50,7 +50,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           expect(subject.subnodes).to be_empty
         end
       end # context
-      
+
       context 'Provided services:' do
         it 'should accept the addition of subnodes' do
           subnode1 = double('first_subnode')
@@ -63,7 +63,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
         end
 
 
-        it 'should have a string representation' do    
+        it 'should have a string representation' do
           expect(subject.to_string(0)).to eq('Alt(sentence => A B C .)[0, 3]')
         end
       end # context

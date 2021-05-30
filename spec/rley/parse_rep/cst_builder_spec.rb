@@ -71,8 +71,8 @@ module Rley # Open this namespace to avoid module qualifier prefixes
         end
       end # context
 
-      
-      
+
+
       context 'Parse tree construction (no null symbol):' do
         before(:each) do
           parser = Parser::GFGEarleyParser.new(sample_grammar)
@@ -119,7 +119,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
         # Event: revisit .S | 0 0
         # Event: visit P => . S | 0 0
         # Event: visit .P | 0 0
-        
+
         it 'should react to a first end event' do
           event = @walker.next
           expect { subject.receive_event(*event) }.not_to raise_error
@@ -428,10 +428,10 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           next_event('visit P => . arr | 0 0')
           expect(stack).to be_empty
           expect(@instance.result).not_to be_nil
-          
+
           next_event('visit .P | 0 0')
           expect(stack).to be_empty
-          expect(@instance.result).not_to be_nil          
+          expect(@instance.result).not_to be_nil
         end
       end # context
     end # describe

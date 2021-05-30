@@ -19,28 +19,28 @@ module Rley # Open this namespace to avoid module qualifier prefixes
         it 'should know its name' do
           expect(subject.name).to eq(sample_name)
         end
-        
+
         it 'should know that is a not a terminal' do
           expect(subject).not_to be_terminal
         end
       end # context
 
-        
-      context 'Provided services:' do    
+
+      context 'Provided services:' do
         it 'should know whether it is nullable' do
           expect(subject.nullable?).to be_nil
           subject.nullable = true
           expect(subject).to be_nullable
           subject.nullable = false
-          expect(subject).not_to be_nullable          
+          expect(subject).not_to be_nullable
         end
-        
+
         it 'should know whether it is defined' do
           expect(subject.undefined?).to be_nil
           subject.undefined = true
           expect(subject).to be_undefined
           subject.undefined = false
-          expect(subject).not_to be_undefined          
+          expect(subject).not_to be_undefined
         end
 
         it 'should know whether it is generative' do
@@ -48,8 +48,8 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           subject.generative = true
           expect(subject).to be_generative
           subject.generative = false
-          expect(subject).not_to be_generative          
-        end        
+          expect(subject).not_to be_generative
+        end
       end # context
     end # describe
   end # module

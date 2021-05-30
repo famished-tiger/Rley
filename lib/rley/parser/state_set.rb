@@ -11,7 +11,7 @@ module Rley # This module is used as a namespace
       # The set of parse states
       attr_reader(:states)
 
-      def initialize()
+      def initialize
         @states = []
       end
 
@@ -34,7 +34,7 @@ module Rley # This module is used as a namespace
       # @param aSymbol [GrmSymbol] the expected symbol
       #   (=on the right of the dot)
       def states_expecting(aSymbol)
-        return states.select { |s| s.dotted_rule.next_symbol == aSymbol }
+        states.select { |s| s.dotted_rule.next_symbol == aSymbol }
       end
 
       # The list of complete ParseState that have the given non-terminal
@@ -47,7 +47,7 @@ module Rley # This module is used as a namespace
 
       # The list of ParseState that involve the given production
       def states_for(aProduction)
-        return states.select { |s| s.dotted_rule.production == aProduction }
+        states.select { |s| s.dotted_rule.production == aProduction }
       end
 
       # Retrieve the parse state that is the predecessor of the given one.
@@ -55,23 +55,22 @@ module Rley # This module is used as a namespace
         dotted_rule = aPState.dotted_rule
         raise StandardError, aPState.to_s unless dotted_rule.prev_position
 
-        candidate = states.find { |s| s.precedes?(aPState) }
-        return candidate
+        states.find { |s| s.precedes?(aPState) }
       end
 
       # The list of distinct expected terminal symbols. An expected symbol
       # is on the left of a dot in a parse state of the parse set.
-      def expected_terminals()
+      def expected_terminals
         expecting_terminals = states.select do |s|
           s.dotted_rule.next_symbol.kind_of?(Rley::Syntax::Terminal)
         end
 
         terminals = expecting_terminals.map { |s| s.dotted_rule.next_symbol }
-        return terminals.uniq
+        terminals.uniq
       end
 
       # Return an Array of Arrays of ambiguous parse states.
-      def ambiguities()
+      def ambiguities
         complete_states = states.select(&:complete?)
         return [] if complete_states.size <= 1
 
@@ -86,14 +85,14 @@ module Rley # This module is used as a namespace
           ambiguous_groups << a_group if a_group.size > 1
         end
 
-        return ambiguous_groups
+        ambiguous_groups
       end
 
       private
 
       def include?(aState)
         # TODO: make it better than linear search
-        return states.include?(aState)
+        states.include?(aState)
       end
     end # class
   end # module

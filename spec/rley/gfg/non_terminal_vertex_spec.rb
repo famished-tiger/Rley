@@ -19,7 +19,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
         it 'should know its non-terminal' do
           expect(subject.non_terminal).to eq(sample_nt)
         end
-        
+
 
         it 'should accept at more than one outgoing edge' do
           edge1 = double('fake-edge1')
@@ -28,11 +28,11 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           expect { subject.add_edge(edge1) }.not_to raise_error
           expect(subject.edges.size).to eq(1)
           expect(subject.edges.last).to eq(edge1)
-          
+
           expect { subject.add_edge(edge2) }.not_to raise_error
           expect(subject.edges.size).to eq(2)
           expect(subject.edges.last).to eq(edge2)
-        end         
+        end
       end # context
     end # describe
   end # module

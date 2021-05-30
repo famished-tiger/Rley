@@ -9,17 +9,16 @@ module GrammarBExprHelper
   # Factory method. Creates a grammar builder for a basic arithmetic
   # expression grammar.
   # (based on the article about Earley's algorithm in Wikipedia)
-  def grammar_expr_builder()
-    builder = Rley::Syntax::GrammarBuilder.new do
+  def grammar_expr_builder
+    Rley::Syntax::GrammarBuilder.new do
       add_terminals('+', '*', 'integer')
       rule 'P' => 'S'
-      rule 'S' => %w[S + M]
+      rule 'S' => 'S + M'
       rule 'S' => 'M'
-      rule 'M' => %w[M * T]
+      rule 'M' => 'M * T'
       rule 'M' => 'T'
       rule 'T' => 'integer'
     end
-    builder
   end
 
   # Basic expression tokenizer

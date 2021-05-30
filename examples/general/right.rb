@@ -8,10 +8,10 @@ builder = Rley::Syntax::GrammarBuilder.new do
   # The grammar defines a language that consists in a sequence
   # of 0 or more dots...
   add_terminals('DOT')
-  
+
   # Grammar with right recursive rule.
   rule 'r_dots' => []
-  rule 'r_dots' => %w[DOT r_dots]  
+  rule 'r_dots' => %w[DOT r_dots]
 end
 
 # And now, let's build the grammar...

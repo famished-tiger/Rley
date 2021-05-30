@@ -12,13 +12,13 @@ describe 'Calculator' do
     engine = Rley::Engine.new do |cfg|
       cfg.repr_builder = CalcASTBuilder
     end
-    
+
     engine.use_grammar(CalcGrammar)
     raw_result = parse_expression(engine, anExpression)
     ast = engine.to_ptree(raw_result)
     return expect(ast.root.interpret)
   end
-  
+
   def parse_expression(anEngine, anExpression)
     lexer = CalcLexer.new(anExpression)
     result = anEngine.parse(lexer.tokens)
@@ -31,7 +31,7 @@ describe 'Calculator' do
     end
 
     return result
-  end  
+  end
 
   it 'should evaluate simple number literals' do
     expect_expr('2').to eq(2)
@@ -56,7 +56,7 @@ describe 'Calculator' do
   it 'should evaluate parentheses' do
     expect_expr('2 * (2.1 + 1)').to eq(6.2)
   end
-  
+
   it 'should evaluate regardless of whitespace' do
     expect_expr("2*(1+\t1)").to eq(4)
   end
@@ -67,6 +67,6 @@ describe 'Calculator' do
 
   it 'should evaluate multiple levels of parentheses' do
     expect_expr('2*(1/(1+3))').to eq(0.5)
-  end  
+  end
 end # describe
 # End of file

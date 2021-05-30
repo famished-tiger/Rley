@@ -94,11 +94,11 @@ module Rley # This module is used as a namespace
 
       private
 
-      def indent()
+      def indent
         @indentation += 1
       end
 
-      def dedent()
+      def dedent
         @indentation -= 1
       end
 

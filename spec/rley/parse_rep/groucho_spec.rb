@@ -25,41 +25,41 @@ module Rley # Open this namespace to avoid module qualifier prefixes
         builder = Rley::Syntax::GrammarBuilder.new do
           add_terminals('N', 'V', 'Pro')  # N(oun), V(erb), Pro(noun)
           add_terminals('Det', 'P')       # Det(erminer), P(reposition)
-          rule 'S' => %w[NP VP]
-          rule 'NP' => %w[Det N]
-          rule 'NP' => %w[Det N PP]
+          rule 'S' => 'NP VP'
+          rule 'NP' => 'Det N'
+          rule 'NP' => 'Det N PP'
           rule 'NP' => 'Pro'
-          rule 'VP' => %w[V NP]
-          rule 'VP' => %w[VP PP]
-          rule 'PP' => %w[P NP]
+          rule 'VP' => 'V NP'
+          rule 'VP' => 'VP PP'
+          rule 'PP' => 'P NP'
         end
         builder.grammar
       end
 
       # The lexicon is just a Hash with pairs of the form:
       # word => terminal symbol name
-      Groucho_lexicon = {
-        'elephant' => 'N',
-        'pajamas' => 'N',
-        'shot' => 'V',
-        'I' => 'Pro',
-        'an' => 'Det',
-        'my' => 'Det',
-        'in' => 'P'
-      }.freeze
+      let(:groucho_lexicon) do
+        {
+          'elephant' => 'N',
+          'pajamas' => 'N',
+          'shot' => 'V',
+          'I' => 'Pro',
+          'an' => 'Det',
+          'my' => 'Det',
+          'in' => 'P'
+        }
+      end
 
       # Highly simplified tokenizer implementation.
       def tokenizer(aText, aGrammar)
         pos = Rley::Lexical::Position.new(1, 2) # Dummy position
-        tokens = aText.scan(/\S+/).map do |word|
-          term = Groucho_lexicon[word]
+        aText.scan(/\S+/).map do |word|
+          term = groucho_lexicon[word]
           raise StandardError, "Word '#{word}' not found in lexicon" if term.nil?
 
           terminal = aGrammar.name2symbol[term]
           Rley::Lexical::Token.new(word, terminal, pos)
         end
-
-        return tokens
       end
 
       let(:sentence_tokens) do
@@ -73,11 +73,11 @@ module Rley # Open this namespace to avoid module qualifier prefixes
       end
 
       # Emit a text representation of the current path.
-      def path_to_s()
+      def path_to_s
         text_parts = subject.curr_path.map do |path_element|
           path_element.to_string(0)
         end
-        return text_parts.join('/')
+        text_parts.join('/')
       end
 
       def next_event(eventType, anEntryText)

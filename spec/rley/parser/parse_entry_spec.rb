@@ -52,7 +52,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
         it 'should know the origin value' do
           expect(subject.origin).to eq(origin_val)
         end
-        
+
         it 'should have not antecedent at creation' do
           expect(subject.antecedents).to be_empty
           expect(subject).to be_orphan
@@ -91,13 +91,13 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           instance = ParseEntry.new(GFG::EndVertex.new('NT.'), 3)
           expect(instance).to be_end_entry
         end
-        
+
         it 'should know if the entry is a dotted item vertex' do
           expect(subject).not_to be_dotted_entry
 
           instance = ParseEntry.new(GFG::ItemVertex.new('P => S.'), 3)
           expect(instance).to be_dotted_entry
-        end             
+        end
 
         it 'should know if the vertex is at end of production (if any)' do
           # Case: start vertex
@@ -120,7 +120,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           instance4 = ParseEntry.new(v2, 3)
           expect(instance4).to be_exit_entry
         end
-        
+
         it 'should know if the vertex is at begin of production (if any)' do
           # Case: start vertex
           instance1 = ParseEntry.new(GFG::StartVertex.new('.NT'), 3)
@@ -131,17 +131,17 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           expect(instance2).not_to be_entry_entry
 
           # Case: item vertex not at begin of rhs
-          d1 = Base::DottedItem.new(sample_prod, 1)          
+          d1 = Base::DottedItem.new(sample_prod, 1)
           v1 = GFG::ItemVertex.new(d1)
           instance3 = ParseEntry.new(v1, 3)
           expect(instance3).not_to be_entry_entry
 
           # Case: item vertex at end of rhs
-          d2 = Base::DottedItem.new(sample_prod, 0)          
-          v2 = GFG::ItemVertex.new(d2)          
+          d2 = Base::DottedItem.new(sample_prod, 0)
+          v2 = GFG::ItemVertex.new(d2)
           instance4 = ParseEntry.new(v2, 3)
           expect(instance4).to be_entry_entry
-        end 
+        end
 
         it 'should know the symbol before the dot (if any)' do
           # Case: start vertex
@@ -151,20 +151,20 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           # Case: end vertex
           instance2 = ParseEntry.new(GFG::EndVertex.new('NT.'), 3)
           expect(instance2.prev_symbol).to be_nil # Really correct?
-          
+
           # Case: item vertex not at start of rhs
           v1 = double('vertex-not-at-start')
           expect(v1).to receive(:prev_symbol).and_return('symbol')
           instance3 = ParseEntry.new(v1, 3)
-          expect(instance3.prev_symbol).to eq('symbol') 
+          expect(instance3.prev_symbol).to eq('symbol')
 
           # Case: item vertex at start of rhs
           v2 = double('vertex-at-start')
           expect(v2).to receive(:prev_symbol).and_return(nil)
           instance4 = ParseEntry.new(v2, 0)
-          expect(instance4.prev_symbol).to be_nil          
+          expect(instance4.prev_symbol).to be_nil
         end
-        
+
         it 'should know the next expected symbol (if any)' do
           # Case: start vertex
           instance1 = ParseEntry.new(GFG::StartVertex.new('.NT'), 3)
@@ -173,19 +173,19 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           # Case: end vertex
           instance2 = ParseEntry.new(GFG::EndVertex.new('NT.'), 3)
           expect(instance2.next_symbol).to be_nil
-          
+
           # Case: item vertex not at end of rhs
           v1 = double('vertex-not-at-end')
           expect(v1).to receive(:next_symbol).and_return('symbol')
           instance3 = ParseEntry.new(v1, 3)
-          expect(instance3.next_symbol).to eq('symbol') 
+          expect(instance3.next_symbol).to eq('symbol')
 
           # Case: item vertex at end of rhs
           v2 = double('vertex-at-end')
           expect(v2).to receive(:next_symbol).and_return(nil)
           instance4 = ParseEntry.new(v2, 3)
-          expect(instance4.next_symbol).to be_nil          
-        end  
+          expect(instance4.next_symbol).to be_nil
+        end
 
         it 'should accept antecedents' do
           antecedent = ParseEntry.new(vertex2, origin_val)
@@ -198,7 +198,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           expected = '.sentence | 3'
           expect(subject.to_s).to eq(expected)
         end
-        
+
         it 'should be inspectable' do
           subject.add_antecedent(subject) # Cheat for the good cause...
           # expected = '.sentence | 3'
@@ -209,8 +209,8 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           pattern2 = /@origin=3 @antecedents=\[/
           expect(subject.inspect).to match(pattern2)
           suffix = /<Rley::GFG::StartVertex:\d+ label=\.sentence> @origin=3\]>$/
-          expect(subject.inspect).to match(suffix)          
-        end        
+          expect(subject.inspect).to match(suffix)
+        end
       end # context
     end # describe
   end # module

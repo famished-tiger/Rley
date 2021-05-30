@@ -14,18 +14,18 @@ module Rley # This module is used as a namespace
       # @param theSuccessor [Vertex]
       def initialize(thePredecessor, theSuccessor)
         @successor = theSuccessor
-        thePredecessor.add_edge(self)
+        thePredecessor&.add_edge(self)
       end
 
       # @return [String]
-      def to_s()
+      def to_s
         " --> #{successor.label}"
       end
-      
-      # Returns a string containing a human-readable representation of the 
+
+      # Returns a string containing a human-readable representation of the
       # production.
       # @return [String]
-      def inspect()
+      def inspect
         to_s
       end
     end # class

@@ -18,26 +18,24 @@ module Rley # This module is used as a namespace
       def ==(other)
         return true if equal?(other)
 
-        result = (dotted_rule == other.dotted_rule) &&
-                 (origin == other.origin)
-
-        return result
+        (dotted_rule == other.dotted_rule) &&
+          (origin == other.origin)
       end
 
       # Returns true if the dot is at the end of the rhs of the production.
       # In other words, the complete rhs matches the input.
-      def complete?()
-        return dotted_rule.reduce_item?
+      def complete?
+        dotted_rule.reduce_item?
       end
 
       # Returns true if the dot is at the start of the rhs of the production.
-      def predicted?()
-        return dotted_rule.predicted_item?
+      def predicted?
+        dotted_rule.predicted_item?
       end
 
       # Next expected symbol in the production
-      def next_symbol()
-        return dotted_rule.next_symbol
+      def next_symbol
+        dotted_rule.next_symbol
       end
 
       # Does this parse state have the 'other' as successor?
@@ -50,23 +48,20 @@ module Rley # This module is used as a namespace
         return false unless dotted_rule.production == other_production
 
         prev_position = other.dotted_rule.prev_position
-        result = if prev_position.nil?
-                   false
-                 else
-                   dotted_rule.position == prev_position
-                 end
-
-        return result
+        if prev_position.nil?
+          false
+        else
+          dotted_rule.position == prev_position
+        end
       end
 
       # Give a String representation of itself.
       # The format of the text representation is
       # "format of dotted rule" + " | " + origin
       # @return [String]
-      def to_s()
-        return dotted_rule.to_s + " | #{origin}"
+      def to_s
+        dotted_rule.to_s + " | #{origin}"
       end
-
 
       private
 
@@ -74,7 +69,7 @@ module Rley # This module is used as a namespace
       def valid_dotted_rule(aDottedRule)
         raise StandardError, 'Dotted item cannot be nil' if aDottedRule.nil?
 
-        return aDottedRule
+        aDottedRule
       end
     end # class
   end # module

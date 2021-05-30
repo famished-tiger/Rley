@@ -20,14 +20,14 @@ module Rley # This module is used as a namespace
       #   Returned hash contains pairs of the form:
       #   terminal name => Class implementing the terminal tokens
       #   terminal name => Hash with pairs: production name => Class
-      def terminal2node()
+      def terminal2node
         raise NotImplementedError
       end
 
       # Method to override in subclass.
       # Default class for representing terminal nodes.
       # @return [Class]
-      def terminalnode_class()
+      def terminalnode_class
         PTree::TerminalNode
       end
 
@@ -37,7 +37,7 @@ module Rley # This module is used as a namespace
       # @param aProductionName [String]
       # @return [String]
       def method_name(aProductionName)
-        return 'reduce_' + aProductionName
+        "reduce_#{aProductionName}"
       end
 
       # Utility method.
@@ -46,7 +46,7 @@ module Rley # This module is used as a namespace
       # @param _tokens [Array<Lexical::Token>]
       # @param theChildren [Array<Object>]
       def return_first_child(_range, _tokens, theChildren)
-        return theChildren[0]
+        theChildren[0]
       end
 
       # Utility method.
@@ -55,7 +55,7 @@ module Rley # This module is used as a namespace
       # @param _tokens [Array<Lexical::Token>]
       # @param theChildren [Array<Object>]
       def return_second_child(_range, _tokens, theChildren)
-        return theChildren[1]
+        theChildren[1]
       end
 
       # Utility method.
@@ -64,7 +64,7 @@ module Rley # This module is used as a namespace
       # @param _tokens [Array<Lexical::Token>]
       # @param theChildren [Array<Object>]
       def return_last_child(_range, _tokens, theChildren)
-        return theChildren[-1]
+        theChildren[-1]
       end
 
       # Simply return an epsilon symbol
@@ -72,7 +72,7 @@ module Rley # This module is used as a namespace
       # @param _tokens [Array<Lexical::Token>]
       # @param _children [Array<Object>]
       def return_epsilon(_range, _tokens, _children)
-        return nil
+        nil
       end
 
       protected
@@ -81,7 +81,7 @@ module Rley # This module is used as a namespace
       # Create a parse tree object with given
       # node as root node.
       def create_tree(aRootNode)
-        return Rley::PTree::ParseTree.new(aRootNode)
+        Rley::PTree::ParseTree.new(aRootNode)
       end
 
       # Factory method for creating a node object for the given
@@ -96,9 +96,7 @@ module Rley # This module is used as a namespace
           # Lexical ambiguity...
           klass = klass.fetch(aProduction.name)
         end
-        node = klass.new(aToken, aTokenPosition)
-
-        return node
+        klass.new(aToken, aTokenPosition)
       end
 
       # Method to override.

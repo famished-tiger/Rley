@@ -73,10 +73,10 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           # Case: dot is after first symbol
           instance1 = ItemVertex.new(sample_item)
           expect(instance1.prev_symbol).to eq(t_a)
-          
+
           # Case: dot is after second or later symbol
           instance2 = ItemVertex.new(next_item)
-          expect(instance2.prev_symbol).to eq(nt_b_sequence)          
+          expect(instance2.prev_symbol).to eq(nt_b_sequence)
 
           # Case: dot is at begin
           instance3 = ItemVertex.new(Base::DottedItem.new(sample_prod, 0))
@@ -86,8 +86,8 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           instance4 = ItemVertex.new(Base::DottedItem.new(empty_prod, 0))
           expect(instance4.prev_symbol).to be_nil
         end
-        
-        
+
+
         it 'should know the next symbol (if any) in the rhs' do
           # Case: dot is not penultimate
           expect(subject.next_symbol).to eq(nt_b_sequence)
@@ -112,21 +112,21 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           shortcut = ShortcutEdge.new(subject, next_vertex)
           expect(subject.shortcut).to eq(shortcut)
         end
-        
+
         it 'should reject an invalid shortcut edge' do
           err = StandardError
           err_msg = 'Invalid shortcut argument'
           expect { subject.shortcut = 'invalid' }.to raise_error(err, err_msg)
-        end        
+        end
       end # context
 
       context 'Provided services:' do
         it 'should provide human-readable representation of itself' do
-          prefix = /^#<Rley::GFG::ItemVertex:\d+/           
+          prefix = /^#<Rley::GFG::ItemVertex:\d+/
           expect(subject.inspect).to match(prefix)
-          suffix = /label="sentence => a \. b_sequence c">$/        
-          expect(subject.inspect).to match(suffix)            
-        end        
+          suffix = /label="sentence => a \. b_sequence c">$/
+          expect(subject.inspect).to match(suffix)
+        end
       end # context
     end # describe
   end # module

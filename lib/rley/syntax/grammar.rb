@@ -48,13 +48,13 @@ module Rley # This module is used as a namespace
       end
 
       # @return [Array] The list of non-terminals in the grammar.
-      def non_terminals()
+      def non_terminals
         @non_terminals ||= symbols.select { |s| s.kind_of?(NonTerminal) }
       end
 
       # @return [Production] The start production of the grammar (i.e.
       #   the rule that specifies the syntax for the start symbol.
-      def start_production()
+      def start_production
         return rules[0]
       end
 
@@ -99,7 +99,7 @@ module Rley # This module is used as a namespace
       end
 
       # Perform some check of the grammar.
-      def diagnose()
+      def diagnose
         mark_undefined
         mark_generative
         compute_nullable
@@ -193,7 +193,7 @@ module Rley # This module is used as a namespace
 
       # For each non-terminal determine whether it is nullable or not.
       # A nullable nonterminal is a nonterminal that can match an empty string.
-      def compute_nullable()
+      def compute_nullable
         non_terminals.each { |nterm| nterm.nullable = false }
         nullable_sets = [direct_nullable]
 
@@ -236,7 +236,7 @@ module Rley # This module is used as a namespace
           nullables << prod.lhs
         end
 
-        return nullables
+        nullables
       end
 
       # For each prodction determine whether it is nullable or not.

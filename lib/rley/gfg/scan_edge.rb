@@ -17,7 +17,7 @@ module Rley # This module is used as a namespace
         @terminal = aTerminal
       end
 
-      def to_s()
+      def to_s
         " -#{terminal}-> #{successor.label}"
       end
     end # class

@@ -28,19 +28,19 @@ class JSONLexer
     @line_start = 0
   end
 
-  def tokens()
+  def tokens
     tok_sequence = []
     until @scanner.eos?
       token = _next_token
       tok_sequence << token unless token.nil?
     end
 
-    return tok_sequence
+    tok_sequence
   end
 
   private
 
-  def _next_token()
+  def _next_token
     token = nil
     skip_whitespaces
     curr_ch = scanner.getch # curr_ch is at start of token or eof reached...
@@ -58,7 +58,7 @@ class JSONLexer
           keyw = scanner.scan(/false|true|null/)
           if keyw.nil?
             invalid_keyw = scanner.scan(/\w+/)
-            raise ScanError.new("Invalid keyword: #{invalid_keyw}")
+            raise ScanError, "Invalid keyword: #{invalid_keyw}"
           else
             token = build_token(keyw, keyw)
           end
@@ -68,7 +68,7 @@ class JSONLexer
           value = scanner.scan(/([^"\\]|\\.)*/)
           end_delimiter = scanner.getch
           err_msg = 'No closing quotes (") found'
-          raise ScanError.new(err_msg) if end_delimiter.nil?
+          raise ScanError, err_msg if end_delimiter.nil?
 
           token = build_token(value, 'string')
 
@@ -81,12 +81,12 @@ class JSONLexer
           erroneous = curr_ch.nil? ? '' : curr_ch
           sequel = scanner.scan(/.{1,20}/)
           erroneous += sequel unless sequel.nil?
-          raise ScanError.new("Unknown token #{erroneous}")
+          raise ScanError, "Unknown token #{erroneous}"
       end # case
       break unless token.nil? && (curr_ch = scanner.getch)
     end
 
-    return token
+    token
   end
 
   def build_token(lexeme, token)
@@ -94,7 +94,7 @@ class JSONLexer
     Rley::Lexical::Token.new(lexeme, token, pos)
   end
 
-  def skip_whitespaces()
+  def skip_whitespaces
     matched = scanner.scan(/[ \t\f\n\r]+/)
     return if matched.nil?
 

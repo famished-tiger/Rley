@@ -37,7 +37,7 @@ module Rley # This module is used as a namespace
     end
 
     # The signal to begin the visit of the parse tree.
-    def start()
+    def start
       ptree.accept(self)
     end
 

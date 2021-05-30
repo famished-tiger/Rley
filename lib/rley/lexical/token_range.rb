@@ -2,13 +2,13 @@
 
 module Rley # This module is used as a namespace
   module Lexical # This module is used as a namespace
-    # A token range (also called an extent) represents an interval 
+    # A token range (also called an extent) represents an interval
     # of token positions that is matched by a given grammar symbol.
     # For instance consider the expression E: 3 + 11,
     # let's assume that the integer literal '3' is the fifth input token and
     # that the '+' and '11' tokens are respectively at position 6 and 7;
     # then the token range associated with E is [5, 7]
-    # While the parse tree/forest is being constructed the boundaries of the 
+    # While the parse tree/forest is being constructed the boundaries of the
     # token range can be temporarily undefined (= set to nil)
     class TokenRange
       # The index of the lower bound of token range
@@ -47,8 +47,8 @@ module Rley # This module is used as a namespace
       end
 
       # true when both bounds aren't nil.
-      def bounded?()
-        return !(low.nil? || high.nil?)
+      def bounded?
+        !(low.nil? || high.nil?)
       end
 
       # Conditional assign
@@ -73,8 +73,8 @@ module Rley # This module is used as a namespace
       def to_string(_indentation)
         low_text = low.nil? ? '?' : low.to_s
         high_text = high.nil? ? '?' : high.to_s
-        
-        return "[#{low_text}, #{high_text}]"
+
+        "[#{low_text}, #{high_text}]"
       end
 
       private

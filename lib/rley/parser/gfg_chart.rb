@@ -16,32 +16,30 @@ module Rley # This module is used as a namespace
 
       # @param aGFGraph [GFG::GrmFlowGraph] The GFG for the grammar in use.
       def initialize(aGFGraph)
-        @sets = [ ParseEntrySet.new ]
+        @sets = [ParseEntrySet.new]
         push_entry(aGFGraph.start_vertex, 0, 0, :start_rule)
       end
 
       # @return [Syntax::NonTerminal] the start symbol of the grammar.
-      def start_symbol()
-        return sets.first.entries[0].vertex.non_terminal
+      def start_symbol
+        sets.first.entries[0].vertex.non_terminal
       end
 
       # @param index [Integer]
       # @return [ParseEntrySet] Access the entry set at given position.
       def [](index)
-        return sets[index]
+        sets[index]
       end
 
       # Return the index value of the last non-empty entry set.
       # @return [Integer]
-      def last_index()
+      def last_index
         first_empty = sets.find_index(&:empty?)
-        index = if first_empty.nil?
-                  sets.size - 1
-                else
-                  first_empty.zero? ? 0 : first_empty - 1
-                end
-
-        return index
+        if first_empty.nil?
+          sets.size - 1
+        else
+          first_empty.zero? ? 0 : first_empty - 1
+        end
       end
 
       # Push a parse entry for the chart entry with given index
@@ -60,20 +58,18 @@ module Rley # This module is used as a namespace
 
           add_entry_set
         end
-        pushed = self[anIndex].push_entry(new_entry)
-
-        return pushed
+        self[anIndex].push_entry(new_entry)
       end
 
       # Retrieve the first parse entry added to this chart
       # @return [ParseEntry]
-      def initial_entry()
-        return sets[0].first
+      def initial_entry
+        sets[0].first
       end
 
       # Retrieve the entry that corresponds to a complete and successful parse
       # @return [ParseEntry]
-      def accepting_entry()
+      def accepting_entry
         # Success can be detected as follows:
         # The last chart entry set has at least one complete parse entry
         # for the start symbol with an origin == 0
@@ -95,7 +91,7 @@ module Rley # This module is used as a namespace
 
         success_entries.first
       end
-      
+
       # @return [Integer] The number of states.
       def count_states
         sets.size
@@ -103,6 +99,7 @@ module Rley # This module is used as a namespace
 
       # @return [Integer] The total number of entries.
       def count_entries
+        # rubocop: disable Lint/UselessAssignment
         sets.reduce(0) do |sub_result, a_set|
           sub_result += a_set.size
         end
@@ -114,6 +111,7 @@ module Rley # This module is used as a namespace
           sub_result += a_set.count_edges
         end
       end
+      # rubocop: enable Lint/UselessAssignment
 
       # @ return [String] A human-readable representation of the chart.
       def to_s
@@ -121,16 +119,16 @@ module Rley # This module is used as a namespace
         sets.each_with_index do |a_set, i|
           result << "State[#{i}]\n"
           a_set.entries.each do |item|
-            result << '  ' + item.to_s + "\n"
+            result << "  #{item}\n"
           end
         end
-        
+
         result
       end
 
       private
 
-      def add_entry_set()
+      def add_entry_set
          @sets << ParseEntrySet.new
       end
     end # class

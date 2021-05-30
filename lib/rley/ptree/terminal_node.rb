@@ -9,10 +9,10 @@ module Rley # This module is used as a namespace
       attr_reader(:token)
 
       # @param aToken [Lexical::Token] Input Token object
-      # @param aPos [Integer] position of the token in the input stream.      
+      # @param aPos [Integer] position of the token in the input stream.
       def initialize(aToken, aPos)
-        # (major, minor) =  
-        
+        # (major, minor) =
+
         # Use '1.class' trick to support both Integer and Fixnum classes
         range = aPos.kind_of?(1.class) ? { low: aPos, high: aPos + 1 } : aPos
         super(aToken.terminal, range)
@@ -24,18 +24,18 @@ module Rley # This module is used as a namespace
       def to_string(indentation)
         return super + ": '#{token.lexeme}'"
       end
-      
+
       # Emit a short string representation of the node.
       # Mainly used for diagnosis/debugging purposes.
-      def to_s()
+      def to_s
         return super + ": '#{token.lexeme}'"
-      end      
+      end
 
       # Part of the 'visitee' role in Visitor design pattern.
       # @param aVisitor[ParseTreeVisitor] the visitor
       def accept(aVisitor)
         aVisitor.visit_terminal(self)
-      end      
+      end
     end # class
   end # module
 end # module

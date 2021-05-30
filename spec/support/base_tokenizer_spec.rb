@@ -25,6 +25,8 @@ describe BaseTokenizer do
 
 
   context 'Provided services:' do
+    # Simplistic tokenizer.
+    # rubocop: disable Lint/ConstantDefinitionInBlock
     class PB_Tokenizer < BaseTokenizer
       @@lexeme2name = {
         '(' => 'LPAREN',
@@ -34,8 +36,9 @@ describe BaseTokenizer do
 
       protected
 
-      def recognize_token()
-        if (lexeme = scanner.scan(/[\(\)]/)) # Single characters
+      # rubocop: disable Lint/DuplicateBranch
+      def recognize_token
+        if (lexeme = scanner.scan(/[()]/)) # Single characters
           # Delimiters, separators => single character token
           build_token(@@lexeme2name[lexeme], lexeme)
         elsif (lexeme = scanner.scan(/(?:\+)(?=\s)/)) # Isolated char
@@ -44,7 +47,9 @@ describe BaseTokenizer do
           build_token('int', lexeme)
         end
       end
+      # rubocop: enable Lint/DuplicateBranch
     end # class
+    # rubocop: enable Lint/ConstantDefinitionInBlock
 
     # Basic tokenizer
     # @return [Array<Rley::Lexical::Token>]

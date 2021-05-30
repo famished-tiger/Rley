@@ -35,7 +35,7 @@ class JSONMinifier
     lexeme = aTerm.token.lexeme
     literal = if aTerm.symbol.name == 'string'
                 # String values are delimited by double quotes
-                '"' + lexeme + '"'
+                "\"#{lexeme}\""
               else
                 lexeme
               end

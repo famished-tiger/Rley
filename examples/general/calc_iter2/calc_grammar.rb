@@ -9,7 +9,7 @@ builder = Rley::Syntax::GrammarBuilder.new do
   add_terminals('NUMBER')
   add_terminals('PLUS', 'MINUS') # For '+', '-' operators or sign
   add_terminals('STAR', 'DIVIDE', 'POWER') # For '*', '/', '**' operators
-  add_terminals('LPAREN', 'RPAREN') # For '(', ')' delimiters  
+  add_terminals('LPAREN', 'RPAREN') # For '(', ')' delimiters
   add_terminals('PI', 'E') # For numeric constants
   add_terminals('RESERVED') # Reserved identifiers
 
@@ -23,13 +23,13 @@ builder = Rley::Syntax::GrammarBuilder.new do
   rule 'simple_factor' => %w[sign scalar]
   rule 'simple_factor' => %w[unary_function in_parenthesis]
   rule 'simple_factor' => %w[MINUS in_parenthesis]
-  rule 'simple_factor' => 'in_parenthesis'  
+  rule 'simple_factor' => 'in_parenthesis'
   rule 'sign' => 'PLUS'
   rule 'sign' => 'MINUS'
   rule 'sign' => []
   rule 'scalar' => 'NUMBER'
   rule 'scalar' => 'PI'
-  rule 'scalar' => 'E'  
+  rule 'scalar' => 'E'
   rule 'unary_function' => 'RESERVED'
   rule 'in_parenthesis' => %w[LPAREN expression RPAREN]
   rule 'add_operator' => 'PLUS'

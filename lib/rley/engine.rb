@@ -15,15 +15,14 @@ module Rley # This module is used as a namespace
     #   @return [Symbol] allowed values are: :parse_tree, :parse_forest
     :parse_repr,
     :repr_builder,
-    :diagnose
-  ) do
-    # Constructor with default initialization.
-    def initialize()
-      super()
-      self.parse_repr = :parse_tree
-      self.repr_builder = :default
-      self.diagnose = false
-    end
+    :diagnose) do
+      # Constructor with default initialization.
+      def initialize
+        super()
+        self.parse_repr = :parse_tree
+        self.repr_builder = :default
+        self.diagnose = false
+      end
   end
 
   # Implementation of the GoF Facade design pattern.
@@ -43,7 +42,7 @@ module Rley # This module is used as a namespace
     #   Engine.new do |config|
     #     config.parse_repr = :parse_forest
     #   end
-    def initialize()
+    def initialize
       @configuration = EngineConfig.new
       yield configuration if block_given?
     end
@@ -91,7 +90,7 @@ module Rley # This module is used as a namespace
       result = parser.parse(tokens)
       result.tidy_up!
 
-      return result
+      result
     end
 
     # Convert raw parse result into a more convenient representation
@@ -99,14 +98,12 @@ module Rley # This module is used as a namespace
     # @param aRawParse [Parser::GFGParsing]
     # @return [Rley::PTree::ParseTree, Rley::SPPF::ParseForest]
     def convert(aRawParse)
-      result = case configuration.parse_repr
-                 when :parse_tree
-                   to_ptree(aRawParse)
-                 when :parse_forest
-                   to_pforest(aRawParse)
-               end
-
-      return result
+      case configuration.parse_repr
+        when :parse_tree
+          to_ptree(aRawParse)
+        when :parse_forest
+          to_pforest(aRawParse)
+      end
     end
 
     # Convert raw parse result into a parse tree representation
@@ -120,7 +117,7 @@ module Rley # This module is used as a namespace
         result = factory.create(configuration.repr_builder)
       end
 
-      return result
+      result
     end
 
     # Convert raw parse result into a parse forest representation
@@ -134,7 +131,7 @@ module Rley # This module is used as a namespace
         result = factory.create(configuration.repr_builder)
       end
 
-      return result
+      result
     end
 
     # Build a visitor for the given parse tree
@@ -148,13 +145,13 @@ module Rley # This module is used as a namespace
     # @param aPForest [SPPF::ParseForest]
     # @return [ParseForestVisitor]
     def pforest_visitor(aPForest)
-      return ParseForestVisitor.new(aPForest)
+      ParseForestVisitor.new(aPForest)
     end
 
     protected
 
     def build_parser(aGrammar)
-      return Parser::GFGEarleyParser.new(aGrammar)
+      Parser::GFGEarleyParser.new(aGrammar)
     end
   end # class
 end # module

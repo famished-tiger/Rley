@@ -28,7 +28,7 @@ class CalcLexer
     @lineno = 1
   end
 
-  def tokens()
+  def tokens
     tok_sequence = []
     until @scanner.eos?
       token = _next_token
@@ -40,7 +40,8 @@ class CalcLexer
 
   private
 
-  def _next_token()
+  # rubocop: disable Lint/DuplicateBranch
+  def _next_token
     skip_whitespaces
     curr_ch = scanner.peek(1)
     return nil if curr_ch.nil?
@@ -63,18 +64,19 @@ class CalcLexer
       erroneous = curr_ch.nil? ? '' : curr_ch
       sequel = scanner.scan(/.{1,20}/)
       erroneous += sequel unless sequel.nil?
-      raise ScanError.new("Unknown token #{erroneous}")
+      raise ScanError, "Unknown token #{erroneous}"
     end
 
     return token
   end
+  # rubocop: enable Lint/DuplicateBranch
 
   def build_token(aSymbolName, aLexeme)
     pos = Rley::Lexical::Position.new(1, scanner.pos)
     return Rley::Lexical::Token.new(aLexeme, aSymbolName, pos)
   end
 
-  def skip_whitespaces()
+  def skip_whitespaces
     scanner.scan(/[ \t\f\n\r]+/)
   end
 end # class

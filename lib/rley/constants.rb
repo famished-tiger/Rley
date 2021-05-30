@@ -5,7 +5,7 @@
 
 module Rley # Module used as a namespace
   # The version number of the gem.
-  Version = '0.7.07'
+  Version = '0.7.08'
 
   # Brief description of the gem.
   Description = "Ruby implementation of the Earley's parsing algorithm"
@@ -20,7 +20,7 @@ module Rley # Module used as a namespace
     RootDir = begin
       require 'pathname' # Load Pathname class from standard library
       startdir = Pathname(__FILE__).dirname.parent.parent.expand_path
-      startdir.to_s + '/' # Append trailing slash character to it
+      "#{startdir}/" # Append trailing slash character to it
     end
   end
 end # module

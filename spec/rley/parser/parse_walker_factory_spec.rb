@@ -303,7 +303,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           event18 = walker.next
           expectations = [:revisit, 'T. | 1', 4]
           event_expectations(event18, expectations)
-          
+
           # Lazy walk: make start entry .T the current one
           # Multiple visit occurred: jump to antecedent of start entry
           event19 = walker.next

@@ -30,7 +30,6 @@ def pkg_files(aPackage)
     '.rspec',
     '.ruby-gemset',
     '.ruby-version',
-    '.simplecov',
     '.travis.yml',
     '.yardopts',
     'appveyor.yml',
@@ -61,13 +60,11 @@ RLEY_GEMSPEC = Gem::Specification.new do |pkg|
   pkg_documentation(pkg)
 
   # Here we have the external dependencies
-  pkg.add_development_dependency 'coveralls', '~> 0.7', '>= 0.7.0'  
   pkg.add_development_dependency 'rake', '~> 10.0', '>= 10.0.0'
   pkg.add_development_dependency 'rspec', '~> 3.5', '>= 3.5.0'
   pkg.add_development_dependency 'rubygems', '~> 2.0', '>= 2.0.0'
-  pkg.add_development_dependency 'simplecov', '~> 0.1', '>= 0.1.0'  
   pkg.license = 'MIT'
-  pkg.required_ruby_version = '>= 2.4.0'
+  pkg.required_ruby_version = '>= 2.5.0'
 end
 
 if $PROGRAM_NAME == __FILE__

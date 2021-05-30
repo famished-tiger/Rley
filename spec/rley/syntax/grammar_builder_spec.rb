@@ -24,7 +24,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
 
       context 'Initialization with argument:' do
         it 'could be created with a block argument' do
-          expect do 
+          expect do
             GrammarBuilder.new { nil }
           end.not_to raise_error
         end
@@ -99,14 +99,14 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           expect(new_prod.lhs).to eq(subject['A'])
           expect_rhs = [subject['a'], subject['A'], subject['c']]
           expect(new_prod.rhs.members).to eq(expect_rhs)
-          
+
           # Try another syntax
           subject.add_production('A' => 'a A c')
           expect(subject.productions.size).to eq(3)
           new_prod = subject.productions.last
           expect(new_prod.lhs).to eq(subject['A'])
           expect_rhs = [subject['a'], subject['A'], subject['c']]
-          expect(new_prod.rhs.members).to eq(expect_rhs)          
+          expect(new_prod.rhs.members).to eq(expect_rhs)
 
           # GrammarBuilder#rule is an alias of add_production
           subject.rule('A' => ['b'])
@@ -162,11 +162,11 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           err = StandardError
           msg = 'Useless terminal symbol(s): d.'
           expect { subject.grammar }.to raise_error(err, msg)
-          
+
           # Add another useless terminal
           subject.add_terminals('e')
           msg = 'Useless terminal symbol(s): d, e.'
-          expect { subject.grammar }.to raise_error(err, msg)          
+          expect { subject.grammar }.to raise_error(err, msg)
         end
 
         it 'should build a grammar with nullable nonterminals' do

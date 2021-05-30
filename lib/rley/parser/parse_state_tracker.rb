@@ -28,7 +28,7 @@ module Rley # This module is used as a namespace
       # Write accessor. Set the given parse state as the current one.
       def parse_state=(aParseState)
         raise StandardError, 'Nil parse state' if aParseState.nil?
-        
+
         @parse_state = aParseState
         processed_states[parse_state] = true
       end
@@ -40,16 +40,16 @@ module Rley # This module is used as a namespace
       end
 
       # The dotted item for the current parse state.
-      def curr_dotted_item()
+      def curr_dotted_item
         parse_state.dotted_rule
       end
 
-      def symbol_on_left()
+      def symbol_on_left
         return curr_dotted_item.prev_symbol
       end
 
       # Notification that one begins with the previous state set
-      def to_prev_state_set()
+      def to_prev_state_set
         self.state_set_index = state_set_index - 1
       end
     end # class

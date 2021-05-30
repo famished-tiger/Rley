@@ -11,17 +11,16 @@ module GrammarArrIntHelper
   # Factory method. Creates a grammar builder for a grammar of
   # array of integers.
   # (based on the article about Earley's algorithm in Wikipedia)
-  def grammar_arr_int_builder()
-    builder = Rley::Syntax::GrammarBuilder.new do
+  def grammar_arr_int_builder
+    Rley::Syntax::GrammarBuilder.new do
       add_terminals('[', ']', ',', 'integer')
       rule 'P' => 'arr'
-      rule 'arr' => %w([ sequence ])
+      rule 'arr' => '[ sequence ]'
       rule 'sequence' => 'list'
       rule 'sequence' => []
-      rule 'list' => %w[list , integer] # Left-recursive rule
+      rule 'list' => 'list , integer' # Left-recursive rule
       rule 'list' => 'integer'
     end
-    builder
   end
 
   # Basic tokenizer for array of integers

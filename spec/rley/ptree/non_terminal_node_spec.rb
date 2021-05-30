@@ -33,7 +33,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           terminal = OpenStruct.new(name: aSymbolName)
           return OpenStruct.new(lexeme: aLexeme, terminal: terminal)
         end
-        
+
         it 'should accept the addition of subnodes' do
           child1 = double('first_child')
           child2 = double('second_child')
@@ -44,6 +44,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           expect(subject.subnodes).to eq([child3, child2, child1])
         end
 
+        # rubocop: disable Naming/VariableNumber
         it 'should provide a text representation of itself' do
           # Case 1: no child
           expected_text = 'VP[0, 3]'
@@ -61,9 +62,9 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           noun = build_token('bus', 'Noun')
           child_3_1 = TerminalNode.new(noun, range(2, 3))
           # We reverse the sequence of subnode addition
-          subject.add_subnode(child_1_2)          
+          subject.add_subnode(child_1_2)
           subject.add_subnode(child_1_1)
-          child_1_2.add_subnode(child_2_2)          
+          child_1_2.add_subnode(child_2_2)
           child_1_2.add_subnode(child_2_1)
           child_2_2.add_subnode(child_3_1)
           expected_text = <<-SNIPPET
@@ -76,6 +77,7 @@ VP[0, 3]
 SNIPPET
           expect(subject.to_string(0)).to eq(expected_text.chomp)
         end
+        # rubocop: enable Naming/VariableNumber
       end # context
     end # describe
   end # module

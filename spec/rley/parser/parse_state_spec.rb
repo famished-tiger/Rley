@@ -63,7 +63,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           item = Base::DottedItem.new(aProd, aRank)
           ParseState.new(item, aVal)
         end
-        
+
         it 'should compare with itself' do
           synonym = subject # Fool Rubocop
           expect(subject == synonym).to eq(true)
@@ -81,14 +81,14 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           diff_rule = ParseState.new(other_dotted_rule, 3)
           expect(subject == diff_rule).to eq(false)
         end
-        
+
         it 'should know if the parsing is at the start of the production' do
           expect(subject).not_to be_predicted
           at_start = Base::DottedItem.new(sample_prod, 0)
 
           instance = ParseState.new(at_start, 0)
           expect(instance).to be_predicted
-        end        
+        end
 
         it 'should know if the parsing reached the end of the production' do
           expect(subject).not_to be_complete
@@ -101,7 +101,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
         it 'should know the next expected symbol' do
           expect(subject.next_symbol).to eq(t_c)
         end
-        
+
         it 'should know whether another instance follows this one' do
           expect(subject.precedes?(subject)).to eq(false)
           state1 = new_parse_state(sample_prod, 1, origin_val)
@@ -112,7 +112,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           state3 = new_parse_state(sample_prod, 3, origin_val)
           expect(state3.precedes?(state0)).to eq(false)
         end
-        
+
         it 'should know its text representation' do
           expected = 'sentence => A B . C | 3'
           expect(subject.to_s).to eq(expected)

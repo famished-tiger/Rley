@@ -24,10 +24,10 @@ module Rley # Open this namespace to avoid module qualifier prefixes
         it 'should know whether it has a dot at the end of the rhs' do
           expect(subject).not_to be_complete
         end
-        
+
         it 'should know the previous symbol (if any) in the rhs' do
           expect(subject.prev_symbol).to be_nil
-        end        
+        end
 
         it 'should know the next symbol (if any) in the rhs' do
           expect(subject.next_symbol).to be_nil
@@ -40,7 +40,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           expect { subject.add_edge(edge1) }.not_to raise_error
           expect(subject.edges.size).to eq(1)
           expect(subject.edges.last).to eq(edge1)
-          
+
           err = StandardError
           msg = 'At most one edge accepted'
           expect { subject.add_edge(edge2) }.to raise_error err, msg

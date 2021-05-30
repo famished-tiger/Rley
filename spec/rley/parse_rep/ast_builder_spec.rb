@@ -12,16 +12,15 @@ require_relative '../support/expectation_helper'
 require_relative '../support/grammar_b_expr_helper'
 require_relative '../support/grammar_arr_int_helper'
 
-
 module Rley # This module is used as a namespace
   module ParseRep # This module is used as a namespace
     ArrayNode = Struct.new(:children) do
-      def initialize()
+      def initialize
         super
         self.children = []
       end
 
-      def interpret()
+      def interpret
         return children.map(&:interpret)
       end
     end
@@ -33,17 +32,18 @@ module Rley # This module is used as a namespace
         self.position = aPosition
       end
 
-      def interpret()
+      def interpret
         value
       end
     end
 
+    # rubocop: disable Naming/VariableNumber
     class ASTBuilder < ASTBaseBuilder
       Terminal2NodeClass = {
         'integer' => IntegerNode
       }.freeze
 
-      def terminal2node()
+      def terminal2node
         Terminal2NodeClass
       end
 
@@ -80,9 +80,9 @@ module Rley # This module is used as a namespace
         return node
       end
     end # class
+    # rubocop: enable Naming/VariableNumber
   end # module
 end # module
-
 
 module Rley # Open this namespace to avoid module qualifier prefixes
   module ParseRep

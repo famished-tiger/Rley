@@ -49,7 +49,7 @@ module Rley # Re-open the module to get rid of qualified names
       # Capital letters represent non-terminal nodes
       let(:grm_abc_ptree1) do
         engine = Rley::Engine.new
-        engine.use_grammar(grammar_abc)     
+        engine.use_grammar(grammar_abc)
         parse_result = engine.parse(grm_abc_tokens1)
         ptree = engine.convert(parse_result)
         ptree

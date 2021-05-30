@@ -19,18 +19,18 @@ module Rley # Open this namespace to avoid module qualifier prefixes
         it 'should know its name' do
           expect(subject.name).to eq(sample_name)
         end
-        
+
         it 'should know that is a terminal symbol' do
           expect(subject).to be_terminal
-        end        
-        
+        end
+
         it "should know that isn't nullable" do
           expect(subject).not_to be_nullable
         end
-        
+
         it 'should know that it is generative' do
           expect(subject).to be_generative
-        end        
+        end
       end # context
     end # describe
   end # module

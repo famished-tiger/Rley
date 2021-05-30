@@ -24,11 +24,11 @@ module Rley # Open this namespace to avoid module qualifier prefixes
         it 'should be created with a non-terminal and a symbol sequence' do
           expect { Production.new(sentence, sequence) }.not_to raise_error
         end
-        
+
         it 'should complain when its rhs is nil' do
           err = StandardError
           msg_prefix = 'Right side of a production of the kind '
-          msg_suffix = "'Sentence' => ... is nil." 
+          msg_suffix = "'Sentence' => ... is nil."
           msg = msg_prefix + msg_suffix
           expect { Production.new(sentence, nil) }.to raise_error(err, msg)
         end
@@ -49,42 +49,42 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           instance = Production.new(sentence, [])
           expect(instance).to be_empty
         end
-        
+
         it 'should be anonymous at creation' do
           expect(subject.name).to be_nil
         end
-        
+
         it 'should complain if its lhs is not a non-terminal' do
           err = StandardError
           msg_prefix = 'Left side of production must be a non-terminal symbol'
-          msg_suffix = ", found a #{String} instead."  
+          msg_suffix = ", found a #{String} instead."
           msg = msg_prefix + msg_suffix
           expect { Production.new('wrong', sequence) }.to raise_error(err, msg)
         end
       end # context
-      
+
       context 'Provided services:' do
         it 'should accept a name (i)' do
           a_name = 'nominem'
           subject.name = a_name
           expect(subject.name).to eq(a_name)
         end
-        
+
         it 'should accept a name (ii)' do
           a_name = 'nominem'
           subject.as(a_name)
-          expect(subject.name).to eq(a_name)          
+          expect(subject.name).to eq(a_name)
         end
-        
+
         it 'should provide human-readable representation of itself' do
           subject.name = 'some name'
           prefix = /^#<Rley::Syntax::Production:\d+ @name="some name"/
           expect(subject.inspect).to match(prefix)
-          pattern = /@lhs=Sentence @rhs=#<Rley::Syntax::SymbolSeq/          
+          pattern = /@lhs=Sentence @rhs=#<Rley::Syntax::SymbolSeq/
           expect(subject.inspect).to match(pattern)
-          suffix = /> @generative=>$/          
-          expect(subject.inspect).to match(suffix)          
-        end        
+          suffix = /> @generative=>$/
+          expect(subject.inspect).to match(suffix)
+        end
       end # context
     end # describe
   end # module

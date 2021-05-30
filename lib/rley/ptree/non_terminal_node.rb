@@ -18,20 +18,22 @@ module Rley # This module is used as a namespace
       def add_subnode(aSubnode)
         subnodes.unshift(aSubnode)
       end
-      
+
       # Emit a (formatted) string representation of the node.
       # Mainly used for diagnosis/debugging purposes.
+      # rubocop: disable Style/StringConcatenation
       def to_string(indentation)
         connector = '+- '
         selfie = super(indentation)
         prefix = "\n" + (' ' * connector.size * indentation) + connector
         subnodes_repr = subnodes.reduce(+'') do |sub_result, subnode|
-          sub_result << prefix + subnode.to_string(indentation + 1) 
+          sub_result << prefix + subnode.to_string(indentation + 1)
         end
-        
-        return selfie + subnodes_repr        
+
+        selfie + subnodes_repr
       end
-      
+      # rubocop: enable Style/StringConcatenation
+
       # Part of the 'visitee' role in Visitor design pattern.
       # @param aVisitor[ParseTreeVisitor] the visitor
       def accept(aVisitor)

@@ -12,7 +12,7 @@ class GrammarPBHelper
   # expression based on example found in paper of
   # K. Pingali and G. Bilardi:
   # "A Graphical Model for Context-Free Grammar Parsing"
-  def grammar()
+  def grammar
     @grammar ||= begin
       builder = Rley::Syntax::GrammarBuilder.new do
         add_terminals('int', '+', '(', ')')
@@ -24,12 +24,13 @@ class GrammarPBHelper
       builder.grammar
     end
   end
-  
+
   class PB_Tokenizer < BaseTokenizer
     protected
 
-    def recognize_token()
-      if (lexeme = scanner.scan(/[\(\)]/)) # Single characters
+    # rubocop: disable Lint/DuplicateBranch
+    def recognize_token
+      if (lexeme = scanner.scan(/[()]/)) # Single characters
         # Delimiters, separators => single character token
         build_token(lexeme, lexeme)
       elsif (lexeme = scanner.scan(/(?:\+)(?=\s|$)/)) # Isolated char
@@ -38,6 +39,7 @@ class GrammarPBHelper
         build_token('int', lexeme)
       end
     end
+    # rubocop: enable Lint/DuplicateBranch
   end # class
 
   # Basic tokenizer
@@ -46,6 +48,5 @@ class GrammarPBHelper
     tokenizer = PB_Tokenizer.new(aText)
     tokenizer.tokens
   end
-  
 end # class
 # End of file

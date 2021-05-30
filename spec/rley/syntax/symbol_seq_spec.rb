@@ -57,13 +57,13 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           unequal_one = SymbolSeq.new([verb, pp, np])
           expect(subject == unequal_one).not_to eq(true)
         end
-        
+
         it 'should complain when unable to compare' do
           err = StandardError
           msg = 'Cannot compare a SymbolSeq with a String'
           expect { subject == 'dummy-text' }.to raise_error(err, msg)
         end
-        
+
         it 'should provide human-readable representation of itself' do
           suffix = /::SymbolSeq:\d+ @members=\["Verb", "NP", "PP"\]>$/
           expect(subject.inspect).to match(suffix)

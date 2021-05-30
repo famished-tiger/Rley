@@ -32,7 +32,7 @@ module Rley # This module is used as a namespace
       # Returns a string containing a human-readable representation of the
       # production.
       # @return [String]
-      def inspect()
+      def inspect
         result = selfie
         result << ' @antecedents=['
         antecedents.each do |antec|
@@ -40,7 +40,7 @@ module Rley # This module is used as a namespace
         end
         result << ']>'
 
-        return result
+        result
       end
 
       # Add a link to an antecedent parse entry
@@ -53,56 +53,55 @@ module Rley # This module is used as a namespace
       def ==(other)
         return true if equal? other
 
-        result = (vertex == other.vertex) && (origin == other.origin)
-        return result
+        (vertex == other.vertex) && (origin == other.origin)
       end
-      
+
       def hash
-        @hash ||= "#{vertex.object_id}-#{origin}".hash
+        @hash ||= (vertex.oid_str + "-#{origin}").hash
       end
 
       # Returns true iff the vertex is a start vertex (i.e. of the form: .X)
-      def start_entry?()
-        return vertex.kind_of?(GFG::StartVertex)
+      def start_entry?
+        vertex.kind_of?(GFG::StartVertex)
       end
 
       # Returns true iff the vertex is at the start of rhs
       # (i.e. of the form: X => .Y
-      def entry_entry?()
+      def entry_entry?
         return false unless vertex.kind_of?(GFG::ItemVertex)
 
-        return vertex.dotted_item.at_start?
+        vertex.dotted_item.at_start?
       end
 
       # Returns true iff the vertex corresponds to a dotted item
       # X => Y
       def dotted_entry?
-        return vertex.kind_of?(GFG::ItemVertex)
+        vertex.kind_of?(GFG::ItemVertex)
       end
 
       # Returns true iff the vertex is at end of rhs (i.e. of the form: X => Y.)
-      def exit_entry?()
-        return vertex.complete?
+      def exit_entry?
+        vertex.complete?
       end
 
       # Returns true iff the vertex is an end vertex (i.e. of the form: X.)
-      def end_entry?()
-        return vertex.kind_of?(GFG::EndVertex)
+      def end_entry?
+        vertex.kind_of?(GFG::EndVertex)
       end
 
       # Return the symbol before the dot (if any)
-      def prev_symbol()
-        return vertex.prev_symbol
+      def prev_symbol
+        vertex.prev_symbol
       end
 
       # Return the symbol after the dot (if any)
-      def next_symbol()
-        return vertex.next_symbol
+      def next_symbol
+        vertex.next_symbol
       end
 
       # Return true if the entry has no antecedent entry
-      def orphan?()
-        return antecedents.empty?
+      def orphan?
+        antecedents.empty?
       end
 
 =begin
@@ -115,11 +114,6 @@ module Rley # This module is used as a namespace
       # Returns true if the dot is at the start of the rhs of the production.
       def predicted?()
         return vertex.predicted_item?
-      end
-
-      # Next expected symbol in the production
-      def next_symbol()
-        return vertex.next_symbol
       end
 
       # Does this parse state have the 'other' as successor?
@@ -145,21 +139,21 @@ module Rley # This module is used as a namespace
       # The format of the text representation is
       # "format of dotted rule" + " | " + origin
       # @return [String]
-      def to_s()
-        return vertex.label + " | #{origin}"
+      def to_s
+        vertex.label + " | #{origin}"
       end
 
       protected
 
       # Returns a human-readable and partial representation of itself.
       # @return [String]
-      def selfie()
+      def selfie
         result = +"#<#{self.class.name}:#{object_id}"
         result << " @vertex=<#{vertex.class.name}:#{vertex.object_id}"
         result << " label=#{vertex.label}>"
         result << " @origin=#{origin}"
 
-        return result
+        result
       end
 
       private
@@ -169,7 +163,7 @@ module Rley # This module is used as a namespace
       def valid_vertex(aVertex)
         raise StandardError, 'GFG vertex cannot be nil' if aVertex.nil?
 
-        return aVertex
+        aVertex
       end
     end # class
   end # module

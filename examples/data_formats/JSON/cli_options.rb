@@ -55,7 +55,7 @@ END_TEXT
 
       rep_help = <<-END_TEXT
 Set the parse tree representation (default: cst)
-        cst         Concrete Syntax Tree. The out-of-the-box parse tree 
+        cst         Concrete Syntax Tree. The out-of-the-box parse tree
                     representation.
         ast         Abstract Syntaxt Tree. A customized parse tree for JSON.
                     It is a more compact and practical representation.

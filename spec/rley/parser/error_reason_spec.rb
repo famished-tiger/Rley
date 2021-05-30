@@ -46,8 +46,8 @@ module Rley # Open this namespace to avoid module qualifier prefixes
 
       context 'Initialization:' do
         it 'should be created with arguments' do
-          expect do 
-            ExpectationNotMet.new(3, err_token, terminals) 
+          expect do
+            ExpectationNotMet.new(3, err_token, terminals)
           end.not_to raise_error
         end
 
@@ -75,8 +75,8 @@ module Rley # Open this namespace to avoid module qualifier prefixes
 
       context 'Initialization:' do
         it 'should be created with arguments' do
-          expect do 
-            UnexpectedToken.new(3, err_token, terminals) 
+          expect do
+            UnexpectedToken.new(3, err_token, terminals)
           end.not_to raise_error
         end
       end # context
@@ -107,8 +107,8 @@ MESSAGE_END
 
       context 'Initialization:' do
         it 'should be created with arguments' do
-          expect do 
-            PrematureInputEnd.new(3, err_token, terminals) 
+          expect do
+            PrematureInputEnd.new(3, err_token, terminals)
           end.not_to raise_error
         end
       end # context

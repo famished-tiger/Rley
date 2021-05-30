@@ -22,12 +22,12 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           expect(subject.label).to eq('.NT')
         end
       end # context
-      
-      context 'Provided services:' do       
+
+      context 'Provided services:' do
         it 'should provide human-readable representation of itself' do
-          pattern = /^#<Rley::GFG::StartVertex:\d+ label="\.NT"/         
-          expect(subject.inspect).to match(pattern)       
-        end        
+          pattern = /^#<Rley::GFG::StartVertex:\d+ label="\.NT"/
+          expect(subject.inspect).to match(pattern)
+        end
       end # context
     end # describe
   end # module

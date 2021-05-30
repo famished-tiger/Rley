@@ -74,7 +74,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
       let(:nt_A) { NonTerminal.new('A') }
       let(:nt_B) { NonTerminal.new('B') }
       let(:nt_C) { NonTerminal.new('C') }
-      let(:nt_D) { NonTerminal.new('D') }      
+      let(:nt_D) { NonTerminal.new('D') }
       let(:a_) { VerbatimSymbol.new('a') }
       let(:b_)  { VerbatimSymbol.new('b') }
       let(:c_)  { VerbatimSymbol.new('c') }
@@ -161,7 +161,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           expect(subject.name2symbol['b']).to eq(b_)
           expect(subject.name2symbol['c']).to eq(c_)
         end
-        
+
         it 'should ensure that each production has a name' do
           subject.rules.each do |prod|
             expect(prod.name).to match(Regexp.new("#{prod.lhs.name}_\\d$"))
@@ -218,8 +218,8 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           partitioning = instance.non_terminals.partition(&:generative?)
           expect(partitioning[0].size).to eq(2)
           expect(partitioning[0]).to eq([nt_S, nt_A])
-          expect(partitioning[1]).to eq([nt_B, nt_C, nt_D]) 
-          
+          expect(partitioning[1]).to eq([nt_B, nt_C, nt_D])
+
           undefined = instance.non_terminals.select(&:undefined?)
           expect(undefined).to be_empty
         end
@@ -248,13 +248,13 @@ module Rley # Open this namespace to avoid module qualifier prefixes
             expect(nterm).to be_nullable
           end
         end
-        
+
         it 'should mark its nullable productions' do
           # Given the above productions, here are our expectations:
           expectations = [true, false, false, true]
           actuals = subject.rules.map(&:nullable?)
           expect(actuals).to eq(expectations)
-        end        
+        end
       end # context
     end # describe
   end # module

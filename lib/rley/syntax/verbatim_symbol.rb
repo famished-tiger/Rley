@@ -14,11 +14,11 @@ module Rley # This module is used as a namespace
         super(aText) # Do we need to separate the text from the name?
         @text = aText.dup
       end
-      
+
       # The String representation of the verbatim symbol
       # @return [String]
-      def to_s()
-        return "'#{text}'"
+      def to_s
+        "'#{text}'"
       end
     end # class
   end # module

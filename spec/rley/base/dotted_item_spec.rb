@@ -125,7 +125,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
 
         it 'should determine if it is a successor of another dotted item' do
           expect(subject).not_to be_successor_of(subject)
-          
+
           # Case: different productions
           instance = DottedItem.new(empty_prod, 0)
           expect(subject).not_to be_successor_of(instance)
@@ -139,7 +139,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           instance2 = DottedItem.new(sample_prod, 2)
           expect(instance).not_to be_successor_of(instance2)
           expect(subject).not_to be_successor_of(instance2)
-          expect(instance2).to be_successor_of(subject)           
+          expect(instance2).to be_successor_of(subject)
         end
 
 

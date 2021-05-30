@@ -19,11 +19,11 @@ module Rley # Open this namespace to avoid module qualifier prefixes
       end
 
       it 'could be created with block argument' do
-        expect do 
-                 Engine.new do |config|
-                   config.parse_repr = :raw
-                 end
-               end.not_to raise_error
+        expect do
+          Engine.new do |config|
+            config.parse_repr = :raw
+          end
+        end.not_to raise_error
       end
 
       it "shouldn't have a link to a grammar yet" do
@@ -45,13 +45,14 @@ module Rley # Open this namespace to avoid module qualifier prefixes
       end
     end # context
 
+    # rubocop: disable Lint/ConstantDefinitionInBlock
     class ABCTokenizer
       # Constructor
       def initialize(someText)
         @input = someText.dup
       end
 
-      def each()
+      def each
         pos = Rley::Lexical::Position.new(1, 1) # Dummy position
         lexemes = @input.scan(/\S/)
         lexemes.each do |ch|
@@ -63,6 +64,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
         end
       end
     end # class
+    # rubocop: enable Lint/ConstantDefinitionInBlock
 
     # Utility method. Ensure that the engine
     # has the defnition of a sample grammar
@@ -101,7 +103,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
         sample_text = 'a a b c c'
         ABCTokenizer.new(sample_text)
       end
-      
+
       it 'should build a parse tree even for a nullable production' do
         instance = Engine.new
         instance.build_grammar do
@@ -112,12 +114,12 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           add_production 'B_opt' => 'b'
           add_production 'B_opt' => []
           add_production 'C_opt' => 'c'
-          add_production 'C_opt' => []            
+          add_production 'C_opt' => []
         end
         input = ABCTokenizer.new('a')
         raw_result = instance.parse(input)
         expect { instance.to_ptree(raw_result) }.not_to raise_error
-      end      
+      end
 
       it 'should build default parse trees' do
         raw_result = subject.parse(sample_tokenizer)
@@ -152,7 +154,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
         sample_text = 'a a b c c'
         ABCTokenizer.new(sample_text)
       end
-      
+
       it 'should build a parse forest even for a nullable production' do
         instance = Engine.new
         instance.build_grammar do
@@ -163,19 +165,19 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           add_production 'B_opt' => 'b'
           add_production 'B_opt' => []
           add_production 'C_opt' => 'c'
-          add_production 'C_opt' => []            
+          add_production 'C_opt' => []
         end
         input = ABCTokenizer.new('a')
         raw_result = instance.parse(input)
         expect { instance.to_pforest(raw_result) }.not_to raise_error
-      end       
-      
+      end
+
       it 'should build parse forest' do
         raw_result = subject.parse(sample_tokenizer)
         pforest = subject.to_pforest(raw_result)
         expect(pforest).to be_kind_of(SPPF::ParseForest)
-      end      
-      
+      end
+
       it 'should provide a parse visitor' do
         raw_result = subject.parse(sample_tokenizer)
         ptree = subject.to_pforest(raw_result)

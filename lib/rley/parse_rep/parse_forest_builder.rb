@@ -44,7 +44,7 @@ module Rley # This module is used as a namespace
       end
 
       # Notify the builder that the construction is over
-      def done!()
+      def done!
         result.done!
       end
 
@@ -64,7 +64,7 @@ module Rley # This module is used as a namespace
       end
 
       # Return the current_parent node
-      def curr_parent()
+      def curr_parent
         curr_path.last
       end
 
@@ -110,18 +110,18 @@ module Rley # This module is used as a namespace
       def process_item_entry(anEvent, anEntry, anIndex)
         case anEvent
           when :visit
-            if anEntry.exit_entry?
+            if anEntry.exit_entry? && last_visitee.end_entry? &&
+               last_visitee.antecedents.size > 1
               # Previous entry was an end entry (X. pattern)
               # Does the previous entry have multiple antecedent?
-              if last_visitee.end_entry? && last_visitee.antecedents.size > 1
-                # Store current path for later backtracking
-                # puts "Store backtrack context #{last_visitee}"
-                # puts "path [#{curr_path.map{|e|e.to_string(0)}.join(', ')}]"
-                entry2path_to_alt[last_visitee] = curr_path.dup
-                curr_parent.refinement = :or
 
-                create_alternative_node(anEntry)
-              end
+              # Store current path for later backtracking
+              # puts "Store backtrack context #{last_visitee}"
+              # puts "path [#{curr_path.map{|e|e.to_string(0)}.join(', ')}]"
+              entry2path_to_alt[last_visitee] = curr_path.dup
+              curr_parent.refinement = :or
+
+              create_alternative_node(anEntry)
             end
 
             # Does this entry have multiple antecedent?
@@ -179,7 +179,7 @@ module Rley # This module is used as a namespace
 
       # Create an empty parse forest
       def create_forest(aRootNode)
-        return Rley::SPPF::ParseForest.new(aRootNode)
+        Rley::SPPF::ParseForest.new(aRootNode)
       end
 
       # Factory method. Build and return an SPPF non-terminal node.
@@ -190,7 +190,7 @@ module Rley # This module is used as a namespace
         add_subnode(new_node)
         # puts "FOREST ADD #{curr_parent.key if curr_parent}/#{new_node.key}"
 
-        return new_node
+        new_node
       end
 
       # Add an alternative node to the forest
@@ -202,7 +202,7 @@ module Rley # This module is used as a namespace
         result.is_ambiguous = true
         # puts "FOREST ADD #{alternative.key}"
 
-        return alternative
+        alternative
       end
 
       # create a token node,
@@ -216,7 +216,7 @@ module Rley # This module is used as a namespace
         candidate = add_node_to_forest(new_node)
         entry2node[anEntry] = candidate
 
-        return candidate
+        candidate
       end
 
       def create_epsilon_node(anEntry, anIndex)
@@ -224,7 +224,7 @@ module Rley # This module is used as a namespace
         candidate = add_node_to_forest(new_node)
         entry2node[anEntry] = candidate
 
-        return candidate
+        candidate
       end
 
       # Add the given node if not yet present in parse forest
@@ -239,17 +239,19 @@ module Rley # This module is used as a namespace
         end
         add_subnode(new_node, false)
 
-        return new_node
+        new_node
       end
 
       # Add the given node as sub-node of current parent node
       # Optionally add the node to the current path
+      # rubocop: disable Style/OptionalBooleanParameter
       def add_subnode(aNode, addToPath = true)
         raise StandardError, 'node is nil' if aNode.nil?
 
         curr_parent.add_subnode(aNode) unless curr_path.empty?
         curr_path << aNode if addToPath
       end
+      # rubocop: enable Style/OptionalBooleanParameter
     end # class
   end # module
 end # module

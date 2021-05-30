@@ -95,14 +95,14 @@ SNIPPET
 
       context 'Parsing:' do
         # Utility method to fill the first entry set...
-        def fill_first_set()
+        def fill_first_set
           subject.start_rule(subject.initial_entry, 0)
           subject.call_rule(subject.chart[0].last, 0)
           subject.start_rule(subject.chart[0].last, 0)
         end
 
         # Utility method to initialize the second entry set...
-        def seed_second_set()
+        def seed_second_set
           # Cheating: we change the tokens to scan...
           # Seeding second entry set...
           subject.scan_rule(0, grm1_token_b[0])
@@ -301,8 +301,8 @@ SNIPPET
         it 'should give a text representation of itself' do
           repr = subject.to_s
           expect(repr).to match(/^success\? true/)
-          
-          # Let's test the last chart state only          
+
+          # Let's test the last chart state only
           expectation = <<REPR
 State[5]
   T => integer . | 4
@@ -337,10 +337,6 @@ REPR
 
         it 'should indicate whether a parse succeeded' do
           expect(subject.success?).to be_truthy
-        end
-
-        it 'should build a parse forest' do
-          expect { subject.parse_forest }.not_to raise_error if subject.success?
         end
       end # context
     end # describe

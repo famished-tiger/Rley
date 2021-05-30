@@ -15,8 +15,8 @@ class CalcASTBuilder < Rley::ParseRep::ASTBaseBuilder
   }.freeze
 
   protected
-  
-  def terminal2node()
+
+  def terminal2node
     Terminal2NodeClass
   end
 
@@ -26,7 +26,9 @@ class CalcASTBuilder < Rley::ParseRep::ASTBaseBuilder
     operator_node.children << theChildren[2]
     return operator_node
   end
-  
+
+  # rubocop: disable Naming/VariableNumber
+
   # rule 'expression' => 'simple_expression'
   def reduce_expression_0(_production, aRange, theTokens, theChildren)
     return_first_child(aRange, theTokens, theChildren)
@@ -35,32 +37,32 @@ class CalcASTBuilder < Rley::ParseRep::ASTBaseBuilder
   # rule 'simple_expression' => 'term'
   def reduce_simple_expression_0(_production, aRange, theTokens, theChildren)
     return_first_child(aRange, theTokens, theChildren)
-  end          
+  end
 
   # rule 'simple_expression' => %w[simple_expression add_operator term]
   def reduce_simple_expression_1(_production, _range, _tokens, theChildren)
     reduce_binary_operator(theChildren)
   end
-  
-  # rule 'term' => 'factor' 
+
+  # rule 'term' => 'factor'
   def reduce_term_0(_production, aRange, theTokens, theChildren)
     return_first_child(aRange, theTokens, theChildren)
-  end  
+  end
 
   # rule 'term' => %w[term mul_operator factor]
   def reduce_term_1(_production, _range, _tokens, theChildren)
     reduce_binary_operator(theChildren)
   end
-  
+
   # rule 'factor' => 'NUMBER'
   def reduce_factor_0(_aProd, aRange, theTokens, theChildren)
     return_first_child(aRange, theTokens, theChildren)
   end
-  
+
   # # rule 'factor' => %w[LPAREN expression RPAREN]
   def reduce_factor_1(_aProd, aRange, theTokens, theChildren)
     return_second_child(aRange, theTokens, theChildren)
-  end   
+  end
 
   # rule 'add_operator' => 'PLUS'
   def reduce_add_operator_0(_production, _range, _tokens, theChildren)
@@ -81,5 +83,6 @@ class CalcASTBuilder < Rley::ParseRep::ASTBaseBuilder
   def reduce_mul_operator_1(_production, _range, _tokens, theChildren)
     return CalcDivideNode.new(theChildren[0].symbol)
   end
+  # rubocop: enable Naming/VariableNumber
 end # class
 # End of file

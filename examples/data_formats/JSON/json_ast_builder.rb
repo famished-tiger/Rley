@@ -9,7 +9,7 @@ require_relative 'json_ast_nodes'
 # The Builder pattern creates a complex object
 # (say, a parse tree) from simpler objects (terminal and non-terminal
 # nodes) and using a step by step approach.
-class JSONASTBuilder < Rley::ParseRep::ASTBaseBuilder 
+class JSONASTBuilder < Rley::ParseRep::ASTBaseBuilder
   Terminal2NodeClass = {
     'false' => JSONBooleanNode,
     'true' => JSONBooleanNode,
@@ -19,21 +19,23 @@ class JSONASTBuilder < Rley::ParseRep::ASTBaseBuilder
   }.freeze
 
   protected
-  
-  def terminal2node()
+
+  def terminal2node
     Terminal2NodeClass
   end
-  
+
   # Default class for representing terminal nodes.
   # @return [Class]
-  def terminalnode_class()
+  def terminalnode_class
     JSONTerminalNode
   end
-  
+
+  # rubocop: disable Naming/VariableNumber
+
   def reduce_JSON_text_0(_aProd, aRange, theTokens, theChildren)
     return_first_child(aRange, theTokens, theChildren)
   end
-  
+
   # rule 'object' => %w[begin-object member-list end-object]
   def reduce_object_0(aProduction, _range, _tokens, theChildren)
     second_child = theChildren[1]
@@ -69,7 +71,7 @@ class JSONASTBuilder < Rley::ParseRep::ASTBaseBuilder
   def reduce_array_0(aProduction, _range, _tokens, theChildren)
     second_child = theChildren[1]
     second_child.symbol = aProduction.lhs
-    return second_child  
+    return second_child
   end
 
   # rule 'array' => %w[begin-array end-array]
@@ -83,12 +85,13 @@ class JSONASTBuilder < Rley::ParseRep::ASTBaseBuilder
     node.children << theChildren[2]
     return node
   end
-  
+
   #   rule 'array-items' => %w[value]
   def reduce_array_items_1(aProduction, _range, _tokens, theChildren)
     node = JSONArrayNode.new(aProduction.lhs)
     node.children << theChildren[0]
     return node
   end
+  # rubocop: enable Naming/VariableNumber
 end # class
 # End of file

@@ -71,7 +71,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
 
       # Helper method that mimicks the output of a tokenizer
       # for the language specified by grammar_expr
-      def grm2_tokens()
+      def grm2_tokens
         input_sequence = [
           { '2' => 'integer' },
           '+',
@@ -79,7 +79,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           '*',
           { '4' => 'integer' }
         ]
-        return build_token_sequence(input_sequence, grammar_expr)
+        build_token_sequence(input_sequence, grammar_expr)
       end
 
       # Default instantiation rule
@@ -104,6 +104,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
       end # context
 
       context 'Parsing: ' do
+        # rubocop: disable Naming/VariableNumber
         it 'should parse a valid simple input' do
           parse_result = subject.parse(grm1_tokens)
           expect(parse_result.success?).to eq(true)
@@ -183,6 +184,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           expect(entry_set_5.entries.size).to eq(4)
           compare_entry_texts(entry_set_5, expected)
         end
+        # rubocop: enable Naming/VariableNumber
 
         it 'should parse a valid simple expression' do
           instance = GFGEarleyParser.new(grammar_expr)

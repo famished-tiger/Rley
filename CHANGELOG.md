@@ -1,3 +1,6 @@
+### 0.7.08 / 2021-05-30
+- Code restyling to please rubocop 1.15.0
+
 ### 0.7.07 / 2020-11-16
 - Code restyling to please rubocop 0.93.1
 * [CHANGE] File `.travis.yml`: updated Ruby versions, drop support for Ruby 2.3.x

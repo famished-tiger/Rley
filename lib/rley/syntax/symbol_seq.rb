@@ -12,9 +12,9 @@ module Rley # This module is used as a namespace
       # @return [Array<GrmSymbol>] The sequence of symbols
       attr_reader(:members)
 
-      # Create a sequence of grammar symbols (as in right-hand side of 
+      # Create a sequence of grammar symbols (as in right-hand side of
       # a production rule).
-      # @param theSymbols [Array<GrmSymbol>] An array of symbols.      
+      # @param theSymbols [Array<GrmSymbol>] An array of symbols.
       def initialize(theSymbols)
         @members = theSymbols.dup
       end
@@ -33,20 +33,18 @@ module Rley # This module is used as a namespace
             raise StandardError, msg
         end
 
-        return result
+        result
       end
-      
-      # Returns a string containing a human-readable representation of the 
+
+      # Returns a string containing a human-readable representation of the
       # sequence of symbols.
       # @return [String]
-      def inspect()
+      def inspect
         result = +"#<#{self.class.name}:#{object_id}"
         symbol_names = members.map(&:name)
         result << " @members=#{symbol_names}>"
-        return result
+        result
       end
-      
-      
     end # class
   end # module
 end # module

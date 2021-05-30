@@ -98,6 +98,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
       end
     end # context
 
+    # rubocop: disable Lint/ConstantDefinitionInBlock
     class EventDispatcher
       # return [Array<Proc>]
       attr_accessor(:expectations)
@@ -125,6 +126,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
         @event_count += 1
       end
     end # class
+    # rubocop: enable Lint/ConstantDefinitionInBlock
 
     context 'Notifying visit events:' do
       # expectations [Array<Array<Symbol, String>>]
@@ -161,329 +163,329 @@ module Rley # Open this namespace to avoid module qualifier prefixes
         # Notify subscribers when start the visit of the pforest
         # expect(listener1).to receive(:before_pforest).with(forest_root)
         checker.expectations = [
-          ->(event, item) {
+          lambda do |event, item|
             check_event(event, item, [:before_pforest, grm_sppf_pforest1])
-          },
-          ->(event, item) {
+          end,
+          lambda do |event, item|
             check_event(event, item, [:before_non_terminal, 'Phi[0, 4]'])
-          },
-          ->(event, parent, children) {
+          end,
+          lambda do |event, parent, children|
             check_event(event, parent, [:before_subnodes, 'Phi[0, 4]'])
             expect(children.size).to eq(1)
-          },
-          ->(event, item) {
+          end,
+          lambda do |event, item|
             check_event(event, item, [:before_non_terminal, 'S[0, 4]'])
             check_legs(['S[0, 4]', 2]) # 2
             check_node_accesses(item, [2])
-          },
-          ->(event, parent, children) {
+          end,
+          lambda do |event, parent, children|
             check_event(event, parent, [:before_subnodes, 'S[0, 4]'])
             expect(children.size).to eq(2)
-          },
-          ->(event, item) {
+          end,
+          lambda do |event, item|
             prediction = 'Alt(S => a T .)[0, 4]'
             check_event(event, item, [:before_alternative, prediction])
             check_legs(['Alt(S => a T .)[0, 4]', 6]) # 2 * 3
             check_node_accesses(item, [6])
-          },
-          ->(event, parent, children) {
+          end,
+          lambda do |event, parent, children|
             prediction = 'Alt(S => a T .)[0, 4]'
             check_event(event, parent, [:before_subnodes, prediction])
             expect(children.size).to eq(2)
-          },
-          ->(event, item) {
+          end,
+          lambda do |event, item|
             check_event(event, item, [:before_terminal, 'a[0, 1]'])
-          },
-          ->(event, item) {
+          end,
+          lambda do |event, item|
             check_event(event, item, [:after_terminal, 'a[0, 1]'])
-          },
-          ->(event, item) {
+          end,
+          lambda do |event, item|
             check_event(event, item, [:before_non_terminal, 'T[1, 4]'])
             check_legs(['T[1, 4]', 66]) # 2 * 3 * 11
             check_node_accesses(item, [66])
-          },
-          ->(event, parent, children) {
+          end,
+          lambda do |event, parent, children|
             check_event(event, parent, [:before_subnodes, 'T[1, 4]'])
             expect(children.size).to eq(3)
-          },
-          ->(event, item) {
+          end,
+          lambda do |event, item|
             check_event(event, item, [:before_terminal, 'b[1, 2]'])
-          },
-          ->(event, item) {
+          end,
+          lambda do |event, item|
             check_event(event, item, [:after_terminal, 'b[1, 2]'])
-          },
-          ->(event, item) {
+          end,
+          lambda do |event, item|
             check_event(event, item, [:before_terminal, 'b[2, 3]'])
-          },
-          ->(event, item) {
+          end,
+          lambda do |event, item|
             check_event(event, item, [:after_terminal, 'b[2, 3]'])
-          },
-          ->(event, item) {
+          end,
+          lambda do |event, item|
             check_event(event, item, [:before_terminal, 'b[3, 4]'])
-          },
-          ->(event, item) {
+          end,
+          lambda do |event, item|
             check_event(event, item, [:after_terminal, 'b[3, 4]'])
-          },
-          ->(event, parent, _children) {
+          end,
+          lambda do |event, parent, _children|
             check_event(event, parent, [:after_subnodes, 'T[1, 4]'])
-          },
-          ->(event, item) {
+          end,
+          lambda do |event, item|
             check_event(event, item, [:after_non_terminal, 'T[1, 4]'])
-          },
-          ->(event, parent, children) {
+          end,
+          lambda do |event, parent, children|
             prediction = 'Alt(S => a T .)[0, 4]'
             check_event(event, parent, [:after_subnodes, prediction])
             expect(children.size).to eq(2)
             check_legs(['Alt(S => a T .)[0, 4]', 6]) # 2 * 3
-          },
-          ->(event, item) {
+          end,
+          lambda do |event, item|
             prediction = 'Alt(S => a T .)[0, 4]'
             check_event(event, item, [:after_alternative, prediction])
-          },
-          ->(event, item) {
+          end,
+          lambda do |event, item|
             prediction = 'Alt(S => A T .)[0, 4]'
             check_event(event, item, [:before_alternative, prediction])
             check_legs(['Alt(S => A T .)[0, 4]', 10]) # 2 * 5
             check_node_accesses(item, [10])
-          },
-          ->(event, parent, children) {
+          end,
+          lambda do |event, parent, children|
             prediction = 'Alt(S => A T .)[0, 4]'
             check_event(event, parent, [:before_subnodes, prediction])
             expect(children.size).to eq(2)
-          },
-          ->(event, item) {
+          end,
+          lambda do |event, item|
             check_event(event, item, [:before_non_terminal, 'A[0, 1]'])
             check_legs(['A[0, 1]', 230]) # 2 * 5 * 23
             check_node_accesses(item, [230])
-          },
-          ->(event, parent, children) {
+          end,
+          lambda do |event, parent, children|
             check_event(event, parent, [:before_subnodes, 'A[0, 1]'])
             expect(children.size).to eq(2)
-          },
-          ->(event, item) {
+          end,
+          lambda do |event, item|
             prediction = 'Alt(A => a .)[0, 1]'
             check_event(event, item, [:before_alternative, prediction])
             check_legs(['Alt(A => a .)[0, 1]', 7130]) # 2 * 5 * 23 * 31
             check_node_accesses(item, [7130])
             # p(subject.legs)
-          },
-          ->(event, parent, children) {
+          end,
+          lambda do |event, parent, children|
             prediction = 'Alt(A => a .)[0, 1]'
             check_event(event, parent, [:before_subnodes, prediction])
             expect(children.size).to eq(1)
-          },
-          ->(event, item) {
+          end,
+          lambda do |event, item|
             check_event(event, item, [:before_terminal, 'a[0, 1]'])
-          },
-          ->(event, item) {
+          end,
+          lambda do |event, item|
             check_event(event, item, [:after_terminal, 'a[0, 1]'])
-          },
-          ->(event, parent, _children) {
+          end,
+          lambda do |event, parent, _children|
             prediction = 'Alt(A => a .)[0, 1]'
             check_event(event, parent, [:after_subnodes, prediction])
             check_legs(['Alt(A => a .)[0, 1]', 7130]) # 2 * 5 * 23 * 31
-          },
-          ->(event, item) {
+          end,
+          lambda do |event, item|
             prediction = 'Alt(A => a .)[0, 1]'
             check_event(event, item, [:after_alternative, prediction])
-          },
-          ->(event, item) {
+          end,
+          lambda do |event, item|
             prediction = 'Alt(A => B A .)[0, 1]'
             check_event(event, item, [:before_alternative, prediction])
             check_legs(['Alt(A => B A .)[0, 1]', 8510]) # 2 * 5 * 23 * 37
             check_node_accesses(item, [8510])
-          },
-          ->(event, parent, children) {
+          end,
+          lambda do |event, parent, children|
             prediction = 'Alt(A => B A .)[0, 1]'
             check_event(event, parent, [:before_subnodes, prediction])
             expect(children.size).to eq(2)
-          },
-          ->(event, item) {
+          end,
+          lambda do |event, item|
             check_event(event, item, [:before_non_terminal, 'B[0, 0]'])
             check_legs(['B[0, 0]', 365930]) # 2 * 5 * 23 * 37 * 43
             check_node_accesses(item, [365930])
-          },
-          ->(event, parent, children) {
+          end,
+          lambda do |event, parent, children|
             check_event(event, parent, [:before_subnodes, 'B[0, 0]'])
             expect(children.size).to eq(1)
-          },
-          ->(event, item) {
+          end,
+          lambda do |event, item|
             check_event(event, item, [:before_epsilon, '_[0, 0]'])
-          },
-          ->(event, item) {
+          end,
+          lambda do |event, item|
             check_event(event, item, [:after_epsilon, '_[0, 0]'])
-          },
-          ->(event, parent, _children) {
+          end,
+          lambda do |event, parent, _children|
             check_event(event, parent, [:after_subnodes, 'B[0, 0]'])
             check_legs(['B[0, 0]', 365930]) # 2 * 5 * 23 * 37 * 43
-          },
-          ->(event, item) {
+          end,
+          lambda do |event, item|
             check_event(event, item, [:after_non_terminal, 'B[0, 0]'])
-          },
-          ->(event, item) {
+          end,
+          lambda do |event, item|
             check_event(event, item, [:before_non_terminal, 'A[0, 1]'])
             check_legs(['A[0, 1]', 399970]) # 2 * 5 * 23 * 37 * 47
             check_node_accesses(item, [230, 399970])
-          },
-          ->(event, parent, children) {
+          end,
+          lambda do |event, parent, children|
             check_event(event, parent, [:before_subnodes, 'A[0, 1]'])
             expect(children.size).to eq(2)
-          },
-          ->(event, item) {
+          end,
+          lambda do |event, item|
             prediction = 'Alt(A => a .)[0, 1]'
             check_event(event, item, [:before_alternative, prediction])
             # 12399070 = 2 * 5 * 23 * 37 * 47 * 31
             check_legs(['Alt(A => a .)[0, 1]', 12399070])
             check_node_accesses(item, [7130, 12399070])
-          },
-          ->(event, parent, children) {
+          end,
+          lambda do |event, parent, children|
             prediction = 'Alt(A => a .)[0, 1]'
             check_event(event, parent, [:before_subnodes, prediction])
             expect(children.size).to eq(1)
-          },
-          ->(event, item) {
+          end,
+          lambda do |event, item|
             check_event(event, item, [:before_terminal, 'a[0, 1]'])
-          },
-          ->(event, item) {
+          end,
+          lambda do |event, item|
             check_event(event, item, [:after_terminal, 'a[0, 1]'])
-          },
-          ->(event, parent, _children) {
+          end,
+          lambda do |event, parent, _children|
             check_event(event, parent, [:after_subnodes, 'Alt(A => a .)[0, 1]'])
             # 12399070 = 2 * 5 * 23 * 37 * 47 * 31
-            check_legs(['Alt(A => a .)[0, 1]', 12399070]) 
-          },
-          ->(event, item) {
+            check_legs(['Alt(A => a .)[0, 1]', 12399070])
+          end,
+          lambda do |event, item|
             prediction = 'Alt(A => a .)[0, 1]'
             check_event(event, item, [:after_alternative, prediction])
-          },
-          ->(event, item) {
+          end,
+          lambda do |event, item|
             prediction = 'Alt(A => B A .)[0, 1]'
             check_event(event, item, [:before_alternative, prediction])
-            # For prime factoring: 
+            # For prime factoring:
             # https://www.calculatorsoup.com/calculators/math/prime-factors.php
             check_legs(['Alt(A => B A .)[0, 1]', 399970]) # 2 * 5 * 23 * 37 * 47
             check_node_accesses(item, [8510, 399970])
-          },
-          ->(event, parent, children) {
+          end,
+          lambda do |event, parent, children|
             prediction = 'Alt(A => B A .)[0, 1]'
             check_event(event, parent, [:before_subnodes, prediction])
             expect(children.size).to eq(2)
-          },
-          ->(event, item) {
+          end,
+          lambda do |event, item|
             check_event(event, item, [:before_non_terminal, 'B[0, 0]'])
             check_legs(['B[0, 0]', 17198710]) # 2 * 5 * 23 * 37 * 47 * 43
             check_node_accesses(item, [365930, 17198710])
-          },
-          ->(event, parent, children) {
+          end,
+          lambda do |event, parent, children|
             check_event(event, parent, [:before_subnodes, 'B[0, 0]'])
             expect(children.size).to eq(1)
-          },
-          ->(event, item) {
+          end,
+          lambda do |event, item|
             check_event(event, item, [:before_epsilon, '_[0, 0]'])
-          },
-          ->(event, item) {
+          end,
+          lambda do |event, item|
             check_event(event, item, [:after_epsilon, '_[0, 0]'])
-          },
-          ->(event, parent, _children) {
+          end,
+          lambda do |event, parent, _children|
             check_event(event, parent, [:after_subnodes, 'B[0, 0]'])
             check_legs(['B[0, 0]', 17198710]) # 2 * 5 * 23 * 37 * 43 * 47
-          },
-          ->(event, item) {
+          end,
+          lambda do |event, item|
             check_event(event, item, [:after_non_terminal, 'B[0, 0]'])
-          },
-          ->(event, parent, _children) {
+          end,
+          lambda do |event, parent, _children|
             prediction = 'Alt(A => B A .)[0, 1]'
             check_event(event, parent, [:after_subnodes, prediction])
             check_legs(['Alt(A => B A .)[0, 1]', 399970]) # 2 * 5 * 23 * 37 * 47
             check_node_accesses(parent, [8510, 399970])
-          },
-          ->(event, item) {
+          end,
+          lambda do |event, item|
             prediction = 'Alt(A => B A .)[0, 1]'
             check_event(event, item, [:after_alternative, prediction])
-          },
-          ->(event, parent, _children) {
+          end,
+          lambda do |event, parent, _children|
             check_event(event, parent, [:after_subnodes, 'A[0, 1]'])
             check_legs(['A[0, 1]', 399970]) # 2 * 5 * 23 * 37 * 47
-          },
-          ->(event, item) {
+          end,
+          lambda do |event, item|
             check_event(event, item, [:after_non_terminal, 'A[0, 1]'])
-          },
-          ->(event, parent, _children) {
+          end,
+          lambda do |event, parent, _children|
             prediction = 'Alt(A => B A .)[0, 1]'
             check_event(event, parent, [:after_subnodes, prediction])
             check_legs(['Alt(A => B A .)[0, 1]', 8510]) # 2 * 5 * 23 * 37
-          },
-          ->(event, item) {
+          end,
+          lambda do |event, item|
             prediction = 'Alt(A => B A .)[0, 1]'
             check_event(event, item, [:after_alternative, prediction])
-          },
-          ->(event, parent, _children) {
+          end,
+          lambda do |event, parent, _children|
             check_event(event, parent, [:after_subnodes, 'A[0, 1]'])
             check_legs(['A[0, 1]', 230]) # 2 * 5 * 23
-          },
-          ->(event, item) {
+          end,
+          lambda do |event, item|
             check_event(event, item, [:after_non_terminal, 'A[0, 1]'])
-          },
-          ->(event, item) {
+          end,
+          lambda do |event, item|
             check_event(event, item, [:before_non_terminal, 'T[1, 4]'])
             check_legs(['T[1, 4]', 290]) # 2 * 5 * 29
             check_node_accesses(item, [66, 290])
-          },
-          ->(event, parent, children) {
+          end,
+          lambda do |event, parent, children|
             check_event(event, parent, [:before_subnodes, 'T[1, 4]'])
             expect(children.size).to eq(3)
-          },
-          ->(event, item) {
+          end,
+          lambda do |event, item|
             check_event(event, item, [:before_terminal, 'b[1, 2]'])
-          },
-          ->(event, item) {
+          end,
+          lambda do |event, item|
             check_event(event, item, [:after_terminal, 'b[1, 2]'])
-          },
-          ->(event, item) {
+          end,
+          lambda do |event, item|
             check_event(event, item, [:before_terminal, 'b[2, 3]'])
-          },
-          ->(event, item) {
+          end,
+          lambda do |event, item|
             check_event(event, item, [:after_terminal, 'b[2, 3]'])
-          },
-          ->(event, item) {
+          end,
+          lambda do |event, item|
             check_event(event, item, [:before_terminal, 'b[3, 4]'])
-          },
-          ->(event, item) {
+          end,
+          lambda do |event, item|
             check_event(event, item, [:after_terminal, 'b[3, 4]'])
-          },
-          ->(event, parent, _children) {
+          end,
+          lambda do |event, parent, _children|
             check_event(event, parent, [:after_subnodes, 'T[1, 4]'])
-          },
-          ->(event, item) {
+          end,
+          lambda do |event, item|
             check_event(event, item, [:after_non_terminal, 'T[1, 4]'])
-          },
-          ->(event, parent, children) {
+          end,
+          lambda do |event, parent, children|
             prediction = 'Alt(S => A T .)[0, 4]'
             check_event(event, parent, [:after_subnodes, prediction])
             expect(children.size).to eq(2)
             check_legs(['Alt(S => A T .)[0, 4]', 10]) # 2 * 5
-          },
-          ->(evt, itm) {
-            check_event(evt, itm, [:after_alternative, 'Alt(S => A T .)[0, 4]'])
-          }, 
-          ->(event, parent, children) {
+          end,
+          lambda do |event, item|
+            check_event(event, item, [:after_alternative, 'Alt(S => A T .)[0, 4]'])
+          end,
+          lambda do |event, parent, children|
             check_event(event, parent, [:after_subnodes, 'S[0, 4]'])
             expect(children.size).to eq(2)
             check_legs(['S[0, 4]', 2]) # 2
-          },
-          ->(event, item) {
+          end,
+          lambda do |event, item|
             check_event(event, item, [:after_non_terminal, 'S[0, 4]'])
-          },          
-          ->(event, parent, children) {
+          end,
+          lambda do |event, parent, children|
             check_event(event, parent, [:after_subnodes, 'Phi[0, 4]'])
             expect(children.size).to eq(1)
-          },
-          ->(event, item) {
+          end,
+          lambda do |event, item|
             check_event(event, item, [:after_non_terminal, 'Phi[0, 4]'])
-          },
-          ->(event, item) {
+          end,
+          lambda do |event, item|
             check_event(event, item, [:after_pforest, grm_sppf_pforest1])
-          }
+          end
         ]
         subject.start
       end

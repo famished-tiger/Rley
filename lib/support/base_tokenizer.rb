@@ -3,21 +3,27 @@
 require 'strscan'
 require_relative '../rley/lexical/token'
 
+# Simplistic tokenizer used mostly for testing purposes
 class BaseTokenizer
+  # @return [StringScanner]
   attr_reader(:scanner)
+
+  # @return [Integer] current line number
   attr_reader(:lineno)
+
+  # @return [Integer] position of start of current line in source text
   attr_reader(:line_start)
-  
+
   class ScanError < StandardError; end
 
-  # Constructor. Initialize a tokenizer for Skeem.
+  # Constructor. Initialize a tokenizer.
   # @param source [String] Skeem text to tokenize.
   def initialize(source)
     @scanner = StringScanner.new('')
     restart(source)
   end
 
-  # @param source [String] Skeem text to tokenize.
+  # @param source [String] input text to tokenize.
   def restart(source)
     @scanner.string = source
     @lineno = 1
@@ -34,13 +40,13 @@ class BaseTokenizer
 
     return tok_sequence
   end
-  
+
   protected
-  
+
   # Patterns:
   # Unambiguous single character
   # Conditional single character:
-  #  (e.g. '+' operator, '+' prefix for positive numbers) 
+  #  (e.g. '+' operator, '+' prefix for positive numbers)
   def _next_token
     skip_whitespaces
     curr_ch = scanner.peek(1)
@@ -57,11 +63,11 @@ class BaseTokenizer
 
     return token
   end
-  
+
   def recognize_token
     raise NotImplementedError
   end
-  
+
   def build_token(aSymbolName, aLexeme, aFormat = :default)
     begin
       value = convert_to(aLexeme, aSymbolName, aFormat)
@@ -75,11 +81,11 @@ class BaseTokenizer
 
     return token
   end
-  
+
   def convert_to(aLexeme, _symbol_name, _format)
     return aLexeme
   end
- 
+
   def skip_whitespaces
     pre_pos = scanner.pos
 
@@ -93,21 +99,16 @@ class BaseTokenizer
         ws_found = true
         next_line
       end
-      # next_ch = scanner.peek(1)
-      # if next_ch == ';'
-      #   cmt_found = true
-      #   scanner.skip(/;[^\r\n]*(?:(?:\r\n)|\r|\n)?/)
-      #   next_line
-      # end
+
       break unless ws_found || cmt_found
     end
 
     curr_pos = scanner.pos
     return if curr_pos == pre_pos
   end
-  
+
   def next_line
     @lineno += 1
     @line_start = scanner.pos
-  end  
+  end
 end # class

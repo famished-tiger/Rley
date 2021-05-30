@@ -40,16 +40,16 @@ module Rley # This module is used as a namespace
       end
 
       # The dotted item for the current parse entry.
-      def curr_dotted_item()
+      def curr_dotted_item
         parse_entry.dotted_rule
       end
 
-      def symbol_on_left()
-        return curr_dotted_item.prev_symbol
+      def symbol_on_left
+        curr_dotted_item.prev_symbol
       end
 
       # Notification that one begins with the previous entry set
-      def to_prev_entry_set()
+      def to_prev_entry_set
         self.entry_set_index = entry_set_index - 1
       end
     end # class

@@ -46,33 +46,33 @@ module Rley # This module is used as a namespace
 
       # Is the rhs empty?
       # @return [Boolean] true if the rhs has no members.
-      def empty?()
-        return rhs.empty?
+      def empty?
+        rhs.empty?
       end
 
       # Return true iff the production is generative
-      def generative?()
-        if @generative.nil?
-        end
+      def generative?
+        # if @generative.nil?
+        # end
 
-        return @generative
+        @generative
       end
 
       # @return [Boolen] true iff the production is nullable
-      def nullable?()
-        return @nullable
+      def nullable?
+        @nullable
       end
 
       # Returns a string containing a human-readable representation of the
       # production.
       # @return [String]
-      def inspect()
+      def inspect
         result = +"#<#{self.class.name}:#{object_id}"
         result << " @name=\"#{name}\""
         result << " @lhs=#{lhs.name}"
         result << " @rhs=#{rhs.inspect}"
         result << " @generative=#{@generative}>"
-        return result
+        result
       end
 
       # A setter for the production name

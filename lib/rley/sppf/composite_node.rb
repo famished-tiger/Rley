@@ -9,11 +9,11 @@ module Rley # This module is used as a namespace
     class CompositeNode < SPPFNode
       # @return [Array<SPFFNode>] Sub-nodes (children).
       attr_reader(:subnodes)
-      
-      alias children subnodes      
+
+      alias children subnodes
 
       # Constructor
-      # @param aRange [Lexical::TokenRange]      
+      # @param aRange [Lexical::TokenRange]
       def initialize(aRange)
         super(aRange)
         @subnodes = []
@@ -24,14 +24,14 @@ module Rley # This module is used as a namespace
       def add_subnode(aSubnode)
         subnodes.unshift(aSubnode)
       end
-      
+
       # @return [String] a text representation of the node.
-      def inspect()
+      def inspect
         key
-      end      
+      end
 
       # @return [String]
-      def key()
+      def key
         @key ||= to_string(0)
       end
     end # class

@@ -50,7 +50,7 @@ module Rley # This module is used as a namespace
       end
 
       # Notify the builder that the parse tree construction is complete.
-      def done!()
+      def done!
         result.done!
       end
 
@@ -92,7 +92,7 @@ module Rley # This module is used as a namespace
       private
 
       # Return the top of stack element.
-      def tos()
+      def tos
         @stack.last
       end
 
@@ -207,7 +207,7 @@ module Rley # This module is used as a namespace
       # @param anEntry [ParseEntry] The entry being visited
       def terminal_before_dot?(anEntry)
         prev_symbol = anEntry.prev_symbol
-        return prev_symbol && prev_symbol.terminal?
+        prev_symbol&.terminal?
       end
 
       # A terminal symbol was detected at left of dot.
@@ -260,7 +260,7 @@ module Rley # This module is used as a namespace
             non_terminal = anEntry.vertex.lhs
         end
 
-        return non_terminal
+        non_terminal
       end
     end # class
   end # module

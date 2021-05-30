@@ -12,12 +12,12 @@ module Rley # This module is used as a namespace
       attr_reader :nonterminal
 
       def initialize(thePredecessor, theSuccessor)
-        @successor = theSuccessor
+        super(nil, theSuccessor)
         @nonterminal = thePredecessor.next_symbol
         thePredecessor.shortcut = self
       end
 
-      def to_s()
+      def to_s
         " -#{nonterminal}-> #{successor.label}"
       end
     end # class

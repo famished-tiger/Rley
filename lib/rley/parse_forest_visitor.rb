@@ -15,8 +15,8 @@ module Rley # This module is used as a namespace
         @signatures = subnodes.map { |_| prime_enumerator.next }
       end
 
-      def signature_exist?()
-        @signatures.nil? ? false : true
+      def signature_exist?
+        !@signatures.nil?
       end
     end # class
   end # module
@@ -69,7 +69,7 @@ module Rley # This module is used as a namespace
     end
 
     # The signal to begin the visit of the parse forest.
-    def start()
+    def start
       pforest.accept(self)
     end
 
@@ -169,7 +169,7 @@ module Rley # This module is used as a namespace
     def broadcast(msg, *args)
       subscribers.each do |subscr|
         next unless subscr.respond_to?(msg) || subscr.respond_to?(:accept_all)
-        
+
         subscr.send(msg, *args)
       end
     end
@@ -190,7 +190,7 @@ module Rley # This module is used as a namespace
 
     def pop_node
       return if legs.empty?
-      
+
       legs.pop
     end
   end # class

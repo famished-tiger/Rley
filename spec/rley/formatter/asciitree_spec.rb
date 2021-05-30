@@ -23,12 +23,12 @@ module Rley # Re-open the module to get rid of qualified names
         builder = sandbox.grammar_abc_builder
         builder.grammar
       end
-      
+
       # Variables for the terminal symbols
       let(:a_) { grammar_abc.name2symbol['a'] }
       let(:b_) { grammar_abc.name2symbol['b'] }
       let(:c_) { grammar_abc.name2symbol['c'] }
-      
+
       # Helper method that mimicks the output of a tokenizer
       # for the language specified by grammar_abc
       let(:grm_abc_tokens1) do
@@ -50,12 +50,12 @@ module Rley # Re-open the module to get rid of qualified names
       # Capital letters represent non-terminal nodes
       let(:grm_abc_ptree1) do
         engine = Rley::Engine.new
-        engine.use_grammar(grammar_abc)     
+        engine.use_grammar(grammar_abc)
         parse_result = engine.parse(grm_abc_tokens1)
         ptree = engine.convert(parse_result)
         ptree
       end
-  
+
       let(:destination) { StringIO.new(+'', 'w') }
       subject { Asciitree.new(destination) }
 
@@ -63,14 +63,14 @@ module Rley # Re-open the module to get rid of qualified names
         it 'should be initialized with an IO argument' do
           expect { Asciitree.new(StringIO.new(+'', 'w')) }.not_to raise_error
         end
-        
+
         it 'should know its output destination' do
           expect(subject.output).to eq(destination)
         end
       end # context
-  
 
-      context 'Rendering:' do   
+
+      context 'Rendering:' do
         it 'should render a parse tree' do
           visitor = Rley::ParseTreeVisitor.new(grm_abc_ptree1)
           subject.render(visitor)

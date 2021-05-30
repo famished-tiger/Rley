@@ -17,13 +17,13 @@ describe 'Calculator' do
     engine = Rley::Engine.new do |cfg|
       cfg.repr_builder = CalcASTBuilder
     end
-    
+
     engine.use_grammar(CalcGrammar)
     raw_result = parse_expression(engine, anExpression)
     ast = engine.to_ptree(raw_result)
     return expect(ast.root.interpret)
   end
-  
+
   def parse_expression(anEngine, anExpression)
     lexer = CalcLexer.new(anExpression)
     result = anEngine.parse(lexer.tokens)
@@ -40,7 +40,7 @@ describe 'Calculator' do
 
   context 'Parsing valid expressions' do
     let(:epsilon) { 0.0000000001 }
-  
+
     it 'should evaluate simple integer literals' do
       expect_expr('2').to eq(2)
     end
@@ -72,18 +72,18 @@ describe 'Calculator' do
     it 'should evaluate the pi constant' do
       expect_expr('PI').to eq(3.141592653589793)
     end
-    
+
     it 'should evaluate the negated pi constant' do
       expect_expr('-PI').to eq(-3.141592653589793)
-    end    
+    end
 
     it "should evaluate Neper's e constant" do
       expect_expr('E').to eq(2.718281828459045)
     end
-    
+
     it "should evaluate negated Neper's e constant" do
       expect_expr('-E').to eq(-2.718281828459045)
-    end    
+    end
 
     it 'should evaluate integer addition' do
       expect_expr('2 + 2').to eq(4)
@@ -156,7 +156,7 @@ describe 'Calculator' do
     it 'should evaluate multiple levels of parentheses' do
       expect_expr('2*(1/(1+3))').to eq(0.5)
     end
-    
+
     # Some special functions
     it 'should evaluate square root of expressions' do
       expect_expr('sqrt(0)').to eq(0)
@@ -170,69 +170,69 @@ describe 'Calculator' do
       expect_expr('cbrt(1)').to eq(1)
       expect_expr('cbrt(1 + 1)').to eq(Math.cbrt(2))
       expect_expr('cbrt(5 * 5 * 5)').to eq(5)
-    end     
+    end
 
     it 'should evaluate exponential of expressions' do
-      expect_expr('exp(-1)').to eq(1 / Math::E)    
+      expect_expr('exp(-1)').to eq(1 / Math::E)
       expect_expr('exp(0)').to eq(1)
       expect_expr('exp(1)').to eq(Math::E)
       expect_expr('exp(2)').to be_within(epsilon).of(Math::E * Math::E)
     end
 
     it 'should evaluate natural logarithm of expressions' do
-      expect_expr('ln(1/E)').to eq(-1)    
-      expect_expr('ln(1)').to eq(0)    
+      expect_expr('ln(1/E)').to eq(-1)
+      expect_expr('ln(1)').to eq(0)
       expect_expr('ln(E)').to eq(1)
       expect_expr('ln(E * E)').to eq(2)
-    end 
+    end
 
     it 'should evaluate the logarithm base 10 of expressions' do
-      expect_expr('log(1/10)').to eq(-1)    
-      expect_expr('log(1)').to eq(0)    
+      expect_expr('log(1/10)').to eq(-1)
+      expect_expr('log(1)').to eq(0)
       expect_expr('log(10)').to eq(1)
       expect_expr('log(10 * 10 * 10)').to eq(3)
-    end    
- 
+    end
+
     # Trigonometric functions
-    
+
     it 'should compute the sinus of an expression' do
       expect_expr('sin(0)').to eq(0)
       expect_expr('sin(PI/6)').to be_within(epsilon).of(0.5)
       expect_expr('sin(PI/2)').to eq(1)
     end
-    
+
     it 'should compute the cosinus of an expression' do
       expect_expr('cos(0)').to eq(1)
       expect_expr('cos(PI/3)').to be_within(epsilon).of(0.5)
       expect_expr('cos(PI/2)').to be_within(epsilon).of(0)
-    end 
+    end
 
     it 'should compute the tangent of an expression' do
       expect_expr('tan(0)').to eq(0)
       expect_expr('tan(PI/4)').to be_within(epsilon).of(1)
       expect_expr('tan(5*PI/12)').to be_within(epsilon).of(2 + Math.sqrt(3))
-    end    
- 
+    end
+
     # Inverse trigonometric functions
-    
+
     it 'should compute the arcsinus of an expression' do
       expect_expr('asin(0)').to eq(0)
       expect_expr('asin(0.5)').to be_within(epsilon).of(Math::PI / 6)
       expect_expr('asin(1)').to eq(Math::PI / 2)
     end
-    
+
     it 'should compute the arccosinus of an expression' do
       expect_expr('acos(1)').to eq(0)
       expect_expr('acos(0.5)').to be_within(epsilon).of(Math::PI / 3)
       expect_expr('acos(0)').to be_within(epsilon).of(Math::PI / 2)
-    end 
+    end
 
     it 'should compute the tangent of an expression' do
       expect_expr('atan(0)').to eq(0)
       pi = Math::PI
       expect_expr('atan(1)').to be_within(epsilon).of(pi / 4)
       expect_expr('atan(2 + sqrt(3))').to be_within(epsilon).of(5 * pi / 12)
-    end    
+    end
   end # context
 end # describe
 # End of file

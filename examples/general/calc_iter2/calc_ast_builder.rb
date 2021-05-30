@@ -15,8 +15,7 @@ class CalcASTBuilder < Rley::ParseRep::ASTBaseBuilder
     # The unary negation operator on one hand, the binary substraction operator
     'MINUS' => { 'add_operator_1' =>  Rley::PTree::TerminalNode,
                  'simple_factor_2' => CalcNegateNode,
-                 'sign_1' => CalcNegateNode
-               },
+                 'sign_1' => CalcNegateNode },
     'NUMBER' => CalcNumberNode,
     'PI' => CalcConstantNode,
     'E' => CalcConstantNode,
@@ -25,7 +24,7 @@ class CalcASTBuilder < Rley::ParseRep::ASTBaseBuilder
 
   protected
 
-  def terminal2node()
+  def terminal2node
     Terminal2NodeClass
   end
 
@@ -35,6 +34,8 @@ class CalcASTBuilder < Rley::ParseRep::ASTBaseBuilder
     operator_node.children << theChildren[2]
     return operator_node
   end
+
+  # rubocop: disable Naming/VariableNumber
 
   # rule 'simple_expression' => %w[simple_expression add_operator term]
   def reduce_simple_expression_1(_production, _range, _tokens, theChildren)
@@ -106,5 +107,6 @@ class CalcASTBuilder < Rley::ParseRep::ASTBaseBuilder
   def reduce_mul_operator_1(_production, aRange, _tokens, theChildren)
     return CalcDivideNode.new(theChildren[0].symbol, aRange)
   end
+  # rubocop: enable Naming/VariableNumber
 end # class
 # End of file

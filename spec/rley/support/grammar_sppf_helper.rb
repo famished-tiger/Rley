@@ -10,7 +10,7 @@ module GrammarSPPFHelper
   # "SPPF-Style Parsing From Earley Recognizers" in
   # Notes in Theoretical Computer Science 203, (2008), pp. 53-67
   # contains a hidden left recursion and a cycle
-  def grammar_sppf_builder()
+  def grammar_sppf_builder
     builder = Rley::Syntax::GrammarBuilder.new do
       add_terminals('a', 'b')
       rule 'Phi' => 'S'

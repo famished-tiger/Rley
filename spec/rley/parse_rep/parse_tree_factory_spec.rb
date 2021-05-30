@@ -38,11 +38,11 @@ module Rley # Open this namespace to avoid module qualifier prefixes
       end
 
       # Emit a text representation of the current path.
-      def path_to_s()
+      def path_to_s
         text_parts = subject.curr_path.map do |path_element|
           path_element.to_string(0)
         end
-        return text_parts.join('/')
+        text_parts.join('/')
       end
 
 

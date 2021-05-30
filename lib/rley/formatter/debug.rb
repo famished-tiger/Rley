@@ -19,17 +19,17 @@ module Rley # This module is used as a namespace
         super(anIO)
         @indentation = 0
       end
-      
+
       # Indicates that this formatter accepts all visit events
       # provided their names start with 'before_' or 'after_'
       # @return [Boolean]
       def accept_all
         return true
       end
-      
+
       # Ghost method pattern.
-      def method_missing(mth, *args)    
-        mth_name = mth.to_s         
+      def method_missing(mth, *args)
+        mth_name = mth.to_s
         case mth_name
           when /^before_/
             output_event(mth_name, indentation)
@@ -44,11 +44,11 @@ module Rley # This module is used as a namespace
 
       private
 
-      def indent()
+      def indent
         @indentation += 1
       end
 
-      def dedent()
+      def dedent
         @indentation -= 1
       end
 

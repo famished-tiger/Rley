@@ -18,12 +18,12 @@ module Rley # This module is used as a namespace
       #   to the matching grammar symbol object.
       attr_reader(:symbols)
 
-      # @return [Array<Production>] The list of production rules for 
+      # @return [Array<Production>] The list of production rules for
       #   the grammar to build.
       attr_reader(:productions)
 
       # Creates a new grammar builder.
-      # @param aBlock [Proc] code block used to build the grammar. 
+      # @param aBlock [Proc] code block used to build the grammar.
       # @example Building a tiny English grammar
       #   builder = Rley::Syntax::GrammarBuilder.new do
       #     add_terminals('n', 'v', 'adj', 'det')
@@ -45,7 +45,7 @@ module Rley # This module is used as a namespace
       # @param aSymbolName [String] the name of a grammar symbol.
       # @return [GrmSymbol] the retrieved symbol object.
       def [](aSymbolName)
-        return symbols[aSymbolName]
+        symbols[aSymbolName]
       end
 
       # Add the given terminal symbols to the grammar of the language
@@ -67,7 +67,7 @@ module Rley # This module is used as a namespace
       #   builder.rule('A' => ['a', 'A', 'c']) # 'rule' is a synonym
       #   builder.rule('A' => %w[a A  c]) # Use %w syntax for Array of String
       #   builder.rule 'A' => %w[a A  c]  # Call parentheses are optional
-      # @param aProductionRepr [Hash{String, Array<String>}] 
+      # @param aProductionRepr [Hash{String, Array<String>}]
       #   A Hash-based representation of a production.
       # @return [Production] The created Production instance
       def add_production(aProductionRepr)
@@ -85,14 +85,14 @@ module Rley # This module is used as a namespace
           new_prod = Production.new(lhs, rhs_members)
           productions << new_prod
         end
-        
+
         return productions.last
       end
 
       # Given the grammar symbols and productions added to the builder,
       # build the resulting grammar (if not yet done).
-      # @return [Grammar] the created grammar object.      
-      def grammar()
+      # @return [Grammar] the created grammar object.
+      def grammar
         unless @grammar
           raise StandardError, 'No symbol found for grammar' if symbols.empty?
           if productions.empty?
@@ -113,7 +113,7 @@ module Rley # This module is used as a namespace
           unused = all_terminals.reject { |a_term| in_use.include?(a_term) }
           unless unused.empty?
             suffix = "#{unused.map(&:name).join(', ')}."
-            raise StandardError, 'Useless terminal symbol(s): ' + suffix
+            raise StandardError, "Useless terminal symbol(s): #{suffix}"
           end
 
           @grammar = Grammar.new(productions.dup)
@@ -166,7 +166,7 @@ module Rley # This module is used as a namespace
         unless symbols.include? aSymbolName
           symbols[aSymbolName] = NonTerminal.new(aSymbolName)
         end
-        return symbols[aSymbolName]
+        symbols[aSymbolName]
       end
     end # class
   end # module

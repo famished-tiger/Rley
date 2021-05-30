@@ -16,11 +16,11 @@ JSONTerminalNode = Struct.new(:token, :value, :position) do
     self.value = aLiteral.dup
   end
 
-  def symbol()
+  def symbol
     token.terminal
   end
 
-  def to_ruby()
+  def to_ruby
     value
   end
 
@@ -29,9 +29,9 @@ JSONTerminalNode = Struct.new(:token, :value, :position) do
   def accept(aVisitor)
     aVisitor.visit_terminal(self)
   end
-  
+
   def done!
-    # Do nothing  
+    # Do nothing
   end
 end
 
@@ -77,23 +77,18 @@ class JSONCompositeNode
   def accept(aVisitor)
     aVisitor.visit_nonterminal(self)
   end
-  
+
   def done!
-    # Do nothing  
+    # Do nothing
   end
 
   alias subnodes children
 end # class
 
-
 class JSONArrayNode < JSONCompositeNode
-  def initialize(aSymbol)
-    super(aSymbol)
-  end
-
   # Convert this tree node in a simpler Ruby representation.
   # Basically a JSON object corresponds to a Ruhy Hash
-  def to_ruby()
+  def to_ruby
     rep = []
     children.each do |child|
       rep << child.to_ruby
@@ -114,7 +109,7 @@ class JSONPair
     @symbol = aSymbol
   end
 
-  def children()
+  def children
     return [name, value]
   end
 
@@ -125,27 +120,23 @@ class JSONPair
   def accept(aVisitor)
     aVisitor.visit_nonterminal(self)
   end
-  
+
   def done!
     # Do nothing
   end
-  
+
   def to_ruby
     rep = {}
     rep[name.to_ruby] = value.to_ruby
 
-    return rep    
+    return rep
   end
 end # class
 
 class JSONObjectNode < JSONCompositeNode
-  def initialize(aSymbol)
-    super(aSymbol)
-  end
-
   # Convert this tree node in a simpler Ruby representation.
   # Basically a JSON object corresponds to a Ruby Hash
-  def to_ruby()
+  def to_ruby
     rep = {}
     members.each do |pair|
       rep[pair.name.to_ruby] = pair.value.to_ruby

@@ -3,7 +3,6 @@
 # Classes that implement nodes of Abstract Syntax Trees (AST) representing
 # calculator parse results.
 
-
 CalcTerminalNode = Struct.new(:token, :value, :position) do
   def initialize(aToken, aPosition)
     self.token = aToken
@@ -16,15 +15,15 @@ CalcTerminalNode = Struct.new(:token, :value, :position) do
     self.value = aLiteral.dup
   end
 
-  def symbol()
+  def symbol
     token.terminal
   end
 
-  def interpret()
-    return value
+  def interpret
+    value
   end
-  
-  def done!()
+
+  def done!
     # Do nothing
   end
 
@@ -45,9 +44,9 @@ class CalcNumberNode < CalcTerminalNode
         self.value = aLiteral.to_f
     end
   end
-  
+
   # Overriding the unary minus operator
-  def -@()
+  def -@
     self.value = - value
     return self
   end
@@ -83,8 +82,8 @@ class CalcCompositeNode
   def accept(aVisitor)
     aVisitor.visit_nonterminal(self)
   end
-  
-  def done!()
+
+  def done!
     # Do nothing
   end
 
@@ -92,44 +91,36 @@ class CalcCompositeNode
 end # class
 
 class CalcUnaryOpNode < CalcCompositeNode
-  def initialize(aSymbol, aPosition)
-    super(aSymbol, aPosition)
-  end
-
   alias members children
 end # class
 
-class CalcNegateNode < CalcUnaryOpNode  
-  def interpret()
+class CalcNegateNode < CalcUnaryOpNode
+  def interpret
     return -children[0].interpret
   end
 end # class
 
 class CalcUnaryFunction < CalcCompositeNode
-  @@name_mapping = begin 
+  @@name_mapping = begin
     map = Hash.new { |me, key| me[key] = key }
     map['ln'] = 'log'
     map['log'] = 'log10'
     map
   end
   attr_accessor(:func_name)
-  
-  
-  def interpret()
+
+
+  def interpret
     argument = children[0].interpret
     internal_name = @@name_mapping[@func_name]
     return Math.send(internal_name.to_sym, argument)
-  end  
+  end
 end
 
 class CalcBinaryOpNode < CalcCompositeNode
-  def initialize(aSymbol, aRange)
-    super(aSymbol, aRange)
-  end
-
   protected
 
-  def retrieve_operands()
+  def retrieve_operands
     operands = []
     children.each do |child|
       oper = child.respond_to?(:interpret) ? child.interpret : child
@@ -142,52 +133,45 @@ end # class
 
 class CalcAddNode < CalcBinaryOpNode
   # TODO
-  def interpret()
+  def interpret
     operands = retrieve_operands
 
-    sum = operands[0] + operands[1]
-    return sum
+    operands[0] + operands[1]
   end
 end # class
 
-
 class CalcSubtractNode < CalcBinaryOpNode
   # TODO
-  def interpret()
+  def interpret
     operands = retrieve_operands
 
-    substraction = operands[0] - operands[1]
-    return substraction
+    operands[0] - operands[1]
   end
 end # class
 
 class CalcMultiplyNode < CalcBinaryOpNode
   # TODO
-  def interpret()
+  def interpret
     operands = retrieve_operands
-    multiplication = operands[0] * operands[1]
-    return multiplication
+    operands[0] * operands[1]
   end
 end # class
 
 class CalcDivideNode < CalcBinaryOpNode
   # TODO
-  def interpret()
+  def interpret
     operands = retrieve_operands
     numerator = operands[0].to_f
     denominator = operands[1]
-    division =  numerator / denominator
-    return division
+    numerator / denominator
   end
 end # class
 
-
 class PowerNode < CalcBinaryOpNode
   # TODO
-  def interpret()
+  def interpret
     operands = retrieve_operands
-    exponentiation = operands[0]**operands[1]
-    return exponentiation
+    operands[0]**operands[1]
   end
 end # class
 # End of file

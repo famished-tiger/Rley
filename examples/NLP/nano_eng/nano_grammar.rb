@@ -11,7 +11,7 @@ require 'rley' # Load the gem
 # based on chapter 12 from Jurafski & Martin book.
 # Daniel Jurafsky,‎ James H. Martin: "Speech and Language Processing";
 # 2009, Pearson Education, Inc., ISBN 978-0135041963
-# It defines the syntax of a sentence in a mini English-like language 
+# It defines the syntax of a sentence in a mini English-like language
 builder = Rley::Syntax::GrammarBuilder.new do
   add_terminals('Pronoun', 'Proper-Noun')
   add_terminals('Determiner', 'Noun')
@@ -21,7 +21,7 @@ builder = Rley::Syntax::GrammarBuilder.new do
 
   rule 'language' => 'sentence'
   rule 'sentence' => 'declarative'
-  rule 'sentence' => 'imperative'  
+  rule 'sentence' => 'imperative'
   rule 'sentence' => 'yes_no_question'
   rule 'sentence' => 'wh_subject_question'
   rule 'sentence' => 'wh_non_subject_question'
@@ -33,7 +33,7 @@ builder = Rley::Syntax::GrammarBuilder.new do
   rule 'NP' => %w[Predeterminer NP]
   rule 'NP' => 'Pronoun'
   rule 'NP' => 'Proper-Noun'
-  rule 'NP' => %w[Det Card Ord Quant Nominal] 
+  rule 'NP' => %w[Det Card Ord Quant Nominal]
   rule 'VP' => 'Verb'
   rule 'VP' => %w[Verb NP]
   rule 'VP' => %w[Verb NP PP]
@@ -43,12 +43,12 @@ builder = Rley::Syntax::GrammarBuilder.new do
   rule 'Card' => 'Cardinal_number'
   rule 'Card' => []
   rule 'Ord' => 'Ordinal_number'
-  rule 'Ord' =>  []  
+  rule 'Ord' =>  []
   rule 'Nominal' => 'Noun'
   rule 'Nominal' => %w[Nominal Noun]
   rule 'Nominal' => %w[Nominal GerundVP]
   rule 'Nominal' => %w[Nominal RelClause]
-  rule 'PP' => %w[Preposition NP]  
+  rule 'PP' => %w[Preposition NP]
   rule 'GerundVP' => 'GerundV'
   rule 'GerundVP' => %w[GerundV NP]
   rule 'GerundVP' => %w[GerundV NP PP]

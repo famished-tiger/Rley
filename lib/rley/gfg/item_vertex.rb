@@ -40,33 +40,33 @@ module Rley # This module is used as a namespace
       # The label of this vertex.
       # It is the same as the label of the corresponding dotted item.
       # @return [String] Label for this vertex
-      def label()
-        return dotted_item.to_s
+      def label
+        dotted_item.to_s
       end
 
       # Returns true if the dotted item has a dot at the end of the production.
       # @return [Boolean]
-      def complete?()
-        return dotted_item.reduce_item?
+      def complete?
+        dotted_item.reduce_item?
       end
 
       # Return the symbol before the dot.
       # @return [Syntax::GrmSymbol, NilClass] Previous symbol otherwise nil.
-      def prev_symbol()
-        return dotted_item.prev_symbol
+      def prev_symbol
+        dotted_item.prev_symbol
       end
 
       # Return the symbol after the dot.
       # @return [Syntax::GrmSymbol, NilClass] Next grammar symbol otherwise nil.
-      def next_symbol()
-        return dotted_item.next_symbol
+      def next_symbol
+        @next_symbol ||= dotted_item.next_symbol
       end
 
       # Return the non-terminal symbol at the left-hand side of the production
       # @return [Syntax::GrmSymbol]
       #   The non-terminal symbol at left side of production.
-      def lhs()
-        return dotted_item.lhs
+      def lhs
+        dotted_item.lhs
       end
     end # class
   end # module

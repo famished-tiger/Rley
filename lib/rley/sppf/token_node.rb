@@ -25,14 +25,14 @@ module Rley # This module is used as a namespace
       # @param indentation [Integer]
       # @return [String]
       def to_string(indentation)
-        return "#{token.terminal.name}#{range.to_string(indentation)}"
+        "#{token.terminal.name}#{range.to_string(indentation)}"
       end
-      
+
       # Part of the 'visitee' role in Visitor design pattern.
       # @param aVisitor[ParseTreeVisitor] the visitor
       def accept(aVisitor)
         aVisitor.visit_terminal(self)
-      end      
+      end
     end # class
   end # module
 end # module

@@ -15,7 +15,7 @@ module Rley # This module is used as a namespace
       # Allowed string values are: 'first', 'last', 'first_and_last', 'other'
       attr_reader(:ranks)
 
-      # @return [String] The character pattern used for rendering 
+      # @return [String] The character pattern used for rendering
       # a parent - child nesting
       attr_reader(:nesting_prefix)
 
@@ -99,7 +99,7 @@ module Rley # This module is used as a namespace
       end
 
       # 'root', 'first', 'first_and_last', 'last', 'other'
-      def path_prefix()
+      def path_prefix
         return '' if ranks.empty?
 
         prefix = +''
@@ -116,7 +116,7 @@ module Rley # This module is used as a namespace
         end
 
         prefix << nesting_prefix
-        return prefix
+        prefix
       end
 
       def emit(aNode, aSuffix = '')

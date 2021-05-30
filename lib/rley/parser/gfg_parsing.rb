@@ -179,50 +179,36 @@ module Rley # This module is used as a namespace
           end
         end
 
-        return true
+        true
       end
 
       # Return true if the parse was successful (= input tokens
       # followed the syntax specified by the grammar)
-      def success?()
+      def success?
         return false if @failure_reason
 
-        return chart.accepting_entry ? true : false
+        chart.accepting_entry ? true : false
       end
 
       # Return true if there are more than one complete state
       # for the same lhs and same origin in any state set.
-      def ambiguous?()
+      def ambiguous?
         found = chart.sets.find { |set| !set.ambiguities.empty? }
-        return !found.nil?
-      end
-
-      # Factory method. Builds a ParseForest from the parse result.
-      # @return [ParseForest]
-      def parse_forest()
-        msg = <<-END_MSG
- Method Rley::Parser::GFGParsing.parse_forest is deprecated, call
- Rley::Engine::to_pforest. It will be removed June 1st
- or version 0.6.1 (whichever is first)
-END_MSG
-        # warn(msg)
-        factory = ParseRep::ParseForestFactory.new(self)
-
-        return factory.create
+        !found.nil?
       end
 
       # Retrieve the very first parse entry added to the chart.
       # This entry corresponds to the start vertex of the GF graph
       # with origin equal to zero.
-      def initial_entry()
-        return chart.initial_entry
+      def initial_entry
+        chart.initial_entry
       end
 
       # Retrieve the accepting parse entry that represents
       # a complete, successful parse
       # After a successful parse, the last chart entry set
       # has an end parse entry that involves the start symbol
-      def accepting_entry()
+      def accepting_entry
         return chart.accepting_entry
       end
 
@@ -232,7 +218,7 @@ END_MSG
       end
 
       # A notification that the parsing reached an end
-      def done()
+      def done
         # Parse not successful and no reason identified
         # Assuming that parse failed because of a premature end
         premature_end unless success? || failure_reason
@@ -240,7 +226,7 @@ END_MSG
 
       # Clean and normalize the object.
       # Call this method when the parsing is complete.
-      def tidy_up!()
+      def tidy_up!
         antecedence.each_key do |entry|
           antecedence[entry].uniq!
         end
@@ -259,7 +245,7 @@ END_MSG
       end
 
       # @return [String] A human readable representation of itself.
-      def to_s()
+      def to_s
         result = +''
         result << "success? #{success?}\n"
         result << "chart:\n"
@@ -296,7 +282,6 @@ END_MSG
         consequent = push_entry(aVertex, anOrigin, aPosition, aRuleId)
 
         antecedence[consequent] << antecedentEntry
-
 
 =begin
         # Invariant checks
@@ -335,7 +320,7 @@ END_MSG
         end
 =end
         consequent.add_antecedent(antecedentEntry)
-        return consequent
+        consequent
       end
 
       # Push a parse entry (vertex + origin) to the
@@ -350,15 +335,16 @@ END_MSG
       def forest_builder(anIndex)
         full_range = { low: 0, high: anIndex }
         start_production = chart.start_dotted_rule.production
-        return ParseForestBuilder.new(start_production, full_range)
+
+        ParseForestBuilder.new(start_production, full_range)
       end
 
       # Factory method. Creates and initializes a ParseEntryTracker instance.
-      def new_entry_tracker()
+      def new_entry_tracker
         instance = ParseEntryTracker.new(chart.last_index)
         instance.parse_entry = accepting_entry
 
-        return instance
+        instance
       end
     end # class
   end # module

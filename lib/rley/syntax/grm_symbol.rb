@@ -23,19 +23,19 @@ module Rley # This module is used as a namespace
 
       # The String representation of the grammar symbol
       # @return [String]
-      def to_s()
-        return name.to_s
+      def to_s
+        name.to_s
       end
 
       # @return [Boolean] true iff the symbol is a terminal
-      def terminal?()
+      def terminal?
         # Default implementation to override if necessary
-        return false
+        false
       end
 
       # @return [Boolean] true iff the symbol is generative.
-      def generative?()
-        return @generative
+      def generative?
+        @generative
       end
     end # class
   end # module

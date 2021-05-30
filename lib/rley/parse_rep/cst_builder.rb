@@ -16,13 +16,13 @@ module Rley # This module is used as a namespace
     # nodes) and using a step by step approach.
     class CSTBuilder < ParseTreeBuilder
       protected
-      
+
       # Method to override
       # Create a parse tree object with given
       # node as root node.
       def create_tree(aRootNode)
         return Rley::PTree::ParseTree.new(aRootNode)
-      end      
+      end
 
       # Method to override
       # Factory method for creating a node object for the given
@@ -42,10 +42,9 @@ module Rley # This module is used as a namespace
       # @param theChildren [Array] Children nodes (one per rhs symbol)
       def new_parent_node(aProduction, aRange, _tokens, theChildren)
         node = Rley::PTree::NonTerminalNode.new(aProduction.lhs, aRange)
-        if theChildren
-          theChildren.reverse_each { |child| node.add_subnode(child) }
-        end
-        return node
+        theChildren&.reverse_each { |child| node.add_subnode(child) }
+
+        node
       end
     end # class
   end # module

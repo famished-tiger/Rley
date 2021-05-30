@@ -37,12 +37,12 @@ module Rley # Open this namespace to avoid module qualifier prefixes
         it "shouldn't have children yet" do
           expect(subject.subnodes).to be_empty
         end
-        
+
         it 'should have :and refinement' do
           expect(subject.refinement).to eq(:and)
         end
       end # context
-      
+
       context 'Provided services:' do
         it 'should accept the addition of subnodes' do
           subnode1 = double('first_subnode')
@@ -57,7 +57,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
         it 'should have a string representation' do
           expect(subject.to_string(0)).to eq('VP[0, 3]')
         end
-        
+
         it 'should return a key value of itself' do
           expect(subject.key).to eq('VP[0, 3]')
         end

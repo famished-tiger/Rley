@@ -16,44 +16,45 @@ module Rley # This module is used as a namespace
 
       # @return [Array<ParseEntry>] The array of parse entries
       attr_reader :entries
-      
+
       # @return [Hash] A Hash with pairs { hash of ParseEntry => ParseEntry }
-      attr_reader :membership      
+      attr_reader :membership
 
       # Constructor.
-      def initialize()
+      def initialize
         @entries = []
         @membership = {}
         @entries4term = Hash.new { |hash, key| hash[key] = [] }
         @entries4n_term = Hash.new { |hash, key| hash[key] = [] }
       end
-      
-      # Returns a string containing a human-readable representation of the 
+
+      # Returns a string containing a human-readable representation of the
       # set of parse entries.
       # @return [String]
-      def inspect()
+      def inspect
         result = +"#<#{self.class.name}:#{object_id}"
         result << ' @entries=['
         entries.each { |e| result << e.inspect }
         result << ']>'
-        return result
+
+        result
       end
 
       # Access the entry at given position
       def [](index)
-        return entries[index]
+        entries[index]
       end
 
       # Returns a Hash with pairs of the form:
       #   terminal symbol => [ parse entry expecting the terminal ]
       def entries4term(aTerminal)
-        return @entries4term.fetch(aTerminal, [])
+        @entries4term.fetch(aTerminal, [])
       end
 
       # Returns a Hash with pairs of the form:
       #   non terminal symbol => [ parse entry expecting the non-terminal ]
       def entries4n_term(aNonTerminal)
-        return @entries4n_term.fetch(aNonTerminal, [])
+        @entries4n_term.fetch(aNonTerminal, [])
       end
 
       # Append the given entry (if it isn't yet in the set)
@@ -71,11 +72,11 @@ module Rley # This module is used as a namespace
           result = anEntry
         end
 
-        return result
+        result
       end
 
       # Return an Array of Arrays of ambiguous parse entries.
-      def ambiguities()
+      def ambiguities
         complete_entries = entries.select(&:exit_entry?)
         return [] if complete_entries.size <= 1
 
@@ -90,20 +91,22 @@ module Rley # This module is used as a namespace
           ambiguous_groups << a_group if a_group.size > 1
         end
 
-        return ambiguous_groups
+        ambiguous_groups
       end
 
       # The list of distinct expected terminal symbols. An expected symbol
       # is on the left of a dot in a parse state of the parse set.
-      def expected_terminals()
+      def expected_terminals
         return @entries4term.keys
       end
-      
+
       def count_edges
+        # rubocop: disable Lint/UselessAssignment
         entries.reduce(0) do |sub_result, entry|
           sub_result += entry.vertex.edges.size
         end
       end
+      # rubocop: enable Lint/UselessAssignment
 
       private
 

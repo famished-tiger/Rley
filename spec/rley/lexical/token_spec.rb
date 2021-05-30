@@ -29,10 +29,10 @@ module Rley # Open this namespace to avoid module qualifier prefixes
         it 'should know its terminal' do
           expect(subject.terminal).to eq(a_terminal)
         end
-        
+
         it 'should know its terminal' do
           expect(subject.position).to eq(a_pos)
-        end        
+        end
       end # context
     end # describe
   end # module

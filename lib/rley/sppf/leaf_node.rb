@@ -8,14 +8,14 @@ module Rley # This module is used as a namespace
     # child node.
     class LeafNode < SPPFNode
       # @return [String] a text representation of the node.
-      def inspect()
+      def inspect
         key
       end
 
       # @return [String]
-      def key()
+      def key
         @key ||= to_string(0)
-      end    
+      end
     end # class
   end # module
 end # module

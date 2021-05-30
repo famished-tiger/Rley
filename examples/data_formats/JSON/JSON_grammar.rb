@@ -18,11 +18,11 @@ builder = Rley::Syntax::GrammarBuilder.new do
   rule 'JSON_text' => 'value'
   rule 'value' => 'false'
   rule 'value' => 'null'
-  rule 'value' => 'true'   
+  rule 'value' => 'true'
   rule 'value' => 'object'
   rule 'value' => 'array'
   rule 'value' => 'number'
-  rule 'value' => 'string'  
+  rule 'value' => 'string'
   rule 'object' => %w[begin-object member-list end-object]
   rule 'object' => %w[begin-object end-object]
   # Next rule is an example of a left recursive rule

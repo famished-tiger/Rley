@@ -17,7 +17,7 @@ module Rley # Module used as a namespace
       end
 
       # @return [String] the result of invoking reason.to_s
-      def message()
+      def message
         return to_s
       end
 
@@ -27,11 +27,10 @@ module Rley # Module used as a namespace
       end
     end # class
 
-
     # This parse error occurs when no input for parsing was provided
     # while the grammar requires some non-empty input.
     class NoInput < ErrorReason
-      def initialize()
+      def initialize
         super(0)
       end
 
@@ -61,7 +60,7 @@ module Rley # Module used as a namespace
 
       protected
 
-      def position()
+      def position
         return last_token.position if last_token.respond_to?(:position)
 
         rank + 1
@@ -76,7 +75,7 @@ module Rley # Module used as a namespace
                    else
                      "'#{term_names[0]}'"
                    end
-        return explain
+        explain
       end
     end # class
 

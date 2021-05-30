@@ -17,14 +17,14 @@ module Rley # This module is used as a namespace
       # Mainly used for diagnosis/debugging purposes.
       # @return [String]
       def to_string(indentation)
-        return "_#{range.to_string(indentation)}"
+        "_#{range.to_string(indentation)}"
       end
-      
+
       # Part of the 'visitee' role in Visitor design pattern.
       # @param aVisitor[ParseTreeVisitor] the visitor
       def accept(aVisitor)
         aVisitor.visit_epsilon(self)
-      end      
+      end
     end # class
   end # module
 end # module

@@ -27,7 +27,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           # Both bounds provided
           expect { TokenRange.new(low: 0, high: 5) }.not_to raise_error
         end
-        
+
         it 'could be created with another TokenRange' do
           # Low bound provided
           instance = TokenRange.new(low: 0)
@@ -61,7 +61,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           expect(subject == [0, 5]).to eq(true)
         end
 
-      
+
         it 'should know whether it is bounded or not' do
           expect(subject).to be_bounded
 
@@ -119,50 +119,50 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           expect(instance.low).to eq(1)
           expect(instance.high).to eq(4)
         end
-        
+
         it 'should tell whether an index value lies outside the range' do
           # Out of range...
           expect(subject.out_of_range?(-1)).to eq(true)
           expect(subject.out_of_range?(6)).to eq(true)
-          
+
           # On boundaries...
           expect(subject.out_of_range?(0)).to eq(false)
           expect(subject.out_of_range?(5)).to eq(false)
-          
+
           # Inside boundaries
           expect(subject.out_of_range?(2)).to eq(false)
 
           instance = TokenRange.new(low: nil, high: 5)
-          
+
           # Lower bound is nil
           expect(instance.out_of_range?(-1)).to eq(false)
           expect(instance.out_of_range?(5)).to eq(false)
           expect(instance.out_of_range?(6)).to eq(true)
-          
+
           instance = TokenRange.new(low: 0, high: nil)
-          
+
           # Upper bound is nil
           expect(instance.out_of_range?(-1)).to eq(true)
           expect(instance.out_of_range?(0)).to eq(false)
           expect(instance.out_of_range?(6)).to eq(false)
         end
-        
+
         it 'should provide a text representation of itself' do
           # Case 1: not bound is set
           instance = TokenRange.new({})
-          expect(instance.to_string(0)).to eq('[?, ?]') 
-          
+          expect(instance.to_string(0)).to eq('[?, ?]')
+
           # Case: only low bound is set
           instance = TokenRange.new(low: 0)
-          expect(instance.to_string(0)).to eq('[0, ?]') 
+          expect(instance.to_string(0)).to eq('[0, ?]')
 
           # Case: only upper bound is set
-          instance = TokenRange.new(high: 5) 
-          expect(instance.to_string(0)).to eq('[?, 5]') 
+          instance = TokenRange.new(high: 5)
+          expect(instance.to_string(0)).to eq('[?, 5]')
 
           # Case: both bounds are set
-          instance = TokenRange.new(low: 0, high: 5) 
-          expect(instance.to_string(0)).to eq('[0, 5]')            
+          instance = TokenRange.new(low: 0, high: 5)
+          expect(instance.to_string(0)).to eq('[0, 5]')
         end
       end
     end # describe

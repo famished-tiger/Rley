@@ -16,7 +16,7 @@ module Rley # This module is used as a namespace
       # Pre-condition: theSuccessor is an StartVertex
       def initialize(thePredecessor, theSuccessor)
         super(thePredecessor, theSuccessor)
-        do_set_key(thePredecessor, theSuccessor)      
+        do_set_key(thePredecessor, theSuccessor)
       end
 
       private

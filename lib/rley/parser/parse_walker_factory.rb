@@ -21,16 +21,13 @@ module Rley # This module is used as a namespace
       # non-terminal symbol => { index(=origin) => start entry }
       :return_stack, # @return [Array<ParseEntry>] A stack of parse entries
       :backtrack_points,
-      :lazy_walk # If true and revisit end vertex then jump to start vertex
-    )
-
+      :lazy_walk) # If true and revisit end vertex then jump to start vertex
 
     WalkerBacktrackpoint = Struct.new(
       :entry_set_index, # Sigma set index of current parse entry
       :return_stack, # A stack of parse entries
       :visitee, # The parse entry being visited
-      :antecedent_index
-    )
+      :antecedent_index)
 
     # A factory that creates an Enumerator object
     # that itself walks through a GFGParsing object.
@@ -53,6 +50,7 @@ module Rley # This module is used as a namespace
       # @param lazyWalk [Boolean] if true then take some shortcut in re-visits.
       # @return [Enumerator] yields visit events when walking over the
       #   parse result
+      # rubocop: disable Style/OptionalBooleanParameter
       def build_walker(acceptingEntry, maxIndex, lazyWalk = false)
         msg = 'Internal error: nil entry argument'
         raise StandardError, msg if acceptingEntry.nil?
@@ -60,7 +58,7 @@ module Rley # This module is used as a namespace
         # Local context for the enumerator
         ctx = init_context(acceptingEntry, maxIndex, lazyWalk)
 
-        walker = Enumerator.new do |receiver| # 'receiver' is a Yielder
+        Enumerator.new do |receiver| # 'receiver' is a Yielder
           # At this point: current entry == accepting entry
 
           loop do
@@ -70,7 +68,7 @@ module Rley # This module is used as a namespace
             if ctx.curr_entry.orphan? # No antecedent?...
               msg_prefix = "No antecedent for #{ctx.curr_entry}"
               msg_suffix = "at rank #{ctx.entry_set_index}"
-              err_msg = msg_prefix + ' ' + msg_suffix
+              err_msg = "#{msg_prefix} #{msg_suffix}"
               raise StandardError, err_msg unless ctx.curr_entry.start_entry?
               break if ctx.backtrack_points.empty?
 
@@ -84,9 +82,8 @@ module Rley # This module is used as a namespace
             ctx.curr_entry = result.last
           end
         end
-
-        return walker
       end
+      # rubocop: enable Style/OptionalBooleanParameter
 
       private
 
@@ -101,12 +98,12 @@ module Rley # This module is used as a namespace
         context.backtrack_points = []
         context.lazy_walk = lazyWalk
 
-        return context
+        context
       end
 
       # Initialize the non-terminal to start entry mapping
-      def init_nterm2start()
-        h = Hash.new do |hsh, defval|
+      def init_nterm2start
+        Hash.new do |hsh, defval|
           entry, index = defval
           nonterm = entry.vertex.non_terminal
           if hsh.include? nonterm
@@ -116,11 +113,10 @@ module Rley # This module is used as a namespace
             hsh[nonterm] = { index => entry }
           end
         end
-
-        return h
       end
 
       # [event, entry, index, vertex]
+      # rubocop: disable Lint/DuplicateBranch
       def visit_entry(anEntry, aContext)
         index = aContext.entry_set_index
         aContext.nterm2start[[anEntry, index]] if anEntry.start_entry?
@@ -156,11 +152,12 @@ module Rley # This module is used as a namespace
           event = [:visit, anEntry, index]
         end
 
-        return event
+        event
       end
+      # rubocop: enable Lint/DuplicateBranch
 
       def detect_scan_edge(_ctx)
-        return nil unless aContext.curr_entry.dotted_entry?
+        nil unless aContext.curr_entry.dotted_entry?
       end
 
       # Given the current entry from context object
@@ -170,13 +167,11 @@ module Rley # This module is used as a namespace
         entries = []
         return entries if aContext.curr_entry.orphan?
 
-        entries = if aContext.curr_entry.antecedents.size == 1
-                    antecedent_of(aContext)
-                  else
-                    select_antecedent(aContext)
-                  end
-
-        entries
+        if aContext.curr_entry.antecedents.size == 1
+          antecedent_of(aContext)
+        else
+          select_antecedent(aContext)
+        end
       end
 
       # Handle the case of an entry having one antecedent only
@@ -205,7 +200,7 @@ module Rley # This module is used as a namespace
           raise NotImplementedError, "edge is a #{traversed_edge.class}"
         end
 
-        return events
+        events
       end
 
       # Handle the case of an entry having multiple antecedents
@@ -231,7 +226,7 @@ module Rley # This module is used as a namespace
             raise StandardError, 'Internal error'
         end
 
-        return [new_entry]
+        [new_entry]
       end
 
       def add_backtrack_point(aContext)
@@ -243,7 +238,7 @@ module Rley # This module is used as a namespace
         bp.antecedent_index = 0
         aContext.backtrack_points << bp
         # puts "Backtrack size after addition #{aContext.backtrack_points.size}"
-        return bp
+        bp
       end
 
       def use_backtrack_point(aContext)
@@ -263,7 +258,7 @@ module Rley # This module is used as a namespace
         # puts "Backtrack size after backtracking #{aContext.backtrack_points.size}"
 
         # Emit a backtrack event
-        return [:backtrack, bp.visitee, aContext.entry_set_index]
+        [:backtrack, bp.visitee, aContext.entry_set_index]
       end
 
       # From the antecedent of the current parse entry
@@ -287,7 +282,7 @@ module Rley # This module is used as a namespace
         new_entry ||= aContext.curr_entry
 
         # puts "Pop from return stack matching entry #{new_entry}"
-        return new_entry
+        new_entry
       end
     end # class
   end # module

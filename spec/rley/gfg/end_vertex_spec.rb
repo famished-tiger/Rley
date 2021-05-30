@@ -23,12 +23,12 @@ module Rley # Open this namespace to avoid module qualifier prefixes
         end
       end # context
 
-      context 'Provided services:' do       
+      context 'Provided services:' do
         it 'should provide human-readable representation of itself' do
-          pattern = /^#<Rley::GFG::EndVertex:\d+ label="NT\."/         
-          expect(subject.inspect).to match(pattern)       
-        end        
-      end # context      
+          pattern = /^#<Rley::GFG::EndVertex:\d+ label="NT\."/
+          expect(subject.inspect).to match(pattern)
+        end
+      end # context
     end # describe
   end # module
 end # module

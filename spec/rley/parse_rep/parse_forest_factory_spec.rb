@@ -25,12 +25,12 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           builder = Syntax::GrammarBuilder.new do
             add_terminals('a', 'b')
             rule 'Phi' => 'S'
-            rule 'S' => %w[A T]
-            rule 'S' => %w[a T]
+            rule 'S' => 'A T'
+            rule 'S' => 'a T'
             rule 'A' => 'a'
-            rule 'A' => %w[B A]
+            rule 'A' => 'B A'
             rule 'B' => []
-            rule 'T' => %w[b b b]
+            rule 'T' => 'b b b'
           end
           builder.grammar
       end
@@ -49,11 +49,11 @@ module Rley # Open this namespace to avoid module qualifier prefixes
       end
 
       # Emit a text representation of the current path.
-      def path_to_s()
+      def path_to_s
         text_parts = subject.curr_path.map do |path_element|
           path_element.to_string(0)
         end
-        return text_parts.join('/')
+        text_parts.join('/')
       end
 
       context 'Initialization:' do

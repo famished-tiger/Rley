@@ -11,7 +11,7 @@ require_relative './support/grammar_sppf_helper'
 require_relative '../../lib/rley/parse_tree_visitor'
 
 module Rley # Open this namespace to avoid module qualifier prefixes
-  describe ParseTreeVisitor do    
+  describe ParseTreeVisitor do
     let(:grammar_abc) do
       sandbox = Object.new
       sandbox.extend(GrammarABCHelper)
@@ -45,7 +45,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
     # Capital letters represent non-terminal nodes
     let(:grm_abc_ptree1) do
       engine = Rley::Engine.new
-      engine.use_grammar(grammar_abc)     
+      engine.use_grammar(grammar_abc)
       parse_result = engine.parse(grm_abc_tokens1)
       ptree = engine.convert(parse_result)
       ptree
@@ -161,6 +161,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
         subject.end_visit_ptree(grm_abc_ptree1)
       end
 
+      # rubocop: disable Naming/VariableNumber
       it 'should begin the visit when requested' do
         # Reminder: parse tree structure is
         # S[0,5]
@@ -209,11 +210,11 @@ module Rley # Open this namespace to avoid module qualifier prefixes
         expectations.each do |(msg, args)|
           expect(listener1).to receive(msg).with(*args).ordered
         end
-        
+
         # Here we go...
         subject.start
       end
-      
+
       it 'should also visit in pre-order' do
         # Reminder: parse tree structure is
         # S[0,5]
@@ -228,7 +229,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
         root = grm_abc_ptree1.root
         # Here we defeat encapsulation for the good cause
         subject.instance_variable_set(:@traversal, :pre_order)
-        
+
         children = root.subnodes
         big_a_1 = children[0]
         big_a_1_children = big_a_1.subnodes
@@ -239,7 +240,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
         expectations = [
           [:before_ptree, [grm_abc_ptree1]]
           # TODO: fix this test
-          # [:before_subnodes, [root, children]],          
+          # [:before_subnodes, [root, children]],
           # [:before_non_terminal, [root]],
 
           # [:before_non_terminal, [big_a_1]],
@@ -267,10 +268,11 @@ module Rley # Open this namespace to avoid module qualifier prefixes
         expectations.each do |(msg, args)|
           expect(listener1).to receive(msg).with(*args).ordered
         end
-        
+
         # Here we go...
         subject.start
-      end      
+      end
+      # rubocop: enable Naming/VariableNumber
     end # context
   end # describe
 end # module

@@ -15,9 +15,9 @@ module Rley # This module is used as a namespace
         @symbol = aSymbol
         @range = Lexical::TokenRange.new(aRange)
       end
-      
+
       # Notify the builder that the construction is over
-      def done!()
+      def done!
         # Do nothing
       end
 
@@ -29,13 +29,13 @@ module Rley # This module is used as a namespace
       # Emit a (formatted) string representation of the node.
       # Mainly used for diagnosis/debugging purposes.
       def to_string(indentation)
-        return "#{symbol.name}#{range.to_string(indentation)}"
+        "#{symbol.name}#{range.to_string(indentation)}"
       end
 
       # Emit a short string representation of the node.
       # Mainly used for diagnosis/debugging purposes.
-      def to_s()
-        return "#{symbol.name}#{range.to_string(0)}"
+      def to_s
+        "#{symbol.name}#{range.to_string(0)}"
       end
     end # class
   end # module

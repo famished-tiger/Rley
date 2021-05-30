@@ -24,7 +24,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           expect(subject.text).to eq(sample_name)
         end
       end # context
-      
+
       context 'Provided services:' do
         it 'should give its text representation' do
           expected = "'#{sample_name}'"

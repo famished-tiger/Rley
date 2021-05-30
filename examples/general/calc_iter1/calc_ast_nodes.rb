@@ -3,7 +3,6 @@
 # Classes that implement nodes of Abstract Syntax Trees (AST) representing
 # calculator parse results.
 
-
 CalcTerminalNode = Struct.new(:token, :value, :position) do
   def initialize(aToken, aPosition)
     self.token = aToken
@@ -16,23 +15,23 @@ CalcTerminalNode = Struct.new(:token, :value, :position) do
     self.value = aLiteral.dup
   end
 
-  def symbol()
+  def symbol
     token.terminal
   end
 
-  def interpret()
-    return value
+  def interpret
+    value
   end
-  
-  def done!()
+
+  def done!
     # Do nothing
   end
-  
+
   # Part of the 'visitee' role in Visitor design pattern.
   # @param aVisitor[ParseTreeVisitor] the visitor
   def accept(aVisitor)
     aVisitor.visit_terminal(self)
-  end  
+  end
 end
 
 class CalcNumberNode < CalcTerminalNode
@@ -53,30 +52,26 @@ class CalcCompositeNode
 
   def initialize(aSymbol)
     @symbol = aSymbol
-    @children = []    
+    @children = []
   end
-  
-  def done!()
+
+  def done!
     # Do nothing
-  end  
+  end
 
   # Part of the 'visitee' role in Visitor design pattern.
   # @param aVisitor[ParseTreeVisitor] the visitor
   def accept(aVisitor)
     aVisitor.visit_nonterminal(self)
   end
-  
+
   alias subnodes children
 end # class
 
 class CalcUnaryOpNode < CalcCompositeNode
-  def initialize(aSymbol)
-    super(aSymbol)
-  end
-
   # Convert this tree node in a simpler Ruby representation.
   # Basically a Calc object corresponds to a Ruhy Hash
-  def to_ruby()
+  def to_ruby
     rep = {}
     members.each do |pair|
       rep[pair.name.to_ruby] = pair.value.to_ruby
@@ -92,13 +87,9 @@ class CalcNegateNode < CalcUnaryOpNode
 end # class
 
 class CalcBinaryOpNode < CalcCompositeNode
-  def initialize(aSymbol)
-    super(aSymbol)
-  end
-  
   protected
-  
-  def retrieve_operands()
+
+  def retrieve_operands
     operands = []
     children.each do |child|
       oper = child.respond_to?(:interpret) ? child.interpret : child
@@ -111,42 +102,37 @@ end # class
 
 class CalcAddNode < CalcBinaryOpNode
   # TODO
-  def interpret()
+  def interpret
     operands = retrieve_operands
 
-    sum = operands[0] + operands[1]
-    return sum
+    operands[0] + operands[1]
   end
 end # class
 
-
 class CalcSubtractNode < CalcBinaryOpNode
   # TODO
-  def interpret()
+  def interpret
     operands = retrieve_operands
 
-    substraction = operands[0] - operands[1]
-    return substraction
+    operands[0] - operands[1]
   end
 end # class
 
 class CalcMultiplyNode < CalcBinaryOpNode
   # TODO
-  def interpret()
+  def interpret
     operands = retrieve_operands
-    multiplication = operands[0] * operands[1]
-    return multiplication
+    operands[0] * operands[1]
   end
 end # class
 
 class CalcDivideNode < CalcBinaryOpNode
   # TODO
-  def interpret()
+  def interpret
     operands = retrieve_operands
     numerator = operands[0].to_f
     denominator = operands[1]
-    division =  numerator / denominator
-    return division    
+    numerator / denominator
   end
 end # class
 # End of file

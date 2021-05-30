@@ -10,16 +10,15 @@ module GrammarAmbig01Helper
   # Factory method. Define a grammar for a very simple language
   # Grammar 3: An ambiguous arithmetic expression language
   # (based on example in article on Earley's algorithm in Wikipedia)
-  def grammar_ambig01_builder()
-    builder = Rley::Syntax::GrammarBuilder.new do
+  def grammar_ambig01_builder
+    Rley::Syntax::GrammarBuilder.new do
       add_terminals('integer', '+', '*')
       rule 'P' => 'S'
-      rule 'S' => %w[S + S]
-      rule 'S' => %w[S * S]
+      rule 'S' => 'S + S'
+      rule 'S' => 'S * S'
       rule 'S' => 'L'
       rule 'L' => 'integer'
     end
-    builder
   end
 
   # Highly simplified tokenizer implementation.

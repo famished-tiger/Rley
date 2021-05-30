@@ -26,12 +26,12 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           builder = Syntax::GrammarBuilder.new do
             add_terminals('a', 'b')
             rule 'Phi' => 'S'
-            rule 'S' => %w[A T]
-            rule 'S' => %w[a T]
+            rule 'S' => 'A T'
+            rule 'S' => 'a T'
             rule 'A' => 'a'
-            rule 'A' => %w[B A]
+            rule 'A' => 'B A'
             rule 'B' => []
-            rule 'T' => %w[b b b]
+            rule 'T' => 'b b b'
           end
           builder.grammar
       end
@@ -48,11 +48,11 @@ module Rley # Open this namespace to avoid module qualifier prefixes
       subject { ParseForestBuilder.new(sample_tokens) }
 
       # Emit a text representation of the current path.
-      def path_to_s()
+      def path_to_s
         text_parts = subject.curr_path.map do |path_element|
           path_element.to_string(0)
         end
-        return text_parts.join('/')
+        text_parts.join('/')
       end
 
       def next_event(eventType, anEntryText)
@@ -209,7 +209,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           path_prefix = 'Phi[0, 4]/S[0, 4]/Alt(S => A T .)[0, 4]/A[0, 1]/'
 
           next_event(:visit, 'A => a . | 0') # Event 21
-          expected_curr_path(path_prefix + 'Alt(A => a .)[0, 1]')
+          expected_curr_path("#{path_prefix}Alt(A => a .)[0, 1]")
           expect(subject.curr_path[-2].refinement).to eq(:or)
 
           next_event(:visit, 'A => . a | 0') # Event 22
@@ -244,24 +244,24 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           path_prefix = 'Phi[0, 4]/S[0, 4]/Alt(S => A T .)[0, 4]/A[0, 1]/'
 
           next_event(:visit, 'A => B A . | 0') # Event 29
-          expected_curr_path(path_prefix + 'Alt(A => B A .)[0, 1]')
+          expected_curr_path("#{path_prefix}Alt(A => B A .)[0, 1]")
 
           next_event(:revisit, 'A. | 0') # REVISIT Event 30
-          expected_curr_path(path_prefix + 'Alt(A => B A .)[0, 1]')
+          expected_curr_path("#{path_prefix}Alt(A => B A .)[0, 1]")
 
           next_event(:visit, 'A => B . A | 0') # Event 31
-          expected_curr_path(path_prefix + 'Alt(A => B A .)[0, 1]')
+          expected_curr_path("#{path_prefix}Alt(A => B A .)[0, 1]")
 
           next_event(:visit, 'B. | 0') # Event 32
-          expected_curr_path(path_prefix + 'Alt(A => B A .)[0, 1]/B[0, 0]')
+          expected_curr_path("#{path_prefix}Alt(A => B A .)[0, 1]/B[0, 0]")
 
           # Entry with empty production!
           next_event(:visit, 'B => . | 0') # Event 33
-          expected_curr_path(path_prefix + 'Alt(A => B A .)[0, 1]/B[0, 0]')
+          expected_curr_path("#{path_prefix}Alt(A => B A .)[0, 1]/B[0, 0]")
           expected_first_child('_[0, 0]')
 
           next_event(:visit, '.B | 0') # Event 34
-          expected_curr_path(path_prefix + 'Alt(A => B A .)[0, 1]')
+          expected_curr_path("#{path_prefix}Alt(A => B A .)[0, 1]")
 
           next_event(:visit, 'A => . B A | 0') # Event 35
           expected_curr_path('Phi[0, 4]/S[0, 4]/Alt(S => A T .)[0, 4]/A[0, 1]')
@@ -360,46 +360,46 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           next_event(:revisit, '.Nominal | 3') # REVISIT Event 15
           expected_curr_path('S[0, 5]/VP[1, 5]/NP[2, 5]')
 
-          next_event(:visit, 'NP => Determiner . Nominal | 2') # Event 16 
+          next_event(:visit, 'NP => Determiner . Nominal | 2') # Event 16
           expected_curr_path('S[0, 5]/VP[1, 5]/NP[2, 5]')
           expected_first_child('Determiner[2, 3]')
 
-          next_event(:visit, 'NP => . Determiner Nominal | 2') # Event 17 
+          next_event(:visit, 'NP => . Determiner Nominal | 2') # Event 17
           expected_curr_path('S[0, 5]/VP[1, 5]/NP[2, 5]')
 
-          next_event(:visit, '.NP | 2') # Event 18 
+          next_event(:visit, '.NP | 2') # Event 18
           expected_curr_path('S[0, 5]/VP[1, 5]')
 
-          next_event(:visit, 'VP => Verb . NP | 1') # Event 19 
+          next_event(:visit, 'VP => Verb . NP | 1') # Event 19
           expected_curr_path('S[0, 5]/VP[1, 5]')
           expected_first_child('Verb[1, 2]')
 
-          next_event(:visit, 'VP => . Verb NP | 1') # Event 20 
+          next_event(:visit, 'VP => . Verb NP | 1') # Event 20
           expected_curr_path('S[0, 5]/VP[1, 5]')
 
-          next_event(:visit, '.VP | 1') # Event 21 
+          next_event(:visit, '.VP | 1') # Event 21
           expected_curr_path('S[0, 5]')
 
-          next_event(:visit, 'S => NP . VP | 0') # Event22 
+          next_event(:visit, 'S => NP . VP | 0') # Event22
           expected_curr_path('S[0, 5]')
 
-          next_event(:visit, 'NP. | 0') # Event 23 
+          next_event(:visit, 'NP. | 0') # Event 23
           expected_curr_path('S[0, 5]/NP[0, 1]')
 
-          next_event(:visit, 'NP => Pronoun . | 0') # Event 24 
+          next_event(:visit, 'NP => Pronoun . | 0') # Event 24
           expected_curr_path('S[0, 5]/NP[0, 1]')
           expected_first_child('Pronoun[0, 1]')
 
-          next_event(:visit, 'NP => . Pronoun | 0') # Event 25 
+          next_event(:visit, 'NP => . Pronoun | 0') # Event 25
           expected_curr_path('S[0, 5]/NP[0, 1]')
 
-          next_event(:visit, '.NP | 0') # Event 26 
+          next_event(:visit, '.NP | 0') # Event 26
           expected_curr_path('S[0, 5]')
 
-          next_event(:visit, 'S => . NP VP | 0') # Event 27 
+          next_event(:visit, 'S => . NP VP | 0') # Event 27
           expected_curr_path('S[0, 5]')
 
-          next_event(:visit, '.S | 0') # Event28 
+          next_event(:visit, '.S | 0') # Event28
           expected_curr_path('')
         end
       end # context

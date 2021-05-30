@@ -19,14 +19,14 @@ module Rley # This module is used as a namespace
     class DottedItem
       # Production rule
       # @return [Syntax::Production]
-      attr_reader(:production)
+      attr_reader :production
 
       # Index of the next symbol (from the rhs) after the 'dot'.
       # If the dot is at the end of the rhs (i.e.) there is no next
       # symbol, then the position takes the value -1.
       # It the rhs is empty, then the position is -2
       # @return [Integer]
-      attr_reader(:position)
+      attr_reader :position
 
       # @param aProduction [Syntax::Production]
       # @param aPosition [Integer] Position of the dot in rhs of production.
@@ -37,7 +37,7 @@ module Rley # This module is used as a namespace
 
       # Return a String representation of the dotted item.
       # @return [String]
-      def to_s()
+      def to_s
         prefix = "#{production.lhs} => "
         text_values = production.rhs.map(&:to_s)
         if position.negative?
@@ -47,13 +47,13 @@ module Rley # This module is used as a namespace
         end
         suffix = text_values.join(' ')
 
-        return prefix + suffix
+        prefix + suffix
       end
 
       # Return true if the dot position is at the start of the rhs.
       # @return [Boolean]
-      def at_start?()
-        return position.zero? || position == -2
+      def at_start?
+        position.zero? || position == -2
       end
 
       # An item with the dot at the beginning is called
@@ -62,41 +62,35 @@ module Rley # This module is used as a namespace
 
       # A dotted item is called a reduce item if the dot is at the end.
       # @return [Boolean]
-      def reduce_item?()
-        return position.negative? # Either -1 or -2
+      def reduce_item?
+        position.negative? # Either -1 or -2
       end
 
       # The non-terminal symbol that is on the left-side of the production
       # @return [Syntax::NonTerminal]
-      def lhs()
-        return production.lhs
+      def lhs
+        production.lhs
       end
 
       # Return the symbol before the dot.
       # nil is returned if the dot is at the start of the rhs
       # @return [Syntax::GrmSymbol, NilClass]
-      def prev_symbol()
+      def prev_symbol
         before_position = prev_position
-        result = if before_position.nil?
-                   nil
-                 else
-                   production.rhs[before_position]
-                 end
-
-        return result
+        before_position.nil? ? nil : production.rhs[before_position]
       end
 
       # Return the symbol after the dot.
       # nil is returned if the dot is at the end
       # @return [Syntax::GrmSymbol, NilClass]
-      def next_symbol()
-        return position.negative? ? nil : production.rhs[position]
+      def next_symbol
+        position.negative? ? nil : production.rhs[position]
       end
 
       # Calculate the position of the dot if were moved by
       # one step on the left.
       # @return [Integer]
-      def prev_position()
+      def prev_position
         unless @k_prev_position
           case position
             when -2, 0
@@ -122,7 +116,7 @@ module Rley # This module is used as a namespace
         to_the_left = prev_position
         return false if to_the_left.nil?
 
-        return to_the_left == another.position
+        to_the_left == another.position
       end
 
 
@@ -135,15 +129,13 @@ module Rley # This module is used as a namespace
           raise StandardError, 'Out of bound index'
         end
 
-        index = if rhs_size.zero?
-                  -2 # Minus 2 at start/end of empty production
-                elsif aPosition == rhs_size
-                  -1 # Minus 1 at end of non-empty production
-                else
-                  aPosition
-                end
-
-        return index
+        if rhs_size.zero?
+          -2 # Minus 2 at start/end of empty production
+        elsif aPosition == rhs_size
+          -1 # Minus 1 at end of non-empty production
+        else
+          aPosition
+        end
       end
     end # class
   end # module

@@ -1,112 +1,240 @@
 AllCops:
   Exclude:
-    - 'features/**/*'
     - 'exp/**/*'
-    - 'gems/**/*'
-    - 'refs/**/*'
+    - 'demo/**/*'
 
-# This is disabled because some demos use UTF-8
-AsciiComments:
+Gemspec/DateAssignment:
+  Enabled: true
+
+Layout/ArgumentAlignment:
   Enabled: false
 
-Attr:
-  Enabled: false
+Layout/ArrayAlignment:
+  Enabled: true
+  EnforcedStyle: with_fixed_indentation
 
-BlockComments:
-  Enabled: false
-
-CaseIndentation:
-  EnforcedStyle: end
-  IndentOneStep: true
-
-# Rubocop enforces the use of is_a? instead of kind_of?
-# Which is contrary to modelling practice.
-ClassCheck:
-  Enabled: false
-
-ClassLength:
-  Max: 250
-  CountComments: false
-
-ConstantName:
-  Enabled: false
-
-CyclomaticComplexity:
-  Enabled: false
-
-DefWithParentheses:
-  Enabled: false
-
-Documentation:
-  Enabled: false
-
-EmptyLines:
-  Enabled: false
-
-Encoding:
-  Enabled: false
-
-EndOfLine:
-  Enabled: false
-#  SupportedStyles: lf
-
-
-IndentationWidth:
-  Enabled: false
-
-Layout/BlockAlignment:
+Layout/CaseIndentation:
   Enabled: false
 
 Layout/ClosingHeredocIndentation:
   Enabled: false
 
+Layout/CommentIndentation:
+  Enabled: false
+
+Layout/ElseAlignment:
+  Enabled: false
+
+Layout/EmptyLines:
+  Enabled: false
+
+Layout/EndAlignment:
+  Enabled: false
+
+Layout/EndOfLine:
+  Enabled: true
+  EnforcedStyle: lf
+
+Layout/FirstArgumentIndentation:
+  Enabled: false
+
+Layout/HashAlignment:
+  Enabled: false
+
+Layout/IndentationWidth:
+  Enabled: false
+
+Layout/IndentationConsistency:
+  Enabled: true
 
 Layout/HeredocIndentation:
   Enabled: false
 
-Layout/SpaceInsideArrayLiteralBrackets:
+Layout/MultilineHashBraceLayout:
+  Enabled: true
+
+Layout/MultilineMethodCallBraceLayout:
+  Enabled: true
+  EnforcedStyle: same_line
+
+Layout/SpaceAroundOperators:
+  Enabled: true
+
+Layout/SpaceBeforeBrackets:
+  Enabled: true
+
+Layout/SpaceInsideParens:
+  Enabled: true
+
+Layout/IndentationStyle:
+  Enabled: true
+
+Layout/SpaceAroundMethodCallOperator:
+  Enabled: true
+
+Layout/TrailingEmptyLines:
+  Enabled: true
+
+Layout/TrailingWhitespace:
+  Enabled: true
+
+Lint/AmbiguousAssignment:
+  Enabled: true
+
+Lint/DeprecatedConstants:
+  Enabled: true
+
+Lint/DuplicateBranch:
+  Enabled: true
+
+Lint/DuplicateRegexpCharacterClassElement:
+  Enabled: true
+
+Lint/EmptyBlock:
+  Enabled: true
+
+Lint/EmptyClass:
   Enabled: false
 
+Lint/LambdaWithoutLiteralBlock:
+  Enabled: true
+
+Lint/Loop:
+  Enabled: true
+
+Lint/NoReturnInBeginEndBlocks:
+  Enabled: true
+
+Lint/NumberedParameterAssignment:
+  Enabled: true
+
+Lint/OrAssignmentToConstant:
+  Enabled: true
+
+Lint/RaiseException:
+  Enabled: true
+
+Lint/RedundantDirGlobSort:
+  Enabled: true
+
+Lint/RescueException:
+  Enabled: true
+
+Lint/StructNewOverride:
+  Enabled: true
+
+Lint/SymbolConversion:
+  Enabled: true
+
+Lint/ToEnumArguments:
+  Enabled: true
+
+Lint/TripleQuotes:
+  Enabled: true
+
+Lint/UnexpectedBlockArity:
+  Enabled: true
+
+Lint/UnmodifiedReduceAccumulator:
+  Enabled: true
+
+Lint/UnusedMethodArgument:
+  Enabled: true
+
+Lint/UselessAccessModifier:
+  Enabled: true
+
+Lint/Void:
+  Enabled: false
+
+Lint/UselessAssignment:
+  Enabled: true
+
 Metrics/AbcSize:
-  Max: 50
+  Enabled: false
 
-# Avoid methods longer than 50 lines of code
+Metrics/BlockLength:
+  Enabled: true
+  Max: 350
+
+Metrics/BlockNesting:
+  Enabled: true
+  Max: 5
+
+Metrics/ClassLength:
+  Enabled: true
+  Max: 450
+
+Metrics/CyclomaticComplexity:
+  Enabled: false
+
+Layout/LineLength:
+  Enabled: false
+  Max: 90
+
 Metrics/MethodLength:
-  Max: 50
-  CountComments: false
+  Enabled: true
+  Max: 60
 
-# Avoid modules longer than 200 lines of code
 Metrics/ModuleLength:
-  CountComments: false
-  Max: 200
+  Enabled: true
+  Max: 500
 
 Metrics/PerceivedComplexity:
-  Enabled: true
-  Max: 50
+  Enabled: false
+
+Naming/ConstantName:
+  Enabled: false
 
 Naming/ClassAndModuleCamelCase:
   Enabled: false
 
-# Disable this because it produces false negatives
-Naming/HeredocDelimiterNaming:
+Naming/BlockParameterName:
+  Enabled: true
+
+Naming/MethodParameterName:
   Enabled: false
 
 Naming/MethodName:
   Enabled: false
 
-Naming/MethodParameterName:
+Naming/VariableName:
   Enabled: false
 
-NonNilCheck:
+Style/AccessorGrouping:
   Enabled: false
 
-NumericLiterals:
+Style/Alias:
+  Enabled: true
+
+Style/ArgumentsForwarding:
+  Enabled: true
+
+Style/AsciiComments:
   Enabled: false
 
-RaiseArgs:
+Style/BarePercentLiterals:
   Enabled: false
 
-RedundantReturn:
+Style/BlockComments:
+  Enabled: false
+
+Style/CharacterLiteral:
+  Enabled: false
+
+Style/ClassCheck:
+  Enabled: false
+
+Style/ClassVars:
+  Enabled: false
+
+Style/CollectionCompact:
+  Enabled: true
+
+Style/ColonMethodCall:
+  Enabled: false
+
+Style/CommentAnnotation:
   Enabled: false
 
 Style/CommentedKeyword:
@@ -115,20 +243,186 @@ Style/CommentedKeyword:
 Style/ConditionalAssignment:
   Enabled: false
 
+Style/DefWithParentheses:
+  Enabled: true
+
+Style/Documentation:
+  Enabled: false
+
+Style/DocumentDynamicEvalDefinition:
+  Enabled: true
+
+Style/ExpandPathArguments:
+  Enabled: false
+
+Style/ExponentialNotation:
+  Enabled: true
+
+Style/GuardClause:
+  Enabled: false
+
+Style/HashEachMethods:
+  Enabled: true
+
+Style/HashExcept:
+  Enabled: true
+
+Style/HashTransformKeys:
+  Enabled: true
+
+Style/HashTransformValues:
+  Enabled: true
+
 Style/IfUnlessModifier:
   Enabled: false
 
-Style/Lambda:
+Style/InverseMethods:
   Enabled: false
 
 Style/MissingRespondToMissing:
   Enabled: false
 
-TrailingWhitespace:
+Style/NegatedIfElseCondition:
+  Enabled: true
+
+Style/Next:
   Enabled: false
 
-VariableName:
+Style/NilLambda:
+  Enabled: true
+
+Style/NumericLiterals:
   Enabled: false
 
-VariableNumber:
+Style/RaiseArgs:
+  Enabled: true
+
+Style/RedundantArgument:
+  Enabled: true
+
+Style/RedundantReturn:
   Enabled: false
+
+Style/RedundantSelf:
+  Enabled: true
+
+Style/RegexpLiteral:
+  Enabled: false
+
+Style/PercentLiteralDelimiters:
+  Enabled: false
+
+Style/StderrPuts:
+  Enabled: false
+
+Style/StringLiterals:
+  Enabled: true
+
+Style/SwapValues:
+  Enabled: true
+
+Style/TernaryParentheses:
+  Enabled: false
+
+Style/UnlessElse:
+  Enabled: false
+
+# Rubocop complains when it doesn't find an explicit setting for the following cops:
+Layout/EmptyLinesAroundAttributeAccessor:
+  Enabled: true
+
+Lint/BinaryOperatorWithIdenticalOperands:
+  Enabled: true
+
+Lint/DeprecatedOpenSSLConstant:
+  Enabled: true
+
+Lint/DuplicateElsifCondition:
+  Enabled: true
+
+Lint/DuplicateRescueException:
+  Enabled: true
+
+Lint/EmptyConditionalBody:
+  Enabled: true
+
+Lint/FloatComparison:
+  Enabled: true
+
+Lint/MissingSuper:
+  Enabled: true
+
+Lint/MixedRegexpCaptureTypes:
+  Enabled: true
+
+Lint/OutOfRangeRegexpRef:
+  Enabled: true
+
+Lint/SelfAssignment:
+  Enabled: true
+
+Lint/TopLevelReturnWithArgument:
+  Enabled: true
+
+Lint/UnreachableLoop:
+  Enabled: true
+
+Style/ArrayCoercion:
+  Enabled: true
+
+Style/BisectedAttrAccessor:
+  Enabled: true
+
+Style/CaseLikeIf:
+  Enabled: true
+
+Style/EndlessMethod:
+  Enabled: true
+
+Style/ExplicitBlockArgument:
+  Enabled: true
+
+Style/GlobalStdStream:
+  Enabled: true
+
+Style/HashAsLastArrayItem:
+  Enabled: true
+
+Style/HashConversion:
+  Enabled: true
+
+Style/HashLikeCase:
+  Enabled: true
+
+Style/IfWithBooleanLiteralBranches:
+  Enabled: true
+
+Style/OptionalBooleanParameter:
+  Enabled: true
+
+Style/RedundantAssignment:
+  Enabled: true
+
+Style/RedundantFetchBlock:
+  Enabled: true
+
+Style/RedundantFileExtensionInRequire:
+  Enabled: true
+
+Style/RedundantRegexpCharacterClass:
+  Enabled: true
+
+Style/RedundantRegexpEscape:
+  Enabled: true
+
+Style/SingleArgumentDig:
+  Enabled: true
+
+Style/SlicingWithRange:
+  Enabled: true
+
+Style/StringChars:
+  Enabled: true
+
+Style/StringConcatenation:
+  Enabled: true
