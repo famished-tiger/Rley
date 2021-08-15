@@ -5,7 +5,7 @@ require 'stringio'
 require_relative '../../../lib/rley/syntax/verbatim_symbol'
 require_relative '../../../lib/rley/syntax/non_terminal'
 require_relative '../../../lib/rley/syntax/production'
-require_relative '../../../lib/rley/syntax/grammar_builder'
+require_relative '../../../lib/rley/syntax/base_grammar_builder'
 require_relative '../../../lib/rley/lexical/token'
 require_relative '../../../lib/rley/base/dotted_item'
 require_relative '../../../lib/rley/parser/gfg_parsing'
@@ -13,6 +13,7 @@ require_relative '../../../lib/rley/parser/gfg_parsing'
 # Load builders and lexers for sample grammars
 require_relative '../support/grammar_abc_helper'
 require_relative '../support/ambiguous_grammar_helper'
+require_relative '../support/grammar_int_seq_helper'
 require_relative '../support/grammar_pb_helper'
 require_relative '../support/grammar_helper'
 require_relative '../support/expectation_helper'
@@ -281,6 +282,91 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           compare_entry_texts(parse_result.chart[5], expected)
         end
 
+        it 'should support Kleene plus ' do
+          extend(GrammarIntSeqHelper)
+          grammar = grammar_int_seq_builder.grammar
+          instance = GFGEarleyParser.new(grammar)
+          tokens = int_seq_tokenizer('6, 36, 216')
+          parse_result = nil
+          expect { parse_result = instance.parse(tokens) }.not_to raise_error
+          expect(parse_result.success?).to eq(true)
+
+          ###################### S(0): . 6, 36, 216
+          # Expectation chart[0]:
+          expected = [
+            '.S | 0',                                   # Initialization
+            'S => . sequence | 0',                      # start rule
+            'S => . | 0',                               # start rule
+            '.sequence | 0',                            # call rule
+            'S. | 0',                                   # exit rule
+            'sequence => . sequence comma integer | 0', # start rule
+            'sequence => . integer | 0',                # start rule
+            '.integer | 0',                             # call rule
+            'integer => . digit_plus | 0' ,             # start rule
+            '.digit_plus | 0',                          # call rule
+            'digit_plus => . digit_plus digit | 0',     # start rule (generated)
+            'digit_plus => . digit | 0'                 # start rule (generated)
+          ]
+          compare_entry_texts(parse_result.chart[0], expected)
+
+          ###################### S(1): 6 ., 36, 216
+          # Expectation chart[1]:
+          expected = [
+            'digit_plus => digit . | 0',                # Scan
+            'digit_plus. | 0',                          # exit rule
+            'integer => digit_plus . | 0' ,             # end rule
+            'digit_plus => digit_plus . digit | 0',     # rule (generated)
+            'integer. | 0',                             # exit rule
+            'sequence => integer . | 0',                # end rule
+            'sequence. | 0',                            # exit rule
+            'S => sequence . | 0',                      # end rule
+            'sequence => sequence . comma integer | 0', #  rule
+            'S. | 0'                                    # exit rule
+          ]
+          compare_entry_texts(parse_result.chart[1], expected)
+
+          ###################### S(2): 6 , . 36, 216
+          # Expectation chart[2]:
+          expected = [
+            'sequence => sequence comma . integer | 0', #  Scan
+            '.integer | 2',                # call rule
+            'integer => . digit_plus | 2' ,             # start rule
+            '.digit_plus | 2',                          # call rule
+            'digit_plus => . digit_plus digit | 2',     # start rule (generated)
+            'digit_plus => . digit | 2'                 # start rule (generated)
+          ]
+          compare_entry_texts(parse_result.chart[2], expected)
+
+          ###################### S(3): 6 , 3 . 6. , 216
+          # Expectation chart[3]:
+          expected = [
+            'digit_plus => digit . | 2',                # Scan
+            'digit_plus. | 2',                          # exit rule
+            'integer => digit_plus . | 2' ,             # end rule
+            'digit_plus => digit_plus . digit | 2',     # rule (generated)
+            'integer. | 2',                             # exit rule
+            'sequence => sequence comma integer . | 0', # rule
+            'sequence. | 0',                             # exit rule
+            'S => sequence . | 0',                      # end rule
+            'sequence => sequence . comma integer | 0', #  rule
+          ]
+          compare_entry_texts(parse_result.chart[3], expected)
+
+          ###################### S(4): 6 , 36 . . , 216
+          # Expectation chart[4]:
+          expected = [
+            'digit_plus => digit_plus digit . | 2',     # Scan
+            'digit_plus. | 2',                          # exit rule
+            'integer => digit_plus . | 2' ,             # end rule
+            'digit_plus => digit_plus . digit | 2',     #
+            'integer. | 2',                             # exit rule
+            'sequence => sequence comma integer . | 0', # rule
+            'sequence. | 0',                            # exit rule
+            'S => sequence . | 0',                      # end rule
+          ]
+          compare_entry_texts(parse_result.chart[4], expected)
+        end
+
         it 'should parse a nullable grammar' do
           # Simple but problematic grammar for the original Earley parser
           # (based on example in D. Grune, C. Jacobs "Parsing Techniques" book)
@@ -288,7 +374,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           # A => ;
           t_x = Syntax::VerbatimSymbol.new('x')
 
-          builder = Syntax::GrammarBuilder.new do
+          builder = Notation::GrammarBuilder.new do
             add_terminals(t_x)
             rule 'Ss' => 'A A x'
             rule 'A' => []
@@ -334,11 +420,11 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           t_plus = Syntax::VerbatimSymbol.new('+')
           t_star = Syntax::VerbatimSymbol.new('*')
 
-          builder = Syntax::GrammarBuilder.new do
+          builder = Syntax::BaseGrammarBuilder.new do
             add_terminals(t_int, t_plus, t_star)
             rule 'P' => 'S'
-            rule 'S' => %w[S + S]
-            rule 'S' => %w[S * S]
+            rule 'S' => 'S + S'
+            rule 'S' => 'S * S'
             rule 'S' => 'L'
             rule 'L' => 'integer'
           end
@@ -733,7 +819,7 @@ MSG
           t_star = Syntax::VerbatimSymbol.new('*')
           t_slash = Syntax::VerbatimSymbol.new('/')
 
-          builder = Syntax::GrammarBuilder.new do
+          builder = Syntax::BaseGrammarBuilder.new do
             add_terminals(t_a, t_star, t_slash)
             rule 'Z' => 'E'
             rule 'E' => %w[E Q F]
@@ -848,10 +934,10 @@ MSG
           # S => ;
           # This grammar requires a time that is quadratic in the number of
           # input tokens
-          builder = Syntax::GrammarBuilder.new
+          builder = Notation::GrammarBuilder.new
           builder.add_terminals('a')
-          builder.add_production('S' => %w[a S])
-          builder.add_production('S' => [])
+          builder.add_production('S' => 'a S')
+          builder.add_production('S' => '')
           grammar = builder.grammar
           tokens = build_token_sequence(%w[a a a a], grammar)
 

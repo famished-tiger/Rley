@@ -12,11 +12,17 @@ module Rley # This module is used as a namespace
       def build_dotted_items(aGrammar)
         items = []
         aGrammar.rules.each do |prod|
+          index_prev = items.size
           rhs_size = prod.rhs.size
           if rhs_size.zero?
             items << DottedItem.new(prod, 0)
           else
             items += (0..rhs_size).map { |i| DottedItem.new(prod, i) }
+          end
+
+          prod.constraints.each do |cs|
+            # Attach constraint to dotted item n + 1
+            items[index_prev + cs.idx_symbol + 1].constraint = cs
           end
         end
 

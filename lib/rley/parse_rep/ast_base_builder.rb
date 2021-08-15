@@ -123,6 +123,19 @@ module Rley # This module is used as a namespace
         end
         return node
       end
+
+      # Standard method for handling one or more modifier: symbol+
+      # rule('symbol_plus' => 'symbol_plus symbol')
+      def reduce_base_plus_more(_production, _range, _tokens, theChildren)
+        theChildren[0] << theChildren[1]
+      end
+
+      # Standard rule method handling one or more modifier: symbol+
+      # rule('symbol_plus' => 'symbol')
+      def reduce_base_plus_last(_production, _range, _tokens, theChildren)
+        [theChildren[0]]
+      end
+
     end # class
   end # module
 end # module

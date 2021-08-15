@@ -12,7 +12,7 @@ require 'rley' # Load the gem
 # Daniel Jurafsky,‎ James H. Martin: "Speech and Language Processing";
 # 2009, Pearson Education, Inc., ISBN 978-0135041963
 # It defines the syntax of a sentence in a mini English-like language
-builder = Rley::Syntax::GrammarBuilder.new do
+builder = Rley::grammar_builder do
   add_terminals('Pronoun', 'Proper-Noun')
   add_terminals('Determiner', 'Noun')
   add_terminals('Cardinal_number', 'Ordinal_number', 'Quant')
@@ -25,19 +25,19 @@ builder = Rley::Syntax::GrammarBuilder.new do
   rule 'sentence' => 'yes_no_question'
   rule 'sentence' => 'wh_subject_question'
   rule 'sentence' => 'wh_non_subject_question'
-  rule 'declarative' => %w[NP VP]
+  rule 'declarative' => 'NP VP'
   rule 'imperative' => 'VP'
-  rule 'yes_no_question' => %w[Aux NP VP]
-  rule 'wh_subject_question' => %w[Wh_NP NP VP]
-  rule 'wh_non_subject_question' => %w[Wh_NP Aux NP VP]
-  rule 'NP' => %w[Predeterminer NP]
+  rule 'yes_no_question' => 'Aux NP VP'
+  rule 'wh_subject_question' => 'Wh_NP NP VP'
+  rule 'wh_non_subject_question' => 'Wh_NP Aux NP VP'
+  rule 'NP' => 'Predeterminer NP'
   rule 'NP' => 'Pronoun'
   rule 'NP' => 'Proper-Noun'
-  rule 'NP' => %w[Det Card Ord Quant Nominal]
+  rule 'NP' => 'Det Card Ord Quant Nominal'
   rule 'VP' => 'Verb'
-  rule 'VP' => %w[Verb NP]
-  rule 'VP' => %w[Verb NP PP]
-  rule 'VP' => %w[Verb PP]
+  rule 'VP' => 'Verb NP'
+  rule 'VP' => 'Verb NP PP'
+  rule 'VP' => 'Verb PP'
   rule 'Det' => 'Determiner'
   rule 'Det' => []
   rule 'Card' => 'Cardinal_number'
@@ -45,15 +45,15 @@ builder = Rley::Syntax::GrammarBuilder.new do
   rule 'Ord' => 'Ordinal_number'
   rule 'Ord' =>  []
   rule 'Nominal' => 'Noun'
-  rule 'Nominal' => %w[Nominal Noun]
-  rule 'Nominal' => %w[Nominal GerundVP]
-  rule 'Nominal' => %w[Nominal RelClause]
-  rule 'PP' => %w[Preposition NP]
+  rule 'Nominal' => 'Nominal Noun'
+  rule 'Nominal' => 'Nominal GerundVP'
+  rule 'Nominal' => 'Nominal RelClause'
+  rule 'PP' => 'Preposition NP'
   rule 'GerundVP' => 'GerundV'
-  rule 'GerundVP' => %w[GerundV NP]
-  rule 'GerundVP' => %w[GerundV NP PP]
-  rule 'GerundVP' => %w[GerundV PP]
-  rule 'RelClause' => %w[Relative_pronoun VP]
+  rule 'GerundVP' => 'GerundV NP'
+  rule 'GerundVP' => 'GerundV NP PP'
+  rule 'GerundVP' => 'GerundV PP'
+  rule 'RelClause' => 'Relative_pronoun VP'
 end
 
 # And now build the grammar...

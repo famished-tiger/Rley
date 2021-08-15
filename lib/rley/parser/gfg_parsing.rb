@@ -280,8 +280,8 @@ module Rley # This module is used as a namespace
 
       def apply_rule(antecedentEntry, aVertex, anOrigin, aPosition, aRuleId)
         consequent = push_entry(aVertex, anOrigin, aPosition, aRuleId)
-
-        antecedence[consequent] << antecedentEntry
+        if consequent
+          antecedence[consequent] << antecedentEntry
 
 =begin
         # Invariant checks
@@ -319,7 +319,9 @@ module Rley # This module is used as a namespace
             end
         end
 =end
-        consequent.add_antecedent(antecedentEntry)
+          consequent.add_antecedent(antecedentEntry)
+        end
+
         consequent
       end
 

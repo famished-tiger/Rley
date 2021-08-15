@@ -22,7 +22,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
       include ExpectationHelper # Mix-in with expectation on parse entry sets
 
       let(:sample_grammar) do
-        builder = Rley::Syntax::GrammarBuilder.new do
+        builder = Rley::Syntax::BaseGrammarBuilder.new do
           add_terminals('N', 'V', 'Pro')  # N(oun), V(erb), Pro(noun)
           add_terminals('Det', 'P')       # Det(erminer), P(reposition)
           rule 'S' => 'NP VP'

@@ -24,20 +24,16 @@ engine.build_grammar do
 
   # Here we define the productions (= grammar rules)
   rule 'Start' => 'S'
-  rule 'S' => %w[NP VP]
-  rule 'S' => %w[Aux NP VP]
+  rule 'S' => 'Aux? NP VP'
   rule 'S' => 'VP'
   rule 'NP' => 'Pronoun'
   rule 'NP' => 'Proper-Noun'
-  rule 'NP' => %w[Determiner Nominal]
-  rule 'Nominal' => %w[Noun]
-  rule 'Nominal' => %w[Nominal Noun]
-  rule 'VP' => 'Verb'
-  rule 'VP' => %w[Verb NP]
-  rule 'VP' => %w[Verb NP PP]
-  rule 'VP' => %w[Verb PP]
-  rule 'VP' => %w[VP PP]
-  rule 'PP' => %w[Preposition NP]
+  rule 'NP' => 'Determiner Nominal'
+  rule 'Nominal' => 'Nominal? Noun'
+  rule 'VP' => 'Verb PP?'
+  rule 'VP' => 'Verb NP PP?'
+  rule 'VP' => 'VP PP'
+  rule 'PP' => 'Preposition NP'
 end
 
 ########################################

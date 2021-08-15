@@ -1,3 +1,6 @@
+### 0.8.00 / 2021-08-15
+- New grammar builder that accepts ? * + modifiers
+
 ### 0.7.08 / 2021-05-30
 - Code restyling to please rubocop 1.15.0
 

@@ -3,7 +3,7 @@
 require_relative '../../spec_helper'
 
 require_relative '../../../lib/rley/parser/gfg_earley_parser'
-require_relative '../../../lib/rley/syntax/grammar_builder'
+require_relative '../../../lib/rley/syntax/base_grammar_builder'
 require_relative '../support/grammar_helper'
 require_relative '../support/grammar_abc_helper'
 require_relative '../support/expectation_helper'

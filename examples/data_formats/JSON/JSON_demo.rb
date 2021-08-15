@@ -37,9 +37,8 @@ case cli_options[:format]
     raise StandardError, msg if tree_rep == :cst
 end
 
-
 # Create a Rley facade object
-# If necessary, select AST representation
+# If requested, select AST representation
 engine = Rley::Engine.new do |cfg|
   builder = tree_rep == :ast ? JSONASTBuilder : nil
   cfg.repr_builder = builder

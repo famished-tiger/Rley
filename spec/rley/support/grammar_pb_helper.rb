@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # Load the builder class
-require_relative '../../../lib/rley/syntax/grammar_builder'
+require_relative '../../../lib/rley/syntax/base_grammar_builder'
 require_relative '../../../lib/support/base_tokenizer'
 require_relative '../../../lib/rley/lexical/token'
 
@@ -14,7 +14,7 @@ class GrammarPBHelper
   # "A Graphical Model for Context-Free Grammar Parsing"
   def grammar
     @grammar ||= begin
-      builder = Rley::Syntax::GrammarBuilder.new do
+      builder = Rley::Syntax::BaseGrammarBuilder.new do
         add_terminals('int', '+', '(', ')')
         rule 'S' => 'E'
         rule 'E' => 'int'

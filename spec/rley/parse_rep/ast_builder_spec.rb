@@ -203,7 +203,6 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           stack = get_stack(subject)
 
           next_event('visit P. | 0 7')
-
           next_event('visit P => arr . | 0 7')
           # stack: [P[0, 7]]
           expect(stack.last.children.size).to eq(1)

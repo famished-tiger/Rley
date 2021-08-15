@@ -43,6 +43,10 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           expect(subject.body).to eq(sequence)
         end
 
+        it 'should be free from constraints at start' do
+          expect(subject.constraints).to be_empty
+        end
+
         it 'should know whether its rhs is empty' do
           expect(subject).not_to be_empty
 

@@ -112,7 +112,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
         end
 
         it 'should handle empty productions' do
-            builder = Rley::Syntax::GrammarBuilder.new
+            builder = Rley::Syntax::BaseGrammarBuilder.new
             builder.add_terminals('a')
             builder.add_production('S' => 'A')
             builder.add_production('A' => 'a')
@@ -162,7 +162,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
         let(:problematic_grammar) do
           # Based on grammar example in book
           # C. Fisher, R. LeBlanc, "Crafting a Compiler"; page 98
-          builder = Rley::Syntax::GrammarBuilder.new
+          builder = Rley::Syntax::BaseGrammarBuilder.new
           builder.add_terminals('a', 'b', 'c')
           builder.add_production('S' => 'A')
           builder.add_production('S' => 'B')

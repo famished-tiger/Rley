@@ -28,6 +28,11 @@ module Rley # This module is used as a namespace
       # @return [Integer]
       attr_reader :position
 
+      # A possible constraint between symbol on left of dot and
+      # the closest preceding given terminal
+      # @return [NilClass, Syntax::MatchClosest]
+      attr_accessor :constraint
+
       # @param aProduction [Syntax::Production]
       # @param aPosition [Integer] Position of the dot in rhs of production.
       def initialize(aProduction, aPosition)

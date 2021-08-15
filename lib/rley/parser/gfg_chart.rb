@@ -12,11 +12,15 @@ module Rley # This module is used as a namespace
     # the chart is an array with n + 1 entry sets.
     class GFGChart
       # @return [Array<ParseEntrySet>] entry sets (one per input token + 1)
-      attr_reader(:sets)
+      attr_reader :sets
+
+      # @return [Array<Array<Syntax::MatchClosest>>]
+      attr_reader :constraints
 
       # @param aGFGraph [GFG::GrmFlowGraph] The GFG for the grammar in use.
       def initialize(aGFGraph)
         @sets = [ParseEntrySet.new]
+        @constraints = [[]]        
         push_entry(aGFGraph.start_vertex, 0, 0, :start_rule)
       end
 
@@ -42,6 +46,18 @@ module Rley # This module is used as a namespace
         end
       end
 
+      # if an entry corresponds to dotted item with a constraint
+      # make this constraint active for this index
+      # :before 'IF'
+      # search backwards to find nearest 'IF' scan rule
+      # in n+1, retrieve all items with IF . pattern
+      # create a lambda
+      # for every subsequent push_entry with same index,
+      # the lambda checks the condition (i.e pattern: ELSE . )
+      # if the condition is false, then push new entry
+      # if the condition is true but the consequent is false, then discard push action
+      # consequent: candidate refers to same dotted_item and same origin, then condition is false
+
       # Push a parse entry for the chart entry with given index
       # @param anIndex [Integer] The rank of the token in the input stream.
       # @return [ParseEntry] the passed parse entry if it is pushed
@@ -51,14 +67,48 @@ module Rley # This module is used as a namespace
         # puts "  anOrigin: #{anOrigin}"
         # puts "  anIndex: #{anIndex}"
         # puts "  _reason: #{_reason}"
-        new_entry = ParseEntry.new(aVertex, anOrigin)
         if anIndex == sets.size
-          err_msg = "Internal error: unexpected push reason #{reason}"
-          raise StandardError, err_msg if reason != :scan_rule
-
-          add_entry_set
+          if reason == :scan_rule
+            add_entry_set
+          else
+            err_msg = "Internal error: unexpected push reason #{reason}"
+            raise StandardError, err_msg
+          end
         end
-        self[anIndex].push_entry(new_entry)
+
+        reject = false
+        unless constraints[anIndex].empty?
+          constraints[anIndex].each do |ct|
+            case ct
+              when Syntax::MatchClosest
+                not_found = sets[anIndex][0].prev_symbol != aVertex.prev_symbol
+                next if not_found
+
+                some_mismatch = ct.entries.find do |en|
+                  (en.vertex.dotted_item.production == aVertex.dotted_item.production) &&
+                    (en.origin != anOrigin)
+                end
+                reject = true if some_mismatch
+            end
+          end
+        end
+
+        return nil if reject
+
+        new_entry = ParseEntry.new(aVertex, anOrigin)
+        result = self[anIndex].push_entry(new_entry)
+
+        if aVertex.kind_of?(GFG::ItemVertex) && aVertex.dotted_item.constraint
+          ct = aVertex.dotted_item.constraint
+
+          case ct
+            when Syntax::MatchClosest
+              update_match_closest(ct, anIndex)
+          end
+          constraints[anIndex] << ct
+        end
+
+        result
       end
 
       # Retrieve the first parse entry added to this chart
@@ -113,6 +163,25 @@ module Rley # This module is used as a namespace
       end
       # rubocop: enable Lint/UselessAssignment
 
+      # Retrieve all entries that have a given terminal before the dot.
+      # @param criteria [Hash{Symbol => String}]
+      def search_entries(atIndex, criteria)
+        entries = sets[atIndex].entries
+        keyword = criteria.keys[0]
+        found = []
+        entries.each do |e|
+          case keyword
+            when :before # terminal before dot
+              term_name = criteria[keyword]
+              if e.dotted_entry? && e.vertex.dotted_item.position > -2
+                found << e if e.prev_symbol&.name == criteria[keyword]
+              end
+          end
+        end
+
+        found
+      end
+
       # @ return [String] A human-readable representation of the chart.
       def to_s
         result = +''
@@ -130,6 +199,31 @@ module Rley # This module is used as a namespace
 
       def add_entry_set
          @sets << ParseEntrySet.new
+         @constraints << []
+      end
+
+      def update_match_closest(aConstraint, anIndex)
+        # Locate in the chart the closest matching terminal...
+        i = anIndex - 1
+        loop do
+          first_entry = sets[i][0]
+          prev_symbol = first_entry.prev_symbol
+          break if prev_symbol.name == aConstraint.closest_symb
+          i -= 1
+          break if i < 0
+        end
+
+        # Retrieve all entries of the kind: closest_symb .
+        if i > 0
+          entries = sets[i].entries.select do |en|
+            if en.prev_symbol
+              en.prev_symbol.name == aConstraint.closest_symb
+            else
+              false
+            end
+          end
+          aConstraint.entries = entries
+        end
       end
     end # class
   end # module

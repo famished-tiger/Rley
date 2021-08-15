@@ -31,6 +31,9 @@ module Rley # This module is used as a namespace
       #   rhs members are nullable.
       attr_writer(:nullable)
 
+      # @return [Array<Syntax::MatchClosest>] A list of constraints between rhs members
+      attr_accessor(:constraints)
+
       # Provide common alternate names to lhs and rhs accessors
 
       alias body rhs
@@ -42,6 +45,7 @@ module Rley # This module is used as a namespace
       def initialize(aNonTerminal, theSymbols)
         @lhs = valid_lhs(aNonTerminal)
         @rhs = valid_rhs(theSymbols)
+        @constraints = []
       end
 
       # Is the rhs empty?
@@ -80,6 +84,8 @@ module Rley # This module is used as a namespace
       def as(aName)
         @name = aName
       end
+
+      alias tag as
 
       private
 

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # Load the builder class
-require_relative '../../../lib/rley/syntax/grammar_builder'
+require_relative '../../../lib/rley/notation/grammar_builder'
 require_relative '../../../lib/rley/lexical/token'
 
 
@@ -10,7 +10,7 @@ module AmbiguousGrammarHelper
   # expression grammar.
   # (based on an example from Fisher and LeBlanc: "Crafting a Compiler")
   def grammar_builder
-    Rley::Syntax::GrammarBuilder.new do
+    Rley::Notation::GrammarBuilder.new do
       add_terminals('+', 'id')
       rule 'S' => 'E'
       rule 'E' => 'E + E'

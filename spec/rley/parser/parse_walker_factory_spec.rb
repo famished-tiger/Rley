@@ -2,7 +2,7 @@
 
 require_relative '../../spec_helper'
 
-require_relative '../../../lib/rley/syntax/grammar_builder'
+require_relative '../../../lib/rley/syntax/base_grammar_builder'
 require_relative '../support/grammar_helper'
 require_relative '../support/expectation_helper'
 
@@ -45,7 +45,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           # "SPPF=Style Parsing From Earley Recognizers" in
           # Notes in Theoretical Computer Science 203, (2008), pp. 53-67
           # contains a hidden left recursion and a cycle
-          builder = Syntax::GrammarBuilder.new do
+          builder = Syntax::BaseGrammarBuilder.new do
             add_terminals('a', 'b')
             rule 'Phi' => 'S'
             rule 'S' => %w[A T]

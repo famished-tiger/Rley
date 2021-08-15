@@ -11,7 +11,7 @@ builder = Rley::Syntax::GrammarBuilder.new do
 
   # Grammar with right recursive rule.
   rule 'r_dots' => []
-  rule 'r_dots' => %w[DOT r_dots]
+  rule 'r_dots' => 'DOT r_dots'
 end
 
 # And now, let's build the grammar...

@@ -82,7 +82,7 @@ module Rley # This module is used as a namespace
 
         # Group parse entries by lhs symbol and origin
         groupings = complete_entries.group_by do |entry|
-          entry.vertex.dotted_rule.lhs.object_id.to_s
+          entry.vertex.dotted_item.lhs.object_id.to_s
         end
 
         # Retain the groups having more than one element.

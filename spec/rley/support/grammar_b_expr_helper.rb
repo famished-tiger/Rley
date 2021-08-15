@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # Load the builder class
-require_relative '../../../lib/rley/syntax/grammar_builder'
+require_relative '../../../lib/rley/syntax/base_grammar_builder'
 require_relative '../../../lib/rley/lexical/token'
 
 
@@ -10,7 +10,7 @@ module GrammarBExprHelper
   # expression grammar.
   # (based on the article about Earley's algorithm in Wikipedia)
   def grammar_expr_builder
-    Rley::Syntax::GrammarBuilder.new do
+    Rley::Syntax::BaseGrammarBuilder.new do
       add_terminals('+', '*', 'integer')
       rule 'P' => 'S'
       rule 'S' => 'S + M'

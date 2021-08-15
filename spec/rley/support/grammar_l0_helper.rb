@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # Load the builder class
-require_relative '../../../lib/rley/syntax/grammar_builder'
+require_relative '../../../lib/rley/syntax/base_grammar_builder'
 require_relative '../../../lib/rley/lexical/token'
 
 
@@ -12,7 +12,7 @@ module GrammarL0Helper
   # It defines the syntax of a sentence in a language with a
   # very limited syntax and lexicon in the context of airline reservation.
   def grammar_l0_builder
-    Rley::Syntax::GrammarBuilder.new do
+    Rley::Syntax::BaseGrammarBuilder.new do
       add_terminals('Noun', 'Verb', 'Pronoun', 'Proper-Noun')
       add_terminals('Determiner', 'Preposition')
       rule 'S' => 'NP VP'

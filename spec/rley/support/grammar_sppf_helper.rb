@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # Load the builder class
-require_relative '../../../lib/rley/syntax/grammar_builder'
+require_relative '../../../lib/rley/syntax/base_grammar_builder'
 
 
 module GrammarSPPFHelper
@@ -11,7 +11,7 @@ module GrammarSPPFHelper
   # Notes in Theoretical Computer Science 203, (2008), pp. 53-67
   # contains a hidden left recursion and a cycle
   def grammar_sppf_builder
-    builder = Rley::Syntax::GrammarBuilder.new do
+    builder = Rley::Syntax::BaseGrammarBuilder.new do
       add_terminals('a', 'b')
       rule 'Phi' => 'S'
       rule 'S' => %w[A T]

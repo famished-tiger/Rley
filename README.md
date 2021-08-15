@@ -50,11 +50,10 @@ application range such as:
 
 
 ### Compatibility
-Rley supports the following Ruby implementations:    
-- MRI 2.3
-- MRI 2.4
+Rley supports the following Ruby implementations:
 - MRI 2.5
 - MRI 2.6 
+- MRI 2.7
 - JRuby 9.1+  
 
 ---
@@ -106,9 +105,9 @@ The subset of English grammar is based on an example from the NLTK book.
       # Here we define the productions (= grammar rules)
       rule 'S' => 'NP VP'
       rule 'NP' => 'Proper-Noun'
-      rule 'NP' => 'Determiner Noun'
+      rule 'NP' => 'Determiner Noun'      
       rule 'NP' => 'Determiner Noun PP'
-      rule 'VP' => 'Verb NP'
+      rule 'VP' => 'Verb NP'      
       rule 'VP' => 'Verb NP PP'
       rule 'PP' => 'Preposition NP'
     end

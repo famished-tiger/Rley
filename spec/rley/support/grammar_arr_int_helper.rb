@@ -3,7 +3,7 @@
 require 'strscan'
 
 # Load the builder class
-require_relative '../../../lib/rley/syntax/grammar_builder'
+require_relative '../../../lib/rley/syntax/base_grammar_builder'
 require_relative '../../../lib/rley/lexical/token'
 
 
@@ -12,7 +12,7 @@ module GrammarArrIntHelper
   # array of integers.
   # (based on the article about Earley's algorithm in Wikipedia)
   def grammar_arr_int_builder
-    Rley::Syntax::GrammarBuilder.new do
+    Rley::Syntax::BaseGrammarBuilder.new do
       add_terminals('[', ']', ',', 'integer')
       rule 'P' => 'arr'
       rule 'arr' => '[ sequence ]'

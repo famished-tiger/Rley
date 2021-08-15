@@ -11,7 +11,7 @@ builder = Rley::Syntax::GrammarBuilder.new do
 
   # Grammar with left recursive rule.
   rule 'l_dots' => []
-  rule 'l_dots' => %w[l_dots DOT]
+  rule 'l_dots' => 'l_dots DOT'
 end
 
 # And now, let's build the grammar...

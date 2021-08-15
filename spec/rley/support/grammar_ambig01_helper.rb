@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # Load the builder class
-require_relative '../../../lib/rley/syntax/grammar_builder'
+require_relative '../../../lib/rley/syntax/base_grammar_builder'
 require_relative '../../../lib/rley/lexical/token'
 
 
@@ -11,7 +11,7 @@ module GrammarAmbig01Helper
   # Grammar 3: An ambiguous arithmetic expression language
   # (based on example in article on Earley's algorithm in Wikipedia)
   def grammar_ambig01_builder
-    Rley::Syntax::GrammarBuilder.new do
+    Rley::Syntax::BaseGrammarBuilder.new do
       add_terminals('integer', '+', '*')
       rule 'P' => 'S'
       rule 'S' => 'S + S'

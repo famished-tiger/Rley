@@ -5,7 +5,7 @@ module Rley # This module is used as a namespace
     # Abstract class for grammar symbols.
     # A grammar symbol is an element that appears in grammar rules.
     class GrmSymbol
-      # The name of the grammar symbol
+      # @return [String] The name of the grammar symbol
       attr_reader(:name)
 
       # An indicator that tells whether the grammar symbol can generate a

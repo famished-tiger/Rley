@@ -35,9 +35,9 @@ module Rley # Open this namespace to avoid module qualifier prefixes
       it 'should build grammar' do
         subject.build_grammar do
           add_terminals('a', 'b', 'c')
-          add_production('S' => ['A'])
-          add_production('A' => %w[a A c])
-          add_production('A' => ['b'])
+          add_production('S' => 'A')
+          add_production('A' => 'a A c')
+          add_production('A' => 'b')
         end
 
         expect(subject.grammar).to be_kind_of(Rley::Syntax::Grammar)
@@ -71,9 +71,9 @@ module Rley # Open this namespace to avoid module qualifier prefixes
     def add_sample_grammar(anEngine)
       anEngine.build_grammar do
         add_terminals('a', 'b', 'c')
-        add_production('S' => ['A'])
-        add_production('A' => %w[a A c])
-        add_production('A' => ['b'])
+        add_production('S' => 'A')
+        add_production('A' => 'a A c')
+        add_production('A' => 'b')
       end
     end
 
