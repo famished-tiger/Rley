@@ -126,15 +126,41 @@ module Rley # This module is used as a namespace
 
       # Standard method for handling one or more modifier: symbol+
       # rule('symbol_plus' => 'symbol_plus symbol')
-      def reduce_base_plus_more(_production, _range, _tokens, theChildren)
-        theChildren[0] << theChildren[1]
-      end
+      # def reduce_base_plus_more(_production, _range, _tokens, theChildren)
+        # theChildren[0] << theChildren[1]
+      # end
 
       # Standard rule method handling one or more modifier: symbol+
       # rule('symbol_plus' => 'symbol')
-      def reduce_base_plus_last(_production, _range, _tokens, theChildren)
-        [theChildren[0]]
+      # def reduce_base_plus_last(_production, _range, _tokens, theChildren)
+        # [theChildren[0]]
+      # end
+      
+      # Implicit rule generated for * modifier
+      # rule('X') => 'X item'.as '_star_more'
+      def reduce__star_more(_production, _range, _tokens, theChildren)
+        theChildren[0]  << theChildren[1]
+        theChildren[0]
       end
+
+      # Implicit rule generated for * modifier
+      # rule('X') => ''.as '_star_none'
+      def reduce__star_none(_production, _range, _tokens, theChildren)
+        []
+      end
+
+      # Implicit rule generated for + modifier
+      # rule('X') => 'X item'.as '_plus_more'
+      def reduce__plus_more(_production, _range, _tokens, theChildren)
+        theChildren[0]  << theChildren[1]
+        theChildren[0]
+      end
+
+      # Implicit rule generated for + modifier
+      # rule('X') => 'item'.as '_plus_one'
+      def reduce__plus_one(_production, _range, _tokens, theChildren)
+        [theChildren[0]]
+      end      
 
     end # class
   end # module

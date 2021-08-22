@@ -113,70 +113,78 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           expect(new_prod.constraints[0].closest_symb).to eq('IF')
         end
 
-        it "should support optional symbol" do
+        it 'should support optional symbol' do
           instance = GrammarBuilder.new
           instance.add_terminals('LPAREN', 'RPAREN')
 
-          instance.add_production('argument_list' => 'LPAREN arguments? RPAREN')
+          instance.rule 'argument_list' => 'LPAREN arguments? RPAREN'
+          instance.grammar_complete!
 
           # implicitly called: rule('arguments_qmark' => 'arguments').tag suffix_qmark_one
           # implicitly called: rule('arguments_qmark' => '').tag suffix_qmark_none
           expect(instance.productions.size).to eq(3)
           prod_star = instance.productions.select { |prod| prod.lhs.name == 'arguments_qmark' }
           expect(prod_star.size).to eq(2)
-          last_prod = instance.productions.last
-          expect(last_prod.lhs.name).to eq('argument_list')
-          expect(last_prod.rhs.members[1].name).to eq('arguments_qmark')
+          first_prod = instance.productions.first
+          expect(first_prod.lhs.name).to eq('argument_list')
+          expect(first_prod.rhs.members[1].name).to eq('arguments_qmark')
         end
 
         it "should support Kleene's star" do
           instance = GrammarBuilder.new
           instance.add_terminals('EOF')
 
-          instance.add_production('program' => 'declaration* EOF')
+          instance.rule 'program' => 'declaration* EOF'
+          instance.grammar_complete!
 
           # implicitly called: rule('declaration_star' => 'declaration_star declaration').tag suffix_star_more
           # implicitly called: rule('declaration_star' => '').tag suffix_star_last
           expect(instance.productions.size).to eq(3)
           prod_star = instance.productions.select { |prod| prod.lhs.name == 'declaration_star' }
           expect(prod_star.size).to eq(2)
-          last_prod = instance.productions.last
-          expect(last_prod.lhs.name).to eq('program')
-          expect(last_prod.rhs.members[0].name).to eq('declaration_star')
+          first_prod = instance.productions.first
+          expect(first_prod.lhs.name).to eq('program')
+          expect(first_prod.rhs.members[0].name).to eq('declaration_star')
         end
 
         it "should support symbols decorated with Kleene's plus" do
           instance = GrammarBuilder.new
           instance.add_terminals('plus', 'minus', 'digit')
 
-          instance.add_production('integer' => 'value')
-          instance.add_production('integer' => 'sign value')
-          instance.add_production('sign' => 'plus')
-          instance.add_production('sign' => 'minus')
-          expect(instance.productions.size).to eq(4)
-          instance.add_production('value' => 'digit+')
+          instance.rule 'integer' => 'value'
+          instance.rule 'integer' => 'sign value'
+          instance.rule 'sign' => 'plus'
+          instance.rule 'sign' => 'minus'
+          instance.rule 'value' => 'digit+'
+          expect(instance.productions.size).to eq(5)
+          instance.grammar_complete!
+          expect(instance.productions.size).to eq(7)
 
           # implicitly called: rule('digit_plus' => 'digit_plus digit').tag suffix_plus_more
           # implicitly called: rule('digit_plus' => 'digit').tag suffix_plus_last
           expect(instance.productions.size).to eq(7) # Two additional rules generated
           prod_plus = instance.productions.select { |prod| prod.lhs.name == 'digit_plus' }
           expect(prod_plus.size).to eq(2)
-          last_prod = instance.productions.last
-          expect(last_prod.lhs.name).to eq('value')
-          expect(last_prod.rhs.members[0].name).to eq('digit_plus')
+          val_prod = instance.productions[4]
+          expect(val_prod.lhs.name).to eq('value')
+          expect(val_prod.rhs.members[0].name).to eq('digit_plus')
         end
 
         it "should support optional grouping" do
           instance = GrammarBuilder.new
           instance.add_terminals('EQUAL', 'IDENTIFIER', 'VAR')
 
-          instance.add_production('var_decl' => 'VAR IDENTIFIER (EQUAL expression)?')
+          instance.rule 'var_decl' => 'VAR IDENTIFIER (EQUAL expression)?'
+          instance.grammar_complete!
 
           # implicitly called: rule('seq_EQUAL_expression' => 'EQUAL expression').tag 'return_children'
           # implicitly called: rule('seq_EQUAL_expression_qmark' => 'seq_EQUAL_expression').tag suffix_qmark_one
           # implicitly called: rule('seq_EQUAL_expression_qmark' => '').tag suffix_qmark_none
           expect(instance.productions.size).to eq(4)
-          (p0, p1, p2) = instance.productions[0..2]
+          first_prod = instance.productions.first
+          expect(first_prod.lhs.name).to eq('var_decl')
+          expect(first_prod.rhs.members[2].name).to eq('seq_EQUAL_expression_qmark')
+          (p0, p1, p2) = instance.productions[1..3]
           expect(p0.lhs.name).to eq('seq_EQUAL_expression')
           expect(p0.rhs[0].name).to eq('EQUAL')
           expect(p0.rhs[1].name).to eq('expression')
@@ -189,23 +197,24 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           expect(p2.lhs.name).to eq('seq_EQUAL_expression_qmark')
           expect(p2.rhs).to be_empty
           expect(p2.name).to eq('_qmark_none')
-
-          last_prod = instance.productions.last
-          expect(last_prod.lhs.name).to eq('var_decl')
-          expect(last_prod.rhs.members[2].name).to eq('seq_EQUAL_expression_qmark')
         end
 
         it "should support grouping with star modifier" do
           instance = GrammarBuilder.new
           instance.add_terminals('OR')
 
-          instance.add_production('logic_or' => 'logic_and (OR logic_and)*')
+          instance.rule 'logic_or' => 'logic_and (OR logic_and)*'
+          instance.grammar_complete!
 
           # implicitly called: rule('seq_OR_logic_and' => 'OR logic_and').tag 'return_children'
           # implicitly called: rule('seq_EQUAL_expression_star' => 'seq_EQUAL_expression_star seq_EQUAL_expression').tag suffix_star_more
           # implicitly called: rule('seq_EQUAL_expression_star' => '').tag suffix_star_none
           expect(instance.productions.size).to eq(4)
-          (p0, p1, p2) = instance.productions[0..2]
+          first_prod = instance.productions.first
+          expect(first_prod.lhs.name).to eq('logic_or')
+          expect(first_prod.rhs.members[1].name).to eq('seq_OR_logic_and_star')
+
+          (p0, p1, p2) = instance.productions[1..3]
           expect(p0.lhs.name).to eq('seq_OR_logic_and')
           expect(p0.rhs[0].name).to eq('OR')
           expect(p0.rhs[1].name).to eq('logic_and')
@@ -219,23 +228,24 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           expect(p2.lhs.name).to eq('seq_OR_logic_and_star')
           expect(p2.rhs).to be_empty
           expect(p2.name).to eq('_star_none')
-
-          last_prod = instance.productions.last
-          expect(last_prod.lhs.name).to eq('logic_or')
-          expect(last_prod.rhs.members[1].name).to eq('seq_OR_logic_and_star')
         end
 
         it "should support grouping with plus modifier" do
           instance = GrammarBuilder.new
           instance.add_terminals('POINT TO SEMI_COLON')
 
-          instance.add_production('path' => 'POINT (TO POINT)+ SEMI_COLON')
+          instance.rule 'path' => 'POINT (TO POINT)+ SEMI_COLON'
+          instance.grammar_complete!
 
           # implicitly called: rule('seq_TO_POINT' => 'TO POINT').tag 'return_children'
           # implicitly called: rule('seq_TO_POINT_plus' => 'seq_TO_POINT_plus seq_TO_POINT').tag suffix_plus_more
           # implicitly called: rule('seq_TO_POINT_plus' => 'seq_TO_POINT').tag suffix_plus_one
           expect(instance.productions.size).to eq(4)
-          (p0, p1, p2) = instance.productions[0..2]
+          first_prod = instance.productions.first
+          expect(first_prod.lhs.name).to eq('path')
+          expect(first_prod.rhs.members[1].name).to eq('seq_TO_POINT_plus')
+
+          (p0, p1, p2) = instance.productions[1..3]
           expect(p0.lhs.name).to eq('seq_TO_POINT')
           expect(p0.rhs[0].name).to eq('TO')
           expect(p0.rhs[1].name).to eq('POINT')
@@ -249,23 +259,24 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           expect(p2.lhs.name).to eq('seq_TO_POINT_plus')
           expect(p2.rhs[0].name).to eq('seq_TO_POINT')
           expect(p2.name).to eq('_plus_one')
-
-          last_prod = instance.productions.last
-          expect(last_prod.lhs.name).to eq('path')
-          expect(last_prod.rhs.members[1].name).to eq('seq_TO_POINT_plus')
         end
 
         it "should support grouping with nested annotation" do
           instance = GrammarBuilder.new
           instance.add_terminals('IF ELSE LPAREN RPAREN')
           st = "IF LPAREN expr RPAREN stmt (ELSE { match_closest: 'IF' } stmt)?"
-          instance.add_production('if_stmt' => st)
+          instance.rule('if_stmt' => st)
+          instance.grammar_complete!
 
           # implicitly called: rule('seq_ELSE_stmt' => 'ELSE stmt').tag 'return_children'
           # implicitly called: rule('seq_ELSE_stmt_qmark' => 'seq_ELSE_stmt ').tag suffix_plus_more
           # implicitly called: rule('seq_ELSE_stmt_qmark' => '').tag suffix_plus_one
           expect(instance.productions.size).to eq(4)
-          (p0, p1, p2) = instance.productions[0..2]
+          first_prod = instance.productions.first
+          expect(first_prod.lhs.name).to eq('if_stmt')
+          expect(first_prod.rhs.members[5].name).to eq('seq_ELSE_stmt_qmark')
+
+          (p0, p1, p2) = instance.productions[1..3]
           expect(p0.lhs.name).to eq('seq_ELSE_stmt')
           expect(p0.rhs[0].name).to eq('ELSE')
           expect(p0.rhs[1].name).to eq('stmt')
@@ -282,10 +293,6 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           expect(p2.lhs.name).to eq('seq_ELSE_stmt_qmark')
           expect(p2.rhs).to be_empty
           expect(p2.name).to eq('_qmark_none')
-
-          last_prod = instance.productions.last
-          expect(last_prod.lhs.name).to eq('if_stmt')
-          expect(last_prod.rhs.members[5].name).to eq('seq_ELSE_stmt_qmark')
         end
       end # context
     end # describe

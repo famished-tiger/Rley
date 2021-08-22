@@ -934,10 +934,11 @@ MSG
           # S => ;
           # This grammar requires a time that is quadratic in the number of
           # input tokens
-          builder = Notation::GrammarBuilder.new
-          builder.add_terminals('a')
-          builder.add_production('S' => 'a S')
-          builder.add_production('S' => '')
+          builder = Notation::GrammarBuilder.new do
+            add_terminals('a')
+            rule('S' => 'a S')
+            rule('S' => '')
+          end
           grammar = builder.grammar
           tokens = build_token_sequence(%w[a a a a], grammar)
 
@@ -1016,6 +1017,25 @@ MSG
             'S. | 0'                # exit rule
           ]
           compare_entry_texts(parse_result.chart[4], expected)
+        end
+
+        it 'should support modifier(s) in start rule' do
+          # An implicit EOF marker is a special terminal
+          # that denotes the end of input string but doesn't
+          # appear explicitly as some character or text in the input.
+          builder = Notation::GrammarBuilder.new do
+            add_terminals('a', 'b', 'EOF')
+
+            rule('S' => 'a_or_b* EOF')
+            rule('a_or_b' => 'a')
+            rule('a_or_b' => 'b')
+          end
+          grammar = builder.grammar
+          tokens = build_token_sequence(%w[EOF], grammar)
+          tokens[0].instance_variable_set(:@lexeme, '')
+          instance = GFGEarleyParser.new(grammar)
+          parse_result = instance.parse(tokens)
+          expect(parse_result.success?).to eq(true)
         end
       end # context
     end # describe
