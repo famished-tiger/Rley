@@ -170,7 +170,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           expect(val_prod.rhs.members[0].name).to eq('digit_plus')
         end
 
-        it "should support optional grouping" do
+        it 'should support optional grouping' do
           instance = GrammarBuilder.new
           instance.add_terminals('EQUAL', 'IDENTIFIER', 'VAR')
 
@@ -199,7 +199,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           expect(p2.name).to eq('_qmark_none')
         end
 
-        it "should support grouping with star modifier" do
+        it 'should support grouping with star modifier' do
           instance = GrammarBuilder.new
           instance.add_terminals('OR')
 
@@ -230,7 +230,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           expect(p2.name).to eq('_star_none')
         end
 
-        it "should support grouping with plus modifier" do
+        it 'should support grouping with plus modifier' do
           instance = GrammarBuilder.new
           instance.add_terminals('POINT TO SEMI_COLON')
 
@@ -261,7 +261,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           expect(p2.name).to eq('_plus_one')
         end
 
-        it "should support grouping with nested annotation" do
+        it 'should support grouping with nested annotation' do
           instance = GrammarBuilder.new
           instance.add_terminals('IF ELSE LPAREN RPAREN')
           st = "IF LPAREN expr RPAREN stmt (ELSE { match_closest: 'IF' } stmt)?"
@@ -281,7 +281,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           expect(p0.rhs[0].name).to eq('ELSE')
           expect(p0.rhs[1].name).to eq('stmt')
           expect(p0.name).to eq('return_children')
-          expect(p0.constraints.size). to eq(1)
+          expect(p0.constraints.size).to eq(1)
           expect(p0.constraints[0]).to be_kind_of(Syntax::MatchClosest)
           expect(p0.constraints[0].idx_symbol).to eq(0) # ELSE is on position 0
           expect(p0.constraints[0].closest_symb).to eq('IF')

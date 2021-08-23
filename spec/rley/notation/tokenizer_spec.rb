@@ -19,10 +19,10 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           expect(token.lexeme).to eq(lexeme)
         end
       end
-      
+
       context 'Initialization:' do
-      let(:sample_text) { 'begin-object member-list end-object' }
-      subject { Tokenizer.new }
+        let(:sample_text) { 'begin-object member-list end-object' }
+        subject { Tokenizer.new }
 
         it 'could be initialized with a text to tokenize or...' do
           expect { Tokenizer.new(sample_text) }.not_to raise_error
@@ -36,7 +36,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           expect(subject.scanner).to be_kind_of(StringScanner)
         end
       end # context
-      
+
       context 'Input tokenization:' do
         it 'should recognize single special character token' do
           input = '(){}?*+,'
@@ -47,9 +47,9 @@ module Rley # Open this namespace to avoid module qualifier prefixes
             %w[RIGHT_PAREN )],
             %w[LEFT_BRACE {],
             %w[RIGHT_BRACE }],
-            %w[QUESTION_MARK ?],            
-            %w[STAR *],             
-            %w[PLUS +],             
+            %w[QUESTION_MARK ?],
+            %w[STAR *],
+            %w[PLUS +],
             %w[COMMA ,]
           ]
           match_expectations(subject, expectations)
@@ -64,7 +64,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           ]
           match_expectations(subject, expectations)
         end
-        
+
         it 'should treat ? * + as symbols if they occur as suffix' do
           input = 'a+ + b* * 3 ?'
           subject.start_with(input)
@@ -80,7 +80,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
             %w[SYMBOL ?]
           ]
           match_expectations(subject, expectations)
-        end        
+        end
 
         it 'should recognize annotation keywords' do
           keywords = 'match_closest: repeat:'
@@ -110,7 +110,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           subject.tokens[0..-2].each_with_index do |tok, i|
             expect(tok).to be_kind_of(Rley::Lexical::Token)
             expect(tok.terminal).to eq('INT_LIT')
-            (lexeme, val) = expectations[i]
+            (lexeme,) = expectations[i]
             expect(tok.lexeme).to eq(lexeme)
           end
         end
@@ -135,37 +135,31 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           subject.tokens.each_with_index do |str, i|
             expect(str).to be_kind_of(Rley::Lexical::Token)
             expect(str.terminal).to eq('STR_LIT')
-            (lexeme, val) = expectations[i]
+            (lexeme,) = expectations[i]
             expect(str.lexeme).to eq(lexeme)
           end
         end
 
         it 'should recognize a sequence of symbols' do
-          input = "IF ifCondition statement ELSE statement"
-          expectations = [
-            'IF',
-            'ifCondition',
-            'statement',
-            'ELSE',
-            'statement'
-          ]
+          input = 'IF ifCondition statement ELSE statement'
+          expectations = %w[IF ifCondition statement ELSE statement]
 
           subject.start_with(input)
           subject.tokens.each_with_index do |str, i|
             expect(str).to be_kind_of(Rley::Lexical::Token)
             expect(str.terminal).to eq('SYMBOL')
-            (lexeme, val) = expectations[i]
+            (lexeme,) = expectations[i]
             expect(str.lexeme).to eq(lexeme)
           end
         end
 
         it 'should recognize an optional symbol' do
-          input = "RETURN expression? SEMICOLON"
+          input = 'RETURN expression? SEMICOLON'
           expectations = [
-            ['RETURN', 'SYMBOL'],
-            ['expression', 'SYMBOL'],
-            ['?', 'QUESTION_MARK'],
-            ['SEMICOLON', 'SYMBOL'],
+            %w[RETURN SYMBOL],
+            %w[expression SYMBOL],
+            %w[? QUESTION_MARK],
+            %w[SEMICOLON SYMBOL]
           ]
 
           subject.start_with(input)
@@ -178,11 +172,11 @@ module Rley # Open this namespace to avoid module qualifier prefixes
         end
 
         it 'should recognize a symbol with a star quantifier' do
-          input = "declaration* EOF"
+          input = 'declaration* EOF'
           expectations = [
-            ['declaration', 'SYMBOL'],
-            ['*', 'STAR'],
-            ['EOF', 'SYMBOL'],
+            %w[declaration SYMBOL],
+            %w[* STAR],
+            %w[EOF SYMBOL]
           ]
 
           subject.start_with(input)
@@ -195,11 +189,11 @@ module Rley # Open this namespace to avoid module qualifier prefixes
         end
 
         it 'should recognize a symbol with a plus quantifier' do
-          input = "declaration+ EOF"
+          input = 'declaration+ EOF'
           expectations = [
-            ['declaration', 'SYMBOL'],
-            ['+', 'PLUS'],
-            ['EOF', 'SYMBOL'],
+            %w[declaration SYMBOL],
+            %w[+ PLUS],
+            %w[EOF SYMBOL]
           ]
 
           subject.start_with(input)
@@ -212,16 +206,16 @@ module Rley # Open this namespace to avoid module qualifier prefixes
         end
 
         it 'should recognize a grouping with a quantifier' do
-          input = "IF ifCondition statement (ELSE statement)?"
+          input = 'IF ifCondition statement (ELSE statement)?'
           expectations = [
-            ['IF', 'SYMBOL'],
-            ['ifCondition', 'SYMBOL'],
-            ['statement', 'SYMBOL'],
-            ['(', 'LEFT_PAREN'],
-            ['ELSE', 'SYMBOL'],
-            ['statement', 'SYMBOL'],
-            [')', 'RIGHT_PAREN'],
-            ['?', 'QUESTION_MARK']
+            %w[IF SYMBOL],
+            %w[ifCondition SYMBOL],
+            %w[statement SYMBOL],
+            %w[( LEFT_PAREN],
+            %w[ELSE SYMBOL],
+            %w[statement SYMBOL],
+            %w[) RIGHT_PAREN],
+            %w[? QUESTION_MARK]
           ]
 
           subject.start_with(input)
@@ -236,15 +230,15 @@ module Rley # Open this namespace to avoid module qualifier prefixes
         it 'should recognize a match closest constraint' do
           input = "IF ifCondition statement ELSE { match_closest: 'IF' } statement"
           expectations = [
-            ['IF', 'SYMBOL'],
-            ['ifCondition', 'SYMBOL'],
-            ['statement', 'SYMBOL'],
-            ['ELSE', 'SYMBOL'],
-            ['{', 'LEFT_BRACE'],
-            ['match_closest', 'KEY'],
-            ['IF', 'STR_LIT'],
-            ['}', 'RIGHT_BRACE'],
-            ['statement', 'SYMBOL']
+            %w[IF SYMBOL],
+            %w[ifCondition SYMBOL],
+            %w[statement SYMBOL],
+            %w[ELSE SYMBOL],
+            %w[{ LEFT_BRACE],
+            %w[match_closest KEY],
+            %w[IF STR_LIT],
+            %w[} RIGHT_BRACE],
+            %w[statement SYMBOL]
           ]
 
           subject.start_with(input)
@@ -257,17 +251,17 @@ module Rley # Open this namespace to avoid module qualifier prefixes
         end
 
         it 'should recognize a repeat constraint' do
-          input = "IF ifCondition statement { repeat: 1 }  ELSE statement"
+          input = 'IF ifCondition statement { repeat: 1 }  ELSE statement'
           expectations = [
-            ['IF', 'SYMBOL'],
-            ['ifCondition', 'SYMBOL'],
-            ['statement', 'SYMBOL'],
-            ['{', 'LEFT_BRACE'],
-            ['repeat', 'KEY'],
-            ['1', 'INT_LIT'],
-            ['}', 'RIGHT_BRACE'],
-            ['ELSE', 'SYMBOL'],
-            ['statement', 'SYMBOL']
+            %w[IF SYMBOL],
+            %w[ifCondition SYMBOL],
+            %w[statement SYMBOL],
+            %w[{ LEFT_BRACE],
+            %w[repeat KEY],
+            %w[1 INT_LIT],
+            %w[} RIGHT_BRACE],
+            %w[ELSE SYMBOL],
+            %w[statement SYMBOL]
           ]
 
           subject.start_with(input)
@@ -280,21 +274,21 @@ module Rley # Open this namespace to avoid module qualifier prefixes
         end
 
         it 'should recognize a grouping with a repeat constraint' do
-          input = "IF ifCondition statement ( ELSE statement ){ repeat: 0..1 }"
+          input = 'IF ifCondition statement ( ELSE statement ){ repeat: 0..1 }'
           expectations = [
-            ['IF', 'SYMBOL'],
-            ['ifCondition', 'SYMBOL'],
-            ['statement', 'SYMBOL'],
-            ['(', 'LEFT_PAREN'],
-            ['ELSE', 'SYMBOL'],
-            ['statement', 'SYMBOL'],
-            [')', 'RIGHT_PAREN'],
-            ['{', 'LEFT_BRACE'],
-            ['repeat', 'KEY'],
-            ['0', 'INT_LIT'],
-            ['..', 'ELLIPSIS'],
-            ['1', 'INT_LIT'],
-            ['}', 'RIGHT_BRACE']
+            %w[IF SYMBOL],
+            %w[ifCondition SYMBOL],
+            %w[statement SYMBOL],
+            %w[( LEFT_PAREN],
+            %w[ELSE SYMBOL],
+            %w[statement SYMBOL],
+            %w[) RIGHT_PAREN],
+            %w[{ LEFT_BRACE],
+            %w[repeat KEY],
+            %w[0 INT_LIT],
+            %w[.. ELLIPSIS],
+            %w[1 INT_LIT],
+            %w[} RIGHT_BRACE]
           ]
 
           subject.start_with(input)
@@ -309,18 +303,18 @@ module Rley # Open this namespace to avoid module qualifier prefixes
         it 'should recognize a combination of constraints' do
           input = "IF ifCondition statement ELSE { repeat: 1, match_closest: 'IF' } statement"
           expectations = [
-            ['IF', 'SYMBOL'],
-            ['ifCondition', 'SYMBOL'],
-            ['statement', 'SYMBOL'],
-            ['ELSE', 'SYMBOL'],
-            ['{', 'LEFT_BRACE'],
-            ['repeat', 'KEY'],
-            ['1', 'INT_LIT'],
-            [',', 'COMMA'],
-            ['match_closest', 'KEY'],
-            ['IF', 'STR_LIT'],
-            ['}', 'RIGHT_BRACE'],
-            ['statement', 'SYMBOL']
+            %w[IF SYMBOL],
+            %w[ifCondition SYMBOL],
+            %w[statement SYMBOL],
+            %w[ELSE SYMBOL],
+            %w[{ LEFT_BRACE],
+            %w[repeat KEY],
+            %w[1 INT_LIT],
+            %w[, COMMA],
+            %w[match_closest KEY],
+            %w[IF STR_LIT],
+            %w[} RIGHT_BRACE],
+            %w[statement SYMBOL]
           ]
 
           subject.start_with(input)
@@ -335,23 +329,23 @@ module Rley # Open this namespace to avoid module qualifier prefixes
         it 'should recognize a grouping with a nested constraint' do
           input = "IF ifCondition statement ( ELSE { match_closest: 'IF' } statement ){ repeat: 0..1 }"
           expectations = [
-            ['IF', 'SYMBOL'],
-            ['ifCondition', 'SYMBOL'],
-            ['statement', 'SYMBOL'],
-            ['(', 'LEFT_PAREN'],
-            ['ELSE', 'SYMBOL'],
-            ['{', 'LEFT_BRACE'],
-            ['match_closest', 'KEY'],
-            ['IF', 'STR_LIT'],
-            ['}', 'RIGHT_BRACE'],
-            ['statement', 'SYMBOL'],
-            [')', 'RIGHT_PAREN'],
-            ['{', 'LEFT_BRACE'],
-            ['repeat', 'KEY'],
-            ['0', 'INT_LIT'],
-            ['..', 'ELLIPSIS'],
-            ['1', 'INT_LIT'],
-            ['}', 'RIGHT_BRACE']
+            %w[IF SYMBOL],
+            %w[ifCondition SYMBOL],
+            %w[statement SYMBOL],
+            %w[( LEFT_PAREN],
+            %w[ELSE SYMBOL],
+            %w[{ LEFT_BRACE],
+            %w[match_closest KEY],
+            %w[IF STR_LIT],
+            %w[} RIGHT_BRACE],
+            %w[statement SYMBOL],
+            %w[) RIGHT_PAREN],
+            %w[{ LEFT_BRACE],
+            %w[repeat KEY],
+            %w[0 INT_LIT],
+            %w[.. ELLIPSIS],
+            %w[1 INT_LIT],
+            %w[} RIGHT_BRACE]
           ]
 
           subject.start_with(input)

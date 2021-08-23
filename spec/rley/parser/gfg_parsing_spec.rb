@@ -316,6 +316,7 @@ State[5]
   S => S . + M | 0
   P. | 0
 REPR
+          expect(expectation).to eq(expectation)
         end
       end # context
 

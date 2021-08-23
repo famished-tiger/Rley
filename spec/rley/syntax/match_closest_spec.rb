@@ -16,19 +16,19 @@ module Rley # Open this namespace to avoid module qualifier prefixes
   module Syntax # Open this namespace to avoid module qualifier prefixes
     describe MatchClosest do
       # 'stmt' => 'IF boolean THEN stmt ELSE stmt'
-      let(:boolean) { NonTerminal.new('boolean') }      
+      let(:boolean) { NonTerminal.new('boolean') }
       let(:stmt) { NonTerminal.new('stmt') }
       let(:if_t) { Terminal.new('IF') }
       let(:then_t) { Terminal.new('THEN') }
-      let(:else_t) { Terminal.new('ELSE') }      
+      let(:else_t) { Terminal.new('ELSE') }
       let(:sequence) { [if_t, boolean, then_t, stmt, else_t, stmt] }
       let(:prod) { Production.new(stmt, sequence) }
 
-      subject{ MatchClosest.new(prod.rhs.members, 4, 'IF') }
+      subject { MatchClosest.new(prod.rhs.members, 4, 'IF') }
 
       context 'Initialization:' do
         it 'should be created with an symbol seq., an indice and a name' do
-          expect { MatchClosest.new(prod.rhs.members, 4, 'IF')  }.not_to raise_error
+          expect { MatchClosest.new(prod.rhs.members, 4, 'IF') }.not_to raise_error
         end
 
         it 'should know the index argument' do

@@ -55,14 +55,14 @@ module Rley # This module is used as a namespace
         new_symbs = build_symbols(Terminal, terminalSymbols)
         symbols.merge!(new_symbs)
       end
-      
+
       # Add the given marker symbol to the grammar of the language
       # @param aMarkerSymbol [Syntax::Marker] A mazker symbol
-      # @return [void]      
+      # @return [void]
       def add_marker(aMarkerSymbol)
         new_symb = build_symbol(Marker, aMarkerSymbol)
         symbols[aMarkerSymbol.name] = new_symb
-      end      
+      end
 
       # Add a production rule in the grammar given one
       # key-value pair of the form: String => Array.

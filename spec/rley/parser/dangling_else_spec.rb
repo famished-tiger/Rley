@@ -19,15 +19,18 @@ module Rley # Open this namespace to avoid module qualifier prefixes
   module Parser # Open this namespace to avoid module qualifier prefixes
     describe GFGEarleyParser do
       include ExpectationHelper # Mix-in with expectation on parse entry sets
-    
+
+      # rubocop: disable Lint/ConstantDefinitionInBlock
+
       Keyword = {
         'else' => 'ELSE',
         'false' => 'FALSE',
         'if' => 'IF',
         'then' => 'THEN',
         'true' => 'TRUE'
-      }.freeze      
-      
+      }.freeze
+      # rubocop: enable Lint/ConstantDefinitionInBlock
+
       def tokenizer(aTextToParse)
         scanner = StringScanner.new(aTextToParse)
         tokens = []
@@ -35,20 +38,21 @@ module Rley # Open this namespace to avoid module qualifier prefixes
         loop do
           scanner.skip(/\s+/)
           break if scanner.eos?
-          curr_pos = scanner.pos          
-          lexeme = scanner.scan(/\S+/)        
+
+          curr_pos = scanner.pos
+          lexeme = scanner.scan(/\S+/)
 
           term_name = Keyword[lexeme]
           unless term_name
             if lexeme =~ /\d+/
               term_name = 'INTEGER'
-            else 
+            else
               err_msg = "Unknown token '#{lexeme}'"
               raise StandardError,  err_msg
             end
           end
           pos = Rley::Lexical::Position.new(1, curr_pos + 1)
-          tokens << Rley::Lexical::Token.new(lexeme, term_name, pos)            
+          tokens << Rley::Lexical::Token.new(lexeme, term_name, pos)
         end
 
         tokens
@@ -57,12 +61,12 @@ module Rley # Open this namespace to avoid module qualifier prefixes
       let(:input) { 'if false then if true then 1 else 2' }
 
       context 'Ambiguous parse: ' do
-        # Factory method. Creates a grammar builder for a simple grammar. 
+        # Factory method. Creates a grammar builder for a simple grammar.
         def grammar_if_else_amb
           builder = Rley::Syntax::BaseGrammarBuilder.new do
             add_terminals('IF', 'THEN', 'ELSE')
             add_terminals('FALSE', 'TRUE', 'INTEGER')
-            
+
             rule 'program' => 'stmt'
             rule 'stmt' => 'IF boolean THEN stmt'
             rule 'stmt' => 'IF boolean THEN stmt ELSE stmt'
@@ -72,7 +76,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
             rule 'boolean' => 'FALSE'
             rule 'boolean' => 'TRUE'
           end
-          
+
           builder.grammar
         end
 
@@ -390,7 +394,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
             'boolean => . TRUE | 8'
           ]
           result8 = parse_result.chart[8]
-          found = parse_result.chart.search_entries(4, {before: 'IF'})
+          # found = parse_result.chart.search_entries(4, { before: 'IF' })
           expect(result8.entries.size).to eq(11)
           compare_entry_texts(result8, expected)
           expected_terminals(result8, %w[FALSE IF INTEGER TRUE])
@@ -441,5 +445,3 @@ module Rley # Open this namespace to avoid module qualifier prefixes
     end # describe
   end # module
 end # module
-  
-      

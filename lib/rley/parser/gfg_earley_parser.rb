@@ -51,7 +51,7 @@ module Rley # This module is used as a namespace
         result.chart[index].each do |entry|
           # Is entry of the form? [A => alpha . B beta, k]...
           next_symbol = entry.next_symbol
-          if next_symbol&.kind_of?(Syntax::NonTerminal)
+          if next_symbol.kind_of?(Syntax::NonTerminal)
             # ...apply the Call rule
             call_rule(result, entry, index)
           end

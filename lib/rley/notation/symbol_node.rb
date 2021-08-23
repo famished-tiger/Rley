@@ -8,14 +8,14 @@ module Rley
     class SymbolNode < ASTNode
       # @return [String] name of grammar symbol
       attr_reader :name
-      
+
       # @param aPosition [Rley::Lexical::Position] Position of the entry in the input stream.
       # @param aName [String] name of grammar symbol
       # @param theRepetition [Symbol] indicates how many times the symbol can be repeated
       def initialize(aPosition, aName, theRepetition = nil)
         super(aPosition)
         @name = aName
-        repetition=(theRepetition) if theRepetition
+        self.repetition = theRepetition if theRepetition
       end
 
       # Abstract method (must be overriden in subclasses).

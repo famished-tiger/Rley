@@ -1,3 +1,10 @@
+### 0.8.02 / 2021-08-23
+- Code restyling to please Rubocop 1.19.1
+
+* [CHANGE] File `.rubocp.yml` updated to take into account new cops.
+* [CHANGE] File `*.rb` files updated to fix Rubocop findings
+
+
 ### 0.8.01 / 2021-08-22
 - Unused/redundant file removal. Fix in rule generation
 

@@ -133,7 +133,6 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           expect(last_prod.lhs.name).to eq('value')
           expect(last_prod.rhs.members[0].name).to eq('digit_plus')
         end
-
       end # context
 
       context 'Building grammar:' do

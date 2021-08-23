@@ -32,7 +32,7 @@ module Rley
           expect(subject.engine).to be_kind_of(Rley::Engine)
         end
       end # context
-     
+
       context 'Parsing into CST:' do
         subject do
           instance = Parser.new
@@ -65,7 +65,6 @@ module Rley
             expect(strait_member.subnodes[0].subnodes[0].token.lexeme).to eq(source)
           end
         end
-
       end # context
 
       context 'Parsing into AST:' do
@@ -132,7 +131,7 @@ module Rley
         end
 
         it 'should parse a grouping with a modifier' do
-          input = "IF ifCondition statement (ELSE statement)?"
+          input = 'IF ifCondition statement (ELSE statement)?'
 
           ptree = subject.parse(input)
           expect(ptree.root).to be_kind_of(SequenceNode)
@@ -175,7 +174,7 @@ module Rley
           expect(optional.repetition).to eq(:zero_or_one)
           expect(optional.subnodes[0]).to be_kind_of(SymbolNode)
           expect(optional.subnodes[0].name).to eq('ELSE')
-          expect(optional.subnodes[0].annotation).to eq({'match_closest' => 'IF'})
+          expect(optional.subnodes[0].annotation).to eq({ 'match_closest' => 'IF' })
           expect(optional.subnodes[1].name).to eq('statement')
         end
       end # context

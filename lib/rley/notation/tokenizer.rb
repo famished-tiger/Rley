@@ -35,11 +35,11 @@ module Rley
         '*' => 'STAR',
         '..' => 'ELLIPSIS'
       }.freeze
-      
+
       # Here are all the implemented Rley notation keywords
       @@keywords = %w[
         match_closest repeat
-      ].map { |x| [x, x] }.to_h      
+      ].map { |x| [x, x] }.to_h
 
       # Constructor. Initialize a tokenizer for Lox input.
       # @param source [String] Lox text to tokenize.
@@ -84,7 +84,7 @@ module Rley
           token = build_token(@@lexeme2name[curr_ch], scanner.getch)
         elsif '?*+,'.include? curr_ch # modifier character
           # modifiers without prefix text are symbols
-          symb = ws_found ? 'SYMBOL' : @@lexeme2name[curr_ch] 
+          symb = ws_found ? 'SYMBOL' : @@lexeme2name[curr_ch]
           token = build_token(symb, scanner.getch)
         elsif (lexeme = scanner.scan(/\.\./))
           # One or two special character tokens
@@ -114,7 +114,6 @@ module Rley
           col = scanner.pos - lex_length - @line_start + 1
           pos = Rley::Lexical::Position.new(@lineno, col)
           token = Rley::Lexical::Token.new(aLexeme.dup, aSymbolName, pos)
-
         rescue StandardError => e
           puts "Failing with '#{aSymbolName}' and '#{aLexeme}'"
           raise e
@@ -148,21 +147,10 @@ module Rley
             when "\n"
               next_line
               literal << special
-            # when '\\'
-              # ch = scanner.scan(/./)
-              # next unless ch
-
-              # escaped = @@escape_chars[ch]
-              # if escaped
-                # literal << escaped
-              # else
-                # literal << ch
-              # end
             end
           end
         end
         pos = Rley::Lexical::Position.new(line, column_start)
-        lexeme = scanner.string[scan_pos - 1..scanner.pos - 1]
         Rley::Lexical::Token.new(literal, 'STR_LIT', pos)
       end
 

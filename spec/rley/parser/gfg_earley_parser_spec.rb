@@ -22,6 +22,7 @@ require_relative '../support/expectation_helper'
 require_relative '../../../lib/rley/parser/gfg_earley_parser'
 
 module Rley # Open this namespace to avoid module qualifier prefixes
+  # rubocop: disable Metrics/BlockLength
   module Parser # Open this namespace to avoid module qualifier prefixes
     describe GFGEarleyParser do
       include GrammarABCHelper # Mix-in module with builder for grammar abc
@@ -302,7 +303,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
             'sequence => . sequence comma integer | 0', # start rule
             'sequence => . integer | 0',                # start rule
             '.integer | 0',                             # call rule
-            'integer => . digit_plus | 0' ,             # start rule
+            'integer => . digit_plus | 0',              # start rule
             '.digit_plus | 0',                          # call rule
             'digit_plus => . digit_plus digit | 0',     # start rule (generated)
             'digit_plus => . digit | 0'                 # start rule (generated)
@@ -314,7 +315,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           expected = [
             'digit_plus => digit . | 0',                # Scan
             'digit_plus. | 0',                          # exit rule
-            'integer => digit_plus . | 0' ,             # end rule
+            'integer => digit_plus . | 0',              # end rule
             'digit_plus => digit_plus . digit | 0',     # rule (generated)
             'integer. | 0',                             # exit rule
             'sequence => integer . | 0',                # end rule
@@ -329,8 +330,8 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           # Expectation chart[2]:
           expected = [
             'sequence => sequence comma . integer | 0', #  Scan
-            '.integer | 2',                # call rule
-            'integer => . digit_plus | 2' ,             # start rule
+            '.integer | 2',                             # call rule
+            'integer => . digit_plus | 2',              # start rule
             '.digit_plus | 2',                          # call rule
             'digit_plus => . digit_plus digit | 2',     # start rule (generated)
             'digit_plus => . digit | 2'                 # start rule (generated)
@@ -342,13 +343,13 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           expected = [
             'digit_plus => digit . | 2',                # Scan
             'digit_plus. | 2',                          # exit rule
-            'integer => digit_plus . | 2' ,             # end rule
+            'integer => digit_plus . | 2',              # end rule
             'digit_plus => digit_plus . digit | 2',     # rule (generated)
             'integer. | 2',                             # exit rule
             'sequence => sequence comma integer . | 0', # rule
-            'sequence. | 0',                             # exit rule
+            'sequence. | 0',                            # exit rule
             'S => sequence . | 0',                      # end rule
-            'sequence => sequence . comma integer | 0', #  rule
+            'sequence => sequence . comma integer | 0'  #  rule
           ]
           compare_entry_texts(parse_result.chart[3], expected)
 
@@ -357,12 +358,12 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           expected = [
             'digit_plus => digit_plus digit . | 2',     # Scan
             'digit_plus. | 2',                          # exit rule
-            'integer => digit_plus . | 2' ,             # end rule
+            'integer => digit_plus . | 2',              # end rule
             'digit_plus => digit_plus . digit | 2',     #
             'integer. | 2',                             # exit rule
             'sequence => sequence comma integer . | 0', # rule
             'sequence. | 0',                            # exit rule
-            'S => sequence . | 0',                      # end rule
+            'S => sequence . | 0'                       # end rule
           ]
           compare_entry_texts(parse_result.chart[4], expected)
         end
@@ -1040,5 +1041,6 @@ MSG
       end # context
     end # describe
   end # module
+  # rubocop: enable Metrics/BlockLength
 end # module
 # End of file

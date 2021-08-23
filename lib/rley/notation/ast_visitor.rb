@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Rley
   module Notation
     class ASTVisitor
@@ -110,4 +112,4 @@ module Rley
       end
     end # class
   end # module
-end # module      
+end # module

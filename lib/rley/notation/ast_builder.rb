@@ -26,12 +26,6 @@ module Rley
         }.freeze
       end
 
-      # Create a new AST builder instance.
-      # @param theTokens [Array<Rley::Lexical::Token>] The sequence of input tokens.
-      def initialize(theTokens)
-        super(theTokens)
-      end
-
       protected
 
       def terminal2node
@@ -178,9 +172,9 @@ module Rley
         low = theChildren[0].token.lexeme
         high = theChildren[2].token.lexeme
         case [low, high]
-          when ['0', '1']
+          when %w[0 1]
             :zero_or_one
-          when ['1', '1']
+          when %w[1 1]
             :exactly_one
           else
             Range.new(low.to_i, high.to_i)

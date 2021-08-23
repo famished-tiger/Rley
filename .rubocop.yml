@@ -1,7 +1,7 @@
 AllCops:
   Exclude:
-    - 'exp/**/*'
-    - 'demo/**/*'
+    - 'examples/**/*'
+    - 'exp/**/*'    
 
 Gemspec/DateAssignment:
   Enabled: true
@@ -50,6 +50,9 @@ Layout/IndentationConsistency:
 Layout/HeredocIndentation:
   Enabled: false
 
+Layout/LineEndStringConcatenationIndentation:
+  Enabled: true
+
 Layout/MultilineHashBraceLayout:
   Enabled: true
 
@@ -81,6 +84,9 @@ Layout/TrailingWhitespace:
 Lint/AmbiguousAssignment:
   Enabled: true
 
+Lint/AmbiguousRange:
+  Enabled: true
+
 Lint/DeprecatedConstants:
   Enabled: true
 
@@ -95,6 +101,9 @@ Lint/EmptyBlock:
 
 Lint/EmptyClass:
   Enabled: false
+
+Lint/EmptyInPattern:
+  Enabled: true
 
 Lint/LambdaWithoutLiteralBlock:
   Enabled: true
@@ -192,6 +201,9 @@ Naming/ClassAndModuleCamelCase:
 Naming/BlockParameterName:
   Enabled: true
 
+Naming/InclusiveLanguage:
+  Enabled: true
+
 Naming/MethodParameterName:
   Enabled: false
 
@@ -199,9 +211,6 @@ Naming/MethodName:
   Enabled: false
 
 Naming/VariableName:
-  Enabled: false
-
-Style/AccessorGrouping:
   Enabled: false
 
 Style/Alias:
@@ -276,11 +285,17 @@ Style/HashTransformValues:
 Style/IfUnlessModifier:
   Enabled: false
 
+Style/InPatternThen:
+  Enabled: true
+
 Style/InverseMethods:
   Enabled: false
 
 Style/MissingRespondToMissing:
   Enabled: false
+  
+Style/MultilineInPatternThen:
+  Enabled: true  
 
 Style/NegatedIfElseCondition:
   Enabled: true
@@ -293,6 +308,9 @@ Style/NilLambda:
 
 Style/NumericLiterals:
   Enabled: false
+  
+Style/QuotedSymbols:
+  Enabled: true  
 
 Style/RaiseArgs:
   Enabled: true
@@ -305,6 +323,9 @@ Style/RedundantReturn:
 
 Style/RedundantSelf:
   Enabled: true
+  
+Style/RedundantSelfAssignmentBranch:
+  Enabled: true  
 
 Style/RegexpLiteral:
   Enabled: false
@@ -365,6 +386,9 @@ Lint/TopLevelReturnWithArgument:
   Enabled: true
 
 Lint/UnreachableLoop:
+  Enabled: true
+
+Style/AccessorGrouping:
   Enabled: true
 
 Style/ArrayCoercion:

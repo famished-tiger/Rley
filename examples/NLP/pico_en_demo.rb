@@ -26,8 +26,8 @@ engine.build_grammar do
   rule 'S' => 'NP VP'
   rule 'NP' => 'Proper-Noun'
   rule 'NP' => 'Determiner Noun'
-  rule 'NP' => 'Determiner Noun PP'  
-  rule 'VP' => 'Verb NP'  
+  rule 'NP' => 'Determiner Noun PP'
+  rule 'VP' => 'Verb NP'
   rule 'VP' => 'Verb NP PP'
   rule 'PP' => 'Preposition NP'
 end

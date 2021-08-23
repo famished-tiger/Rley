@@ -135,24 +135,24 @@ module Rley # This module is used as a namespace
       # def reduce_base_plus_last(_production, _range, _tokens, theChildren)
         # [theChildren[0]]
       # end
-      
+
       # Implicit rule generated for * modifier
       # rule('X') => 'X item'.as '_star_more'
       def reduce__star_more(_production, _range, _tokens, theChildren)
-        theChildren[0]  << theChildren[1]
+        theChildren[0] << theChildren[1]
         theChildren[0]
       end
 
       # Implicit rule generated for * modifier
       # rule('X') => ''.as '_star_none'
-      def reduce__star_none(_production, _range, _tokens, theChildren)
+      def reduce__star_none(_production, _range, _tokens, _children)
         []
       end
 
       # Implicit rule generated for + modifier
       # rule('X') => 'X item'.as '_plus_more'
       def reduce__plus_more(_production, _range, _tokens, theChildren)
-        theChildren[0]  << theChildren[1]
+        theChildren[0] << theChildren[1]
         theChildren[0]
       end
 
@@ -160,8 +160,7 @@ module Rley # This module is used as a namespace
       # rule('X') => 'item'.as '_plus_one'
       def reduce__plus_one(_production, _range, _tokens, theChildren)
         [theChildren[0]]
-      end      
-
+      end
     end # class
   end # module
 end # module

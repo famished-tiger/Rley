@@ -5,7 +5,7 @@ require_relative 'sequence_node'
 module Rley
   module Notation
     # A syntax node representing an expression bracketed by parentheses.
-    class GroupingNode < SequenceNode      
+    class GroupingNode < SequenceNode
       # @param aPosition [Rley::Lexical::Position] Start position.
       # @param sequence [Array<ASTNode>] sequence of AST nodes
       # @param theRepetition [Symbol] indicates how many times the symbol can be repeated

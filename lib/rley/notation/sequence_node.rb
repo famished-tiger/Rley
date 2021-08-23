@@ -8,16 +8,16 @@ module Rley
     class SequenceNode < ASTNode
       # @return [Array<ASTNode>]
       attr_reader :subnodes
-      
+
       attr_accessor :constraints
-      
+
       # @param aPosition [Rley::Lexical::Position] Start position.
       # @param sequence [Array<ASTNode>] sequence of AST nodes
       # @param theRepetition [Symbol] indicates how many times the symbol can be repeated
       def initialize(aPosition, sequence, theRepetition = nil)
         super(aPosition)
         @subnodes = sequence
-        repetition=(theRepetition) if theRepetition
+        self.repetition = theRepetition if theRepetition
         @constraints = []
       end
 

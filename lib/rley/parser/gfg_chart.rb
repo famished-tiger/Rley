@@ -20,7 +20,7 @@ module Rley # This module is used as a namespace
       # @param aGFGraph [GFG::GrmFlowGraph] The GFG for the grammar in use.
       def initialize(aGFGraph)
         @sets = [ParseEntrySet.new]
-        @constraints = [[]]        
+        @constraints = [[]]
         push_entry(aGFGraph.start_vertex, 0, 0, :start_rule)
       end
 
@@ -174,7 +174,7 @@ module Rley # This module is used as a namespace
             when :before # terminal before dot
               term_name = criteria[keyword]
               if e.dotted_entry? && e.vertex.dotted_item.position > -2
-                found << e if e.prev_symbol&.name == criteria[keyword]
+                found << e if e.prev_symbol&.name == term_name
               end
           end
         end
@@ -209,12 +209,13 @@ module Rley # This module is used as a namespace
           first_entry = sets[i][0]
           prev_symbol = first_entry.prev_symbol
           break if prev_symbol.name == aConstraint.closest_symb
+
           i -= 1
-          break if i < 0
+          break if i.negative?
         end
 
         # Retrieve all entries of the kind: closest_symb .
-        if i > 0
+        if i.positive?
           entries = sets[i].entries.select do |en|
             if en.prev_symbol
               en.prev_symbol.name == aConstraint.closest_symb
