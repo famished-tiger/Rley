@@ -161,6 +161,12 @@ module Rley # This module is used as a namespace
       def reduce__plus_one(_production, _range, _tokens, theChildren)
         [theChildren[0]]
       end
+
+      # Implicit rule generated for + modifier
+      # rule('X') => 'item'.as '_plus_one'
+      def reduce_return_children(_production, _range, _tokens, theChildren)
+        theChildren
+      end
     end # class
   end # module
 end # module

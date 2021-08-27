@@ -1,3 +1,8 @@
+### 0.8.03 / 2021-08-27
+- Added missing method in `ASTBaseBuilder` class
+
+* [FIX] Added method `ParseRep::ASTBaseBuilder#reduce_children`.
+
 ### 0.8.02 / 2021-08-23
 - Code restyling to please Rubocop 1.19.1
 
