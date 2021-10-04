@@ -1,7 +1,6 @@
 AllCops:
   Exclude:
-    - 'examples/**/*'
-    - 'exp/**/*'    
+    - 'exp/**/*'
 
 Gemspec/DateAssignment:
   Enabled: true
@@ -81,6 +80,9 @@ Layout/TrailingEmptyLines:
 Layout/TrailingWhitespace:
   Enabled: true
 
+Lint/AmbiguousOperatorPrecedence:
+  Enabled: true
+
 Lint/AmbiguousAssignment:
   Enabled: true
 
@@ -105,6 +107,9 @@ Lint/EmptyClass:
 Lint/EmptyInPattern:
   Enabled: true
 
+Lint/IncompatibleIoSelectWithFiberScheduler:
+  Enabled: true
+
 Lint/LambdaWithoutLiteralBlock:
   Enabled: true
 
@@ -124,6 +129,9 @@ Lint/RaiseException:
   Enabled: true
 
 Lint/RedundantDirGlobSort:
+  Enabled: true
+
+Lint/RequireRelativeSelfPath:
   Enabled: true
 
 Lint/RescueException:
@@ -213,6 +221,9 @@ Naming/MethodName:
 Naming/VariableName:
   Enabled: false
 
+Security/IoMethods:
+  Enabled: true
+
 Style/Alias:
   Enabled: true
 
@@ -293,9 +304,9 @@ Style/InverseMethods:
 
 Style/MissingRespondToMissing:
   Enabled: false
-  
+
 Style/MultilineInPatternThen:
-  Enabled: true  
+  Enabled: true
 
 Style/NegatedIfElseCondition:
   Enabled: true
@@ -306,11 +317,17 @@ Style/Next:
 Style/NilLambda:
   Enabled: true
 
+Style/NumberedParameters:
+  Enabled: true
+
+Style/NumberedParametersLimit:
+  Enabled: true
+
 Style/NumericLiterals:
   Enabled: false
-  
+
 Style/QuotedSymbols:
-  Enabled: true  
+  Enabled: true
 
 Style/RaiseArgs:
   Enabled: true
@@ -323,15 +340,18 @@ Style/RedundantReturn:
 
 Style/RedundantSelf:
   Enabled: true
-  
+
 Style/RedundantSelfAssignmentBranch:
-  Enabled: true  
+  Enabled: true
 
 Style/RegexpLiteral:
   Enabled: false
 
 Style/PercentLiteralDelimiters:
   Enabled: false
+  
+Style/SelectByRegexp:
+  Enabled: true  
 
 Style/StderrPuts:
   Enabled: false

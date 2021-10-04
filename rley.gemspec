@@ -39,6 +39,11 @@ def pkg_files(aPackage)
     'LICENSE.txt',
     'README.md',
     'examples/**/*.rb',
+    'examples/**/*.yml',
+    'examples/**/*.md',
+    'examples/**/*.svg',
+    'examples/**/*.json',
+    'examples/**/*.rex',
     'lib/*.*',
     'lib/**/*.rb',
     'spec/**/*.rb'

@@ -1,0 +1,23 @@
+# frozen_string_literal: true
+
+require 'oedipus_lex'
+
+rex_option = {}
+
+magic_comment = <<-END_MAGIC
+# frozen_string_literal: true
+
+END_MAGIC
+
+rule '.rex.rb' => proc { |path| path.sub(/\.rb$/, '') } do |t|
+  warn "Generating #{t.name} from #{t.source}"
+  rex = OedipusLex.new rex_option
+  rex.parse_file t.source
+
+  File.open t.name, 'w' do |f|
+    f.puts magic_comment
+    f.write rex.generate
+  end
+end
+
+task tokenizer: 'loxxy_raw_scanner.rex.rb'

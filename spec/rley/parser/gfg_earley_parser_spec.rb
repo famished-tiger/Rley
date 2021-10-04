@@ -2,7 +2,7 @@
 
 require_relative '../../spec_helper'
 require 'stringio'
-require_relative '../../../lib/rley/syntax/verbatim_symbol'
+require_relative '../../../lib/rley/syntax/terminal'
 require_relative '../../../lib/rley/syntax/non_terminal'
 require_relative '../../../lib/rley/syntax/production'
 require_relative '../../../lib/rley/syntax/base_grammar_builder'
@@ -54,12 +54,9 @@ module Rley # Open this namespace to avoid module qualifier prefixes
       let(:nt_S) { Syntax::NonTerminal.new('S') }
       let(:nt_M) { Syntax::NonTerminal.new('M') }
       let(:nt_T) { Syntax::NonTerminal.new('T') }
-      let(:plus) { Syntax::VerbatimSymbol.new('+') }
-      let(:star) { Syntax::VerbatimSymbol.new('*') }
-      let(:integer) do
-        integer_pattern = /[-+]?[0-9]+/ # Decimal notation
-        Syntax::Literal.new('integer', integer_pattern)
-      end
+      let(:plus) { Syntax::Terminal.new('+') }
+      let(:star) { Syntax::Terminal.new('*') }
+      let(:integer) { Syntax::Terminal.new('integer') }
       let(:prod_P) { Syntax::Production.new(nt_P, [nt_S]) }
       let(:prod_S1) { Syntax::Production.new(nt_S, [nt_S, plus, nt_M]) }
       let(:prod_S2) { Syntax::Production.new(nt_S, [nt_M]) }
@@ -197,16 +194,16 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           ###################### S(0): . 2 + 3 * 4
           # Expectation chart[0]:
           expected = [
-            '.P | 0',               # Initialization
-            'P => . S | 0',         # start rule
-            '.S | 0',               # call rule
-            "S => . S '+' M | 0",   # start rule
-            'S => . M | 0',         # start rule
-            '.M | 0',               # call rule
-            "M => . M '*' T | 0",   # start rule
-            'M => . T | 0',         # start rule
-            '.T | 0',               # call rule
-            'T => . integer | 0'    # start rule
+            '.P | 0',            # Initialization
+            'P => . S | 0',      # start rule
+            '.S | 0',            # call rule
+            'S => . S + M | 0',  # start rule
+            'S => . M | 0',      # start rule
+            '.M | 0',            # call rule
+            'M => . M * T | 0',  # start rule
+            'M => . T | 0',      # start rule
+            '.T | 0',            # call rule
+            'T => . integer | 0' # start rule
           ]
           compare_entry_texts(parse_result.chart[0], expected)
 
@@ -214,16 +211,16 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           ###################### S(1): 2 . + 3 * 4
           # Expectation chart[1]:
           expected = [
-            'T => integer . | 0',   # scan '2'
-            'T. | 0',               # exit rule
-            'M => T . | 0',         # end rule
-            'M. | 0',               # exit rule
-            'S => M . | 0',         # end rule
-            "M => M . '*' T | 0",   # end rule
-            'S. | 0',               # exit rule
-            'P => S . | 0',         # end rule
-            "S => S . '+' M | 0",   # end rule
-            'P. | 0'                # exit rule
+            'T => integer . | 0', # scan '2'
+            'T. | 0',             # exit rule
+            'M => T . | 0',       # end rule
+            'M. | 0',             # exit rule
+            'S => M . | 0',       # end rule
+            'M => M . * T | 0',   # end rule
+            'S. | 0',             # exit rule
+            'P => S . | 0',       # end rule
+            'S => S . + M | 0',   # end rule
+            'P. | 0'              # exit rule
           ]
           compare_entry_texts(parse_result.chart[1], expected)
 
@@ -231,12 +228,12 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           ###################### S(2): 2 + . 3 * 4
           # Expectation chart[2]:
           expected = [
-            "S => S '+' . M | 0",   # scan '+'
-            '.M | 2',               # call rule
-            "M => . M '*' T | 2",   # start rule
-            'M => . T | 2',         # start rule
-            '.T | 2',               # call rule
-            'T => . integer | 2'    # start rule
+            'S => S + . M | 0',   # scan '+'
+            '.M | 2',             # call rule
+            'M => . M * T | 2',   # start rule
+            'M => . T | 2',       # start rule
+            '.T | 2',             # call rule
+            'T => . integer | 2'  # start rule
           ]
           compare_entry_texts(parse_result.chart[2], expected)
 
@@ -244,41 +241,41 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           ###################### S(3): 2 + 3 . * 4
           # Expectation chart[3]:
           expected = [
-            'T => integer . | 2',   # scan '3'
-            'T. | 2',               # exit rule
-            'M => T . | 2',         # end rule
-            'M. | 2',               # exit rule
-            "S => S '+' M . | 0",   # end rule
-            "M => M . '*' T | 2",   # end rule
-            'S. | 0',               # exit rule
-            'P => S . | 0',         # end rule
-            "S => S . '+' M | 0",   # end rule
-            'P. | 0'                # exit rule
+            'T => integer . | 2',  # scan '3'
+            'T. | 2',              # exit rule
+            'M => T . | 2',        # end rule
+            'M. | 2',              # exit rule
+            'S => S + M . | 0',    # end rule
+            'M => M . * T | 2',    # end rule
+            'S. | 0',              # exit rule
+            'P => S . | 0',        # end rule
+            'S => S . + M | 0',    # end rule
+            'P. | 0'               # exit rule
           ]
           compare_entry_texts(parse_result.chart[3], expected)
 
           ###################### S(4): 2 + 3 * . 4
           # Expectation chart[4]:
           expected = [
-            "M => M '*' . T | 2",   # scan '*'
-            '.T | 4',               # call rule
-            'T => . integer | 4'    # entry rule
+            'M => M * . T | 2',   # scan '*'
+            '.T | 4',             # call rule
+            'T => . integer | 4'  # entry rule
           ]
           compare_entry_texts(parse_result.chart[4], expected)
 
           ###################### S(5): 2 + 3 * 4 .
           # Expectation chart[5]:
           expected = [
-            'T => integer . | 4',   # scan '4'
-            'T. | 4',               # exit rule
-            "M => M '*' T . | 2",   # end rule
-            'M. | 2',               # exit rule
-            "S => S '+' M . | 0",   # end rule
-            "M => M . '*' T | 2",   # end rule
-            'S. | 0',               # exit rule
-            'P => S . | 0',         # end rule
-            "S => S . '+' M | 0",   # end rule
-            'P. | 0'                # end rule
+            'T => integer . | 4',  # scan '4'
+            'T. | 4',              # exit rule
+            'M => M * T . | 2',    # end rule
+            'M. | 2',              # exit rule
+            'S => S + M . | 0',    # end rule
+            'M => M . * T | 2',    # end rule
+            'S. | 0',              # exit rule
+            'P => S . | 0',        # end rule
+            'S => S . + M | 0',    # end rule
+            'P. | 0'               # end rule
           ]
           compare_entry_texts(parse_result.chart[5], expected)
         end
@@ -373,7 +370,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           # (based on example in D. Grune, C. Jacobs "Parsing Techniques" book)
           # Ss =>  A A 'x';
           # A => ;
-          t_x = Syntax::VerbatimSymbol.new('x')
+          t_x = Syntax::Terminal.new('x')
 
           builder = Notation::GrammarBuilder.new do
             add_terminals(t_x)
@@ -390,21 +387,21 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           ###################### S(0): . x
           # Expectation chart[0]:
           expected = [
-            '.Ss | 0',              # Initialization
-            "Ss => . A A 'x' | 0",  # start rule
-            '.A | 0',               # call rule
-            'A => . | 0',           # start rule
-            'A. | 0',               # exit rule
-            "Ss => A . A 'x' | 0",  # end rule
-            "Ss => A A . 'x' | 0"   # end rule
+            '.Ss | 0',            # Initialization
+            'Ss => . A A x | 0',  # start rule
+            '.A | 0',             # call rule
+            'A => . | 0',         # start rule
+            'A. | 0',             # exit rule
+            'Ss => A . A x | 0',  # end rule
+            'Ss => A A . x | 0'   # end rule
           ]
           compare_entry_texts(parse_result.chart[0], expected)
 
           ###################### S(1): x .
           # Expectation chart[1]:
           expected = [
-            "Ss => A A 'x' . | 0",  # scan 'x'
-            'Ss. | 0'               # exit rule
+            'Ss => A A x . | 0',  # scan 'x'
+            'Ss. | 0'             # exit rule
           ]
           compare_entry_texts(parse_result.chart[1], expected)
         end
@@ -417,9 +414,9 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           # S => S "*" S.
           # S => L.
           # L => an integer number token.
-          t_int = Syntax::Literal.new('integer', /[-+]?\d+/)
-          t_plus = Syntax::VerbatimSymbol.new('+')
-          t_star = Syntax::VerbatimSymbol.new('*')
+          t_int = Syntax::Terminal.new('integer')
+          t_plus = Syntax::Terminal.new('+')
+          t_star = Syntax::Terminal.new('*')
 
           builder = Syntax::BaseGrammarBuilder.new do
             add_terminals(t_int, t_plus, t_star)
@@ -449,8 +446,8 @@ module Rley # Open this namespace to avoid module qualifier prefixes
             '.P | 0',             # Initialization
             'P => . S | 0',       # start rule
             '.S | 0',             # call rule
-            "S => . S '+' S | 0", # entry rule
-            "S => . S '*' S | 0", # entry rule
+            'S => . S + S | 0',   # entry rule
+            'S => . S * S | 0',   # entry rule
             'S => . L | 0',       # entry rule
             '.L | 0',             # call rule
             'L => . integer | 0'  # entry rule
@@ -465,8 +462,8 @@ module Rley # Open this namespace to avoid module qualifier prefixes
             'S => L . | 0',       # end rule
             'S. | 0',             # exit rule
             'P => S . | 0',       # end rule
-            "S => S . '+' S | 0", # end rule
-            "S => S . '*' S | 0", # end rule
+            'S => S . + S | 0',   # end rule
+            'S => S . * S | 0',   # end rule
             'P. | 0'              # exit rule
           ]
           compare_entry_texts(parse_result.chart[1], expected)
@@ -474,10 +471,10 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           ###################### S(2): 2 + . 3 * 4
           # Expectation chart[2]:
           expected = [
-            "S => S '+' . S | 0", # scan '+'
+            'S => S + . S | 0',   # scan '+'
             '.S | 2',             # call rule
-            "S => . S '+' S | 2", # entry rule
-            "S => . S '*' S | 2", # entry rule
+            'S => . S + S | 2',   # entry rule
+            'S => . S * S | 2',   # entry rule
             'S => . L | 2',       # entry rule
             '.L | 2',             # call rule
             'L => . integer | 2'  # entry rule
@@ -491,13 +488,13 @@ module Rley # Open this namespace to avoid module qualifier prefixes
             'L. | 2',             # exit rule
             'S => L . | 2',       # end rule
             'S. | 2',             # exit rule
-            "S => S '+' S . | 0", # end rule
-            "S => S . '+' S | 2", # end rule
-            "S => S . '*' S | 2", # end rule
+            'S => S + S . | 0',   # end rule
+            'S => S . + S | 2',   # end rule
+            'S => S . * S | 2',   # end rule
             'S. | 0',             # exit rule
             'P => S . | 0',       # end rule
-            "S => S . '+' S | 0", # end rule
-            "S => S . '*' S | 0", # end rule
+            'S => S . + S | 0',   # end rule
+            'S => S . * S | 0',   # end rule
             'P. | 0'              # exit rule
           ]
           compare_entry_texts(parse_result.chart[3], expected)
@@ -505,11 +502,11 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           ###################### S(4): 2 + 3 * . 4
           # Expectation chart[4]:
           expected = [
-            "S => S '*' . S | 2", # scan '*'
-            "S => S '*' . S | 0", # scan '*'
+            'S => S * . S | 2',   # scan '*'
+            'S => S * . S | 0',   # scan '*'
             '.S | 4',             # call rule
-            "S => . S '+' S | 4", # entry rule
-            "S => . S '*' S | 4", # entry rule
+            'S => . S + S | 4',   # entry rule
+            'S => . S * S | 4',   # entry rule
             'S => . L | 4',       # entry rule
             '.L | 4',             # call rule
             'L => . integer | 4'  # entry rule
@@ -523,18 +520,18 @@ module Rley # Open this namespace to avoid module qualifier prefixes
             'L. | 4',               # exit rule
             'S => L . | 4',         # end rule
             'S. | 4',               # exit rule
-            "S => S '*' S . | 2",   # end rule
-            "S => S '*' S . | 0",   # end rule
-            "S => S . '+' S | 4",   # end rule
-            "S => S . '*' S | 4",   # end rule
+            'S => S * S . | 2',     # end rule
+            'S => S * S . | 0',     # end rule
+            'S => S . + S | 4',     # end rule
+            'S => S . * S | 4',     # end rule
             'S. | 2',               # exit rule
             'S. | 0',               # exit rule
-            "S => S '+' S . | 0",   # end rule
-            "S => S . '+' S | 2",   # end rule
-            "S => S . '*' S | 2",   # end rule
+            'S => S + S . | 0',     # end rule
+            'S => S . + S | 2',     # end rule
+            'S => S . * S | 2',     # end rule
             'P => S . | 0',         # end rule
-            "S => S . '+' S | 0",   # end rule
-            "S => S . '*' S | 0",   # end rule
+            'S => S . + S | 0',     # end rule
+            'S => S . * S | 0',     # end rule
             'P. | 0'                # exit rule
           ]
           compare_entry_texts(parse_result.chart[5], expected)
@@ -544,18 +541,18 @@ module Rley # Open this namespace to avoid module qualifier prefixes
             'L. | 4' => ['L => integer . | 4'],
             'S => L . | 4' => ['L. | 4'],
             'S. | 4' => ['S => L . | 4'],
-            "S => S '*' S . | 2" => ['S. | 4'],
-            "S => S '*' S . | 0" => ['S. | 4'],
-            "S => S . '+' S | 4" => ['S. | 4'],
-            "S => S . '*' S | 4" => ['S. | 4'],
-            'S. | 2' => ["S => S '*' S . | 2"],
-            'S. | 0' => ["S => S '*' S . | 0", "S => S '+' S . | 0"],
-            "S => S '+' S . | 0" => ['S. | 2'],
-            "S => S . '+' S | 2" => ['S. | 2'],
-            "S => S . '*' S | 2" => ['S. | 2'],
+            'S => S * S . | 2' => ['S. | 4'],
+            'S => S * S . | 0' => ['S. | 4'],
+            'S => S . + S | 4' => ['S. | 4'],
+            'S => S . * S | 4' => ['S. | 4'],
+            'S. | 2' => ['S => S * S . | 2'],
+            'S. | 0' => ['S => S * S . | 0', 'S => S + S . | 0'],
+            'S => S + S . | 0' => ['S. | 2'],
+            'S => S . + S | 2' => ['S. | 2'],
+            'S => S . * S | 2' => ['S. | 2'],
             'P => S . | 0' => ['S. | 0'],
-            "S => S . '+' S | 0" => ['S. | 0'],
-            "S => S . '*' S | 0" => ['S. | 0'],
+            'S => S . + S | 0' => ['S. | 0'],
+            'S => S . * S | 0' => ['S. | 0'],
             'P. | 0' => ['P => S . | 0']
           }
           check_antecedence(parse_result, 5, expected_antecedents)
@@ -816,9 +813,9 @@ MSG
           # Q ::= *.
           # Q ::= /.
           # Q ::=.
-          t_a = Syntax::VerbatimSymbol.new('a')
-          t_star = Syntax::VerbatimSymbol.new('*')
-          t_slash = Syntax::VerbatimSymbol.new('/')
+          t_a = Syntax::Terminal.new('a')
+          t_star = Syntax::Terminal.new('*')
+          t_slash = Syntax::Terminal.new('/')
 
           builder = Syntax::BaseGrammarBuilder.new do
             add_terminals(t_a, t_star, t_slash)
@@ -846,35 +843,35 @@ MSG
             'E => . E Q F | 0', # start rule
             'E => . F | 0',     # start rule
             '.F | 0',           # call rule
-            "F => . 'a' | 0"    # start rule
+            'F => . a | 0'      # start rule
           ]
           compare_entry_texts(parse_result.chart[0], expected)
 
           ###################### S(1) == a . a / a
           # Expectation chart[1]:
           expected = [
-            "F => 'a' . | 0",   # scan 'a'
-            'F. | 0',           # exit rule
-            'E => F . | 0',     # end rule
-            'E. | 0',           # exit rule
-            'Z => E . | 0',     # end rule
-            'E => E . Q F | 0', # end rule
-            'Z. | 0',           # exit rule
-            '.Q | 1',           # call rule
-            "Q => . '*' | 1",   # start rule
-            "Q => . '/' | 1",   # start rule
-            'Q => . | 1',       # start rule
-            'Q. | 1',           # exit rule
-            'E => E Q . F | 0', # end rule
-            '.F | 1',           # call rule
-            "F => . 'a' | 1"    # start rule
+            'F => a . | 0',      # scan 'a'
+            'F. | 0',            # exit rule
+            'E => F . | 0',      # end rule
+            'E. | 0',            # exit rule
+            'Z => E . | 0',      # end rule
+            'E => E . Q F | 0',  # end rule
+            'Z. | 0',            # exit rule
+            '.Q | 1',            # call rule
+            'Q => . * | 1',      # start rule
+            'Q => . / | 1',      # start rule
+            'Q => . | 1',        # start rule
+            'Q. | 1',            # exit rule
+            'E => E Q . F | 0',  # end rule
+            '.F | 1',            # call rule
+            'F => . a | 1'       # start rule
           ]
           compare_entry_texts(parse_result.chart[1], expected)
 
           ###################### S(2) == a a . / a
           # Expectation chart[2]:
           expected = [
-            "F => 'a' . | 1",   # scan 'a'
+            'F => a . | 1',     # scan 'a'
             'F. | 1',           # exit rule
             'E => E Q F . | 0', # end rule
             'E. | 0',           # exit rule
@@ -882,13 +879,13 @@ MSG
             'E => E . Q F | 0', # end rule
             'Z. | 0',           # exit rule
             '.Q | 2',           # call rule
-            "Q => . '*' | 2",   # start rule
-            "Q => . '/' | 2",   # start rule
+            'Q => . * | 2',     # start rule
+            'Q => . / | 2',     # start rule
             'Q => . | 2',       # start rule
             'Q. | 2',           # exit rule
             'E => E Q . F | 0', # end rule
             '.F | 2',           # call rule
-            "F => . 'a' | 2"    # start rule
+            'F => . a | 2'      # start rule
           ]
           compare_entry_texts(parse_result.chart[2], expected)
 
@@ -896,11 +893,11 @@ MSG
           ###################### S(3) == a a / . a
           # Expectation chart[3]:
           expected = [
-            "Q => '/' . | 2",   # scan '/'
+            'Q => / . | 2',     # scan '/'
             'Q. | 2',           # exit rule
             'E => E Q . F | 0', # end rule
             '.F | 3',           # call rule
-            "F => . 'a' | 3"    # entry rule
+            'F => . a | 3'      # entry rule
           ]
           compare_entry_texts(parse_result.chart[3], expected)
 
@@ -908,7 +905,7 @@ MSG
           ###################### S(4) == a a / a .
           # Expectation chart[4]:
           expected = [
-            "F => 'a' . | 3",   # scan 'a'
+            'F => a . | 3',     # scan 'a'
             'F. | 3',           # exit rule
             'E => E Q F . | 0', # end rule
             'E. | 0',           # exit rule
@@ -916,13 +913,13 @@ MSG
             'E => E . Q F | 0', # end rule
             'Z. | 0',           # exit rule
             '.Q | 4',           # call rule
-            "Q => . '*' | 4",   # start rule
-            "Q => . '/' | 4",   # start rule
+            'Q => . * | 4',     # start rule
+            'Q => . / | 4',     # start rule
             'Q => . | 4',       # start rule
             'Q. | 4',           # exit rule
             'E => E Q . F | 0', # end rule
             '.F | 4',           # call rule
-            "F => . 'a' | 4"    # entry rule
+            'F => . a | 4'      # entry rule
           ]
           compare_entry_texts(parse_result.chart[4], expected)
         end

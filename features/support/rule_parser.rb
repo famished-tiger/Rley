@@ -51,7 +51,7 @@ module Rley4Cuke # Use the module as a namespace
     # Find all the terminal symbols occurring in the grammar rules
     def extract_terminals(tokenizedRules)
       terminals = tokenizedRules.reduce([]) do |sub_result, token_row|
-        sub_result += token_row.select { |token| token =~ /^[a-z]/ }
+        sub_result += token_row.grep(/^[a-z]/)
       end
 
       terminals.uniq

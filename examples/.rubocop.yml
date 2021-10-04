@@ -9,6 +9,9 @@ Metrics/BlockLength:
   Max: 200
   CountComments: false
   
+Style/AccessorGrouping:
+  Enabled: false  
+  
 Style/ClassVars:
   Enabled: false
   

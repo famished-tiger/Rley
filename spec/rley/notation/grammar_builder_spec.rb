@@ -55,8 +55,8 @@ module Rley # Open this namespace to avoid module qualifier prefixes
 
         it 'should accept already built terminals' do
           a = Syntax::Terminal.new('a')
-          b = Syntax::VerbatimSymbol.new('b')
-          c = Syntax::Literal.new('c', /c/)
+          b = Syntax::Terminal.new('b')
+          c = Syntax::Terminal.new('c')
 
           subject.add_terminals(a, b, c)
           expect(subject.symbols.size).to eq(3)

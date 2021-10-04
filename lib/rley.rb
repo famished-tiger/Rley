@@ -6,7 +6,7 @@
 
 require_relative './rley/constants'
 require_relative './rley/interface'
-require_relative './rley/lexical/token'
+require_relative './rley/lexical/literal'
 require_relative './rley/parser/gfg_earley_parser'
 require_relative './rley/parse_rep/ast_base_builder'
 require_relative './rley/parse_tree_visitor'

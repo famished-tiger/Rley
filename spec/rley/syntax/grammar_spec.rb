@@ -2,7 +2,7 @@
 
 require_relative '../../spec_helper'
 
-require_relative '../../../lib/rley/syntax/verbatim_symbol'
+require_relative '../../../lib/rley/syntax/terminal'
 require_relative '../../../lib/rley/syntax/non_terminal'
 require_relative '../../../lib/rley/syntax/production'
 
@@ -25,7 +25,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
 
       def build_verbatim_symbols(symbols)
         result = {}
-        symbols.each { |symb| result[symb] = VerbatimSymbol.new(symb) }
+        symbols.each { |symb| result[symb] = Terminal.new(symb) }
         result
       end
 
@@ -36,7 +36,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
       end
 
       # Grammar symbols for integer arithmetic expressions
-      let(:number) { Literal.new('number', /\d+/) } # Positive integers only
+      let(:number) { Terminal.new('number') } # Positive integers only
       let(:add_op) { NonTerminal.new('add_op') }
       let(:add_operators) { [grm1_ops['+'], grm1_ops['-']] }
       let(:mult_op) { NonTerminal.new('mult_op') }
@@ -75,9 +75,9 @@ module Rley # Open this namespace to avoid module qualifier prefixes
       let(:nt_B) { NonTerminal.new('B') }
       let(:nt_C) { NonTerminal.new('C') }
       let(:nt_D) { NonTerminal.new('D') }
-      let(:a_) { VerbatimSymbol.new('a') }
-      let(:b_)  { VerbatimSymbol.new('b') }
-      let(:c_)  { VerbatimSymbol.new('c') }
+      let(:a_) { Terminal.new('a') }
+      let(:b_)  { Terminal.new('b') }
+      let(:c_)  { Terminal.new('c') }
       let(:prod_S) { Production.new(nt_S, [nt_A]) }
       let(:prod_A1) { Production.new(nt_A, [a_, nt_A, c_]) }
       let(:prod_A2) { Production.new(nt_A, [b_]) }
@@ -103,9 +103,6 @@ module Rley # Open this namespace to avoid module qualifier prefixes
       let(:preposition_list) { %w(from to on near) }
       let(:conjunction) { NonTerminal.new('Conjunction') }
       let(:conjunction_list) { %w(and or but) }
-
-
-
 
       let(:noun_prods) { prods_for_list(noun, noun_list) }
       let(:verb_prods) { prods_for_list(verb, verb_list) }

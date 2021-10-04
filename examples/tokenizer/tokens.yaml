@@ -1,0 +1,249 @@
+---
+- !ruby/object:Rley::Lexical::Token
+  lexeme: class
+  terminal: CLASS
+  position: !ruby/struct:Rley::Lexical::Position
+    line: 1
+    column: 1
+- !ruby/object:Rley::Lexical::Token
+  lexeme: Base
+  terminal: IDENTIFIER
+  position: !ruby/struct:Rley::Lexical::Position
+    line: 1
+    column: 7
+- !ruby/object:Rley::Lexical::Token
+  lexeme: "{"
+  terminal: LEFT_BRACE
+  position: !ruby/struct:Rley::Lexical::Position
+    line: 1
+    column: 12
+- !ruby/object:Rley::Lexical::Token
+  lexeme: foo
+  terminal: IDENTIFIER
+  position: !ruby/struct:Rley::Lexical::Position
+    line: 2
+    column: 3
+- !ruby/object:Rley::Lexical::Token
+  lexeme: "("
+  terminal: LEFT_PAREN
+  position: !ruby/struct:Rley::Lexical::Position
+    line: 2
+    column: 6
+- !ruby/object:Rley::Lexical::Token
+  lexeme: ")"
+  terminal: RIGHT_PAREN
+  position: !ruby/struct:Rley::Lexical::Position
+    line: 2
+    column: 7
+- !ruby/object:Rley::Lexical::Token
+  lexeme: "{"
+  terminal: LEFT_BRACE
+  position: !ruby/struct:Rley::Lexical::Position
+    line: 2
+    column: 9
+- !ruby/object:Rley::Lexical::Token
+  lexeme: print
+  terminal: PRINT
+  position: !ruby/struct:Rley::Lexical::Position
+    line: 3
+    column: 5
+- !ruby/object:Rley::Lexical::Literal
+  lexeme: '"Base.foo()"'
+  terminal: STRING
+  position: !ruby/struct:Rley::Lexical::Position
+    line: 3
+    column: 11
+  value: Base.foo()
+- !ruby/object:Rley::Lexical::Token
+  lexeme: ";"
+  terminal: SEMICOLON
+  position: !ruby/struct:Rley::Lexical::Position
+    line: 3
+    column: 23
+- !ruby/object:Rley::Lexical::Token
+  lexeme: "}"
+  terminal: RIGHT_BRACE
+  position: !ruby/struct:Rley::Lexical::Position
+    line: 4
+    column: 3
+- !ruby/object:Rley::Lexical::Token
+  lexeme: "}"
+  terminal: RIGHT_BRACE
+  position: !ruby/struct:Rley::Lexical::Position
+    line: 5
+    column: 1
+- !ruby/object:Rley::Lexical::Token
+  lexeme: class
+  terminal: CLASS
+  position: !ruby/struct:Rley::Lexical::Position
+    line: 7
+    column: 1
+- !ruby/object:Rley::Lexical::Token
+  lexeme: Derived
+  terminal: IDENTIFIER
+  position: !ruby/struct:Rley::Lexical::Position
+    line: 7
+    column: 7
+- !ruby/object:Rley::Lexical::Token
+  lexeme: "<"
+  terminal: LESS
+  position: !ruby/struct:Rley::Lexical::Position
+    line: 7
+    column: 15
+- !ruby/object:Rley::Lexical::Token
+  lexeme: Base
+  terminal: IDENTIFIER
+  position: !ruby/struct:Rley::Lexical::Position
+    line: 7
+    column: 17
+- !ruby/object:Rley::Lexical::Token
+  lexeme: "{"
+  terminal: LEFT_BRACE
+  position: !ruby/struct:Rley::Lexical::Position
+    line: 7
+    column: 22
+- !ruby/object:Rley::Lexical::Token
+  lexeme: foo
+  terminal: IDENTIFIER
+  position: !ruby/struct:Rley::Lexical::Position
+    line: 8
+    column: 3
+- !ruby/object:Rley::Lexical::Token
+  lexeme: "("
+  terminal: LEFT_PAREN
+  position: !ruby/struct:Rley::Lexical::Position
+    line: 8
+    column: 6
+- !ruby/object:Rley::Lexical::Token
+  lexeme: ")"
+  terminal: RIGHT_PAREN
+  position: !ruby/struct:Rley::Lexical::Position
+    line: 8
+    column: 7
+- !ruby/object:Rley::Lexical::Token
+  lexeme: "{"
+  terminal: LEFT_BRACE
+  position: !ruby/struct:Rley::Lexical::Position
+    line: 8
+    column: 9
+- !ruby/object:Rley::Lexical::Token
+  lexeme: print
+  terminal: PRINT
+  position: !ruby/struct:Rley::Lexical::Position
+    line: 9
+    column: 5
+- !ruby/object:Rley::Lexical::Literal
+  lexeme: '"Derived.foo()"'
+  terminal: STRING
+  position: !ruby/struct:Rley::Lexical::Position
+    line: 9
+    column: 11
+  value: Derived.foo()
+- !ruby/object:Rley::Lexical::Token
+  lexeme: ";"
+  terminal: SEMICOLON
+  position: !ruby/struct:Rley::Lexical::Position
+    line: 9
+    column: 26
+- !ruby/object:Rley::Lexical::Token
+  lexeme: super
+  terminal: SUPER
+  position: !ruby/struct:Rley::Lexical::Position
+    line: 10
+    column: 5
+- !ruby/object:Rley::Lexical::Token
+  lexeme: "."
+  terminal: DOT
+  position: !ruby/struct:Rley::Lexical::Position
+    line: 10
+    column: 10
+- !ruby/object:Rley::Lexical::Token
+  lexeme: foo
+  terminal: IDENTIFIER
+  position: !ruby/struct:Rley::Lexical::Position
+    line: 10
+    column: 11
+- !ruby/object:Rley::Lexical::Token
+  lexeme: "("
+  terminal: LEFT_PAREN
+  position: !ruby/struct:Rley::Lexical::Position
+    line: 10
+    column: 14
+- !ruby/object:Rley::Lexical::Token
+  lexeme: ")"
+  terminal: RIGHT_PAREN
+  position: !ruby/struct:Rley::Lexical::Position
+    line: 10
+    column: 15
+- !ruby/object:Rley::Lexical::Token
+  lexeme: ";"
+  terminal: SEMICOLON
+  position: !ruby/struct:Rley::Lexical::Position
+    line: 10
+    column: 16
+- !ruby/object:Rley::Lexical::Token
+  lexeme: "}"
+  terminal: RIGHT_BRACE
+  position: !ruby/struct:Rley::Lexical::Position
+    line: 11
+    column: 3
+- !ruby/object:Rley::Lexical::Token
+  lexeme: "}"
+  terminal: RIGHT_BRACE
+  position: !ruby/struct:Rley::Lexical::Position
+    line: 12
+    column: 1
+- !ruby/object:Rley::Lexical::Token
+  lexeme: Derived
+  terminal: IDENTIFIER
+  position: !ruby/struct:Rley::Lexical::Position
+    line: 14
+    column: 1
+- !ruby/object:Rley::Lexical::Token
+  lexeme: "("
+  terminal: LEFT_PAREN
+  position: !ruby/struct:Rley::Lexical::Position
+    line: 14
+    column: 8
+- !ruby/object:Rley::Lexical::Token
+  lexeme: ")"
+  terminal: RIGHT_PAREN
+  position: !ruby/struct:Rley::Lexical::Position
+    line: 14
+    column: 9
+- !ruby/object:Rley::Lexical::Token
+  lexeme: "."
+  terminal: DOT
+  position: !ruby/struct:Rley::Lexical::Position
+    line: 14
+    column: 10
+- !ruby/object:Rley::Lexical::Token
+  lexeme: foo
+  terminal: IDENTIFIER
+  position: !ruby/struct:Rley::Lexical::Position
+    line: 14
+    column: 11
+- !ruby/object:Rley::Lexical::Token
+  lexeme: "("
+  terminal: LEFT_PAREN
+  position: !ruby/struct:Rley::Lexical::Position
+    line: 14
+    column: 14
+- !ruby/object:Rley::Lexical::Token
+  lexeme: ")"
+  terminal: RIGHT_PAREN
+  position: !ruby/struct:Rley::Lexical::Position
+    line: 14
+    column: 15
+- !ruby/object:Rley::Lexical::Token
+  lexeme: ";"
+  terminal: SEMICOLON
+  position: !ruby/struct:Rley::Lexical::Position
+    line: 14
+    column: 16
+- !ruby/object:Rley::Lexical::Token
+  lexeme:
+  terminal: EOF
+  position: !ruby/struct:Rley::Lexical::Position
+    line: 14
+    column: 17

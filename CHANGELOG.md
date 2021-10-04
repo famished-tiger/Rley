@@ -1,3 +1,13 @@
+### 0.8.05 / 2021-10-04
+- Added example of generated scanner. Unused class removal, code re-styling to please `Rubocop`
+
+* [NEW] Folder `example\tokenizer` contains an example with a scanner that was generated.
+* [NEW] Class `Rley::Lexical::Literal` a specialization of Token class for literal tokens.
+* [CHANGE] File `.rubocp.yml` updated to take into account new 1.21 and 1.22 cops.
+* [DELETED] Class `Rley::Parser::ParserTracer` this class was no more in use.
+* [DELETED] Class `Rley::Syntax::Literal` this class was unused.
+* [DELETED] Class `Rley::Syntax::VerbatimSymbol` this class was unused.
+
 ### 0.8.03 / 2021-08-27
 - Added missing method in `ASTBaseBuilder` class
 

@@ -9,6 +9,7 @@ require_relative '../../../lib/rley/syntax/base_grammar_builder'
 require_relative '../../../lib/rley/lexical/token'
 require_relative '../../../lib/rley/base/dotted_item'
 require_relative '../../../lib/rley/parser/gfg_parsing'
+require_relative '../../../lib/rley/notation/grammar_builder'
 
 require_relative '../support/expectation_helper'
 
@@ -63,7 +64,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
       context 'Ambiguous parse: ' do
         # Factory method. Creates a grammar builder for a simple grammar.
         def grammar_if_else_amb
-          builder = Rley::Syntax::BaseGrammarBuilder.new do
+          builder = Rley::Notation::GrammarBuilder.new do
             add_terminals('IF', 'THEN', 'ELSE')
             add_terminals('FALSE', 'TRUE', 'INTEGER')
 
@@ -289,7 +290,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
 
         # Factory method. Creates a grammar builder for a simple grammar.
         def grammar_if_else
-          builder = Rley::Syntax::BaseGrammarBuilder.new do
+          builder = Rley::Notation::GrammarBuilder.new do
             add_terminals('IF', 'THEN', 'ELSE')
             add_terminals('FALSE', 'TRUE', 'INTEGER')
 
@@ -298,7 +299,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
 
             # To prevent dangling else issue, the ELSE must match the closest preceding IF
             # rule 'stmt' => 'IF boolean THEN stmt ELSE{closest IF} stmt'
-            rule 'stmt' => 'IF boolean THEN stmt ELSE stmt'
+            rule 'stmt' => 'IF boolean THEN stmt ELSE { match_closest: "IF" } stmt'
             rule 'stmt' => 'literal'
             rule 'literal' => 'boolean'
             rule 'literal' => 'INTEGER'
@@ -306,10 +307,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
             rule 'boolean' => 'TRUE'
           end
 
-          grm = builder.grammar
-          match_else_with_if(grm)
-
-          grm
+          builder.grammar
         end
 
         subject { GFGEarleyParser.new(grammar_if_else) }

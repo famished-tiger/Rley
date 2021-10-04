@@ -55,8 +55,8 @@ module Rley # Open this namespace to avoid module qualifier prefixes
 
         it 'should accept already built terminals' do
           a = Terminal.new('a')
-          b = VerbatimSymbol.new('b')
-          c = Literal.new('c', /c/)
+          b = Terminal.new('b')
+          c = Terminal.new('c')
 
           subject.add_terminals(a, b, c)
           expect(subject.symbols.size).to eq(3)
@@ -67,8 +67,8 @@ module Rley # Open this namespace to avoid module qualifier prefixes
 
         it 'should accept already built terminals' do
           a = Terminal.new('a')
-          b = VerbatimSymbol.new('b')
-          c = Literal.new('c', /c/)
+          b = Terminal.new('b')
+          c = Terminal.new('c')
 
           subject.add_terminals(a, b, c)
           expect(subject.symbols.size).to eq(3)
@@ -197,9 +197,9 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           # Q ::= *.
           # Q ::= /.
           # Q ::=.
-          t_a = VerbatimSymbol.new('a')
-          t_star = VerbatimSymbol.new('*')
-          t_slash = VerbatimSymbol.new('/')
+          t_a = Terminal.new('a')
+          t_star = Terminal.new('*')
+          t_slash = Terminal.new('/')
 
           builder = BaseGrammarBuilder.new
           builder.add_terminals(t_a, t_star, t_slash)
