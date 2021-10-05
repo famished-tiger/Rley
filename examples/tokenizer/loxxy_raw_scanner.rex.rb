@@ -28,6 +28,8 @@
 # rubocop: disable Layout/EmptyLineBetweenDefs
 # rubocop: disable Layout/IndentationConsistency
 
+# The scanner for the Lox programming language to generate.
+
 
 ##
 # The generated lexer LoxxyRawScanner

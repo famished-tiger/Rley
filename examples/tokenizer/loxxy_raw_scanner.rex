@@ -19,16 +19,20 @@
 # rubocop: disable Layout/EmptyLineBetweenDefs
 # rubocop: disable Layout/IndentationConsistency
 
+# The scanner for the Lox programming language to generate.
 class LoxxyRawScanner
 option
-  lineno
-  column
+  lineno # Option to generate line number handling
+  column # Option to generate column number handling
 
+# Macros in `oedipus_lex` define name regexps that can be reused
+# via interpolation in other macros of rule patterns
 macro
   DIGIT /\d/
   ALPHA /[a-zA-Z_]/
 
 rule
+    # Rule syntax: state? regex (block|method)?
     # Delimiters, punctuators, operators
     /[ \t]+/
     /\/\/[^\r\n]*/
@@ -50,6 +54,8 @@ rule
 
 inner
 
+  # Method called in `parse` method.
+  # @return [Array<Array>]
   def do_parse
     tokens = []
     while (tok = next_token) do
@@ -65,6 +71,9 @@ inner
     tokens
   end
 
+  # Increment the line number in case the \r\n? occurs.
+  # Generated code works correctly with Linux end-of-line only.
+  # @param txt [String]
   def newline(txt)
     if txt == '\r'
       ss.skip(/\n/) # CR LF sequence
