@@ -1,3 +1,5 @@
+# As Rubocop shouts about "offences" in the generated code, 
+# we disable the detection of most of them...
 # rubocop: disable Style/MutableConstant
 # rubocop: disable Layout/SpaceBeforeSemicolon
 # rubocop: disable Style/Alias

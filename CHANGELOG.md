@@ -1,3 +1,8 @@
+### 0.8.06 / 2021-10-06
+- Added  more comment in `/examples/tokenizer` files
+
+* [CHANGE] File `rley.gemspec` some files weren't put the gem files.
+
 ### 0.8.05 / 2021-10-04
 - Added example of generated scanner. Unused class removal, code re-styling to please `Rubocop`
 

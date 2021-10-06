@@ -43,4 +43,9 @@ There were two reasons:
   Without the flexbility of Ruby, handling keywords directly in the `rex` can become cumbersone.
 - Second, the `LoxxyTokenizer` class acts as an Adapter between the parser-neutral generated scanner and the expectations of a Rley parser.
   For instance, Rley expects the tokenizer to deliver a sequence of `Rley::Lexical::Token` instances.
-  In addition, that class performs some convertion methods that are better implemented directly in Ruby. 
+  In addition, that class performs some convertion methods that are better implemented directly in Ruby.
+
+## Can I see the tokenizer in action?
+Sure, there is a little script `run_tokenizer.rb` that contains a Lox snippet.
+The script creates a tokenizer, launches the lexical analysis of the snippet, 
+then saves the result in a YAML file. 

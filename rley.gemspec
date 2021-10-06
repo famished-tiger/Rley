@@ -38,12 +38,7 @@ def pkg_files(aPackage)
     'CHANGELOG.md',
     'LICENSE.txt',
     'README.md',
-    'examples/**/*.rb',
-    'examples/**/*.yml',
-    'examples/**/*.md',
-    'examples/**/*.svg',
-    'examples/**/*.json',
-    'examples/**/*.rex',
+    'examples/**/*.*',
     'lib/*.*',
     'lib/**/*.rb',
     'spec/**/*.rb'
