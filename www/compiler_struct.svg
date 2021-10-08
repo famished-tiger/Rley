@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" contentScriptType="application/ecmascript" contentStyleType="text/css" height="277px" preserveAspectRatio="none" style="width:739px;height:277px;background:#FFFFFF;" version="1.1" viewBox="0 0 739 277" width="739px" zoomAndPan="magnify"><defs><filter height="300%" id="flbnv7wj8bt8d" width="300%" x="-1" y="-1"><feGaussianBlur result="blurOut" stdDeviation="2.0"/><feColorMatrix in="blurOut" result="blurOut2" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .4 0"/><feOffset dx="4.0" dy="4.0" in="blurOut2" result="blurOut3"/><feBlend in="SourceGraphic" in2="blurOut3" mode="normal"/></filter></defs><g><text fill="#000000" font-family="sans-serif" font-size="18" lengthAdjust="spacing" textLength="288" x="219.25" y="16.708">Typical structure of a compiler</text><!--MD5=[5e572db9c91b7d39dfcd628b9bc12a61]
+class Character\nstream--><rect codeLine="3" fill="#FFFFFF" filter="url(#flbnv7wj8bt8d)" height="37.9375" id="Character\nstream" style="stroke:#FFFFFF;stroke-width:2.0;" width="64" x="8" y="27.9531"/><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacing" textLength="58" x="11" y="44.0918">Character</text><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacing" textLength="42" x="19" y="58.0605">stream</text><!--MD5=[7763e024349b4cac7a01779176319d84]
+class Tokenizer--><rect codeLine="4" fill="#D3D3D3" filter="url(#flbnv7wj8bt8d)" height="23.9688" id="Tokenizer" style="stroke:#A9A9A9;stroke-width:2.0;" width="66" x="7" y="133.9531"/><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacing" textLength="60" x="10" y="150.0918">Tokenizer</text><!--MD5=[5fb322cb81d66d67b90634fed9579b86]
+class parser--><rect codeLine="5" fill="#FFA500" filter="url(#flbnv7wj8bt8d)" height="23.9688" id="parser" style="stroke:#FFA500;stroke-width:2.0;" width="68" x="156" y="133.9531"/><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacing" textLength="38" x="171" y="150.0918">Parser</text><!--MD5=[8d656b3404d97a6b3520c0b9bc5a4806]
+class semantic--><rect codeLine="6" fill="#D3D3D3" filter="url(#flbnv7wj8bt8d)" height="37.9375" id="semantic" style="stroke:#A9A9A9;stroke-width:2.0;" width="61" x="305.5" y="126.9531"/><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacing" textLength="55" x="308.5" y="143.0918">Semantic</text><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacing" textLength="51" x="310.5" y="157.0605">Routines</text><!--MD5=[6c28647a76747a4e77fc269c0c63e07e]
+class Optimizers--><rect codeLine="7" fill="#D3D3D3" filter="url(#flbnv7wj8bt8d)" height="23.9688" id="Optimizers" style="stroke:#A9A9A9;stroke-width:2.0;" width="72" x="467" y="232.9531"/><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacing" textLength="66" x="470" y="249.0918">Optimizers</text><!--MD5=[dd71179583cce17ecb14726d47c32e81]
+class generator--><rect codeLine="8" fill="#D3D3D3" filter="url(#flbnv7wj8bt8d)" height="37.9375" id="generator" style="stroke:#A9A9A9;stroke-width:2.0;" width="66" x="540" y="126.9531"/><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacing" textLength="32" x="557" y="143.0918">Code</text><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacing" textLength="60" x="543" y="157.0605">generator</text><!--MD5=[205d9983e3b5ecca6983c69622840455]
+class peephole--><rect codeLine="9" fill="#D3D3D3" filter="url(#flbnv7wj8bt8d)" height="37.9375" id="peephole" style="stroke:#A9A9A9;stroke-width:2.0;" width="63" x="611.5" y="225.9531"/><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacing" textLength="56" x="615" y="242.0918">Peephole</text><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacing" textLength="57" x="614.5" y="256.0605">optimizer</text><!--MD5=[ad234e2a2a0592f778426242bed0b57b]
+class Target\ncode--><rect codeLine="10" fill="#FFFFFF" filter="url(#flbnv7wj8bt8d)" height="37.9375" id="Target\ncode" style="stroke:#FFFFFF;stroke-width:2.0;" width="45" x="680.5" y="126.9531"/><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacing" textLength="39" x="683.5" y="143.0918">Target</text><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacing" textLength="31" x="687.5" y="157.0605">code</text><ellipse cx="503" cy="145.9531" fill="#000000" rx="2" ry="2" style="stroke:none;stroke-width:1.0;"/><ellipse cx="643" cy="145.9531" fill="#000000" rx="2" ry="2" style="stroke:none;stroke-width:1.0;"/><!--MD5=[ced91c6bef60f06a46e40d0ba52cd29a]
+link Character\nstream to Tokenizer--><path codeLine="15" d="M40,66.1981 C40,84.2021 40,111.4671 40,128.7341 " fill="none" id="Character\nstream-to-Tokenizer" style="stroke:#A80036;stroke-width:1.0;"/><polygon fill="#A80036" points="40,133.7501,44,124.7501,40,128.7501,36,124.7501,40,133.7501" style="stroke:#A80036;stroke-width:1.0;"/><!--MD5=[8fed50b5e99dac3d2d29e526d1717eae]
+link Tokenizer to parser--><path codeLine="16" d="M73.2899,145.9531 C96.1744,145.9531 126.656,145.9531 150.729,145.9531 " fill="none" id="Tokenizer-to-parser" style="stroke:#A80036;stroke-width:1.0;"/><polygon fill="#A80036" points="155.763,145.9531,146.763,141.9531,150.763,145.9531,146.763,149.9531,155.763,145.9531" style="stroke:#A80036;stroke-width:1.0;"/><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="46" x="91.5" y="139.02">Tokens</text><!--MD5=[744818aa9881f185de4a8a165b38a1c6]
+link parser to semantic--><path codeLine="17" d="M224.231,145.9531 C247.111,145.9531 277.15,145.9531 300.323,145.9531 " fill="none" id="parser-to-semantic" style="stroke:#000000;stroke-width:1.0;"/><polygon fill="#000000" points="305.458,145.9531,296.458,141.9531,300.458,145.9531,296.458,149.9531,305.458,145.9531" style="stroke:#000000;stroke-width:1.0;"/><text fill="#FFA500" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="45" x="242.25" y="124.02">Syntax</text><text fill="#FFA500" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="26" x="251.75" y="139.1528">tree</text><!--MD5=[6aeb381ad57269b984649d006b92e25d]
+link semantic to apoint1228550--><path d="M366.63,145.9531 C410.322,145.9531 486.821,145.9531 500.781,145.9531 " fill="none" id="semantic-apoint1228550" style="stroke:#A80036;stroke-width:1.0;"/><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="82" x="392.75" y="124.02">Intermediate</text><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="98" x="384.75" y="139.1528">Representation</text><!--MD5=[c123ec3105fc8d9f9d393e55f9f856d9]
+link apoint1228550 to generator--><path d="M505.188,145.9531 C515.038,145.9531 524.888,145.9531 534.738,145.9531 " fill="none" id="apoint1228550-to-generator" style="stroke:#A80036;stroke-width:1.0;"/><polygon fill="#A80036" points="539.888,145.9531,530.888,141.9531,534.888,145.9531,530.888,149.9531,539.888,145.9531" style="stroke:#A80036;stroke-width:1.0;"/><!--MD5=[cd8f0472e8abe36071f022a2fcd260c5]
+link apoint1228550 to Optimizers--><path d="M503,148.0421 C503,156.2851 503,209.1515 503,232.6837 " fill="none" id="apoint1228550-Optimizers" style="stroke:#A80036;stroke-width:1.0;stroke-dasharray:7.0,7.0;"/><!--MD5=[632648c70b298b5026f9f60ed24819c0]
+link generator to apoint1228556--><path d="M606.086,145.9531 C617.718,145.9531 629.349,145.9531 640.981,145.9531 " fill="none" id="generator-apoint1228556" style="stroke:#A80036;stroke-width:1.0;"/><!--MD5=[09efaf034f1dc72e49fa1a25c6340112]
+link apoint1228556 to Target\ncode--><path d="M645.344,145.9531 C655.317,145.9531 665.29,145.9531 675.263,145.9531 " fill="none" id="apoint1228556-to-Target\ncode" style="stroke:#A80036;stroke-width:1.0;"/><polygon fill="#A80036" points="680.478,145.9531,671.478,141.9531,675.478,145.9531,671.478,149.9531,680.478,145.9531" style="stroke:#A80036;stroke-width:1.0;"/><!--MD5=[f63318c1c49e40e2b9227bb0489831ea]
+link apoint1228556 to peephole--><path d="M643,148.0421 C643,155.5351 643,199.9082 643,225.5941 " fill="none" id="apoint1228556-peephole" style="stroke:#A80036;stroke-width:1.0;stroke-dasharray:7.0,7.0;"/><!--MD5=[9531e7195c9dd47dee7f3bdc49ab6618]
+@startuml
+title Typical structure of a compiler
+  
+  class Character\nstream #white ##[bold]white
+  class Tokenizer #lightgrey ##[bold]darkgrey
+  class "   Parser   " as parser  #orange ##[bold]orange
+  class "Semantic\nRoutines" as semantic #lightgrey ##[bold]darkgrey
+  class Optimizers #lightgrey ##[bold]darkgrey
+  class "Code\ngenerator" as generator #lightgrey ##[bold]darkgrey 
+  class "Peephole\noptimizer" as peephole #lightgrey ##[bold]darkgrey
+  class Target\ncode #white ##[bold]white
+  
+  hide members
+  hide circle
+  
+  Character\nstream -down-> Tokenizer
+  Tokenizer -> parser : Tokens
+  parser -> semantic #line:black;text:orange : Syntax\ntree 
+  semantic -> generator : Intermediate\nRepresentation
+  (semantic, generator) .. Optimizers
+  generator ->  Target\ncode
+  (generator, Target\ncode) .. peephole
+@enduml
+
+PlantUML version 1.2021.12(Tue Oct 05 16:01:58 UTC 2021)
+(GPL source distribution)
+Java Runtime: Java(TM) SE Runtime Environment
+JVM: Java HotSpot(TM) 64-Bit Server VM
+Default Encoding: UTF-8
+Language: en
+Country: US
+--></g></svg>
