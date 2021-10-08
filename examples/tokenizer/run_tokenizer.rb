@@ -29,5 +29,5 @@ LOX_END
 
 loxxy_tokenizer = LoxxyTokenizer.new(lox_source)
 tokens = loxxy_tokenizer.tokens
-File::open('tokens.yaml', 'w') { |f| YAML.dump(tokens, f) }
+File::open('tokens.yml', 'w') { |f| YAML.dump(tokens, f) }
 puts 'Done: tokenizer results saved in YAML.'

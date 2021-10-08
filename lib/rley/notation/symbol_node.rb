@@ -20,7 +20,7 @@ module Rley
 
       # Abstract method (must be overriden in subclasses).
       # Part of the 'visitee' role in Visitor design pattern.
-      # @param _visitor [LoxxyTreeVisitor] the visitor
+      # @param visitor [LoxxyTreeVisitor] the visitor
       def accept(visitor)
         visitor.visit_symbol_node(self)
       end
