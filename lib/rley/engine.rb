@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative './notation/grammar_builder'
+require_relative './rgn/grammar_builder'
 require_relative './parser/gfg_earley_parser'
 require_relative './parse_tree_visitor'
 require_relative './parse_forest_visitor'
@@ -61,7 +61,7 @@ module Rley # This module is used as a namespace
     #     add_production('elements' => 'INTEGER')
     #   end
     def build_grammar(&aBlock)
-      builder = Rley::Notation::GrammarBuilder.new(&aBlock)
+      builder = Rley::RGN::GrammarBuilder.new(&aBlock)
       @grammar = builder.grammar
     end
 

@@ -3,19 +3,27 @@
 require_relative 'ast_node'
 
 module Rley
-  module Notation
-    # A syntax node for a grammar symbol occurring in rhs of a rule
+  module RGN
+    # A syntax node for a grammar symbol occurring in rhs of a rule.
+    # symbol nodes are leaf nodes of RRN parse trees.
     class SymbolNode < ASTNode
+      # @return [Rley::Lexical::Position] Position of the entry in the input stream.
+      attr_reader :position
+
       # @return [String] name of grammar symbol
       attr_reader :name
 
       # @param aPosition [Rley::Lexical::Position] Position of the entry in the input stream.
       # @param aName [String] name of grammar symbol
-      # @param theRepetition [Symbol] indicates how many times the symbol can be repeated
-      def initialize(aPosition, aName, theRepetition = nil)
-        super(aPosition)
+      def initialize(aPosition, aName)
+        super()
+        @position = aPosition
         @name = aName
-        self.repetition = theRepetition if theRepetition
+      end
+
+      # @return [String] name of grammar symbol
+      def to_text
+        annotation.empty? ? name : "#{name} #{annotation_to_text}"
       end
 
       # Abstract method (must be overriden in subclasses).

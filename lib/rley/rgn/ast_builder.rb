@@ -5,7 +5,7 @@ require_relative '../engine'
 require_relative 'all_notation_nodes'
 
 module Rley
-  module Notation
+  module RGN
     # The purpose of ASTBuilder is to build piece by piece an AST
     # (Abstract Syntax Tree) from a sequence of input tokens and
     # visit events produced by walking over a GFGParsing object.
@@ -72,7 +72,7 @@ module Rley
       end
 
       #####################################
-      #  SEMANTIC ACTIONS
+      #  RGN SEMANTIC ACTIONS
       #####################################
 
       # rule('rhs' => 'member_seq').tag 'sequence'
@@ -80,7 +80,7 @@ module Rley
         if theChildren[0].size == 1
           theChildren[0].first
         else
-          SequenceNode.new(theChildren[0].first.position, theChildren[0], nil)
+          SequenceNode.new(theChildren[0])
         end
       end
 
@@ -96,9 +96,15 @@ module Rley
 
       # rule('strait_member' => 'base_member annotation')
       def reduce_annotated_member(_production, _range, _tokens, theChildren)
-        theChildren[0].annotation = theChildren[1]
-
-        theChildren[0]
+        if theChildren[1].include?('repeat')
+          node = RepetitionNode.new(theChildren[0], theChildren[1].fetch('repeat'))
+          theChildren[1].delete('repeat')
+          theChildren[0].annotation = theChildren[1]
+          node
+        else
+          theChildren[0].annotation = theChildren[1]
+          theChildren[0]
+        end
       end
 
       # rule('base_member' => 'SYMBOL')
@@ -107,20 +113,21 @@ module Rley
       end
 
       # rule('base_member' => 'LEFT_PAREN member_seq RIGHT_PAREN')
-      def reduce_grouping(_production, _range, tokens, theChildren)
+      def reduce_grouping(_production, _range, _tokens, theChildren)
         if theChildren[1].size == 1
           theChildren[1].first
         else
-          rank = theChildren[0].range.high
-          pos = tokens[rank].position
-          GroupingNode.new(pos, theChildren[1], nil)
+          SequenceNode.new(theChildren[1])
         end
       end
 
       # rule('quantified_member' => 'base_member quantifier')
       def reduce_quantified_member(_production, _range, _tokens, theChildren)
-        theChildren[0].repetition = theChildren[1]
-        theChildren[0]
+        if theChildren == :exactly_one
+          theChildren[0]
+        else
+          RGN::RepetitionNode.new(theChildren[0], theChildren[1])
+        end
       end
 
       # rule('quantifier' => 'QUESTION_MARK')

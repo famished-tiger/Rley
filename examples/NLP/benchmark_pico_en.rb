@@ -24,13 +24,13 @@ engine.build_grammar do
   add_terminals('Determiner', 'Preposition')
 
   # Here we define the productions (= grammar rules)
-  rule 'S' => %w[NP VP]
+  rule 'S' => 'NP VP'
   rule 'NP' => 'Proper-Noun'
-  rule 'NP' => %w[Determiner Noun]
-  rule 'NP' => %w[Determiner Noun PP]
-  rule 'VP' => %w[Verb NP]
-  rule 'VP' => %w[Verb NP PP]
-  rule 'PP' => %w[Preposition NP]
+  rule 'NP' => 'Determiner Noun'
+  rule 'NP' => 'Determiner Noun PP'
+  rule 'VP' => 'Verb NP'
+  rule 'VP' => 'Verb NP PP'
+  rule 'PP' => 'Preposition NP'
 end
 
 ########################################

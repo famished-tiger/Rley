@@ -24,7 +24,7 @@ class CalcLexer
   class ScanError < StandardError; end
 
   def initialize(source)
-    @scanner = StringScanner.new(source)
+    @scanner = StringScanner.new(source.strip)
     @lineno = 1
   end
 

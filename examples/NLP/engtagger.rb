@@ -136,13 +136,13 @@ nlp_engine.build_grammar do
   add_terminals('DET', 'IN', 'VBD')
 
   # Here we define the productions (= grammar rules)
-  rule 'S' => %w[NP VP]
+  rule 'S' => 'NP VP'
   rule 'NP' => 'NNP'
-  rule 'NP' => %w[DET NN]
-  rule 'NP' => %w[DET NN PP]
-  rule 'VP' => %w[VBD NP]
-  rule 'VP' => %w[VBD NP PP]
-  rule 'PP' => %w[IN NP]
+  rule 'NP' => 'DET NN'
+  rule 'NP' => 'DET NN PP'
+  rule 'VP' => 'VBD NP'
+  rule 'VP' => 'VBD NP PP'
+  rule 'PP' => 'IN NP'
 end
 
 # text = "Yo I'm not done with you"

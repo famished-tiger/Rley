@@ -4,7 +4,7 @@ require 'strscan'
 require_relative '../lexical/token'
 
 module Rley
-  module Notation
+  module RGN
     # A tokenizer for the Rley notation language.
     # Responsibility: break input into a sequence of token objects.
     # The tokenizer should recognize:

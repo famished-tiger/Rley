@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Rley
-  module Notation
+  module RGN
     class ASTVisitor
       # Link to the top node to visit
       attr_reader(:top)
@@ -10,7 +10,7 @@ module Rley
       attr_reader(:subscribers)
 
       # Build a visitor for the given top.
-      # @param aTop [Notation::ASTNode] the parse tree to visit.
+      # @param aTop [RGN::ASTNode] the parse tree to visit.
       def initialize(aTop)
         raise StandardError if aTop.nil?
 
@@ -49,26 +49,26 @@ module Rley
       end
 
       # Visit event. The visitor is about to visit a symbol node.
-      # @param aSymbolNode [Notation::SymbolNode] the symbol node to visit
+      # @param aSymbolNode [RGN::SymbolNode] the symbol node to visit
       def visit_symbol_node(aSymbolNode)
         broadcast(:before_symbol_node, aSymbolNode, self)
         broadcast(:after_symbol_node, aSymbolNode, self)
       end
 
       # Visit event. The visitor is about to visit a sequence node.
-      # @param aSequenceNode [Notation::SequenceNode] the sequence node to visit
+      # @param aSequenceNode [RGN::SequenceNode] the sequence node to visit
       def visit_sequence_node(aSequenceNode)
         broadcast(:before_sequence_node, aSequenceNode, self)
         traverse_subnodes(aSequenceNode)
         broadcast(:after_sequence_node, aSequenceNode, self)
       end
 
-      # Visit event. The visitor is about to visit a grouping node.
-      # @param aGroupingNode [Notation::GroupingNode] the grouping node to visit
-      def visit_grouping_node(aGroupingNode)
-        broadcast(:before_grouping_node, aGroupingNode, self)
-        traverse_subnodes(aGroupingNode) if aGroupingNode.repetition == :exactly_one
-        broadcast(:after_grouping_node, aGroupingNode, self)
+      # Visit event. The visitor is about to visit a repetition node.
+      # @param aRepetitionNode [RGN::GroupingNode] the repetition node to visit
+      def visit_repetition_node(aRepetitionNode)
+        broadcast(:before_repetition_node, aRepetitionNode, self)
+        traverse_subnodes(aRepetitionNode) if aRepetitionNode.repetition == :exactly_one
+        broadcast(:after_repetition_node, aRepetitionNode, self)
       end
 
       private

@@ -3,7 +3,7 @@
 require_relative '../syntax/base_grammar_builder'
 
 module Rley
-  module Notation
+  module RGN
     ########################################
     # Syntax for right-hand side of production rules
     builder = Rley::Syntax::BaseGrammarBuilder.new do

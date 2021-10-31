@@ -2,12 +2,12 @@
 
 require_relative '../../spec_helper' # Use the RSpec framework
 
-require_relative '../../../lib/rley/notation/ast_builder'
+require_relative '../../../lib/rley/rgn/ast_builder'
 # Load the class under test
-require_relative '../../../lib/rley/notation/parser'
+require_relative '../../../lib/rley/rgn/parser'
 
 module Rley
-  module Notation
+  module RGN
     describe Parser do
       subject { Parser.new }
 
@@ -44,7 +44,7 @@ module Rley
         it 'should parse single symbol names' do
           samples = %w[IF ifCondition statement]
 
-          # One drawback od CSTs: they have a deeply nested structure
+          # One drawback of CSTs: they have a deeply nested structure
           samples.each do |source|
             ptree = subject.parse(source)
             expect(ptree.root).to be_kind_of(Rley::PTree::NonTerminalNode)
@@ -82,7 +82,7 @@ module Rley
             ptree = subject.parse(source)
             expect(ptree.root).to be_kind_of(SymbolNode)
             expect(ptree.root.name).to eq(source)
-            expect(ptree.root.repetition).to eq(:exactly_one)
+            expect(ptree.root.annotation).to be_empty
           end
         end
 
@@ -103,8 +103,10 @@ module Rley
           optional = 'member_seq?'
 
           ptree = subject.parse(optional)
-          expect(ptree.root).to be_kind_of(SymbolNode)
-          expect(ptree.root.name).to eq('member_seq')
+          expect(ptree.root).to be_kind_of(RepetitionNode)
+          expect(ptree.root.name).to eq('rep_member_seq_qmark')
+          expect(ptree.root.child).to be_kind_of(SymbolNode)
+          expect(ptree.root.child.name).to eq('member_seq')
           expect(ptree.root.repetition).to eq(:zero_or_one)
         end
 
@@ -112,8 +114,10 @@ module Rley
           one_or_more = 'member+'
 
           ptree = subject.parse(one_or_more)
-          expect(ptree.root).to be_kind_of(SymbolNode)
-          expect(ptree.root.name).to eq('member')
+          expect(ptree.root).to be_kind_of(RepetitionNode)
+          expect(ptree.root.name).to eq('rep_member_plus')
+          expect(ptree.root.child).to be_kind_of(SymbolNode)
+          expect(ptree.root.child.name).to eq('member')
           expect(ptree.root.repetition).to eq(:one_or_more)
         end
 
@@ -122,12 +126,14 @@ module Rley
 
           ptree = subject.parse(zero_or_more)
           expect(ptree.root).to be_kind_of(SequenceNode)
-          expect(ptree.root.subnodes[0]).to be_kind_of(SymbolNode)
-          expect(ptree.root.subnodes[0].name).to eq('declaration')
+          expect(ptree.root.name).to eq('seq_rep_declaration_star_EOF')
+          expect(ptree.root.subnodes[0]).to be_kind_of(RepetitionNode)
+          expect(ptree.root.subnodes[0].name).to eq('rep_declaration_star')
           expect(ptree.root.subnodes[0].repetition).to eq(:zero_or_more)
+          expect(ptree.root.subnodes[0].child).to be_kind_of(SymbolNode)
+          expect(ptree.root.subnodes[0].child.name).to eq('declaration')
           expect(ptree.root.subnodes[1]).to be_kind_of(SymbolNode)
           expect(ptree.root.subnodes[1].name).to eq('EOF')
-          expect(ptree.root.subnodes[1].repetition).to eq(:exactly_one)
         end
 
         it 'should parse a grouping with a modifier' do
@@ -141,21 +147,25 @@ module Rley
           expect(ptree.root.subnodes[1].name).to eq('ifCondition')
           expect(ptree.root.subnodes[2]).to be_kind_of(SymbolNode)
           expect(ptree.root.subnodes[2].name).to eq('statement')
-          expect(ptree.root.subnodes[3]).to be_kind_of(SequenceNode)
+          expect(ptree.root.subnodes[3]).to be_kind_of(RepetitionNode)
+          expect(ptree.root.subnodes[3].name).to eq('rep_seq_ELSE_statement_qmark')
           expect(ptree.root.subnodes[3].repetition).to eq(:zero_or_one)
-          expect(ptree.root.subnodes[3].subnodes[0]).to be_kind_of(SymbolNode)
-          expect(ptree.root.subnodes[3].subnodes[0].name).to eq('ELSE')
-          expect(ptree.root.subnodes[3].subnodes[1]).to be_kind_of(SymbolNode)
-          expect(ptree.root.subnodes[3].subnodes[1].name).to eq('statement')
+          expect(ptree.root.subnodes[3].child).to be_kind_of(SequenceNode)
+          expect(ptree.root.subnodes[3].child.subnodes[0]).to be_kind_of(SymbolNode)
+          expect(ptree.root.subnodes[3].child.subnodes[0].name).to eq('ELSE')
+          expect(ptree.root.subnodes[3].child.subnodes[1]).to be_kind_of(SymbolNode)
+          expect(ptree.root.subnodes[3].child.subnodes[1].name).to eq('statement')
         end
 
         it 'should parse an annotated symbol' do
           optional = 'member_seq{repeat: 0..1}'
 
           ptree = subject.parse(optional)
-          expect(ptree.root).to be_kind_of(SymbolNode)
-          expect(ptree.root.name).to eq('member_seq')
+          expect(ptree.root).to be_kind_of(RepetitionNode)
+          expect(ptree.root.name).to eq('rep_member_seq_qmark')
           expect(ptree.root.repetition).to eq(:zero_or_one)
+          expect(ptree.root.child).to be_kind_of(SymbolNode)
+          expect(ptree.root.child.name).to eq('member_seq')
         end
 
         it 'should parse a grouping with embedded annotation' do
@@ -170,12 +180,14 @@ module Rley
           expect(ptree.root.subnodes[2]).to be_kind_of(SymbolNode)
           expect(ptree.root.subnodes[2].name).to eq('statement')
           optional = ptree.root.subnodes[3]
-          expect(optional).to be_kind_of(SequenceNode)
+          expect(optional).to be_kind_of(RepetitionNode)
+          expect(optional.name).to eq('rep_seq_ELSE_statement_qmark')
           expect(optional.repetition).to eq(:zero_or_one)
-          expect(optional.subnodes[0]).to be_kind_of(SymbolNode)
-          expect(optional.subnodes[0].name).to eq('ELSE')
-          expect(optional.subnodes[0].annotation).to eq({ 'match_closest' => 'IF' })
-          expect(optional.subnodes[1].name).to eq('statement')
+          expect(optional.child).to be_kind_of(SequenceNode)
+          expect(optional.child.subnodes[0]).to be_kind_of(SymbolNode)
+          expect(optional.child.subnodes[0].name).to eq('ELSE')
+          expect(optional.child.subnodes[0].annotation).to eq({ 'match_closest' => 'IF' })
+          expect(optional.child.subnodes[1].name).to eq('statement')
         end
       end # context
     end # describe

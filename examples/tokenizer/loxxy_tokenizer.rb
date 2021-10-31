@@ -4,7 +4,7 @@ require 'rley'
 require_relative 'loxxy_raw_scanner.rex'
 
 # Tokenizer for the Lox language that is compatible with a Rley parser.
-# It works as an adapter between the parser and the scanner generated 
+# It works as an adapter between the parser and the scanner generated
 # with `oedipus_lex` scanner generator.
 # The purpose is to transform the output of a `LoxxyRawScanner` instance
 # into o sequence of tokens in the format expected by Rley.
@@ -60,7 +60,7 @@ class LoxxyTokenizer
   end
 
   # Set the text to tokenize.
-  # @param source [String] The text to tokenize  
+  # @param source [String] The text to tokenize
   def start_with(source)
     @input = source
   end

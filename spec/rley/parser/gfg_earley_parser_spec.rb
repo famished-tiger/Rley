@@ -292,75 +292,75 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           ###################### S(0): . 6, 36, 216
           # Expectation chart[0]:
           expected = [
-            '.S | 0',                                   # Initialization
-            'S => . sequence | 0',                      # start rule
-            'S => . | 0',                               # start rule
-            '.sequence | 0',                            # call rule
-            'S. | 0',                                   # exit rule
-            'sequence => . sequence comma integer | 0', # start rule
-            'sequence => . integer | 0',                # start rule
-            '.integer | 0',                             # call rule
-            'integer => . digit_plus | 0',              # start rule
-            '.digit_plus | 0',                          # call rule
-            'digit_plus => . digit_plus digit | 0',     # start rule (generated)
-            'digit_plus => . digit | 0'                 # start rule (generated)
+            '.S | 0',                                       # Initialization
+            'S => . sequence | 0',                          # start rule
+            'S => . | 0',                                   # start rule
+            '.sequence | 0',                                # call rule
+            'S. | 0',                                       # exit rule
+            'sequence => . sequence comma integer | 0',     # start rule
+            'sequence => . integer | 0',                    # start rule
+            '.integer | 0',                                 # call rule
+            'integer => . rep_digit_plus | 0',              # start rule
+            '.rep_digit_plus | 0',                          # call rule
+            'rep_digit_plus => . rep_digit_plus digit | 0', # start rule (generated)
+            'rep_digit_plus => . digit | 0'                 # start rule (generated)
           ]
           compare_entry_texts(parse_result.chart[0], expected)
 
           ###################### S(1): 6 ., 36, 216
           # Expectation chart[1]:
           expected = [
-            'digit_plus => digit . | 0',                # Scan
-            'digit_plus. | 0',                          # exit rule
-            'integer => digit_plus . | 0',              # end rule
-            'digit_plus => digit_plus . digit | 0',     # rule (generated)
-            'integer. | 0',                             # exit rule
-            'sequence => integer . | 0',                # end rule
-            'sequence. | 0',                            # exit rule
-            'S => sequence . | 0',                      # end rule
-            'sequence => sequence . comma integer | 0', #  rule
-            'S. | 0'                                    # exit rule
+            'rep_digit_plus => digit . | 0',                # Scan
+            'rep_digit_plus. | 0',                          # exit rule
+            'integer => rep_digit_plus . | 0',              # end rule
+            'rep_digit_plus => rep_digit_plus . digit | 0', # rule (generated)
+            'integer. | 0',                                 # exit rule
+            'sequence => integer . | 0',                    # end rule
+            'sequence. | 0',                                # exit rule
+            'S => sequence . | 0',                          # end rule
+            'sequence => sequence . comma integer | 0',     #  rule
+            'S. | 0'                                        # exit rule
           ]
           compare_entry_texts(parse_result.chart[1], expected)
 
           ###################### S(2): 6 , . 36, 216
           # Expectation chart[2]:
           expected = [
-            'sequence => sequence comma . integer | 0', #  Scan
-            '.integer | 2',                             # call rule
-            'integer => . digit_plus | 2',              # start rule
-            '.digit_plus | 2',                          # call rule
-            'digit_plus => . digit_plus digit | 2',     # start rule (generated)
-            'digit_plus => . digit | 2'                 # start rule (generated)
+            'sequence => sequence comma . integer | 0',     #  Scan
+            '.integer | 2',                                 # call rule
+            'integer => . rep_digit_plus | 2',              # start rule
+            '.rep_digit_plus | 2',                          # call rule
+            'rep_digit_plus => . rep_digit_plus digit | 2', # start rule (generated)
+            'rep_digit_plus => . digit | 2'                 # start rule (generated)
           ]
           compare_entry_texts(parse_result.chart[2], expected)
 
           ###################### S(3): 6 , 3 . 6. , 216
           # Expectation chart[3]:
           expected = [
-            'digit_plus => digit . | 2',                # Scan
-            'digit_plus. | 2',                          # exit rule
-            'integer => digit_plus . | 2',              # end rule
-            'digit_plus => digit_plus . digit | 2',     # rule (generated)
-            'integer. | 2',                             # exit rule
-            'sequence => sequence comma integer . | 0', # rule
-            'sequence. | 0',                            # exit rule
-            'S => sequence . | 0',                      # end rule
-            'sequence => sequence . comma integer | 0'  #  rule
+            'rep_digit_plus => digit . | 2',                # Scan
+            'rep_digit_plus. | 2',                          # exit rule
+            'integer => rep_digit_plus . | 2',              # end rule
+            'rep_digit_plus => rep_digit_plus . digit | 2', # rule (generated)
+            'integer. | 2',                                 # exit rule
+            'sequence => sequence comma integer . | 0',     # rule
+            'sequence. | 0',                                # exit rule
+            'S => sequence . | 0',                          # end rule
+            'sequence => sequence . comma integer | 0'      #  rule
           ]
           compare_entry_texts(parse_result.chart[3], expected)
 
           ###################### S(4): 6 , 36 . . , 216
           # Expectation chart[4]:
           expected = [
-            'digit_plus => digit_plus digit . | 2',     # Scan
-            'digit_plus. | 2',                          # exit rule
-            'integer => digit_plus . | 2',              # end rule
-            'digit_plus => digit_plus . digit | 2',     #
-            'integer. | 2',                             # exit rule
-            'sequence => sequence comma integer . | 0', # rule
-            'sequence. | 0',                            # exit rule
-            'S => sequence . | 0'                       # end rule
+            'rep_digit_plus => rep_digit_plus digit . | 2', # Scan
+            'rep_digit_plus. | 2',                          # exit rule
+            'integer => rep_digit_plus . | 2',              # end rule
+            'rep_digit_plus => rep_digit_plus . digit | 2', #
+            'integer. | 2',                                 # exit rule
+            'sequence => sequence comma integer . | 0',     # rule
+            'sequence. | 0',                                # exit rule
+            'S => sequence . | 0'                           # end rule
           ]
           compare_entry_texts(parse_result.chart[4], expected)
         end
@@ -372,7 +372,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           # A => ;
           t_x = Syntax::Terminal.new('x')
 
-          builder = Notation::GrammarBuilder.new do
+          builder = RGN::GrammarBuilder.new do
             add_terminals(t_x)
             rule 'Ss' => 'A A x'
             rule 'A' => []
@@ -932,7 +932,7 @@ MSG
           # S => ;
           # This grammar requires a time that is quadratic in the number of
           # input tokens
-          builder = Notation::GrammarBuilder.new do
+          builder = RGN::GrammarBuilder.new do
             add_terminals('a')
             rule('S' => 'a S')
             rule('S' => '')
@@ -1021,7 +1021,7 @@ MSG
           # An implicit EOF marker is a special terminal
           # that denotes the end of input string but doesn't
           # appear explicitly as some character or text in the input.
-          builder = Notation::GrammarBuilder.new do
+          builder = RGN::GrammarBuilder.new do
             add_terminals('a', 'b', 'EOF')
 
             rule('S' => 'a_or_b* EOF')

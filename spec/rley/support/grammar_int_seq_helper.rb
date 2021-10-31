@@ -3,7 +3,7 @@
 require 'strscan'
 
 # Load the builder class
-require_relative '../../../lib/rley/notation/grammar_builder'
+require_relative '../../../lib/rley/rgn/grammar_builder'
 require_relative '../../../lib/rley/lexical/token'
 
 
@@ -11,7 +11,7 @@ module GrammarIntSeqHelper
   # Factory method. Creates a builder for a grammar of sequence
   # of positive integers.
   def grammar_int_seq_builder
-    Rley::Notation::GrammarBuilder.new do
+    Rley::RGN::GrammarBuilder.new do
       add_terminals('comma', 'digit')
       rule 'S' => 'sequence'
       rule 'S' => ''

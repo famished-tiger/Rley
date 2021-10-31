@@ -9,7 +9,7 @@ require_relative '../../../lib/rley/syntax/base_grammar_builder'
 require_relative '../../../lib/rley/lexical/token'
 require_relative '../../../lib/rley/base/dotted_item'
 require_relative '../../../lib/rley/parser/gfg_parsing'
-require_relative '../../../lib/rley/notation/grammar_builder'
+require_relative '../../../lib/rley/rgn/grammar_builder'
 
 require_relative '../support/expectation_helper'
 
@@ -64,7 +64,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
       context 'Ambiguous parse: ' do
         # Factory method. Creates a grammar builder for a simple grammar.
         def grammar_if_else_amb
-          builder = Rley::Notation::GrammarBuilder.new do
+          builder = Rley::RGN::GrammarBuilder.new do
             add_terminals('IF', 'THEN', 'ELSE')
             add_terminals('FALSE', 'TRUE', 'INTEGER')
 
@@ -290,7 +290,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
 
         # Factory method. Creates a grammar builder for a simple grammar.
         def grammar_if_else
-          builder = Rley::Notation::GrammarBuilder.new do
+          builder = Rley::RGN::GrammarBuilder.new do
             add_terminals('IF', 'THEN', 'ELSE')
             add_terminals('FALSE', 'TRUE', 'INTEGER')
 

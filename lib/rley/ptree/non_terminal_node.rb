@@ -27,7 +27,7 @@ module Rley # This module is used as a namespace
         selfie = super(indentation)
         prefix = "\n" + (' ' * connector.size * indentation) + connector
         subnodes_repr = subnodes.reduce(+'') do |sub_result, subnode|
-          sub_result << prefix + subnode.to_string(indentation + 1)
+          sub_result << (prefix + subnode.to_string(indentation + 1))
         end
 
         selfie + subnodes_repr

@@ -1,3 +1,16 @@
+### 0.8.08 / 2021-10-31
+- Fixes in example files, Refactored module `Notation` renamed `to `RGN´
+
+
+* [CHANGE] Module `Notation` changed to `RGN`.
+
+* [FIX] `examples/general/calc_iter1/CalcLexer#initialize` now strips whitespaces at end of expression to parse.
+* [FIX] `examples/general/calc_iter2/CalcLexer#initialize` now strips whitespaces at end of expression to parse.
+* [FIX] File `examples/general/left.rb` Call to wrong grammar builder
+* [FIX] File `examples/general/right.rb` Call to wrong grammar builder
+* [FIX] File `examples/NLP/benchmark_pico_en.rb` Grammar rules used obsolete rule syntax
+* [FIX] File `examples/NLP/engtagger.rb` Grammar rules used obsolete rule syntax
+
 ### 0.8.06 / 2021-10-06
 - Added  more comment in `/examples/tokenizer` files
 

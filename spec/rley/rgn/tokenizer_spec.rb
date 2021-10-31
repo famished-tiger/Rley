@@ -3,10 +3,10 @@
 require_relative '../../spec_helper'
 
 # Load the class under test
-require_relative '../../../lib/rley/notation/tokenizer'
+require_relative '../../../lib/rley/rgn/tokenizer'
 
 module Rley # Open this namespace to avoid module qualifier prefixes
-  module Notation # Open this namespace to avoid module qualifier prefixes
+  module RGN # Open this namespace to avoid module qualifier prefixes
     describe Tokenizer do
       # Utility method for comparing actual and expected token
       # sequence. The final EOF is removed from the input sequence.

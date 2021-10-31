@@ -3,10 +3,10 @@
 require_relative '../../spec_helper'
 
 # Load the class under test
-require_relative '../../../lib/rley/notation/grammar_builder'
+require_relative '../../../lib/rley/rgn/grammar_builder'
 
 module Rley # Open this namespace to avoid module qualifier prefixes
-  module Notation # Open this namespace to avoid module qualifier prefixes
+  module RGN # Open this namespace to avoid module qualifier prefixes
     describe GrammarBuilder do
       context 'Initialization without argument:' do
         it 'could be created without argument' do
@@ -123,11 +123,12 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           # implicitly called: rule('arguments_qmark' => 'arguments').tag suffix_qmark_one
           # implicitly called: rule('arguments_qmark' => '').tag suffix_qmark_none
           expect(instance.productions.size).to eq(3)
-          prod_star = instance.productions.select { |prod| prod.lhs.name == 'arguments_qmark' }
+          prod_star = instance.productions.select { |prod| prod.lhs.name == 'rep_arguments_qmark' }
           expect(prod_star.size).to eq(2)
           first_prod = instance.productions.first
           expect(first_prod.lhs.name).to eq('argument_list')
-          expect(first_prod.rhs.members[1].name).to eq('arguments_qmark')
+          expect(first_prod.rhs.members[1].name).to eq('rep_arguments_qmark')
+          expect(instance.productions.last.rhs.members).to be_empty
         end
 
         it "should support Kleene's star" do
@@ -137,14 +138,14 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           instance.rule 'program' => 'declaration* EOF'
           instance.grammar_complete!
 
-          # implicitly called: rule('declaration_star' => 'declaration_star declaration').tag suffix_star_more
-          # implicitly called: rule('declaration_star' => '').tag suffix_star_last
+          # implicitly called: rule('rep_declaration_star' => 'rep_declaration_star declaration').tag suffix_star_more
+          # implicitly called: rule('rep_declaration_star' => '').tag suffix_star_last
           expect(instance.productions.size).to eq(3)
-          prod_star = instance.productions.select { |prod| prod.lhs.name == 'declaration_star' }
+          prod_star = instance.productions.select { |prod| prod.lhs.name == 'rep_declaration_star' }
           expect(prod_star.size).to eq(2)
           first_prod = instance.productions.first
           expect(first_prod.lhs.name).to eq('program')
-          expect(first_prod.rhs.members[0].name).to eq('declaration_star')
+          expect(first_prod.rhs.members[0].name).to eq('rep_declaration_star')
         end
 
         it "should support symbols decorated with Kleene's plus" do
@@ -163,11 +164,11 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           # implicitly called: rule('digit_plus' => 'digit_plus digit').tag suffix_plus_more
           # implicitly called: rule('digit_plus' => 'digit').tag suffix_plus_last
           expect(instance.productions.size).to eq(7) # Two additional rules generated
-          prod_plus = instance.productions.select { |prod| prod.lhs.name == 'digit_plus' }
+          prod_plus = instance.productions.select { |prod| prod.lhs.name == 'rep_digit_plus' }
           expect(prod_plus.size).to eq(2)
           val_prod = instance.productions[4]
           expect(val_prod.lhs.name).to eq('value')
-          expect(val_prod.rhs.members[0].name).to eq('digit_plus')
+          expect(val_prod.rhs.members[0].name).to eq('rep_digit_plus')
         end
 
         it 'should support optional grouping' do
@@ -180,21 +181,23 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           # implicitly called: rule('seq_EQUAL_expression' => 'EQUAL expression').tag 'return_children'
           # implicitly called: rule('seq_EQUAL_expression_qmark' => 'seq_EQUAL_expression').tag suffix_qmark_one
           # implicitly called: rule('seq_EQUAL_expression_qmark' => '').tag suffix_qmark_none
-          expect(instance.productions.size).to eq(4)
+          expect(instance.productions.size).to eq(3)
           first_prod = instance.productions.first
           expect(first_prod.lhs.name).to eq('var_decl')
-          expect(first_prod.rhs.members[2].name).to eq('seq_EQUAL_expression_qmark')
-          (p0, p1, p2) = instance.productions[1..3]
-          expect(p0.lhs.name).to eq('seq_EQUAL_expression')
-          expect(p0.rhs[0].name).to eq('EQUAL')
-          expect(p0.rhs[1].name).to eq('expression')
-          expect(p0.name).to eq('return_children')
+          expect(first_prod.rhs.members[2].name).to eq('rep_seq_EQUAL_expression_qmark')
+          (p1, p2) = instance.productions[1..2]
+          # expect(p0.lhs.name).to eq('rep_seq_EQUAL_expression_qmark')
+          # expect(p0.rhs[0].name).to eq('EQUAL')
+          # expect(p0.rhs[1].name).to eq('expression')
+          # expect(p0.name).to eq('return_children')
 
-          expect(p1.lhs.name).to eq('seq_EQUAL_expression_qmark')
-          expect(p1.rhs[0].name).to eq('seq_EQUAL_expression')
-          expect(p1.name).to eq('_qmark_one')
+          expect(p1.lhs.name).to eq('rep_seq_EQUAL_expression_qmark')
+          expect(p1.rhs[0].name).to eq('EQUAL')
+          expect(p1.rhs[1].name).to eq('expression')
+          # expect(p1.rhs[0].name).to eq('seq_EQUAL_expression')
+          expect(p1.name).to eq('return_children') # TODO _qmark_one
 
-          expect(p2.lhs.name).to eq('seq_EQUAL_expression_qmark')
+          expect(p2.lhs.name).to eq('rep_seq_EQUAL_expression_qmark')
           expect(p2.rhs).to be_empty
           expect(p2.name).to eq('_qmark_none')
         end
@@ -212,7 +215,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           expect(instance.productions.size).to eq(4)
           first_prod = instance.productions.first
           expect(first_prod.lhs.name).to eq('logic_or')
-          expect(first_prod.rhs.members[1].name).to eq('seq_OR_logic_and_star')
+          expect(first_prod.rhs.members[1].name).to eq('rep_seq_OR_logic_and_star')
 
           (p0, p1, p2) = instance.productions[1..3]
           expect(p0.lhs.name).to eq('seq_OR_logic_and')
@@ -220,12 +223,12 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           expect(p0.rhs[1].name).to eq('logic_and')
           expect(p0.name).to eq('return_children')
 
-          expect(p1.lhs.name).to eq('seq_OR_logic_and_star')
-          expect(p1.rhs[0].name).to eq('seq_OR_logic_and_star')
+          expect(p1.lhs.name).to eq('rep_seq_OR_logic_and_star')
+          expect(p1.rhs[0].name).to eq('rep_seq_OR_logic_and_star')
           expect(p1.rhs[1].name).to eq('seq_OR_logic_and')
           expect(p1.name).to eq('_star_more')
 
-          expect(p2.lhs.name).to eq('seq_OR_logic_and_star')
+          expect(p2.lhs.name).to eq('rep_seq_OR_logic_and_star')
           expect(p2.rhs).to be_empty
           expect(p2.name).to eq('_star_none')
         end
@@ -243,7 +246,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           expect(instance.productions.size).to eq(4)
           first_prod = instance.productions.first
           expect(first_prod.lhs.name).to eq('path')
-          expect(first_prod.rhs.members[1].name).to eq('seq_TO_POINT_plus')
+          expect(first_prod.rhs.members[1].name).to eq('rep_seq_TO_POINT_plus')
 
           (p0, p1, p2) = instance.productions[1..3]
           expect(p0.lhs.name).to eq('seq_TO_POINT')
@@ -251,12 +254,12 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           expect(p0.rhs[1].name).to eq('POINT')
           expect(p0.name).to eq('return_children')
 
-          expect(p1.lhs.name).to eq('seq_TO_POINT_plus')
-          expect(p1.rhs[0].name).to eq('seq_TO_POINT_plus')
+          expect(p1.lhs.name).to eq('rep_seq_TO_POINT_plus')
+          expect(p1.rhs[0].name).to eq('rep_seq_TO_POINT_plus')
           expect(p1.rhs[1].name).to eq('seq_TO_POINT')
           expect(p1.name).to eq('_plus_more')
 
-          expect(p2.lhs.name).to eq('seq_TO_POINT_plus')
+          expect(p2.lhs.name).to eq('rep_seq_TO_POINT_plus')
           expect(p2.rhs[0].name).to eq('seq_TO_POINT')
           expect(p2.name).to eq('_plus_one')
         end
@@ -268,29 +271,30 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           instance.rule('if_stmt' => st)
           instance.grammar_complete!
 
-          # implicitly called: rule('seq_ELSE_stmt' => 'ELSE stmt').tag 'return_children'
-          # implicitly called: rule('seq_ELSE_stmt_qmark' => 'seq_ELSE_stmt ').tag suffix_plus_more
-          # implicitly called: rule('seq_ELSE_stmt_qmark' => '').tag suffix_plus_one
-          expect(instance.productions.size).to eq(4)
-          first_prod = instance.productions.first
-          expect(first_prod.lhs.name).to eq('if_stmt')
-          expect(first_prod.rhs.members[5].name).to eq('seq_ELSE_stmt_qmark')
+          # implicitly called: rule('rep_seq_ELSE_stmt_qmark' => 'ELSE stmt').tag return_children'
+          # implicitly called: rule('rep_seq_ELSE_stmt_qmark' => '').tag suffix_qmark_none
+          expect(instance.productions.size).to eq(3)
+          (p0, p1, p2) = instance.productions[0..2]
+          expect(p0.lhs.name).to eq('if_stmt')
+          expect(p0.rhs.members[5].name).to eq('rep_seq_ELSE_stmt_qmark')
+          # expect(p0.lhs.name).to eq('seq_ELSE_stmt')
+          # expect(p0.rhs[0].name).to eq('ELSE')
+          # expect(p0.rhs[1].name).to eq('stmt')
+          # expect(p0.name).to eq('return_children')
+          # expect(p0.constraints.size).to eq(1)
+          # expect(p0.constraints[0]).to be_kind_of(Syntax::MatchClosest)
+          # expect(p0.constraints[0].idx_symbol).to eq(0) # ELSE is on position 0
+          # expect(p0.constraints[0].closest_symb).to eq('IF')
 
-          (p0, p1, p2) = instance.productions[1..3]
-          expect(p0.lhs.name).to eq('seq_ELSE_stmt')
-          expect(p0.rhs[0].name).to eq('ELSE')
-          expect(p0.rhs[1].name).to eq('stmt')
-          expect(p0.name).to eq('return_children')
-          expect(p0.constraints.size).to eq(1)
-          expect(p0.constraints[0]).to be_kind_of(Syntax::MatchClosest)
-          expect(p0.constraints[0].idx_symbol).to eq(0) # ELSE is on position 0
-          expect(p0.constraints[0].closest_symb).to eq('IF')
+          expect(p1.lhs.name).to eq('rep_seq_ELSE_stmt_qmark')
+          expect(p1.rhs[0].name).to eq('ELSE')
+          expect(p1.rhs[1].name).to eq('stmt')
+          expect(p1.name).to eq('return_children')
+          expect(p1.constraints.size).to eq(1)
+          expect(p1.constraints[0]).to be_kind_of(Syntax::MatchClosest)
+          expect(p1.constraints[0].closest_symb).to eq('IF')
 
-          expect(p1.lhs.name).to eq('seq_ELSE_stmt_qmark')
-          expect(p1.rhs[0].name).to eq('seq_ELSE_stmt')
-          expect(p1.name).to eq('_qmark_one')
-
-          expect(p2.lhs.name).to eq('seq_ELSE_stmt_qmark')
+          expect(p2.lhs.name).to eq('rep_seq_ELSE_stmt_qmark')
           expect(p2.rhs).to be_empty
           expect(p2.name).to eq('_qmark_none')
         end
