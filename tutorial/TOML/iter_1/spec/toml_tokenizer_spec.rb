@@ -109,7 +109,7 @@ TOML
 
       expect(str).to be_kind_of(Rley::Lexical::Literal)
       expect(str.position.line).to eq(3)
-      expect(str.position.column).to eq(13)
+      expect(str.position.column).to eq(12) # Position of opening quote
       expect(str.terminal).to eq('BASIC-STRING')
       expect(str.lexeme).to eq('"TOML Example"')
       expect(str.value).to be_kind_of(TOMLString)

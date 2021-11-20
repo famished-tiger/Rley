@@ -9,6 +9,12 @@ require_relative 'toml_datatype'
 #   - read characters from input string ...
 #   - and transform them into a sequence of token objects.
 class TOMLTokenizer
+  PATT_BOOLEAN = /true|false/.freeze
+  PATT_COMMENT = /#[^\r\n]*/
+  PATT_NEWLINE = /(?:\r\n)|\r|\n/.freeze
+  PATT_SINGLE_CHAR = /[=]/.freeze # Single delimiter or separator character
+  PATT_UNQUOTED_KEY = /[A-Za-z0-9\-_]+/.freeze
+  PATT_WHITESPACE = /[ \t\f]+/.freeze
   # @return [StringScanner] Low-level input scanner
   attr_reader(:scanner)
 
@@ -61,7 +67,7 @@ class TOMLTokenizer
     token = nil
 
     until scanner.eos? || token
-      nl_found = scanner.skip(/(?:\r\n)|\r|\n/)
+      nl_found = scanner.skip(PATT_NEWLINE)
       if nl_found
         next_line
         next
@@ -69,23 +75,23 @@ class TOMLTokenizer
 
       token = case state
         when :default
-          next if scanner.skip(/[ \t\f]+/) # Skip whitespaces
+          next if scanner.skip(PATT_WHITESPACE) # Skip whitespaces
 
           curr_ch = scanner.peek(1)
 
           if curr_ch == '#'
-            scanner.skip(/#[^\r\n]*/) # Skip line comment
+            # Start of comment detected...
+            scanner.skip(PATT_COMMENT) # Skip line comment
             next
-
-          elsif '='.include? curr_ch
-            # Single delimiter or separator character
-            build_token(@@lexeme2name[curr_ch], scanner.getch)
-          elsif (lexeme = scanner.scan(/false|true/))
-            build_token('BOOLEAN', lexeme)
-          elsif (lexeme = scanner.scan(/[a-zA-Z0-9\-_]+/))
-            build_token('UNQUOTED-KEY', lexeme)
-          elsif scanner.scan(/"/) # Start of string detected...
+          elsif curr_ch == '"'
+            # Start of string detected...
             build_string_token
+          elsif (lexeme = scanner.scan(PATT_SINGLE_CHAR))
+            build_token(@@lexeme2name[curr_ch], lexeme)
+          elsif (lexeme = scanner.scan(PATT_BOOLEAN))
+            build_token('BOOLEAN', lexeme)
+          elsif (lexeme = scanner.scan(PATT_UNQUOTED_KEY))
+            build_token('UNQUOTED-KEY', lexeme)
           else # Unknown token
             col = scanner.pos - @line_start + 1
             _erroneous = curr_ch.nil? ? '' : scanner.scan(/./)
@@ -137,7 +143,7 @@ class TOMLTokenizer
     line = @lineno
     column_start = scan_pos - @line_start
 
-    literal = scanner.scan(/[^"]*"/)
+    literal = scanner.scan(/"[^"]*"/)
     unless literal
       pos_start = "line #{line}:#{column_start}"
       raise ScanError, "Error: [#{pos_start}]: Unterminated string."
@@ -145,8 +151,8 @@ class TOMLTokenizer
 
     @state = :default
     pos = Rley::Lexical::Position.new(line, column_start)
-    basic_string = TOMLString.new(literal.chop)
-    lexeme = scanner.string[scan_pos - 1..scanner.pos - 1]
+    basic_string = TOMLString.new(literal[1..-2])
+    lexeme = scanner.string[scan_pos..scanner.pos - 1]
     Rley::Lexical::Literal.new(basic_string, lexeme, 'BASIC-STRING', pos)
   end
 
