@@ -45,6 +45,6 @@ class TOMLParser
       raise SyntaxError, line1 + line2
     end
 
-    return engine.convert(result) # engine.to_ptree(result)
+    engine.convert(result)
   end
 end # class

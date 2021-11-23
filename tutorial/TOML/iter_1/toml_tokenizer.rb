@@ -10,7 +10,7 @@ require_relative 'toml_datatype'
 #   - and transform them into a sequence of token objects.
 class TOMLTokenizer
   PATT_BOOLEAN = /true|false/.freeze
-  PATT_COMMENT = /#[^\r\n]*/
+  PATT_COMMENT = /#[^\r\n]*/.freeze
   PATT_NEWLINE = /(?:\r\n)|\r|\n/.freeze
   PATT_SINGLE_CHAR = /[=]/.freeze # Single delimiter or separator character
   PATT_UNQUOTED_KEY = /[A-Za-z0-9\-_]+/.freeze
@@ -66,6 +66,7 @@ class TOMLTokenizer
   def _next_token
     token = nil
 
+    # Loop until end of input reached or token found
     until scanner.eos? || token
       nl_found = scanner.skip(PATT_NEWLINE)
       if nl_found
