@@ -8,10 +8,6 @@ module Rley # This module is used as a namespace
       # @return [String] The name of the grammar symbol
       attr_reader(:name)
 
-      # An indicator that tells whether the grammar symbol can generate a
-      # non-empty string of terminals.
-      attr_writer(:generative)
-
       # Constructor.
       # aName [String] The name of the grammar symbol.
       def initialize(aName)

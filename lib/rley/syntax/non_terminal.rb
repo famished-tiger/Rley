@@ -7,6 +7,10 @@ module Rley # This module is used as a namespace
     # A non-terminal symbol (sometimes called a syntactic variable) represents
     # a composition of terminal or non-terminal symbols
     class NonTerminal < GrmSymbol
+      # An indicator that tells whether the grammar symbol can generate a
+      # non-empty string of terminals.
+      attr_writer(:generative)
+
       # A non-terminal symbol is nullable if it can match an empty string.
       attr_writer(:nullable)
 

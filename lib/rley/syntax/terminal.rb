@@ -11,21 +11,31 @@ module Rley # This module is used as a namespace
       # @param aName [String] The name of the grammar symbol.
       def initialize(aName)
         super(aName)
-        self.generative = true
+      end
+
+      # An indicator that tells whether the grammar symbol can generate a
+      # non-empty string of terminals.
+      # @return [TrueClass]
+      def generative?
+        true
       end
 
       # Return true iff the symbol is a terminal
+      # @return [TrueClass]
       def terminal?
-        return true
+        true
       end
 
       # @return [false] Return true if the symbol derives
       # the empty string. As terminal symbol corresponds to a input token
       # it is by definition non-nullable.
+      # @return [FalseClass]
       def nullable?
         false
       end
 
+      # Return a readable text representation of the instance
+      # @return [String] The symbol name
       def to_s
         name
       end
