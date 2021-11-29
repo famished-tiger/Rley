@@ -84,7 +84,7 @@ TOML
       subject.start_with(str)
       token_true = subject.tokens[0]
       expect(token_true).to be_kind_of(Rley::Lexical::Literal)
-      expect(token_true.terminal).to eq('BASIC-STRING')
+      expect(token_true.terminal).to eq('STRING')
       expect(token_true.lexeme).to eq(str)
       expect(token_true.value).to be_kind_of(TOMLString)
     end
@@ -110,7 +110,7 @@ TOML
       expect(str).to be_kind_of(Rley::Lexical::Literal)
       expect(str.position.line).to eq(3)
       expect(str.position.column).to eq(12) # Position of opening quote
-      expect(str.terminal).to eq('BASIC-STRING')
+      expect(str.terminal).to eq('STRING')
       expect(str.lexeme).to eq('"TOML Example"')
       expect(str.value).to be_kind_of(TOMLString)
       expect(str.value.value).to eq('TOML Example')

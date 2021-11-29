@@ -154,7 +154,7 @@ class TOMLTokenizer
     pos = Rley::Lexical::Position.new(line, column_start)
     basic_string = TOMLString.new(literal[1..-2])
     lexeme = scanner.string[scan_pos..scanner.pos - 1]
-    Rley::Lexical::Literal.new(basic_string, lexeme, 'BASIC-STRING', pos)
+    Rley::Lexical::Literal.new(basic_string, lexeme, 'STRING', pos)
   end
 
   def next_line

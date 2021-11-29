@@ -17,7 +17,7 @@ require 'rley' # Load the Rley gem
 #   enabled = true
 builder = Rley::grammar_builder do
   # Define first the terminal symbols...
-  add_terminals('UNQUOTED-KEY', 'EQUAL', 'BASIC-STRING')
+  add_terminals('UNQUOTED-KEY', 'EQUAL', 'STRING')
   add_terminals('BOOLEAN')
 
   # ... then with syntax rules
@@ -28,7 +28,7 @@ builder = Rley::grammar_builder do
   rule 'expression' => 'keyval'
   rule 'keyval' => 'key EQUAL val'
   rule 'key' => 'UNQUOTED-KEY'
-  rule 'val' => 'BASIC-STRING'
+  rule 'val' => 'STRING'
   rule 'val' => 'BOOLEAN'
 end
 
