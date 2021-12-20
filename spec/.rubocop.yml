@@ -3,10 +3,13 @@ inherit_from:
 
 # Let's relax this cop to allow long RSpec 'describe', 'it' blocks
 Metrics/BlockLength:
-  Max: 700
+  Max: 800
   CountComments: false
   
 # Avoid modules longer than 700 lines of code 
 Metrics/ModuleLength:
   CountComments: false
-  Max: 700
+  Max: 800
+  
+Style/OpenStructUse: # new in 1.23
+  Enabled: false   
