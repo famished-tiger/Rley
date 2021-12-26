@@ -26,10 +26,10 @@ require 'rley' # Load the Rley gem
 #   [servers]
 builder = Rley::grammar_builder do
   # Define first the terminal symbols...
-  add_terminals('COMMA', 'EQUAL', 'LBRACKET', 'RBRACKET', 'LACCOLADE', 'RACCOLADE')
+  add_terminals('COMMA', 'DOT', 'EQUAL', 'LBRACKET', 'RBRACKET', 'LACCOLADE', 'RACCOLADE')
   add_terminals('STRING', 'BOOLEAN', 'FLOAT', 'INTEGER')
   add_terminals('OFFSET-DATE-TIME', 'LOCAL-DATE-TIME', 'LOCAL-DATE', 'LOCAL-TIME')
-  add_terminals('UNQUOTED-KEY')
+  add_terminals('QUOTED-KEY', 'UNQUOTED-KEY')
 
   # ... then with syntax rules
   # Reminder: first found rule is considered to be the top-level rule
@@ -40,7 +40,11 @@ builder = Rley::grammar_builder do
   rule 'expression' => 'keyval'
   rule 'expression' => 'table'
   rule 'keyval' => 'key EQUAL val'
-  rule 'key' => 'UNQUOTED-KEY'
+  rule 'key' => 'simple-key'
+  rule 'key' => 'dotted-key'
+  rule 'simple-key' => 'QUOTED-KEY'
+  rule 'simple-key' => 'UNQUOTED-KEY'
+  rule 'dotted-key' => 'key DOT simple-key'
   rule 'val' => 'STRING'
   rule 'val' => 'BOOLEAN'
   rule 'val' => 'array'

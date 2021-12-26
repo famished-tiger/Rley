@@ -10,7 +10,8 @@ require_relative 'toml_datatype'
 #   - and transform them into a sequence of token objects.
 class TOMLTokenizer
   PATT_BOOLEAN = /true|false/.freeze
-  PATT_CHAR_SINGLE = /[,=\[\]\{\}]/.freeze # Single delimiter or separator character
+  PATT_CHAR_SINGLE_KEY = /[,\.=\[\]\}]/.freeze # Single delimiter or separator character
+  PATT_CHAR_SINGLE_VAL = /[,\[\]\{]/.freeze # Single delimiter or separator character
   PATT_COMMENT = /#[^\r\n]*/.freeze
   PATT_FLOAT = /[-+]? # Optional sign
     (?:0|(?:[1-9](?:(?:_\d)|\d)*)) # Integer part
@@ -22,6 +23,8 @@ class TOMLTokenizer
   PATT_INT_HEX = /0x[0-9A-Fa-f](?:(?:_[0-9A-Fa-f])|[0-9A-Fa-f])*/.freeze
   PATT_INT_OCT = /0o[0-7](?:(?:_[0-7])|[0-7])*/.freeze
   PATT_INT_BIN = /0b[01](?:(?:_[01])|[01])*/.freeze
+  PATT_KEY_UNQUOTED = /[A-Za-z0-9\-_]+/.freeze
+  PATT_KEY_QUOTED_DELIM = /(?:"(?!""))|(?:'(?!''))/.freeze
   PATT_OFFSET_DATE_TIME = /[0-2]\d{3}-[01]\d-[0-3]\d[Tt ][0-2]\d:[0-5]\d:[0-6]\d(?:\.\d+)?(?:[Zz]|(?:[-+][0-6]\d:[0-6]\d))/.freeze
   PATT_LOCAL_DATE_TIME = /[0-2]\d{3}-[01]\d-[0-3]\d[Tt ][0-2]\d:[0-5]\d:[0-6]\d(?:\.\d+)?/.freeze
   PATT_LOCAL_DATE = /[0-2]\d{3}-[01]\d-[0-3]\d/.freeze
@@ -37,13 +40,9 @@ class TOMLTokenizer
     | (?:\\(?=\n|\r))
     | (?:(\\\\)+\\"""))*?
     (?:"""|$)/x.freeze
-  PATT_UNQUOTED_KEY = /[A-Za-z0-9\-_]+/.freeze
   PATT_WHITESPACE = /[ \t\f]+/.freeze
   # @return [StringScanner] Low-level input scanner
   attr_reader(:scanner)
-
-  # @return [Symbol] Current lexical state
-  attr_reader(:state)
 
   # Key track of whether the scanner expects a key or avalue
   # This is necessary since the lexeme 1234 can be a naked key or an integer
@@ -59,6 +58,7 @@ class TOMLTokenizer
   # Single special character tokens.
   @@lexeme2name = {
     ',' => 'COMMA',
+    '.' => 'DOT',
     '=' => 'EQUAL',
     '[' => 'LBRACKET',
     ']' => 'RBRACKET',
@@ -81,19 +81,26 @@ class TOMLTokenizer
   # Constructor. Initialize a tokenizer for Lox input.
   # @param source [String] Lox text to tokenize.
   def initialize(source = nil)
-    @scanner = StringScanner.new('')
-    @state = :default
-    @keyval_stack = [0]
-    start_with(source) if source
+    reset
+    input = source ? source : ''
+    @scanner = StringScanner.new(input)
   end
 
   # Reset the tokenizer and make the given text, the current input.
   # @param source [String] Lox text to tokenize.
   def start_with(source)
+    reset
     @scanner.string = source
-    @state = :default
-    @lineno = 1
-    @line_start = 0
+  end
+
+  # Return the current lexical state
+  # State can be one of:
+  # :default # expecting a key, a table name or equal sign
+  # :expecting_value # expecting a value to associate with a key
+  # :multiline # Processing a multiline string
+  def state
+    return :expecting_value if @state == :default && @keyval_stack.last > 0
+    @state
   end
 
   # Scan the source and return an array of tokens.
@@ -110,6 +117,13 @@ class TOMLTokenizer
 
   private
 
+  def reset
+    @state = :default
+    @keyval_stack = [0]
+    @lineno = 1
+    @line_start = 0
+  end
+
   # rubocop: disable Lint/DuplicateBranch
   def _next_token
     token = nil
@@ -122,48 +136,65 @@ class TOMLTokenizer
         next
       end
 
+      unless state == :multiline
+        # Code common to :default and :expecting_value states
+        next if scanner.skip(PATT_WHITESPACE) # Skip whitespaces
+
+        curr_ch = scanner.peek(1)
+
+        if curr_ch == '#'
+          # Start of comment detected...
+          scanner.skip(PATT_COMMENT) # Skip line comment
+          next
+        end
+      end
+
       token = case state
         when :default
-          next if scanner.skip(PATT_WHITESPACE) # Skip whitespaces
+          if (lexeme = scanner.scan(PATT_KEY_QUOTED_DELIM))
+            # Start of quoted key detected...
+            begin_string_token(lexeme, :key)
+          elsif (lexeme = scanner.scan(PATT_CHAR_SINGLE_KEY))
+            build_token(@@lexeme2name[lexeme], lexeme)
+          elsif (lexeme = scanner.scan(PATT_KEY_UNQUOTED))
+            build_literal('UNQUOTED-KEY', lexeme, UnquotedKey)
+          else # Unknown token
+            col = scanner.pos - @line_start + 1
+            erroneous = curr_ch.nil? ? '' : scanner.scan(/./)
+            raise ScanError, "Error: [line #{lineno}:#{col}]: Unexpected character #{erroneous}."
+          end
 
-          curr_ch = scanner.peek(1)
-
-          if curr_ch == '#'
-            # Start of comment detected...
-            scanner.skip(PATT_COMMENT) # Skip line comment
-            next
-          elsif (lexeme = scanner.scan(PATT_STRING_DELIM))
+        when :expecting_value
+          if (lexeme = scanner.scan(PATT_STRING_DELIM))
             # Start of string detected...
-            string_token = begin_string_token(lexeme)
+            string_token = begin_string_token(lexeme, :string)
             next if state == :multiline
             update_keyval_state(string_token)
             string_token
-          elsif (lexeme = scanner.scan(PATT_CHAR_SINGLE))
-            build_token(@@lexeme2name[curr_ch], lexeme)
+          elsif (lexeme = scanner.scan(PATT_CHAR_SINGLE_VAL))
+            build_token(@@lexeme2name[lexeme], lexeme)
           elsif (lexeme = scanner.scan(PATT_BOOLEAN))
             build_literal('BOOLEAN', lexeme, TOMLBoolean)
-          elsif expecting_value && (lexeme = scanner.scan(PATT_OFFSET_DATE_TIME))
+          elsif (lexeme = scanner.scan(PATT_OFFSET_DATE_TIME))
             build_literal('OFFSET-DATE-TIME', lexeme, TOMLOffsetDateTime)
-          elsif expecting_value && (lexeme = scanner.scan(PATT_LOCAL_DATE_TIME))
+          elsif (lexeme = scanner.scan(PATT_LOCAL_DATE_TIME))
             build_literal('LOCAL-DATE-TIME', lexeme, TOMLLocalDateTime)
-          elsif expecting_value && (lexeme = scanner.scan(PATT_LOCAL_DATE))
+          elsif (lexeme = scanner.scan(PATT_LOCAL_DATE))
             build_literal('LOCAL-DATE', lexeme, TOMLLocalDate)
-          elsif expecting_value && (lexeme = scanner.scan(PATT_LOCAL_TIME))
+          elsif (lexeme = scanner.scan(PATT_LOCAL_TIME))
             build_literal('LOCAL-TIME', lexeme, TOMLLocalTime)
-          elsif expecting_value && (lexeme = scanner.scan(PATT_FLOAT))
+          elsif (lexeme = scanner.scan(PATT_FLOAT))
             build_literal('FLOAT', lexeme, TOMLFloat)
-          elsif expecting_value && (lexeme = scanner.scan(PATT_INT_HEX))
+          elsif (lexeme = scanner.scan(PATT_INT_HEX))
             build_literal('INTEGER', lexeme, TOMLInteger, :hex)
-          elsif expecting_value && (lexeme = scanner.scan(PATT_INT_OCT))
+          elsif (lexeme = scanner.scan(PATT_INT_OCT))
             build_literal('INTEGER', lexeme, TOMLInteger, :oct)
-          elsif expecting_value && (lexeme = scanner.scan(PATT_INT_BIN))
+          elsif (lexeme = scanner.scan(PATT_INT_BIN))
             build_literal('INTEGER', lexeme, TOMLInteger, :bin)
-          elsif expecting_value && (lexeme = scanner.scan(PATT_INT_DEC))
+          elsif (lexeme = scanner.scan(PATT_INT_DEC))
             build_literal('INTEGER', lexeme, TOMLInteger)
           elsif (lexeme = scanner.scan(PATT_FLOAT_SPECIAL))
             build_special_float(lexeme)
-          elsif (lexeme = scanner.scan(PATT_UNQUOTED_KEY))
-            build_literal('UNQUOTED-KEY', lexeme, UnquotedKey)
           else # Unknown token
             col = scanner.pos - @line_start + 1
             erroneous = curr_ch.nil? ? '' : scanner.scan(/./)
@@ -235,7 +266,7 @@ class TOMLTokenizer
   end
 
   # precondition: current position at leading delimiter
-  def begin_string_token(delimiter)
+  def begin_string_token(delimiter, token_type)
     @scan_pos = scanner.pos
     line = @lineno
     column_start = @scan_pos - @line_start
@@ -245,17 +276,29 @@ class TOMLTokenizer
     when "'"
       literal = scanner.scan(/[^']*'/)
       unterminated(line, column_start) unless literal
-      string_value = TOMLString.new(literal[0..-2])
       lexeme = scanner.string[(@scan_pos-1)..scanner.pos - 1]
-      Rley::Lexical::Literal.new(string_value, lexeme, 'STRING', @string_start)
+      if token_type == :key
+        token_kind = 'QUOTED-KEY'
+        token_value = QuotedKey.new(literal[0..-2])
+      else
+        token_kind = 'STRING'
+        token_value = TOMLString.new(literal[0..-2])
+      end
+      Rley::Lexical::Literal.new(token_value, lexeme, token_kind, @string_start)
 
     when '"'
       literal = scanner.scan(/(?:[^"]|(?:(?<=\\)"))*"/)
       unterminated(line, column_start) unless literal
       raw_value = literal[0..-2]
-      string_value = TOMLString.new(unescape(raw_value))
       lexeme = scanner.string[(@scan_pos-1)..scanner.pos - 1]
-      Rley::Lexical::Literal.new(string_value, lexeme, 'STRING', @string_start)
+      if token_type == :key
+        token_kind = 'QUOTED-KEY'
+        token_value = QuotedKey.new(unescape(raw_value))
+      else
+        token_kind = 'STRING'
+        token_value = TOMLString.new(unescape(raw_value))
+      end
+      Rley::Lexical::Literal.new(token_value, lexeme, token_kind, @string_start)
 
     when "'''"
       literal = scanner.scan(PATT_STRING_END_LITERAL)
@@ -385,7 +428,7 @@ class TOMLTokenizer
       laccolade_scanned
     when 'RACCOLADE'
       raccolade_scanned
-    when 'UNQUOTED-KEY'
+    when 'COMMA', 'UNQUOTED-KEY'
       # Do nothing
     else
       literal_scanned
@@ -401,10 +444,12 @@ class TOMLTokenizer
   end
 
   def lbracket_scanned()
-    @keyval_stack[-1] += 1
+    @keyval_stack[-1] += 1 if state == :expecting_value
   end
 
   def rbracket_scanned()
+    return unless state == :expecting_value
+    
     if @keyval_stack.last == 2
       keyval_stack[-1] = 0
     else
@@ -418,6 +463,11 @@ class TOMLTokenizer
 
   def raccolade_scanned()
     @keyval_stack.pop
+    if @keyval_stack.last == 2
+      keyval_stack[-1] = 0
+    else
+      keyval_stack[-1] -= 1
+    end
   end
 
   def next_line

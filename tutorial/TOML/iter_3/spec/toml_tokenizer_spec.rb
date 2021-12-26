@@ -46,11 +46,11 @@ TOML
   end # context
 
   context 'Separator and delimiters tokenization:' do
-    it 'should recognize single special character token' do
+    it 'should recognize single stateless character in default state' do
       cases = [
         # token, lexeme
         %w(COMMA ,),
-        %w(EQUAL =),
+        %w(DOT .),
         %w(LBRACKET [),
         %w(RBRACKET ])
       ]
@@ -58,14 +58,46 @@ TOML
         subject.start_with(lexeme)
         expectations = [[token, lexeme]]
         match_expectations(subject, expectations)
+        expect(subject.state).to eq(:default)
       end
     end
+
+    it 'should recognize equal character in default state' do
+      cases = [
+        # token, lexeme
+        %w(EQUAL =)
+      ]
+      cases.each do |(token, lexeme)|
+        subject.start_with(lexeme)
+        expectations = [[token, lexeme]]
+        match_expectations(subject, expectations)
+        expect(subject.state).to eq(:expecting_value)
+      end
+    end
+
+      # it 'should recognize single special character in expecting value state' do
+      #   cases = [
+      #     # token, lexeme
+      #     %w(COMMA ,),
+      #     %w(LBRACKET [),
+      #     %w(RBRACKET ]),
+      #   ]
+      #   cases.each do |(token, lexeme)|
+      #     subject.start_with(lexeme)
+      #     subject.send(:equal_scanned)
+      #     expectations = [[token, lexeme]]
+      #     match_expectations(subject, expectations)
+      #     expect(subject.state).to eq(:expecting_value)
+      #   end
+      # end
   end # context
 
   context 'Data type tokenization:' do
+
     it 'should recognize a boolean literal' do
       [['true', TrueClass], ['false', FalseClass]].each do |(str, klass)|
         subject.start_with(str)
+        subject.send(:equal_scanned)
         token = subject.tokens[0]
         expect(token).to be_kind_of(Rley::Lexical::Literal)
         expect(token.terminal).to eq('BOOLEAN')
@@ -76,9 +108,6 @@ TOML
     end
 
     it 'should recognize decimal integer literals' do
-      stack = subject.instance_variable_get(:@keyval_stack)
-      stack[-1] = 2
-
       cases = [
         # token,      lexeme
         ['+99',       99],
@@ -94,6 +123,7 @@ TOML
       ]
       cases.each do |(str, val)|
         subject.start_with(str)
+        subject.send(:equal_scanned)
         int_token = subject.tokens[0]
         expect(int_token).to be_kind_of(Rley::Lexical::Literal)
         expect(int_token.terminal).to eq('INTEGER')
@@ -104,9 +134,6 @@ TOML
     end
 
     it 'should recognize hexadecimal integer literals' do
-      stack = subject.instance_variable_get(:@keyval_stack)
-      stack[-1] = 2
-
       cases = [
         # token, lexeme
         ['0xDEADBEEF',  0xdeadbeef],
@@ -116,6 +143,7 @@ TOML
       ]
       cases.each do |(str, val)|
         subject.start_with(str)
+        subject.send(:equal_scanned)
         int_token = subject.tokens[0]
         expect(int_token).to be_kind_of(Rley::Lexical::Literal)
         expect(int_token.terminal).to eq('INTEGER')
@@ -126,9 +154,6 @@ TOML
     end
 
     it 'should recognize octal integer literals' do
-      stack = subject.instance_variable_get(:@keyval_stack)
-      stack[-1] = 2
-
       cases = [
         # token,       lexeme
         ['0o01234567', 0o01234567],
@@ -137,6 +162,7 @@ TOML
       ]
       cases.each do |(str, val)|
         subject.start_with(str)
+        subject.send(:equal_scanned)
         int_token = subject.tokens[0]
         expect(int_token).to be_kind_of(Rley::Lexical::Literal)
         expect(int_token.terminal).to eq('INTEGER')
@@ -147,9 +173,6 @@ TOML
     end
 
     it 'should recognize binary integer literals' do
-      stack = subject.instance_variable_get(:@keyval_stack)
-      stack[-1] = 2
-
       cases = [
         # token,       lexeme
         ['0b11010110', 0b11010110],
@@ -157,6 +180,7 @@ TOML
       ]
       cases.each do |(str, val)|
         subject.start_with(str)
+        subject.send(:equal_scanned)
         int_token = subject.tokens[0]
         expect(int_token).to be_kind_of(Rley::Lexical::Literal)
         expect(int_token.terminal).to eq('INTEGER')
@@ -167,8 +191,6 @@ TOML
     end
 
     it 'should recognize float literals' do
-      stack = subject.instance_variable_get(:@keyval_stack)
-      stack[-1] = 2
       cases = [
         # token,       lexeme
         ['+1.0', 1.0],
@@ -182,6 +204,7 @@ TOML
       ]
       cases.each do |(str, val)|
         subject.start_with(str)
+        subject.send(:equal_scanned)
         float_token = subject.tokens[0]
         expect(float_token).to be_kind_of(Rley::Lexical::Literal)
         expect(float_token.terminal).to eq('FLOAT')
@@ -200,6 +223,7 @@ TOML
       ]
       cases.each do |(str, val)|
         subject.start_with(str)
+        subject.send(:equal_scanned)
         float_token = subject.tokens[0]
         expect(float_token).to be_kind_of(Rley::Lexical::Literal)
         expect(float_token.terminal).to eq('FLOAT')
@@ -218,6 +242,7 @@ TOML
       ]
       cases.each do |(str, val)|
         subject.start_with(str)
+        subject.send(:equal_scanned)
         float_token = subject.tokens[0]
         expect(float_token).to be_kind_of(Rley::Lexical::Literal)
         expect(float_token.terminal).to eq('FLOAT')
@@ -228,11 +253,9 @@ TOML
     end
 
     it 'should recognize offset date time' do
-      stack = subject.instance_variable_get(:@keyval_stack)
-      stack[-1] = 2
-
       str = '1979-05-27T05:32:07.999999-07:00'
       subject.start_with(str)
+      subject.send(:equal_scanned)
       date_token = subject.tokens[0]
       expect(date_token).to be_kind_of(Rley::Lexical::Literal)
       expect(date_token.terminal).to eq('OFFSET-DATE-TIME')
@@ -242,8 +265,6 @@ TOML
     end
 
     it 'should recognize local date time' do
-      stack = subject.instance_variable_get(:@keyval_stack)
-      stack[-1] = 2
       cases = [
         # lexeme,       value
         ['1979-05-27T07:32:00', Time.local(1979, 5, 27,7, 32, 0)],
@@ -251,6 +272,7 @@ TOML
       ]
       cases.each do |(str, val)|
         subject.start_with(str)
+        subject.send(:equal_scanned)
         date_token = subject.tokens[0]
         expect(date_token).to be_kind_of(Rley::Lexical::Literal)
         expect(date_token.terminal).to eq('LOCAL-DATE-TIME')
@@ -261,8 +283,6 @@ TOML
     end
 
     it 'should recognize local date' do
-      stack = subject.instance_variable_get(:@keyval_stack)
-      stack[-1] = 2
       cases = [
         # lexeme,       value
         ['1979-05-27', Date.new(1979, 5, 27)],
@@ -270,6 +290,7 @@ TOML
       ]
       cases.each do |(str, val)|
         subject.start_with(str)
+        subject.send(:equal_scanned)
         date_token = subject.tokens[0]
         expect(date_token).to be_kind_of(Rley::Lexical::Literal)
         expect(date_token.terminal).to eq('LOCAL-DATE')
@@ -280,8 +301,6 @@ TOML
     end
 
     it 'should recognize local time' do
-      stack = subject.instance_variable_get(:@keyval_stack)
-      stack[-1] = 2
       cases = [
         # lexeme,       value
         ['07:32:00', [7, 32, 0, 0]],
@@ -289,6 +308,7 @@ TOML
       ]
       cases.each do |(str, val)|
         subject.start_with(str)
+        subject.send(:equal_scanned)
         time_token = subject.tokens[0]
         expect(time_token).to be_kind_of(Rley::Lexical::Literal)
         expect(time_token.terminal).to eq('LOCAL-TIME')
@@ -299,17 +319,6 @@ TOML
         expect(time_token.value.min).to eq(min)
         expect(time_token.value.sec).to eq(sec)
         expect(time_token.value.usec).to eq(usec)
-      end
-    end
-
-    it 'should recognize an unquoted key' do
-      %w[key bare_key bare-key 1234].each do |str|
-        subject.start_with(str)
-        token = subject.tokens[0]
-        expect(token).to be_kind_of(Rley::Lexical::Literal)
-        expect(token.terminal).to eq('UNQUOTED-KEY')
-        expect(token.lexeme).to eq(str)
-        expect(token.value).to be_kind_of(UnquotedKey)
       end
     end
 
@@ -325,6 +334,7 @@ TOML
       ]
       cases.each do |str|
         subject.start_with(str)
+        subject.send(:equal_scanned)
         token = subject.tokens[0]
         expect(token).to be_kind_of(Rley::Lexical::Literal)
         expect(token.terminal).to eq('STRING')
@@ -347,6 +357,7 @@ TOML
       ]
       cases.each do |str|
         subject.start_with(str)
+        subject.send(:equal_scanned)
         token = subject.tokens[0]
         expect(token).to be_kind_of(Rley::Lexical::Literal)
         expect(token.terminal).to eq('STRING')
@@ -366,6 +377,7 @@ trimmed in raw strings.
 '''
       TOML
       subject.start_with(str)
+      subject.send(:equal_scanned)
       token = subject.tokens[0]
       expect(token).to be_kind_of(Rley::Lexical::Literal)
       expect(token.terminal).to eq('STRING')
@@ -385,6 +397,7 @@ trimmed in raw strings.
       ]
       cases.each do |str, expected|
         subject.start_with(str)
+        subject.send(:equal_scanned)
         token = subject.tokens[0]
         expect(token).to be_kind_of(Rley::Lexical::Literal)
         expect(token.terminal).to eq('STRING')
@@ -403,6 +416,7 @@ trimmed in raw strings.
       ]
       cases.each do |str, expected|
         subject.start_with(str)
+        subject.send(:equal_scanned)
         token = subject.tokens[0]
         expect(token).to be_kind_of(Rley::Lexical::Literal)
         expect(token.terminal).to eq('STRING')
@@ -431,6 +445,7 @@ trimmed in raw strings.
       TOML
       [str2, str3].each do |str|
         subject.start_with(str)
+        subject.send(:equal_scanned)
         token = subject.tokens[0]
         expect(token).to be_kind_of(Rley::Lexical::Literal)
         expect(token.terminal).to eq('STRING')
@@ -441,7 +456,71 @@ trimmed in raw strings.
     end
   end # context
 
-  context 'TOML tokenization:' do
+  context 'TOML tokenization in default state:' do
+    def next_token(tokenizer, lexeme, terminal, klass = nil)
+      token = tokenizer.send(:_next_token)
+      expect(token.lexeme).to eq(lexeme)
+      expect(token.terminal).to eq(terminal)
+      expect(token.value).to be_kind_of(klass) if klass
+    end
+
+    it 'should recognize an unquoted key' do
+      %w[key bare_key bare-key true 1234].each do |str|
+        subject.start_with(str)
+        token = subject.tokens[0]
+        expect(token).to be_kind_of(Rley::Lexical::Literal)
+        expect(token.terminal).to eq('UNQUOTED-KEY')
+        expect(token.lexeme).to eq(str)
+        expect(token.value).to be_kind_of(UnquotedKey)
+      end
+    end
+
+    it 'should recognize a quoted key' do
+      cases = [
+        '"127.0.0.1"',
+        '"character encoding"',
+        "'key2'",
+        %q|'quoted "value"'|,
+        '""',
+        "''"
+      ]
+      cases  .each do |str|
+        subject.start_with(str)
+        token = subject.tokens[0]
+        expect(token).to be_kind_of(Rley::Lexical::Literal)
+        expect(token.terminal).to eq('QUOTED-KEY')
+        expect(token.lexeme).to eq(str)
+        expect(token.value).to be_kind_of(QuotedKey)
+        expect(token.value.value).to eq(str[1..-2])
+      end
+    end
+
+    it 'should recognize a dotted key' do
+      cases = [
+        'physical.color',
+        'physical.shape',
+        'site."google"',
+      ]
+      cases  .each do |str|
+        subject.start_with(str)
+        (left, dot, right) = subject.tokens
+        (left_lex, right_lex) = str.split('.')
+        expect(left).to be_kind_of(Rley::Lexical::Literal)
+        expect(left.terminal).to eq('UNQUOTED-KEY')
+        expect(left.lexeme).to eq(left_lex)
+        expect(left.value).to be_kind_of(UnquotedKey)
+        expect(left.value.value).to eq(left_lex)
+
+        expect(dot).to be_kind_of(Rley::Lexical::Token)
+        expect(dot.terminal).to eq('DOT')
+
+        expect(right).to be_kind_of(Rley::Lexical::Literal)
+        expect(right.terminal).to match(/QUOTED-KEY$/)
+        expect(right.lexeme).to eq(right_lex)
+        expect(right.value.value).to eq(right_lex.gsub(/"/, ''))
+      end
+    end
+
     it 'should recognize a key-value pair' do
       instance = TOMLTokenizer.new(sample_text)
       (key, equal, str) = instance.tokens
@@ -466,5 +545,205 @@ trimmed in raw strings.
       expect(str.value).to be_kind_of(TOMLString)
       expect(str.value.value).to eq('TOML Example')
     end
+
+    it 'should recognize a dotted table name' do
+      source = '[server."alpha"]'
+      # TOS     00     00      0
+      instance = TOMLTokenizer.new(source)
+      next_token(instance, '[', 'LBRACKET')
+      expect(instance.state).to eq(:default)
+
+      next_token(instance, 'server', 'UNQUOTED-KEY', UnquotedKey)
+      expect(instance.state).to eq(:default)
+
+      next_token(instance, '.', 'DOT')
+      expect(instance.state).to eq(:default)
+
+      next_token(instance, '"alpha"', 'QUOTED-KEY', QuotedKey)
+      expect(instance.state).to eq(:default)
+
+      next_token(instance, ']', 'RBRACKET')
+      expect(instance.state).to eq(:default)
+    end
+
+    it 'should recognize array of literals' do
+      source = "ports = [ 8000, 8001, 8002 ]"
+      # TOS     0     1 2 2   2 2   2 2    0
+      instance = TOMLTokenizer.new(source)
+      next_token(instance, 'ports', 'UNQUOTED-KEY', UnquotedKey)
+      expect(instance.state).to eq(:default)
+
+      next_token(instance, '=', 'EQUAL')
+      expect(instance.state).to eq(:expecting_value)
+      expect(instance.keyval_stack).to eq([1])
+
+      next_token(instance, '[', 'LBRACKET')
+      expect(instance.state).to eq(:expecting_value)
+      expect(instance.keyval_stack).to eq([2])
+
+      next_token(instance, '8000', 'INTEGER', TOMLInteger)
+      expect(instance.state).to eq(:expecting_value)
+      expect(instance.keyval_stack).to eq([2])
+
+      next_token(instance, ',', 'COMMA')
+      expect(instance.state).to eq(:expecting_value)
+      expect(instance.keyval_stack).to eq([2])
+
+      next_token(instance, '8001', 'INTEGER', TOMLInteger)
+      expect(instance.state).to eq(:expecting_value)
+      expect(instance.keyval_stack).to eq([2])
+
+      next_token(instance, ',', 'COMMA')
+      expect(instance.state).to eq(:expecting_value)
+      expect(instance.keyval_stack).to eq([2])
+
+      next_token(instance, '8002', 'INTEGER', TOMLInteger)
+      expect(instance.state).to eq(:expecting_value)
+      expect(instance.keyval_stack).to eq([2])
+
+      next_token(instance, ']', 'RBRACKET')
+      expect(instance.state).to eq(:default)
+      expect(instance.keyval_stack).to eq([0])
+    end
+
+    it 'should recognize inline tables' do
+      source = 'temp_targets = { cpu = 79.5, "case" = 72.0 }'
+      # TOS     0            1 0 0   1 0   0 0      1 1    0
+      # TOS-1   -            - 1 1   1 1   1 1      1 1
+      instance = TOMLTokenizer.new(source)
+      next_token(instance, 'temp_targets', 'UNQUOTED-KEY', UnquotedKey)
+      expect(instance.state).to eq(:default)
+
+      next_token(instance, '=', 'EQUAL')
+      expect(instance.state).to eq(:expecting_value)
+      expect(instance.keyval_stack).to eq([1])
+
+      next_token(instance, '{', 'LACCOLADE')
+      expect(instance.state).to eq(:default)
+      expect(instance.keyval_stack).to eq([1, 0])
+
+      next_token(instance, 'cpu', 'UNQUOTED-KEY', UnquotedKey)
+      expect(instance.state).to eq(:default)
+      expect(instance.keyval_stack).to eq([1, 0])
+
+      next_token(instance, '=', 'EQUAL')
+      expect(instance.state).to eq(:expecting_value)
+      expect(instance.keyval_stack).to eq([1, 1])
+
+      next_token(instance, '79.5', 'FLOAT', TOMLFloat)
+      expect(instance.state).to eq(:default)
+      expect(instance.keyval_stack).to eq([1, 0])
+
+      next_token(instance, ',', 'COMMA')
+      expect(instance.state).to eq(:default)
+      expect(instance.keyval_stack).to eq([1, 0])
+
+      next_token(instance, '"case"', 'QUOTED-KEY', QuotedKey)
+      expect(instance.state).to eq(:default)
+      expect(instance.keyval_stack).to eq([1, 0])
+
+      next_token(instance, '=', 'EQUAL')
+      expect(instance.state).to eq(:expecting_value)
+      expect(instance.keyval_stack).to eq([1, 1])
+
+      next_token(instance, '72.0', 'FLOAT', TOMLFloat)
+      expect(instance.state).to eq(:default)
+      expect(instance.keyval_stack).to eq([1, 0])
+
+      next_token(instance, '}', 'RACCOLADE')
+      expect(instance.state).to eq(:default)
+      expect(instance.keyval_stack).to eq([0])
+    end
+
+    it 'should recognize nested aggregates' do
+      source = "key = { a = [1, [2]], b = { 'c' = 3 }}"
+      # TOS     0   1 0 0 1 222 33200 0 1 0 0   1 0 0
+      # TOS-1   -   - 1 1 1 111 11111 1 1 1 1   1 1 1
+      # TOS-2                             1 1   1 1
+      instance = TOMLTokenizer.new(source)
+      next_token(instance, 'key', 'UNQUOTED-KEY', UnquotedKey)
+      expect(instance.state).to eq(:default)
+
+      next_token(instance, '=', 'EQUAL')
+      expect(instance.state).to eq(:expecting_value)
+      expect(instance.keyval_stack).to eq([1])
+
+      next_token(instance, '{', 'LACCOLADE')
+      expect(instance.state).to eq(:default)
+      expect(instance.keyval_stack).to eq([1, 0])
+
+      next_token(instance, 'a', 'UNQUOTED-KEY', UnquotedKey)
+      expect(instance.state).to eq(:default)
+      expect(instance.keyval_stack).to eq([1, 0])
+
+      next_token(instance, '=', 'EQUAL')
+      expect(instance.state).to eq(:expecting_value)
+      expect(instance.keyval_stack).to eq([1, 1])
+
+      next_token(instance, '[', 'LBRACKET')
+      expect(instance.state).to eq(:expecting_value)
+      expect(instance.keyval_stack).to eq([1, 2])
+
+      next_token(instance, '1', 'INTEGER', TOMLInteger)
+      expect(instance.state).to eq(:expecting_value)
+      expect(instance.keyval_stack).to eq([1, 2])
+
+      next_token(instance, ',', 'COMMA')
+      expect(instance.state).to eq(:expecting_value)
+      expect(instance.keyval_stack).to eq([1, 2])
+
+      next_token(instance, '[', 'LBRACKET')
+      expect(instance.state).to eq(:expecting_value)
+      expect(instance.keyval_stack).to eq([1, 3])
+
+      next_token(instance, '2', 'INTEGER', TOMLInteger)
+      expect(instance.state).to eq(:expecting_value)
+      expect(instance.keyval_stack).to eq([1, 3])
+
+      next_token(instance, ']', 'RBRACKET')
+      expect(instance.state).to eq(:expecting_value)
+      expect(instance.keyval_stack).to eq([1, 2])
+
+      next_token(instance, ']', 'RBRACKET')
+      expect(instance.state).to eq(:default)
+      expect(instance.keyval_stack).to eq([1, 0])
+
+      next_token(instance, ',', 'COMMA')
+      expect(instance.state).to eq(:default)
+      expect(instance.keyval_stack).to eq([1, 0])
+
+      next_token(instance, 'b', 'UNQUOTED-KEY', UnquotedKey)
+      expect(instance.state).to eq(:default)
+      expect(instance.keyval_stack).to eq([1, 0])
+
+      next_token(instance, '=', 'EQUAL')
+      expect(instance.state).to eq(:expecting_value)
+      expect(instance.keyval_stack).to eq([1, 1])
+
+      next_token(instance, '{', 'LACCOLADE')
+      expect(instance.state).to eq(:default)
+      expect(instance.keyval_stack).to eq([1, 1, 0])
+
+      next_token(instance, "'c'", 'QUOTED-KEY', QuotedKey)
+      expect(instance.state).to eq(:default)
+      expect(instance.keyval_stack).to eq([1, 1, 0])
+
+      next_token(instance, '=', 'EQUAL')
+      expect(instance.state).to eq(:expecting_value)
+      expect(instance.keyval_stack).to eq([1, 1, 1])
+
+      next_token(instance, '3', 'INTEGER', TOMLInteger)
+      expect(instance.state).to eq(:default)
+      expect(instance.keyval_stack).to eq([1, 1, 0])
+
+      next_token(instance, '}', 'RACCOLADE')
+      expect(instance.state).to eq(:default)
+      expect(instance.keyval_stack).to eq([1, 0])
+
+      next_token(instance, '}', 'RACCOLADE')
+      expect(instance.state).to eq(:default)
+      expect(instance.keyval_stack).to eq([0])
+    end
   end # context
+
 end # describe
