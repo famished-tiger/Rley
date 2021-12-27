@@ -214,7 +214,7 @@ TOML
         ['+nan', Float::NAN],
         ['-nan', -Float::NAN]
       ]
-      cases.each do |(str, val)|
+      cases.each do |(str, _val)|
         subject.start_with(str)
         float_token = subject.tokens[0]
         expect(float_token).to be_kind_of(Rley::Lexical::Literal)

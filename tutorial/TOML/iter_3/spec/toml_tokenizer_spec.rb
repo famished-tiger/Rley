@@ -93,7 +93,6 @@ TOML
   end # context
 
   context 'Data type tokenization:' do
-
     it 'should recognize a boolean literal' do
       [['true', TrueClass], ['false', FalseClass]].each do |(str, klass)|
         subject.start_with(str)
@@ -139,7 +138,9 @@ TOML
         ['0xDEADBEEF',  0xdeadbeef],
         ['0xdeadbeef',  0xdeadbeef],
         ['0xdead_beef', 0xdeadbeef],
-        ['0x0', 0]
+        ['0x0',         0],
+        ['0x00',        0],
+        ['0x0000',      0]
       ]
       cases.each do |(str, val)|
         subject.start_with(str)
@@ -158,7 +159,10 @@ TOML
         # token,       lexeme
         ['0o01234567', 0o01234567],
         ['0o755',      0o755],
-        ['0o0',        0]
+        ['0o7_6_5',    0o765],
+        ['0o0',        0],
+        ['0o00',       0],
+        ['0o0000',     0]
       ]
       cases.each do |(str, val)|
         subject.start_with(str)
@@ -176,7 +180,10 @@ TOML
       cases = [
         # token,       lexeme
         ['0b11010110', 0b11010110],
-        ['0b0',        0]
+        ['0b1_0_1',    0b101],
+        ['0b0',        0],
+        ['0b00',       0],
+        ['0b0000',     0]
       ]
       cases.each do |(str, val)|
         subject.start_with(str)
@@ -240,7 +247,7 @@ TOML
         ['+nan', Float::NAN],
         ['-nan', -Float::NAN]
       ]
-      cases.each do |(str, val)|
+      cases.each do |(str, _val)|
         subject.start_with(str)
         subject.send(:equal_scanned)
         float_token = subject.tokens[0]
@@ -267,8 +274,8 @@ TOML
     it 'should recognize local date time' do
       cases = [
         # lexeme,       value
-        ['1979-05-27T07:32:00', Time.local(1979, 5, 27,7, 32, 0)],
-        ['1979-05-27T00:32:00.999999',  Time.local(1979, 5, 27,0, 32, 0, 999999)]
+        ['1979-05-27T07:32:00', Time.local(1979, 5, 27, 7, 32, 0)],
+        ['1979-05-27T00:32:00.999999', Time.local(1979, 5, 27, 0, 32, 0, 999999)]
       ]
       cases.each do |(str, val)|
         subject.start_with(str)
@@ -484,7 +491,7 @@ trimmed in raw strings.
         '""',
         "''"
       ]
-      cases  .each do |str|
+      cases.each do |str|
         subject.start_with(str)
         token = subject.tokens[0]
         expect(token).to be_kind_of(Rley::Lexical::Literal)
@@ -499,9 +506,9 @@ trimmed in raw strings.
       cases = [
         'physical.color',
         'physical.shape',
-        'site."google"',
+        'site."google"'
       ]
-      cases  .each do |str|
+      cases.each do |str|
         subject.start_with(str)
         (left, dot, right) = subject.tokens
         (left_lex, right_lex) = str.split('.')
@@ -567,7 +574,7 @@ trimmed in raw strings.
     end
 
     it 'should recognize array of literals' do
-      source = "ports = [ 8000, 8001, 8002 ]"
+      source = 'ports = [ 8000, 8001, 8002 ]'
       # TOS     0     1 2 2   2 2   2 2    0
       instance = TOMLTokenizer.new(source)
       next_token(instance, 'ports', 'UNQUOTED-KEY', UnquotedKey)
@@ -745,5 +752,4 @@ trimmed in raw strings.
       expect(instance.keyval_stack).to eq([0])
     end
   end # context
-
 end # describe

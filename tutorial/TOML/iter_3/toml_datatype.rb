@@ -36,17 +36,22 @@ class TOMLOffsetDateTime < TOMLDatatype
     unless aValue.is_a?(String)
       raise StandardError, "Expected a string value #{aValue}"
     end
+
     (date_literal, time_literal) = aValue.split(/[Tt ]/)
     (year, month, day) = date_literal.split('-').map(&:to_i)
     unless Date.valid_date?(year, month, day)
       raise StandardError, "Invalid date value yyyy-mm-dd: #{year}-#{month}-#{day}"
     end
-    offset =nil
-    time_literal.sub!(/(?:[Zz]|(?:[+-]\d\d:\d\d))$/) { |match| offset = match; '' }
+
+    offset = nil
+    time_literal.sub!(/(?:[Zz]|(?:[+-]\d\d:\d\d))$/) do |match|
+      offset = match
+      ''
+    end
     (hour, min, sec) = time_literal.split(':')
     (seconds, subsec) = sec.split('.')
     base = Time.new(year, month, day, hour.to_i, min.to_i, seconds.to_i, offset)
-    base + ("0.#{subsec}").to_f
+    base + "0.#{subsec}".to_f
   end
 end # class
 
@@ -62,6 +67,7 @@ class TOMLLocalDateTime < TOMLDatatype
     unless aValue.is_a?(String)
       raise StandardError, "Expected a string value #{aValue}"
     end
+
     (date_literal, time_literal) = aValue.split(/[Tt ]/)
     (year, month, day) = date_literal.split('-').map(&:to_i)
     unless Date.valid_date?(year, month, day)
@@ -69,7 +75,7 @@ class TOMLLocalDateTime < TOMLDatatype
     end
 
     (hour, min, sec) = time_literal.split(':')
-    (seconds, subsec) = sec.split('.')
+    (_seconds, subsec) = sec.split('.')
     us = subsec ? ("0.#{subsec}".to_f * 1000000) : nil
     Time.local(year, month, day, hour.to_i, min.to_i, sec.to_i, us)
   end
@@ -87,10 +93,12 @@ class TOMLLocalDate < TOMLDatatype
     unless aValue.is_a?(String)
       raise StandardError, "Expected a string value #{aValue}"
     end
+
     (year, month, day) = aValue.split('-').map(&:to_i)
     unless Date.valid_date?(year, month, day)
       raise StandardError, "Invalid date value yyyy-mm-dd: #{year}-#{month}-#{day}"
     end
+
     Date.new(year, month, day)
   end
 end # class
@@ -107,8 +115,9 @@ class TOMLLocalTime < TOMLDatatype
     unless aValue.is_a?(String)
       raise StandardError, "Expected a string value #{aValue}"
     end
+
     (hour, min, sec) = aValue.split(':')
-    (seconds, subsec) = sec.split('.')
+    (_seconds, subsec) = sec.split('.')
     us = subsec ? ("0.#{subsec}".to_f * 1000000) : nil
     nunc = Time.new
     Time.local(nunc.year, nunc.month, nunc.day, hour.to_i, min.to_i, sec.to_i, us)

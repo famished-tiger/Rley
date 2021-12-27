@@ -26,19 +26,19 @@ describe TOMLInteger do
   subject { TOMLBoolean.new('true') }
 
   context 'Initialization:' do
-    it "could be initialized with a decimal integer literal" do
+    it 'could be initialized with a decimal integer literal' do
       expect { TOMLInteger.new('42') }.not_to raise_error
     end
 
-    it "could be initialized with a hexadecimal integer literal" do
+    it 'could be initialized with a hexadecimal integer literal' do
       expect { TOMLInteger.new('0xDEADBEEF', :hex) }.not_to raise_error
     end
 
-    it "could be initialized with a octal integer literal" do
+    it 'could be initialized with an octal integer literal' do
       expect { TOMLInteger.new('0o01234567', :oct) }.not_to raise_error
     end
 
-    it "could be initialized with a binary integer literal" do
+    it 'could be initialized with a binary integer literal' do
       expect { TOMLInteger.new('0b11010110', :bin) }.not_to raise_error
     end
 
@@ -83,7 +83,7 @@ describe TOMLInteger do
         expect(instance.value).to eq(exp_value)
       end
     end
-    
+
     it 'should initialize its value with a binary integer literal' do
       cases = [
         ['0b11010110', 0b11010110],
@@ -93,6 +93,6 @@ describe TOMLInteger do
         instance = TOMLInteger.new(literal, :bin)
         expect(instance.value).to eq(exp_value)
       end
-    end    
+    end
   end # context
 end # describe

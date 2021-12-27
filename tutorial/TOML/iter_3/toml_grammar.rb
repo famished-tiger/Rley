@@ -24,6 +24,14 @@ require 'rley' # Load the Rley gem
 #   temp_targets = { cpu = 79.5, case = 72.0 }
 #
 #   [servers]
+#
+#   [servers.alpha]
+#   ip = "10.0.0.1"
+#   role = "frontend"
+#
+#   [servers.beta]
+#   ip = "10.0.0.2"
+#   role = "backend"
 builder = Rley::grammar_builder do
   # Define first the terminal symbols...
   add_terminals('COMMA', 'DOT', 'EQUAL', 'LBRACKET', 'RBRACKET', 'LACCOLADE', 'RACCOLADE')
@@ -61,10 +69,12 @@ builder = Rley::grammar_builder do
   rule 'date-time' => 'LOCAL-DATE'
   rule 'date-time' => 'LOCAL-TIME'
   rule 'table' => 'std-table'
+  rule 'table' => 'array-table'
   rule 'std-table' => 'LBRACKET key RBRACKET'
   rule 'inline-table' => 'LACCOLADE inline-table-keyvals RACCOLADE'
   rule 'inline-table-keyvals' => 'inline-table-keyvals COMMA keyval'
   rule 'inline-table-keyvals' => 'keyval'
+  rule 'array-table' => 'LBRACKET LBRACKET key RBRACKET RBRACKET'
 end
 
 # Let's build a TOML grammar object

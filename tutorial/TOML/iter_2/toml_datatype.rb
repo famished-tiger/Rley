@@ -47,7 +47,7 @@ class TOMLInteger < TOMLDatatype
 
   # @param text [String] Literal value: should be 'true' or 'false'
   def validated_value(text, format)
-    compacted = text.gsub(/_/, '')  # Remove underscores
+    compacted = text.gsub(/_/, '') # Remove underscores
     case format
     when :hex
       compacted.hex
@@ -67,15 +67,15 @@ class TOMLFloat < TOMLDatatype
   INFINITY_MIN = TOMLFloat.new(-Float::INFINITY).freeze
   NAN = TOMLFloat.new(Float::NAN).freeze
   NAN_MIN = TOMLFloat.new(-Float::NAN).freeze
-  
+
   protected
-  
+
   # @param text [String] Literal value: should be 'true' or 'false'
-  def validated_value(text, format)
-    compacted = text.gsub(/_/, '')  # Remove underscores
+  def validated_value(text, _format)
+    compacted = text.gsub(/_/, '') # Remove underscores
     compacted.to_f
-  end  
-end # class 
+  end
+end # class
 
 # Class implementing the TOML unquoted key data type.
 class UnquotedKey < TOMLDatatype

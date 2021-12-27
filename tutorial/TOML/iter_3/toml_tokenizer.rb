@@ -10,8 +10,8 @@ require_relative 'toml_datatype'
 #   - and transform them into a sequence of token objects.
 class TOMLTokenizer
   PATT_BOOLEAN = /true|false/.freeze
-  PATT_CHAR_SINGLE_KEY = /[,\.=\[\]\}]/.freeze # Single delimiter or separator character
-  PATT_CHAR_SINGLE_VAL = /[,\[\]\{]/.freeze # Single delimiter or separator character
+  PATT_CHAR_SINGLE_KEY = /[,.=\[\]}]/.freeze # Single delimiter or separator character
+  PATT_CHAR_SINGLE_VAL = /[,\[\]{]/.freeze # Single delimiter or separator character
   PATT_COMMENT = /#[^\r\n]*/.freeze
   PATT_FLOAT = /[-+]? # Optional sign
     (?:0|(?:[1-9](?:(?:_\d)|\d)*)) # Integer part
@@ -82,7 +82,7 @@ class TOMLTokenizer
   # @param source [String] Lox text to tokenize.
   def initialize(source = nil)
     reset
-    input = source ? source : ''
+    input = source || ''
     @scanner = StringScanner.new(input)
   end
 
@@ -99,7 +99,8 @@ class TOMLTokenizer
   # :expecting_value # expecting a value to associate with a key
   # :multiline # Processing a multiline string
   def state
-    return :expecting_value if @state == :default && @keyval_stack.last > 0
+    return :expecting_value if @state == :default && expecting_value?
+
     @state
   end
 
@@ -124,7 +125,7 @@ class TOMLTokenizer
     @line_start = 0
   end
 
-  # rubocop: disable Lint/DuplicateBranch
+  # rubocop: disable Metrics/MethodLength
   def _next_token
     token = nil
 
@@ -132,7 +133,7 @@ class TOMLTokenizer
     until scanner.eos? || token
       nl_found = scanner.skip(PATT_NEWLINE)
       if nl_found
-        next_line
+        next_line_scanned
         next
       end
 
@@ -169,6 +170,7 @@ class TOMLTokenizer
             # Start of string detected...
             string_token = begin_string_token(lexeme, :string)
             next if state == :multiline
+
             update_keyval_state(string_token)
             string_token
           elsif (lexeme = scanner.scan(PATT_CHAR_SINGLE_VAL))
@@ -204,19 +206,23 @@ class TOMLTokenizer
         when :multiline
           add_next_line
           next if @state == :multiline
+
           string_token = build_multiline_string
           update_keyval_state(string_token)
           string_token
       end # case state
     end # until
 
-    unterminated(@string_start.line , @string_start.column) if state == :multiline
+    unterminated(@string_start.line, @string_start.column) if state == :multiline
     token
   end
-  # rubocop: enable Lint/DuplicateBranch
+  # rubocop: enable Metrics/MethodLength
 
-  def expecting_value
-    @keyval_stack.last > 0
+  # Is the tokenizer expecting a data value?
+  # ToS keyval_stack == 0 => false (:default state)
+  # ToS keyval_stack > 0 => true (:expecting_value state)
+  def expecting_value?
+    @keyval_stack.last.positive?
   end
 
   def build_token(aSymbolName, aLexeme)
@@ -225,7 +231,6 @@ class TOMLTokenizer
       col = scanner.pos - lex_length - @line_start + 1
       pos = Rley::Lexical::Position.new(@lineno, col)
       token = Rley::Lexical::Token.new(aLexeme.dup, aSymbolName, pos)
-
     rescue StandardError => e
       puts "Failing with '#{aSymbolName}' and '#{aLexeme}'"
       raise e
@@ -276,7 +281,7 @@ class TOMLTokenizer
     when "'"
       literal = scanner.scan(/[^']*'/)
       unterminated(line, column_start) unless literal
-      lexeme = scanner.string[(@scan_pos-1)..scanner.pos - 1]
+      lexeme = scanner.string[(@scan_pos - 1)..scanner.pos - 1]
       if token_type == :key
         token_kind = 'QUOTED-KEY'
         token_value = QuotedKey.new(literal[0..-2])
@@ -290,7 +295,7 @@ class TOMLTokenizer
       literal = scanner.scan(/(?:[^"]|(?:(?<=\\)"))*"/)
       unterminated(line, column_start) unless literal
       raw_value = literal[0..-2]
-      lexeme = scanner.string[(@scan_pos-1)..scanner.pos - 1]
+      lexeme = scanner.string[(@scan_pos - 1)..scanner.pos - 1]
       if token_type == :key
         token_kind = 'QUOTED-KEY'
         token_value = QuotedKey.new(unescape(raw_value))
@@ -306,7 +311,7 @@ class TOMLTokenizer
       if literal =~ /'''$/
         # ... single-line string
         string_value = TOMLString.new(literal[0..-4])
-        lexeme = scanner.string[(@scan_pos-3)..scanner.pos - 1]
+        lexeme = scanner.string[(@scan_pos - 3)..scanner.pos - 1]
         Rley::Lexical::Literal.new(string_value, lexeme, 'STRING', @string_start)
       else
         # ... multi-line lliteral string
@@ -320,7 +325,7 @@ class TOMLTokenizer
       if literal.slice!(/"""$/)
         # ... single-line string
         string_value = TOMLString.new(unescape(literal))
-        lexeme = scanner.string[(@scan_pos-3)..scanner.pos - 1]
+        lexeme = scanner.string[(@scan_pos - 3)..scanner.pos - 1]
         Rley::Lexical::Literal.new(string_value, lexeme, 'STRING', @string_start)
       else
         # ... multi-line literal string
@@ -371,6 +376,7 @@ class TOMLTokenizer
           @trimming = true
         end
         return if @trimming && literal.empty?
+
         if @trimming
           @multilines << unescape(literal)
         else
@@ -381,39 +387,40 @@ class TOMLTokenizer
   end
 
   def build_multiline_string
-    string_value = TOMLString.new(@multilines.join(''))
-    lexeme = scanner.string[(@scan_pos-3)..scanner.pos - 1]
+    string_value = TOMLString.new(@multilines.join)
+    lexeme = scanner.string[(@scan_pos - 3)..scanner.pos - 1]
     Rley::Lexical::Literal.new(string_value, lexeme, 'STRING', @string_start)
   end
 
-  def unterminated(line, col)
+  def unterminated(_line, _col)
     raise ScanError, "#{error_prefix}: Unterminated string."
   end
 
   def unescape(aString)
-    result = aString.gsub(PATT_STRING_ESCAPE) do |match|
+    aString.gsub(PATT_STRING_ESCAPE) do |match|
       match.slice!(0)
       case match[0]
       when ?u
         if match.length < 5
           raise ScanError, "#{error_prefix}: escape sequence \\#{match} must have exactly 4 hexdigits."
         end
+
         [match[1..-1].hex].pack('U') # Ugly: conversion from codepoint to character
       when ?U
         if match.length < 9
           raise ScanError, "#{error_prefix}: escape sequence \\#{match} must have exactly 8 hexdigits."
         end
+
         [match[1..-1].hex].pack('U') # Ugly: conversion from codepoint to character
       else
         ch = @@escape_chars[match[0]]
         if ch.nil?
           raise ScanError, "#{error_prefix}: Reserved escape code \\#{match}."
         end
+
         ch
       end
     end
-
-    result
   end
 
   def update_keyval_state(aToken)
@@ -435,21 +442,26 @@ class TOMLTokenizer
     end
   end
 
-  def literal_scanned()
+  # Event: a data literal detected.
+  def literal_scanned
     @keyval_stack[-1] = 0 if keyval_stack[-1] == 1
   end
 
-  def equal_scanned()
+  # Event: an equal sign '=' detected.
+  # This forces a transition from :default state to :expecting_value state
+  def equal_scanned
     @keyval_stack[-1] = 1
   end
 
-  def lbracket_scanned()
+  # Event: an opening square bracket '[' detected.
+  def lbracket_scanned
     @keyval_stack[-1] += 1 if state == :expecting_value
   end
 
-  def rbracket_scanned()
+  # Event: a closing square bracket ']' detected.
+  def rbracket_scanned
     return unless state == :expecting_value
-    
+
     if @keyval_stack.last == 2
       keyval_stack[-1] = 0
     else
@@ -457,11 +469,13 @@ class TOMLTokenizer
     end
   end
 
-  def laccolade_scanned()
+  # Event: an opening curly accolade '{' detected.
+  def laccolade_scanned
     @keyval_stack.push(0)
   end
 
-  def raccolade_scanned()
+  # Event: a closing curly accolade '}' detected.
+  def raccolade_scanned
     @keyval_stack.pop
     if @keyval_stack.last == 2
       keyval_stack[-1] = 0
@@ -470,7 +484,8 @@ class TOMLTokenizer
     end
   end
 
-  def next_line
+  # Event: next line detected.
+  def next_line_scanned
     @lineno += 1
     @line_start = scanner.pos
   end

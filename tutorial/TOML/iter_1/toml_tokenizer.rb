@@ -9,12 +9,16 @@ require_relative 'toml_datatype'
 #   - read characters from input string ...
 #   - and transform them into a sequence of token objects.
 class TOMLTokenizer
+  # rubocop: disable Style/RedundantRegexpCharacterClass
+
   PATT_BOOLEAN = /true|false/.freeze
   PATT_COMMENT = /#[^\r\n]*/.freeze
   PATT_NEWLINE = /(?:\r\n)|\r|\n/.freeze
   PATT_SINGLE_CHAR = /[=]/.freeze # Single delimiter or separator character
   PATT_UNQUOTED_KEY = /[A-Za-z0-9\-_]+/.freeze
   PATT_WHITESPACE = /[ \t\f]+/.freeze
+  # rubocop: enable Style/RedundantRegexpCharacterClass
+
   # @return [StringScanner] Low-level input scanner
   attr_reader(:scanner)
 

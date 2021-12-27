@@ -25,19 +25,19 @@ describe TOMLInteger do
   subject { TOMLBoolean.new('true') }
 
   context 'Initialization:' do
-    it "could be initialized with a decimal integer literal" do
+    it 'could be initialized with a decimal integer literal' do
       expect { TOMLInteger.new('42') }.not_to raise_error
     end
 
-    it "could be initialized with a hexadecimal integer literal" do
+    it 'could be initialized with a hexadecimal integer literal' do
       expect { TOMLInteger.new('0xDEADBEEF', :hex) }.not_to raise_error
     end
 
-    it "could be initialized with a octal integer literal" do
+    it 'could be initialized with a octal integer literal' do
       expect { TOMLInteger.new('0o01234567', :oct) }.not_to raise_error
     end
 
-    it "could be initialized with a binary integer literal" do
+    it 'could be initialized with a binary integer literal' do
       expect { TOMLInteger.new('0b11010110', :bin) }.not_to raise_error
     end
 
@@ -82,7 +82,7 @@ describe TOMLInteger do
         expect(instance.value).to eq(exp_value)
       end
     end
-    
+
     it 'should initialize its value with a binary integer literal' do
       cases = [
         ['0b11010110', 0b11010110],
@@ -92,7 +92,7 @@ describe TOMLInteger do
         instance = TOMLInteger.new(literal, :bin)
         expect(instance.value).to eq(exp_value)
       end
-    end    
+    end
   end # context
 end # describe
 
@@ -207,27 +207,27 @@ end # describe
 describe TOMLLocalTime do
   subject { TOMLLocalTime.new('07:32:00') }
 
-    context 'Initialization:' do
-      it 'should be initialized with a string' do
-        # Case: round second
-        expect { TOMLLocalTime.new('07:32:00') }.not_to raise_error
+  context 'Initialization:' do
+    it 'should be initialized with a string' do
+      # Case: round second
+      expect { TOMLLocalTime.new('07:32:00') }.not_to raise_error
 
-        # Case: fractional part
-        expect { TOMLLocalTime.new('07:32:00.999999') }.not_to raise_error
-      end
+      # Case: fractional part
+      expect { TOMLLocalTime.new('07:32:00.999999') }.not_to raise_error
+    end
 
-      it 'should know its time value' do
-        expect(subject.value).to be_kind_of(Time)
-        expect(subject.hour).to eq(7)
-        expect(subject.min).to eq(32)
-        expect(subject.sec).to be_zero
+    it 'should know its time value' do
+      expect(subject.value).to be_kind_of(Time)
+      expect(subject.hour).to eq(7)
+      expect(subject.min).to eq(32)
+      expect(subject.sec).to be_zero
 
-        instance = TOMLLocalTime.new('07:32:00.999999')
-        expect(instance.value).to be_kind_of(Time)
-        expect(instance.hour).to eq(7)
-        expect(instance.min).to eq(32)
-        expect(instance.sec).to be_zero
-        expect(instance.usec).to eq(999999)
-      end
-    end # context
+      instance = TOMLLocalTime.new('07:32:00.999999')
+      expect(instance.value).to be_kind_of(Time)
+      expect(instance.hour).to eq(7)
+      expect(instance.min).to eq(32)
+      expect(instance.sec).to be_zero
+      expect(instance.usec).to eq(999999)
+    end
+  end # context
 end # describe

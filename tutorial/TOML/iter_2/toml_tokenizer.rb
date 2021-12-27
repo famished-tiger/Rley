@@ -10,7 +10,7 @@ require_relative 'toml_datatype'
 #   - and transform them into a sequence of token objects.
 class TOMLTokenizer
   PATT_BOOLEAN = /true|false/.freeze
-  PATT_CHAR_SINGLE = /[,=\[\]]/.freeze # Single delimiter or separator character  
+  PATT_CHAR_SINGLE = /[,=\[\]]/.freeze # Single delimiter or separator character
   PATT_COMMENT = /#[^\r\n]*/.freeze
   PATT_INT_DEC = /[-+]?(?:0|(?:[1-9](?:(?:_\d)|\d)*))(?!\.)/.freeze
   PATT_INT_HEX = /0x[0-9A-Fa-f](?:(?:_[0-9A-Fa-f])|[0-9A-Fa-f])*/.freeze
@@ -104,7 +104,6 @@ class TOMLTokenizer
 
   private
 
-  # rubocop: disable Lint/DuplicateBranch
   def _next_token
     token = nil
 
@@ -130,6 +129,7 @@ class TOMLTokenizer
             # Start of string detected...
             string_token = begin_string_token(lexeme)
             next if state == :multiline
+
             update_keyval_state(string_token)
             string_token
           elsif (lexeme = scanner.scan(PATT_CHAR_SINGLE))
@@ -159,19 +159,19 @@ class TOMLTokenizer
         when :multiline
           add_next_line
           next if @state == :multiline
+
           string_token = build_multiline_string
           update_keyval_state(string_token)
           string_token
       end # case state
     end # until
 
-    unterminated(@string_start.line , @string_start.column) if state == :multiline
+    unterminated(@string_start.line, @string_start.column) if state == :multiline
     token
   end
-  # rubocop: enable Lint/DuplicateBranch
 
   def expecting_value
-    @keyval_stack.last > 0
+    @keyval_stack.last.positive?
   end
 
   def build_token(aSymbolName, aLexeme)
@@ -180,7 +180,6 @@ class TOMLTokenizer
       col = scanner.pos - lex_length - @line_start + 1
       pos = Rley::Lexical::Position.new(@lineno, col)
       token = Rley::Lexical::Token.new(aLexeme.dup, aSymbolName, pos)
-
     rescue StandardError => e
       puts "Failing with '#{aSymbolName}' and '#{aLexeme}'"
       raise e
@@ -232,7 +231,7 @@ class TOMLTokenizer
       literal = scanner.scan(/[^']*'/)
       unterminated(line, column_start) unless literal
       string_value = TOMLString.new(literal[0..-2])
-      lexeme = scanner.string[(@scan_pos-1)..scanner.pos - 1]
+      lexeme = scanner.string[(@scan_pos - 1)..scanner.pos - 1]
       Rley::Lexical::Literal.new(string_value, lexeme, 'STRING', @string_start)
 
     when '"'
@@ -240,7 +239,7 @@ class TOMLTokenizer
       unterminated(line, column_start) unless literal
       raw_value = literal[0..-2]
       string_value = TOMLString.new(unescape(raw_value))
-      lexeme = scanner.string[(@scan_pos-1)..scanner.pos - 1]
+      lexeme = scanner.string[(@scan_pos - 1)..scanner.pos - 1]
       Rley::Lexical::Literal.new(string_value, lexeme, 'STRING', @string_start)
 
     when "'''"
@@ -249,7 +248,7 @@ class TOMLTokenizer
       if literal =~ /'''$/
         # ... single-line string
         string_value = TOMLString.new(literal[0..-4])
-        lexeme = scanner.string[(@scan_pos-3)..scanner.pos - 1]
+        lexeme = scanner.string[(@scan_pos - 3)..scanner.pos - 1]
         Rley::Lexical::Literal.new(string_value, lexeme, 'STRING', @string_start)
       else
         # ... multi-line lliteral string
@@ -263,7 +262,7 @@ class TOMLTokenizer
       if literal.slice!(/"""$/)
         # ... single-line string
         string_value = TOMLString.new(unescape(literal))
-        lexeme = scanner.string[(@scan_pos-3)..scanner.pos - 1]
+        lexeme = scanner.string[(@scan_pos - 3)..scanner.pos - 1]
         Rley::Lexical::Literal.new(string_value, lexeme, 'STRING', @string_start)
       else
         # ... multi-line literal string
@@ -314,6 +313,7 @@ class TOMLTokenizer
           @trimming = true
         end
         return if @trimming && literal.empty?
+
         if @trimming
           @multilines << unescape(literal)
         else
@@ -324,39 +324,40 @@ class TOMLTokenizer
   end
 
   def build_multiline_string
-    string_value = TOMLString.new(@multilines.join(''))
-    lexeme = scanner.string[(@scan_pos-3)..scanner.pos - 1]
+    string_value = TOMLString.new(@multilines.join)
+    lexeme = scanner.string[(@scan_pos - 3)..scanner.pos - 1]
     Rley::Lexical::Literal.new(string_value, lexeme, 'STRING', @string_start)
   end
 
-  def unterminated(line, col)
+  def unterminated(_line, _col)
     raise ScanError, "#{error_prefix}: Unterminated string."
   end
 
   def unescape(aString)
-    result = aString.gsub(PATT_STRING_ESCAPE) do |match|
+    aString.gsub(PATT_STRING_ESCAPE) do |match|
       match.slice!(0)
       case match[0]
       when ?u
         if match.length < 5
           raise ScanError, "#{error_prefix}: escape sequence \\#{match} must have exactly 4 hexdigits."
         end
+
         [match[1..-1].hex].pack('U') # Ugly: conversion from codepoint to character
       when ?U
         if match.length < 9
           raise ScanError, "#{error_prefix}: escape sequence \\#{match} must have exactly 8 hexdigits."
         end
+
         [match[1..-1].hex].pack('U') # Ugly: conversion from codepoint to character
       else
         ch = @@escape_chars[match[0]]
         if ch.nil?
           raise ScanError, "#{error_prefix}: Reserved escape code \\#{match}."
         end
+
         ch
       end
     end
-
-    result
   end
 
   def update_keyval_state(aToken)
@@ -374,19 +375,19 @@ class TOMLTokenizer
     end
   end
 
-  def literal_scanned()
+  def literal_scanned
     @keyval_stack[-1] = 0 if keyval_stack[-1] == 1
   end
 
-  def equal_scanned()
+  def equal_scanned
     @keyval_stack[-1] = 1
   end
 
-  def lbracket_scanned()
+  def lbracket_scanned
     @keyval_stack[-1] += 1
   end
 
-  def rbracket_scanned()
+  def rbracket_scanned
     if @keyval_stack.last == 2
       keyval_stack[-1] = 0
     else
@@ -402,6 +403,5 @@ class TOMLTokenizer
   def error_prefix
     "Error [#{@string_start.line}:#{@string_start.column}]:"
   end
-
 end # class
 # End of file

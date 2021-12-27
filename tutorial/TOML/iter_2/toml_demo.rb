@@ -10,7 +10,7 @@ toml_doc = <<-TOML
 
   [owner]
   name = "Thomas O'Malley"
-  
+
   [database]
   enabled = true
   ports = [ 8000, 8001, 8002 ]
