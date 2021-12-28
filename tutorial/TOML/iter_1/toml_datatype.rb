@@ -7,12 +7,12 @@ class TOMLDatatype
   # @return [Object] The Ruby representation
   attr_reader :value
 
-  # Constructor. Initialize a Lox value from one of its built-in data type.
+  # Constructor. Initialize a TOML value from one of its built-in data type.
   def initialize(aValue)
     @value = validated_value(aValue)
   end
 
-  # Method called from Lox to obtain the text representation of the boolean.
+  # Method called from TOML to obtain the text representation of the boolean.
   # @return [String]
   def to_str
     value.to_s # Default implementation...
@@ -37,7 +37,7 @@ end # class
 
 # Class implementing the TOML unquoted key data type.
 class UnquotedKey < TOMLDatatype
-  # Method called from Lox to obtain the text representation of the object.
+  # Method called from TOML to obtain the text representation of the object.
   # @return [String]
   def to_str
     value
@@ -56,7 +56,7 @@ end # class
 
 # Class implementing the TOML string data type.
 class TOMLString < TOMLDatatype
-  # Method called from Lox to obtain the text representation of the object.
+  # Method called from TOML to obtain the text representation of the object.
   # @return [String]
   def to_str
     value

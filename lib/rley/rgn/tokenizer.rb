@@ -41,15 +41,15 @@ module Rley
         match_closest repeat
       ].map { |x| [x, x] }.to_h
 
-      # Constructor. Initialize a tokenizer for Lox input.
-      # @param source [String] Lox text to tokenize.
+      # Constructor. Initialize a tokenizer for RGN input.
+      # @param source [String] RGN text to tokenize.
       def initialize(source = nil)
         @scanner = StringScanner.new('')
         start_with(source) if source
       end
 
       # Reset the tokenizer and make the given text, the current input.
-      # @param source [String] Lox text to tokenize.
+      # @param source [String] RGN text to tokenize.
       def start_with(source)
         @scanner.string = source
         @lineno = 1

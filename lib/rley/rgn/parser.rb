@@ -35,9 +35,9 @@ module Rley
         @engine.use_grammar(Rley::RGN::RGNGrammar)
       end
 
-      # Parse the given Lox program into a parse tree.
-      # @param source [String] Lox program to parse
-      # @return [Rley::ParseTree] A parse tree equivalent to the Lox input.
+      # Parse the given RGN snippet into a parse tree.
+      # @param source [String] Snippet to parse
+      # @return [Rley::ParseTree] A parse tree equivalent to the RGN input.
       def parse(source)
         lexer = Tokenizer.new(source)
         result = engine.parse(lexer.tokens)

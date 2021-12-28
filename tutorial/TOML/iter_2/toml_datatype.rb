@@ -7,7 +7,7 @@ class TOMLDatatype
   # @return [Object] The Ruby representation
   attr_reader :value
 
-  # Constructor. Initialize a Lox value from one of its built-in data type.
+  # Constructor. Initialize a TOML value from one of its built-in data type.
   def initialize(aValue, aFormat = nil)
     @value = validated_value(aValue, aFormat)
   end

@@ -36,8 +36,8 @@ class TOMLTokenizer
     '=' => 'EQUAL'
   }.freeze
 
-  # Constructor. Initialize a tokenizer for Lox input.
-  # @param source [String] Lox text to tokenize.
+  # Constructor. Initialize a tokenizer for TOML input.
+  # @param source [String] TOML text to tokenize.
   def initialize(source = nil)
     @scanner = StringScanner.new('')
     @state = :default
@@ -45,7 +45,7 @@ class TOMLTokenizer
   end
 
   # Reset the tokenizer and make the given text, the current input.
-  # @param source [String] Lox text to tokenize.
+  # @param source [String] TOML text to tokenize.
   def start_with(source)
     @scanner.string = source
     @state = :default

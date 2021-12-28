@@ -27,13 +27,13 @@ class TOMLParser
       cfg.diagnose = true
     end
 
-    # Step 1. Load Lox grammar
+    # Step 1. Load TOML grammar
     @engine.use_grammar(TOMLGrammar)
   end
 
-  # Parse the given Lox program into a parse tree.
-  # @param source [String] Lox program to parse
-  # @return [Rley::ParseTree] A parse tree equivalent to the Lox input.
+  # Parse the given TOML file into a parse tree.
+  # @param source [String] TOML source to parse
+  # @return [Rley::ParseTree] A parse tree equivalent to the TOML input.
   def parse(source)
     tokenizer = TOMLTokenizer.new(source)
     result = engine.parse(tokenizer.tokens)

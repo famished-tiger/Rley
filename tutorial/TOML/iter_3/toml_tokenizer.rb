@@ -78,8 +78,8 @@ class TOMLTokenizer
     ?\ => ?\
   }.freeze
 
-  # Constructor. Initialize a tokenizer for Lox input.
-  # @param source [String] Lox text to tokenize.
+  # Constructor. Initialize a tokenizer for TOML input.
+  # @param source [String] TOML text to tokenize.
   def initialize(source = nil)
     reset
     input = source || ''
@@ -87,7 +87,7 @@ class TOMLTokenizer
   end
 
   # Reset the tokenizer and make the given text, the current input.
-  # @param source [String] Lox text to tokenize.
+  # @param source [String] TOML text to tokenize.
   def start_with(source)
     reset
     @scanner.string = source

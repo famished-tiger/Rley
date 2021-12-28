@@ -36,7 +36,7 @@ module Rley
 
       # Abstract method (must be overriden in subclasses).
       # Part of the 'visitee' role in Visitor design pattern.
-      # @param _visitor [LoxxyTreeVisitor] the visitor
+      # @param _visitor [ASTVisitor] the visitor
       def accept(_visitor)
         raise NotImplementedError
       end
