@@ -29,25 +29,25 @@ builder = Rley::grammar_builder do
 
   # ... then with syntax rules
   # Reminder: first found rule is considered to be the top-level rule
-  rule 'toml' => 'expr-list'
+  rule('toml' => 'expr-list')
 
-  rule 'expr-list' => 'expr-list expression'
-  rule 'expr-list' => ''
-  rule 'expression' => 'keyval'
-  rule 'expression' => 'table'
-  rule 'keyval' => 'key EQUAL val'
-  rule 'key' => 'UNQUOTED-KEY'
-  rule 'val' => 'STRING'
-  rule 'val' => 'BOOLEAN'
-  rule 'val' => 'array'
-  rule 'val' => 'FLOAT'
-  rule 'val' => 'INTEGER'
-  rule 'array' => 'LBRACKET array-values RBRACKET'
-  rule 'array' => 'LBRACKET array-values COMMA RBRACKET'
-  rule 'array-values' => 'array-values COMMA val'
-  rule 'array-values' => 'val'
-  rule 'table' => 'std-table'
-  rule 'std-table' => 'LBRACKET key RBRACKET'
+  rule('expr-list' => 'expr-list expression')
+  rule('expr-list' => '')
+  rule('expression' => 'keyval')
+  rule('expression' => 'table')
+  rule('keyval' => 'key EQUAL val')
+  rule('key' => 'UNQUOTED-KEY')
+  rule('val' => 'STRING')
+  rule('val' => 'BOOLEAN')
+  rule('val' => 'array')
+  rule('val' => 'FLOAT')
+  rule('val' => 'INTEGER')
+  rule('array' => 'LBRACKET array-values RBRACKET')
+  rule('array' => 'LBRACKET array-values COMMA RBRACKET')
+  rule('array-values' => 'array-values COMMA val')
+  rule('array-values' => 'val')
+  rule('table' => 'std-table')
+  rule('std-table' => 'LBRACKET key RBRACKET')
 end
 
 # Let's build a TOML grammar object
