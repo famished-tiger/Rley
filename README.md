@@ -458,5 +458,5 @@ standard parser textbooks. Here are a few references (and links) of papers on GF
 
 Copyright
 ---------
-Copyright (c) 2014-2020, Dimitri Geshef.  
+Copyright (c) 2014-2022, Dimitri Geshef.  
 __Rley__ is released under the MIT License see [LICENSE.txt](https://github.com/famished-tiger/Rley/blob/master/LICENSE.txt) for details.

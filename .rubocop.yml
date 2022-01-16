@@ -161,6 +161,9 @@ Lint/UnusedMethodArgument:
 Lint/UselessAccessModifier:
   Enabled: true
 
+Lint/UselessRuby2Keywords: # new in 1.23
+  Enabled: true
+
 Lint/Void:
   Enabled: false
 
@@ -325,6 +328,9 @@ Style/NumberedParametersLimit:
 
 Style/NumericLiterals:
   Enabled: false
+  
+Style/OpenStructUse: # new in 1.23
+  Enabled: true  
 
 Style/QuotedSymbols:
   Enabled: true
@@ -349,9 +355,9 @@ Style/RegexpLiteral:
 
 Style/PercentLiteralDelimiters:
   Enabled: false
-  
+
 Style/SelectByRegexp:
-  Enabled: true  
+  Enabled: true
 
 Style/StderrPuts:
   Enabled: false

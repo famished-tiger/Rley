@@ -4,7 +4,7 @@
 require 'rley' # Load the Rley gem
 
 ########################################
-# Iteration 3: define a grammar for a limited subset of TOML
+# Iteration 4: define a grammar for a limited subset of TOML
 # Objective: the grammar should support key-value pair of basic string values.
 # Names of grammar elements are based on the official TOML grammar
 # [TOML v.1.0.0 grammar](https://github.com/toml-lang/toml/blob/1.0.0/toml.abnf )
@@ -41,39 +41,37 @@ builder = Rley::grammar_builder do
 
   # ... then with syntax rules
   # Reminder: first found rule is considered to be the top-level rule
-  rule 'toml' => 'expr-list'
+  rule('toml' => 'expression*').tag 'toml'
 
-  rule 'expr-list' => 'expr-list expression'
-  rule 'expr-list' => ''
-  rule 'expression' => 'keyval'
-  rule 'expression' => 'table'
-  rule 'keyval' => 'key EQUAL val'
-  rule 'key' => 'simple-key'
-  rule 'key' => 'dotted-key'
-  rule 'simple-key' => 'QUOTED-KEY'
-  rule 'simple-key' => 'UNQUOTED-KEY'
-  rule 'dotted-key' => 'key DOT simple-key'
-  rule 'val' => 'STRING'
-  rule 'val' => 'BOOLEAN'
+  rule('expression' => 'keyval')
+  rule('expression' => 'table').tag 'table_expr'
+  rule('keyval' => 'key EQUAL val').tag 'keyval'
+  rule('key' => 'simple-key')
+  rule('key' => 'dotted-key').tag 'dotted_key'
+  rule('simple-key' => 'QUOTED-KEY').tag 'atomic_literal'
+  rule('simple-key' => 'UNQUOTED-KEY').tag 'atomic_literal'
+  rule('dotted-key' => 'key DOT simple-key').tag 'dkey_items'
+  rule('val' => 'STRING').tag 'atomic_literal'
+  rule('val' => 'BOOLEAN').tag 'atomic_literal'
   rule 'val' => 'array'
   rule 'val' => 'inline-table'
-  rule 'val' => 'FLOAT'
-  rule 'val' => 'INTEGER'
-  rule 'val' => 'date-time'
-  rule 'array' => 'LBRACKET array-values RBRACKET'
-  rule 'array' => 'LBRACKET array-values COMMA RBRACKET'
-  rule 'array-values' => 'array-values COMMA val'
-  rule 'array-values' => 'val'
+  rule('val' => 'FLOAT').tag 'atomic_literal'
+  rule('val' => 'INTEGER').tag 'atomic_literal'
+  rule('val' => 'date-time').tag 'atomic_literal'
+  rule('array' => 'LBRACKET array-values RBRACKET').tag 'array'
+  rule('array' => 'LBRACKET array-values COMMA RBRACKET').tag 'array'
+  rule('array-values' => 'array-values COMMA val').tag 'more_array_values'
+  rule('array-values' => 'val').tag 'one_array_value'
   rule 'date-time' => 'OFFSET-DATE-TIME'
   rule 'date-time' => 'LOCAL-DATE-TIME'
   rule 'date-time' => 'LOCAL-DATE'
   rule 'date-time' => 'LOCAL-TIME'
   rule 'table' => 'std-table'
   rule 'table' => 'array-table'
-  rule 'std-table' => 'LBRACKET key RBRACKET'
-  rule 'inline-table' => 'LACCOLADE inline-table-keyvals RACCOLADE'
-  rule 'inline-table-keyvals' => 'inline-table-keyvals COMMA keyval'
-  rule 'inline-table-keyvals' => 'keyval'
+  rule('std-table' => 'LBRACKET key RBRACKET').tag 'std_table'
+  rule('inline-table' => 'LACCOLADE inline-table-keyvals RACCOLADE').tag 'inline_table'
+  rule('inline-table-keyvals' => 'inline-table-keyvals COMMA keyval').tag 'more_keyval'
+  rule('inline-table-keyvals' => 'keyval').tag 'one_keyval'
   rule 'array-table' => 'LBRACKET LBRACKET key RBRACKET RBRACKET'
 end
 

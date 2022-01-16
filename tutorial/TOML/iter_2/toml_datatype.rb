@@ -12,6 +12,16 @@ class TOMLDatatype
     @value = validated_value(aValue, aFormat)
   end
 
+  def ==(other)
+    return true if equal?(other)
+
+    if other.kind_of?(TOMLDatatype)
+      value == other.value
+    else
+      value == other
+    end
+  end
+
   # Method to obtain the text representation of the boolean.
   # @return [String]
   def to_str
@@ -19,9 +29,9 @@ class TOMLDatatype
   end
 
   # Part of the 'visitee' role in Visitor design pattern.
-  # @param visitor [Ast::ASTVisitor] the visitor
+  # @param visitor [TOMLASTVisitor] the visitor
   def accept(visitor)
-    visitor.visit_builtin(self)
+    visitor.visit_data_value(self)
   end
 
   protected
@@ -83,6 +93,12 @@ class UnquotedKey < TOMLDatatype
   # @return [String]
   def to_str
     value
+  end
+
+  # Part of the 'visitee' role in Visitor design pattern.
+  # @param visitor [TOMLASTVisitor] the visitor
+  def accept(visitor)
+    visitor.visit_unquoted_key(self)
   end
 
   protected

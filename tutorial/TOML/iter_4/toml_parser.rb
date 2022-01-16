@@ -2,6 +2,7 @@
 
 require_relative 'toml_tokenizer'
 require_relative 'toml_grammar'
+require_relative 'toml_ast_builder'
 
 # A TOML parser that produce concrete parse trees.
 # Concrete parse trees are the default kind of parse tree
@@ -25,6 +26,7 @@ class TOMLParser
     # Create a Rley facade object
     @engine = Rley::Engine.new do |cfg|
       cfg.diagnose = true
+      cfg.repr_builder = TOMLASTBuilder # Parse result will be an AST
     end
 
     # Step 1. Load TOML grammar

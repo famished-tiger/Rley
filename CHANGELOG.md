@@ -1,3 +1,6 @@
+* [NEW] Folder `tutorial` contains code used in tutorial (in wiki)
+* [NEW] Folder `TOML\iter_1` contains code for first iteration
+
 ### 0.8.08 / 2021-10-31
 - Fixes in example files, Refactored module `Notation` renamed `to `RGN´
 

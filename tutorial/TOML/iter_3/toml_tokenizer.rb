@@ -56,6 +56,7 @@ class TOMLTokenizer
   attr_reader(:line_start)
 
   # Single special character tokens.
+  # @return [{Char => String}]
   @@lexeme2name = {
     ',' => 'COMMA',
     '.' => 'DOT',
@@ -271,6 +272,7 @@ class TOMLTokenizer
   end
 
   # precondition: current position at leading delimiter
+  # rubocop: disable Metrics/MethodLength
   def begin_string_token(delimiter, token_type)
     @scan_pos = scanner.pos
     line = @lineno
@@ -345,6 +347,7 @@ class TOMLTokenizer
       end
     end
   end
+  # rubocop: enable Metrics/MethodLength
 
   def add_next_line
     if @string_delimiter == "'''"

@@ -34,13 +34,127 @@ describe TOMLParser do
       blank_inputs.each do |input_string|
         ptree = subject.parse(input_string)
         root = ptree.root
-        expect(root).to be_kind_of(Rley::PTree::NonTerminalNode)
-        expect(root.symbol.name).to eq('toml')
-        expect(root.subnodes.size).to eq(1)
-        expect(root.subnodes[0]).to be_kind_of(Rley::PTree::NonTerminalNode)
-        expect(root.subnodes[0].symbol.name).to eq('expr-list')
-        expect(root.subnodes[0].subnodes).to be_empty
+        expect(root).to be_kind_of(TOMLTableNode)
+        expect(root.subnodes).to be_empty
       end
     end
   end # context
+
+  context 'Parsing simple keyval:' do
+    it 'should parse key - integer literal' do
+      source = 'key = -42'
+      ptree = subject.parse(source)
+      root = ptree.root
+      expect(root).to be_kind_of(TOMLTableNode)
+      expect(root.subnodes.size).to eq(1)
+      keyval = root.subnodes[0]
+      expect(keyval.key.value).to eq('key')
+      expect(keyval.val.value).to eq(-42)
+    end
+
+    it 'should parse key - date literal' do
+      source = 'key = 1915-11-25'
+      ptree = subject.parse(source)
+      root = ptree.root
+      expect(root).to be_kind_of(TOMLTableNode)
+      expect(root.subnodes.size).to eq(1)
+      keyval = root.subnodes[0]
+      expect(keyval.key.value).to eq('key')
+      expect(keyval.val.value.value.to_s).to eq('1915-11-25')
+    end
+  end
+
+  context 'Parsing tables:' do
+    it 'should parse a table section' do
+      source = <<-TOML
+      [database]
+      enabled = true
+      ip = "10.0.0.1"
+      TOML
+      ptree = subject.parse(source)
+      root = ptree.root
+      expect(root).to be_kind_of(TOMLTableNode)
+      expect(root.subnodes.size).to eq(1)
+      db_table = root['database']
+      expect(db_table).to be_kind_of(TOMLTableNode)
+      expect(db_table.subnodes.size).to eq(2)
+      expect(db_table['enabled'].value).to be_truthy
+      expect(db_table['ip'].value).to eq('10.0.0.1')
+    end
+
+    it 'should parse multiple table sections' do
+      source = <<-TOML
+        [owner]
+        name = "Tom Sawyer"
+        dob = 1909-05-27T07:32:00-08:00
+
+        [database]
+        enabled = true
+      TOML
+      ptree = subject.parse(source)
+      root = ptree.root
+      expect(root).to be_kind_of(TOMLTableNode)
+      expect(root.subnodes.size).to eq(2)
+
+      owner_table = root['owner']
+      expect(owner_table).to be_kind_of(TOMLTableNode)
+      expect(owner_table.subnodes.size).to eq(2)
+      expect(owner_table['name'].value).to eq('Tom Sawyer')
+      expect(owner_table['dob'].value).to be_kind_of(TOMLOffsetDateTime)
+
+      db_table = root['database']
+      expect(db_table).to be_kind_of(TOMLTableNode)
+      expect(db_table.subnodes.size).to eq(1)
+      expect(db_table['enabled'].value).to be_truthy
+    end
+
+    it 'should parse dotted keys' do
+      source = <<-TOML
+        name = "Orange"
+        physical.color = "orange"
+        physical.shape = "round"
+        site."google.com" = true
+      TOML
+      ptree = subject.parse(source)
+      root = ptree.root
+      expect(root).to be_kind_of(TOMLTableNode)
+      expect(root.subnodes.size).to eq(3)
+      expect(root['name'].value).to eq('Orange')
+
+      expect(root['physical']).to be_kind_of(TOMLTableNode)
+      physical = root['physical']
+      expect(physical['color'].value).to eq('orange')
+      expect(physical['shape'].value).to eq('round')
+
+      expect(root['site']).to be_kind_of(TOMLTableNode)
+      expect(root['site']['google.com'].value).to eq(true)
+    end
+
+    it 'should parse dotted key table' do
+      source = <<-TOML
+      [database]
+      enabled = true
+
+      [server.alpha]
+      ip = "10.0.0.1"
+      role = "frontend"
+      TOML
+      ptree = subject.parse(source)
+      root = ptree.root
+      expect(root).to be_kind_of(TOMLTableNode)
+      expect(root.subnodes.size).to eq(2)
+      db_table = root['database']
+      expect(db_table).to be_kind_of(TOMLTableNode)
+      expect(db_table.subnodes.size).to eq(1)
+      expect(db_table['enabled'].value).to be_truthy
+
+      srvr_table = root['server']
+      expect(srvr_table.subnodes.size).to eq(1)
+
+      alpha_table = srvr_table['alpha']
+      expect(alpha_table.subnodes.size).to eq(2)
+      expect(alpha_table['ip'].value).to eq('10.0.0.1')
+      expect(alpha_table['role'].value).to eq('frontend')
+    end
+  end
 end # describe
