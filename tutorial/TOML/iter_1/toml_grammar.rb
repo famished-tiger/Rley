@@ -22,15 +22,15 @@ builder = Rley::grammar_builder do
 
   # ... then with syntax rules
   # First found rule is considered to be the top-level rule
-  rule 'toml' => 'expr-list'
-  rule 'expr-list' => 'expr-list expression'
-  rule 'expr-list' => ''
-  rule 'expression' => 'keyval'
-  rule 'keyval' => 'key EQUAL val'
-  rule 'key' => 'UNQUOTED-KEY'
-  rule 'val' => 'STRING'
-  rule 'val' => 'BOOLEAN'
+  rule('toml' => 'expr-list')
+  rule('expr-list' => 'expr-list expression')
+  rule('expr-list' => '')
+  rule('expression' => 'keyval')
+  rule('keyval' => 'key EQUAL val')
+  rule('key' => 'UNQUOTED-KEY')
+  rule('val' => 'STRING')
+  rule('val' => 'BOOLEAN')
 end
 
 # Let's build a TOML grammar object
-TOMLGrammar = builder.grammar
+TOMLGrammar = builder.grammar.freeze

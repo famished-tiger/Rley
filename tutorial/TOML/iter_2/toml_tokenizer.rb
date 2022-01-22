@@ -23,7 +23,8 @@ class TOMLTokenizer
       |  (?:[eE][-+]?\d+))/x.freeze # or exponent part
   PATT_FLOAT_SPECIAL = /[-+]?(?:inf|nan)/.freeze
   PATT_NEWLINE = /(?:\r\n)|\r|\n/.freeze
-  PATT_STRING_DELIM = /(?:'(?:'')?)|(?:"(?:"")?)/.freeze
+  PATT_MULTI_LINE_STRING_DELIM = /(?:''')|(?:""")/.freeze
+  PATT_SINGLE_LINE_STRING_DELIM = /'|"/.freeze
   PATT_STRING_ESCAPE = /\\(?:[^Uu]|u[0-9A-Fa-f]{0,4}|U[0-9A-Fa-f]{0,8})/.freeze
   PATT_STRING_END_LITERAL = /(?:[^']|(?:'(?!''))|(?:''(?!')))*?(?:'''|$)/.freeze
   PATT_STRING_END_ML_BASIC = /(?:[^"\\]
@@ -38,11 +39,11 @@ class TOMLTokenizer
   # @return [StringScanner] Low-level input scanner
   attr_reader(:scanner)
 
-  # @return [Symbol] Current lexical state
+  # @return [Symbol] Current lexical state; One of { :default, :multiline }
   attr_reader(:state)
 
-  # Key track of whether the scanner expects a key or avalue
-  # This is necessary since the lexeme 1234 can be a naked key or an integer
+  # Key track of whether the scanner expects a key or a value
+  # This is necessary since the lexeme 1234 can be a bare key or an integer
   # @return [Array<Integer>]
   attr_accessor(:keyval_stack)
 
@@ -125,11 +126,17 @@ class TOMLTokenizer
             # Start of comment detected...
             scanner.skip(PATT_COMMENT) # Skip line comment
             next
-          elsif (lexeme = scanner.scan(PATT_STRING_DELIM))
-            # Start of string detected...
-            string_token = begin_string_token(lexeme)
+          elsif (lexeme = scanner.scan(PATT_MULTI_LINE_STRING_DELIM))
+            # Start of multi-line string detected...
+            string_token = begin_ml_string_token(lexeme)
             next if state == :multiline
 
+            update_keyval_state(string_token)
+            string_token
+
+          elsif (lexeme = scanner.scan(PATT_SINGLE_LINE_STRING_DELIM))
+            # Start of single line string detected...
+            string_token = single_line_string_token(lexeme)
             update_keyval_state(string_token)
             string_token
           elsif (lexeme = scanner.scan(PATT_CHAR_SINGLE))
@@ -219,29 +226,29 @@ class TOMLTokenizer
     literal
   end
 
+  def single_line_string_token(delimiter)
+    @scan_pos = scanner.pos
+    line = @lineno
+    column_start = @scan_pos - @line_start
+    @string_start = Rley::Lexical::Position.new(line, column_start)
+    remainder_pattern = delimiter == "'" ? /[^']*'/ : /(?:[^"]|(?:(?<=\\)"))*"/
+
+    literal = scanner.scan(remainder_pattern)
+    unterminated(line, column_start) unless literal
+    raw_value = delimiter == "'" ? literal[0..-2] : unescape(literal[0..-2])
+    string_value = TOMLString.new(raw_value)
+    lexeme = scanner.string[(@scan_pos - 1)..scanner.pos - 1]
+    Rley::Lexical::Literal.new(string_value, lexeme, 'STRING', @string_start)
+  end
+
   # precondition: current position at leading delimiter
-  def begin_string_token(delimiter)
+  def begin_ml_string_token(delimiter)
     @scan_pos = scanner.pos
     line = @lineno
     column_start = @scan_pos - @line_start
     @string_start = Rley::Lexical::Position.new(line, column_start)
 
     case delimiter
-    when "'"
-      literal = scanner.scan(/[^']*'/)
-      unterminated(line, column_start) unless literal
-      string_value = TOMLString.new(literal[0..-2])
-      lexeme = scanner.string[(@scan_pos - 1)..scanner.pos - 1]
-      Rley::Lexical::Literal.new(string_value, lexeme, 'STRING', @string_start)
-
-    when '"'
-      literal = scanner.scan(/(?:[^"]|(?:(?<=\\)"))*"/)
-      unterminated(line, column_start) unless literal
-      raw_value = literal[0..-2]
-      string_value = TOMLString.new(unescape(raw_value))
-      lexeme = scanner.string[(@scan_pos - 1)..scanner.pos - 1]
-      Rley::Lexical::Literal.new(string_value, lexeme, 'STRING', @string_start)
-
     when "'''"
       literal = scanner.scan(PATT_STRING_END_LITERAL)
       unterminated(line, column_start) unless literal
@@ -265,7 +272,7 @@ class TOMLTokenizer
         lexeme = scanner.string[(@scan_pos - 3)..scanner.pos - 1]
         Rley::Lexical::Literal.new(string_value, lexeme, 'STRING', @string_start)
       else
-        # ... multi-line literal string
+        # ... multi-line basic string
         @state = :multiline
         @string_delimiter = delimiter
         if literal.empty?

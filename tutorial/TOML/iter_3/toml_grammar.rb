@@ -41,41 +41,41 @@ builder = Rley::grammar_builder do
 
   # ... then with syntax rules
   # Reminder: first found rule is considered to be the top-level rule
-  rule 'toml' => 'expr-list'
+  rule('toml' => 'expr-list')
 
-  rule 'expr-list' => 'expr-list expression'
-  rule 'expr-list' => ''
-  rule 'expression' => 'keyval'
-  rule 'expression' => 'table'
-  rule 'keyval' => 'key EQUAL val'
-  rule 'key' => 'simple-key'
-  rule 'key' => 'dotted-key'
-  rule 'simple-key' => 'QUOTED-KEY'
-  rule 'simple-key' => 'UNQUOTED-KEY'
-  rule 'dotted-key' => 'key DOT simple-key'
-  rule 'val' => 'STRING'
-  rule 'val' => 'BOOLEAN'
-  rule 'val' => 'array'
-  rule 'val' => 'inline-table'
-  rule 'val' => 'FLOAT'
-  rule 'val' => 'INTEGER'
-  rule 'val' => 'date-time'
-  rule 'array' => 'LBRACKET array-values RBRACKET'
-  rule 'array' => 'LBRACKET array-values COMMA RBRACKET'
-  rule 'array-values' => 'array-values COMMA val'
-  rule 'array-values' => 'val'
-  rule 'date-time' => 'OFFSET-DATE-TIME'
-  rule 'date-time' => 'LOCAL-DATE-TIME'
-  rule 'date-time' => 'LOCAL-DATE'
-  rule 'date-time' => 'LOCAL-TIME'
-  rule 'table' => 'std-table'
-  rule 'table' => 'array-table'
-  rule 'std-table' => 'LBRACKET key RBRACKET'
-  rule 'inline-table' => 'LACCOLADE inline-table-keyvals RACCOLADE'
-  rule 'inline-table-keyvals' => 'inline-table-keyvals COMMA keyval'
-  rule 'inline-table-keyvals' => 'keyval'
-  rule 'array-table' => 'LBRACKET LBRACKET key RBRACKET RBRACKET'
+  rule('expr-list' => 'expr-list expression')
+  rule('expr-list' => '')
+  rule('expression' => 'keyval')
+  rule('expression' => 'table')
+  rule('keyval' => 'key EQUAL val')
+  rule('key' => 'simple-key')
+  rule('key' => 'dotted-key')
+  rule('simple-key' => 'QUOTED-KEY')
+  rule('simple-key' => 'UNQUOTED-KEY')
+  rule('dotted-key' => 'key DOT simple-key')
+  rule('val' => 'STRING')
+  rule('val' => 'BOOLEAN')
+  rule('val' => 'array')
+  rule('val' => 'inline-table')
+  rule('val' => 'FLOAT')
+  rule('val' => 'INTEGER')
+  rule('val' => 'date-time')
+  rule('array' => 'LBRACKET array-values RBRACKET')
+  rule('array' => 'LBRACKET array-values COMMA RBRACKET')
+  rule('array-values' => 'array-values COMMA val')
+  rule('array-values' => 'val')
+  rule('date-time' => 'OFFSET-DATE-TIME')
+  rule('date-time' => 'LOCAL-DATE-TIME')
+  rule('date-time' => 'LOCAL-DATE')
+  rule('date-time' => 'LOCAL-TIME')
+  rule('table' => 'std-table')
+  rule('table' => 'array-table')
+  rule('std-table' => 'LBRACKET key RBRACKET')
+  rule('inline-table' => 'LACCOLADE inline-table-keyvals RACCOLADE')
+  rule('inline-table-keyvals' => 'inline-table-keyvals COMMA keyval')
+  rule('inline-table-keyvals' => 'keyval')
+  rule('array-table' => 'LBRACKET LBRACKET key RBRACKET RBRACKET')
 end
 
 # Let's build a TOML grammar object
-TOMLGrammar = builder.grammar
+TOMLGrammar = builder.grammar.freeze

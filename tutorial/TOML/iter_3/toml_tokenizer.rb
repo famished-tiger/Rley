@@ -30,7 +30,8 @@ class TOMLTokenizer
   PATT_LOCAL_DATE = /[0-2]\d{3}-[01]\d-[0-3]\d/.freeze
   PATT_LOCAL_TIME = /[0-2]\d:[0-5]\d:[0-6]\d(?:\.\d+)?/.freeze
   PATT_NEWLINE = /(?:\r\n)|\r|\n/.freeze
-  PATT_STRING_DELIM = /(?:'(?:'')?)|(?:"(?:"")?)/.freeze
+  PATT_MULTI_LINE_STRING_DELIM = /(?:''')|(?:""")/.freeze
+  PATT_SINGLE_LINE_STRING_DELIM = /'|"/.freeze
   PATT_STRING_ESCAPE = /\\(?:[^Uu]|u[0-9A-Fa-f]{0,4}|U[0-9A-Fa-f]{0,8})/.freeze
   PATT_STRING_END_LITERAL = /(?:[^']|(?:'(?!''))|(?:''(?!')))*?(?:'''|$)/.freeze
   PATT_STRING_END_ML_BASIC = /(?:[^"\\]
@@ -155,7 +156,7 @@ class TOMLTokenizer
         when :default
           if (lexeme = scanner.scan(PATT_KEY_QUOTED_DELIM))
             # Start of quoted key detected...
-            begin_string_token(lexeme, :key)
+            single_line_quoted_token(lexeme, :key)
           elsif (lexeme = scanner.scan(PATT_CHAR_SINGLE_KEY))
             build_token(@@lexeme2name[lexeme], lexeme)
           elsif (lexeme = scanner.scan(PATT_KEY_UNQUOTED))
@@ -167,11 +168,17 @@ class TOMLTokenizer
           end
 
         when :expecting_value
-          if (lexeme = scanner.scan(PATT_STRING_DELIM))
-            # Start of string detected...
-            string_token = begin_string_token(lexeme, :string)
+          if (lexeme = scanner.scan(PATT_MULTI_LINE_STRING_DELIM))
+            # Start of multi-line string detected...
+            string_token = begin_ml_string_token(lexeme)
             next if state == :multiline
 
+            update_keyval_state(string_token)
+            string_token
+
+          elsif (lexeme = scanner.scan(PATT_SINGLE_LINE_STRING_DELIM))
+            # Start of single line string detected...
+            string_token = single_line_quoted_token(lexeme, :string)
             update_keyval_state(string_token)
             string_token
           elsif (lexeme = scanner.scan(PATT_CHAR_SINGLE_VAL))
@@ -272,41 +279,35 @@ class TOMLTokenizer
   end
 
   # precondition: current position at leading delimiter
-  # rubocop: disable Metrics/MethodLength
-  def begin_string_token(delimiter, token_type)
+  def single_line_quoted_token(delimiter, token_type)
+    @scan_pos = scanner.pos
+    line = @lineno
+    column_start = @scan_pos - @line_start
+    @string_start = Rley::Lexical::Position.new(line, column_start)
+    remainder_pattern = delimiter == "'" ? /[^']*'/ : /(?:[^"]|(?:(?<=\\)"))*"/
+
+    literal = scanner.scan(remainder_pattern)
+    unterminated(line, column_start) unless literal
+    raw_value = delimiter == "'" ? literal[0..-2] : unescape(literal[0..-2])
+    if token_type == :key
+      token_kind = 'QUOTED-KEY'
+      token_value = QuotedKey.new(raw_value)
+    else
+      token_kind = 'STRING'
+      token_value = TOMLString.new(raw_value)
+    end
+    lexeme = scanner.string[(@scan_pos - 1)..scanner.pos - 1]
+    Rley::Lexical::Literal.new(token_value, lexeme, token_kind, @string_start)
+  end
+
+  # precondition: current position at leading delimiter
+  def begin_ml_string_token(delimiter)
     @scan_pos = scanner.pos
     line = @lineno
     column_start = @scan_pos - @line_start
     @string_start = Rley::Lexical::Position.new(line, column_start)
 
     case delimiter
-    when "'"
-      literal = scanner.scan(/[^']*'/)
-      unterminated(line, column_start) unless literal
-      lexeme = scanner.string[(@scan_pos - 1)..scanner.pos - 1]
-      if token_type == :key
-        token_kind = 'QUOTED-KEY'
-        token_value = QuotedKey.new(literal[0..-2])
-      else
-        token_kind = 'STRING'
-        token_value = TOMLString.new(literal[0..-2])
-      end
-      Rley::Lexical::Literal.new(token_value, lexeme, token_kind, @string_start)
-
-    when '"'
-      literal = scanner.scan(/(?:[^"]|(?:(?<=\\)"))*"/)
-      unterminated(line, column_start) unless literal
-      raw_value = literal[0..-2]
-      lexeme = scanner.string[(@scan_pos - 1)..scanner.pos - 1]
-      if token_type == :key
-        token_kind = 'QUOTED-KEY'
-        token_value = QuotedKey.new(unescape(raw_value))
-      else
-        token_kind = 'STRING'
-        token_value = TOMLString.new(unescape(raw_value))
-      end
-      Rley::Lexical::Literal.new(token_value, lexeme, token_kind, @string_start)
-
     when "'''"
       literal = scanner.scan(PATT_STRING_END_LITERAL)
       unterminated(line, column_start) unless literal
@@ -330,7 +331,7 @@ class TOMLTokenizer
         lexeme = scanner.string[(@scan_pos - 3)..scanner.pos - 1]
         Rley::Lexical::Literal.new(string_value, lexeme, 'STRING', @string_start)
       else
-        # ... multi-line literal string
+        # ... multi-line basic string
         @state = :multiline
         @string_delimiter = delimiter
         if literal.empty?
@@ -347,7 +348,6 @@ class TOMLTokenizer
       end
     end
   end
-  # rubocop: enable Metrics/MethodLength
 
   def add_next_line
     if @string_delimiter == "'''"

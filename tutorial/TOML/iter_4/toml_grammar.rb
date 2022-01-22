@@ -76,4 +76,4 @@ builder = Rley::grammar_builder do
 end
 
 # Let's build a TOML grammar object
-TOMLGrammar = builder.grammar
+TOMLGrammar = builder.grammar.freeze
