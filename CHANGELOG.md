@@ -1,9 +1,13 @@
+### 0.8.09 / 2022-01-28
+- Added code for coming tutorial
+
 * [NEW] Folder `tutorial` contains code used in tutorial (in wiki)
-* [NEW] Folder `TOML\iter_1` contains code for first iteration
+* [NEW] Folders `TOML\iter_1` .. `TOML\iter_2` contains code for a TOML parser
+* [CHANGE] File `.rubocop.yml` updated to take into account new 1.25 cops.
+* [CHANGE] File `.rubocop.yml` updated to take into account new 1.25 cops.
 
 ### 0.8.08 / 2021-10-31
 - Fixes in example files, Refactored module `Notation` renamed `to `RGN´
-
 
 * [CHANGE] Module `Notation` changed to `RGN`.
 
@@ -24,7 +28,7 @@
 
 * [NEW] Folder `example\tokenizer` contains an example with a scanner that was generated.
 * [NEW] Class `Rley::Lexical::Literal` a specialization of Token class for literal tokens.
-* [CHANGE] File `.rubocp.yml` updated to take into account new 1.21 and 1.22 cops.
+* [CHANGE] File `.rubocop.yml` updated to take into account new 1.21 and 1.22 cops.
 * [DELETED] Class `Rley::Parser::ParserTracer` this class was no more in use.
 * [DELETED] Class `Rley::Syntax::Literal` this class was unused.
 * [DELETED] Class `Rley::Syntax::VerbatimSymbol` this class was unused.

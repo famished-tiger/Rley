@@ -22,7 +22,6 @@ require_relative '../support/expectation_helper'
 require_relative '../../../lib/rley/parser/gfg_earley_parser'
 
 module Rley # Open this namespace to avoid module qualifier prefixes
-  # rubocop: disable Metrics/BlockLength
   module Parser # Open this namespace to avoid module qualifier prefixes
     describe GFGEarleyParser do
       include GrammarABCHelper # Mix-in module with builder for grammar abc
@@ -1038,6 +1037,5 @@ MSG
       end # context
     end # describe
   end # module
-  # rubocop: enable Metrics/BlockLength
 end # module
 # End of file

@@ -5,6 +5,9 @@ AllCops:
 Gemspec/DateAssignment:
   Enabled: true
 
+Gemspec/RequireMFA: # new in 1.23
+  Enabled: false
+
 Layout/ArgumentAlignment:
   Enabled: false
 
@@ -203,6 +206,9 @@ Metrics/ModuleLength:
 Metrics/PerceivedComplexity:
   Enabled: false
 
+Naming/BlockForwarding: # new in 1.24
+  Enabled: true
+
 Naming/ConstantName:
   Enabled: false
 
@@ -281,6 +287,12 @@ Style/ExpandPathArguments:
 Style/ExponentialNotation:
   Enabled: true
 
+Style/FileRead: # new in 1.24
+  Enabled: true
+
+Style/FileWrite: # new in 1.24
+  Enabled: true
+
 Style/GuardClause:
   Enabled: false
 
@@ -305,6 +317,9 @@ Style/InPatternThen:
 Style/InverseMethods:
   Enabled: false
 
+Style/MapToHash: # new in 1.24
+  Enabled: true
+
 Style/MissingRespondToMissing:
   Enabled: false
 
@@ -328,9 +343,9 @@ Style/NumberedParametersLimit:
 
 Style/NumericLiterals:
   Enabled: false
-  
+
 Style/OpenStructUse: # new in 1.23
-  Enabled: true  
+  Enabled: true
 
 Style/QuotedSymbols:
   Enabled: true

@@ -7,12 +7,6 @@ module Rley # This module is used as a namespace
     # A terminal symbol represents a class of words in the language
     # defined the grammar.
     class Terminal < GrmSymbol
-      # Constructor.
-      # @param aName [String] The name of the grammar symbol.
-      def initialize(aName)
-        super(aName)
-      end
-
       # An indicator that tells whether the grammar symbol can generate a
       # non-empty string of terminals.
       # @return [TrueClass]
