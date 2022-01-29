@@ -84,7 +84,7 @@ TOML
       #   ]
       #   cases.each do |(token, lexeme)|
       #     subject.start_with(lexeme)
-      #     subject.send(:equal_scanned)
+      #     subject.send(:equal_found)
       #     expectations = [[token, lexeme]]
       #     match_expectations(subject, expectations)
       #     expect(subject.state).to eq(:expecting_value)
@@ -96,7 +96,7 @@ TOML
     it 'should recognize a boolean literal' do
       [['true', TrueClass], ['false', FalseClass]].each do |(str, klass)|
         subject.start_with(str)
-        subject.send(:equal_scanned)
+        subject.send(:equal_found)
         token = subject.tokens[0]
         expect(token).to be_kind_of(Rley::Lexical::Literal)
         expect(token.terminal).to eq('BOOLEAN')
@@ -122,7 +122,7 @@ TOML
       ]
       cases.each do |(str, val)|
         subject.start_with(str)
-        subject.send(:equal_scanned)
+        subject.send(:equal_found)
         int_token = subject.tokens[0]
         expect(int_token).to be_kind_of(Rley::Lexical::Literal)
         expect(int_token.terminal).to eq('INTEGER')
@@ -144,7 +144,7 @@ TOML
       ]
       cases.each do |(str, val)|
         subject.start_with(str)
-        subject.send(:equal_scanned)
+        subject.send(:equal_found)
         int_token = subject.tokens[0]
         expect(int_token).to be_kind_of(Rley::Lexical::Literal)
         expect(int_token.terminal).to eq('INTEGER')
@@ -166,7 +166,7 @@ TOML
       ]
       cases.each do |(str, val)|
         subject.start_with(str)
-        subject.send(:equal_scanned)
+        subject.send(:equal_found)
         int_token = subject.tokens[0]
         expect(int_token).to be_kind_of(Rley::Lexical::Literal)
         expect(int_token.terminal).to eq('INTEGER')
@@ -187,7 +187,7 @@ TOML
       ]
       cases.each do |(str, val)|
         subject.start_with(str)
-        subject.send(:equal_scanned)
+        subject.send(:equal_found)
         int_token = subject.tokens[0]
         expect(int_token).to be_kind_of(Rley::Lexical::Literal)
         expect(int_token.terminal).to eq('INTEGER')
@@ -211,7 +211,7 @@ TOML
       ]
       cases.each do |(str, val)|
         subject.start_with(str)
-        subject.send(:equal_scanned)
+        subject.send(:equal_found)
         float_token = subject.tokens[0]
         expect(float_token).to be_kind_of(Rley::Lexical::Literal)
         expect(float_token.terminal).to eq('FLOAT')
@@ -230,7 +230,7 @@ TOML
       ]
       cases.each do |(str, val)|
         subject.start_with(str)
-        subject.send(:equal_scanned)
+        subject.send(:equal_found)
         float_token = subject.tokens[0]
         expect(float_token).to be_kind_of(Rley::Lexical::Literal)
         expect(float_token.terminal).to eq('FLOAT')
@@ -249,7 +249,7 @@ TOML
       ]
       cases.each do |(str, _val)|
         subject.start_with(str)
-        subject.send(:equal_scanned)
+        subject.send(:equal_found)
         float_token = subject.tokens[0]
         expect(float_token).to be_kind_of(Rley::Lexical::Literal)
         expect(float_token.terminal).to eq('FLOAT')
@@ -262,7 +262,7 @@ TOML
     it 'should recognize offset date time' do
       str = '1979-05-27T05:32:07.999999-07:00'
       subject.start_with(str)
-      subject.send(:equal_scanned)
+      subject.send(:equal_found)
       date_token = subject.tokens[0]
       expect(date_token).to be_kind_of(Rley::Lexical::Literal)
       expect(date_token.terminal).to eq('OFFSET-DATE-TIME')
@@ -279,7 +279,7 @@ TOML
       ]
       cases.each do |(str, val)|
         subject.start_with(str)
-        subject.send(:equal_scanned)
+        subject.send(:equal_found)
         date_token = subject.tokens[0]
         expect(date_token).to be_kind_of(Rley::Lexical::Literal)
         expect(date_token.terminal).to eq('LOCAL-DATE-TIME')
@@ -297,7 +297,7 @@ TOML
       ]
       cases.each do |(str, val)|
         subject.start_with(str)
-        subject.send(:equal_scanned)
+        subject.send(:equal_found)
         date_token = subject.tokens[0]
         expect(date_token).to be_kind_of(Rley::Lexical::Literal)
         expect(date_token.terminal).to eq('LOCAL-DATE')
@@ -315,7 +315,7 @@ TOML
       ]
       cases.each do |(str, val)|
         subject.start_with(str)
-        subject.send(:equal_scanned)
+        subject.send(:equal_found)
         time_token = subject.tokens[0]
         expect(time_token).to be_kind_of(Rley::Lexical::Literal)
         expect(time_token.terminal).to eq('LOCAL-TIME')
@@ -341,7 +341,7 @@ TOML
       ]
       cases.each do |str|
         subject.start_with(str)
-        subject.send(:equal_scanned)
+        subject.send(:equal_found)
         token = subject.tokens[0]
         expect(token).to be_kind_of(Rley::Lexical::Literal)
         expect(token.terminal).to eq('STRING')
@@ -364,7 +364,7 @@ TOML
       ]
       cases.each do |str|
         subject.start_with(str)
-        subject.send(:equal_scanned)
+        subject.send(:equal_found)
         token = subject.tokens[0]
         expect(token).to be_kind_of(Rley::Lexical::Literal)
         expect(token.terminal).to eq('STRING')
@@ -384,7 +384,7 @@ trimmed in raw strings.
 '''
       TOML
       subject.start_with(str)
-      subject.send(:equal_scanned)
+      subject.send(:equal_found)
       token = subject.tokens[0]
       expect(token).to be_kind_of(Rley::Lexical::Literal)
       expect(token.terminal).to eq('STRING')
@@ -404,7 +404,7 @@ trimmed in raw strings.
       ]
       cases.each do |str, expected|
         subject.start_with(str)
-        subject.send(:equal_scanned)
+        subject.send(:equal_found)
         token = subject.tokens[0]
         expect(token).to be_kind_of(Rley::Lexical::Literal)
         expect(token.terminal).to eq('STRING')
@@ -423,7 +423,7 @@ trimmed in raw strings.
       ]
       cases.each do |str, expected|
         subject.start_with(str)
-        subject.send(:equal_scanned)
+        subject.send(:equal_found)
         token = subject.tokens[0]
         expect(token).to be_kind_of(Rley::Lexical::Literal)
         expect(token.terminal).to eq('STRING')
@@ -452,7 +452,7 @@ trimmed in raw strings.
       TOML
       [str2, str3].each do |str|
         subject.start_with(str)
-        subject.send(:equal_scanned)
+        subject.send(:equal_found)
         token = subject.tokens[0]
         expect(token).to be_kind_of(Rley::Lexical::Literal)
         expect(token.terminal).to eq('STRING')

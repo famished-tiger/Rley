@@ -109,7 +109,7 @@ class TOMLTokenizer
     token = nil
 
     # Loop until end of input reached or token found
-    until scanner.eos? || token
+    until token || scanner.eos?
       nl_found = scanner.skip(PATT_NEWLINE)
       if nl_found
         next_line

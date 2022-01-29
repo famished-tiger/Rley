@@ -42,6 +42,7 @@ class TOMLTokenizer
     | (?:(\\\\)+\\"""))*?
     (?:"""|$)/x.freeze
   PATT_WHITESPACE = /[ \t\f]+/.freeze
+
   # @return [StringScanner] Low-level input scanner
   attr_reader(:scanner)
 
@@ -158,9 +159,9 @@ class TOMLTokenizer
             # Start of quoted key detected...
             single_line_quoted_token(lexeme, :key)
           elsif (lexeme = scanner.scan(PATT_CHAR_SINGLE_KEY))
-            build_token(@@lexeme2name[lexeme], lexeme)
+            verbatim_scanned(lexeme)
           elsif (lexeme = scanner.scan(PATT_KEY_UNQUOTED))
-            build_literal('UNQUOTED-KEY', lexeme, UnquotedKey)
+            literal_scanned('UNQUOTED-KEY', lexeme, UnquotedKey)
           else # Unknown token
             col = scanner.pos - @line_start + 1
             erroneous = curr_ch.nil? ? '' : scanner.scan(/./)
@@ -173,38 +174,36 @@ class TOMLTokenizer
             string_token = begin_ml_string_token(lexeme)
             next if state == :multiline
 
-            update_keyval_state(string_token)
             string_token
-
           elsif (lexeme = scanner.scan(PATT_SINGLE_LINE_STRING_DELIM))
             # Start of single line string detected...
             string_token = single_line_quoted_token(lexeme, :string)
             update_keyval_state(string_token)
             string_token
           elsif (lexeme = scanner.scan(PATT_CHAR_SINGLE_VAL))
-            build_token(@@lexeme2name[lexeme], lexeme)
+            verbatim_scanned(lexeme)
           elsif (lexeme = scanner.scan(PATT_BOOLEAN))
-            build_literal('BOOLEAN', lexeme, TOMLBoolean)
+            literal_scanned('BOOLEAN', lexeme, TOMLBoolean)
           elsif (lexeme = scanner.scan(PATT_OFFSET_DATE_TIME))
-            build_literal('OFFSET-DATE-TIME', lexeme, TOMLOffsetDateTime)
+            literal_scanned('OFFSET-DATE-TIME', lexeme, TOMLOffsetDateTime)
           elsif (lexeme = scanner.scan(PATT_LOCAL_DATE_TIME))
-            build_literal('LOCAL-DATE-TIME', lexeme, TOMLLocalDateTime)
+            literal_scanned('LOCAL-DATE-TIME', lexeme, TOMLLocalDateTime)
           elsif (lexeme = scanner.scan(PATT_LOCAL_DATE))
-            build_literal('LOCAL-DATE', lexeme, TOMLLocalDate)
+            literal_scanned('LOCAL-DATE', lexeme, TOMLLocalDate)
           elsif (lexeme = scanner.scan(PATT_LOCAL_TIME))
-            build_literal('LOCAL-TIME', lexeme, TOMLLocalTime)
+            literal_scanned('LOCAL-TIME', lexeme, TOMLLocalTime)
           elsif (lexeme = scanner.scan(PATT_FLOAT))
-            build_literal('FLOAT', lexeme, TOMLFloat)
+            literal_scanned('FLOAT', lexeme, TOMLFloat)
           elsif (lexeme = scanner.scan(PATT_INT_HEX))
-            build_literal('INTEGER', lexeme, TOMLInteger, :hex)
+            literal_scanned('INTEGER', lexeme, TOMLInteger, :hex)
           elsif (lexeme = scanner.scan(PATT_INT_OCT))
-            build_literal('INTEGER', lexeme, TOMLInteger, :oct)
+            literal_scanned('INTEGER', lexeme, TOMLInteger, :oct)
           elsif (lexeme = scanner.scan(PATT_INT_BIN))
-            build_literal('INTEGER', lexeme, TOMLInteger, :bin)
+            literal_scanned('INTEGER', lexeme, TOMLInteger, :bin)
           elsif (lexeme = scanner.scan(PATT_INT_DEC))
-            build_literal('INTEGER', lexeme, TOMLInteger)
+            literal_scanned('INTEGER', lexeme, TOMLInteger)
           elsif (lexeme = scanner.scan(PATT_FLOAT_SPECIAL))
-            build_special_float(lexeme)
+            special_float_scanned(lexeme)
           else # Unknown token
             col = scanner.pos - @line_start + 1
             erroneous = curr_ch.nil? ? '' : scanner.scan(/./)
@@ -215,9 +214,7 @@ class TOMLTokenizer
           add_next_line
           next if @state == :multiline
 
-          string_token = build_multiline_string
-          update_keyval_state(string_token)
-          string_token
+          multiline_string_scanned
       end # case state
     end # until
 
@@ -233,14 +230,15 @@ class TOMLTokenizer
     @keyval_stack.last.positive?
   end
 
-  def build_token(aSymbolName, aLexeme)
+  def verbatim_scanned(aLexeme)
+    symbol_name = @@lexeme2name[aLexeme]
     begin
       lex_length = aLexeme ? aLexeme.size : 0
       col = scanner.pos - lex_length - @line_start + 1
       pos = Rley::Lexical::Position.new(@lineno, col)
-      token = Rley::Lexical::Token.new(aLexeme.dup, aSymbolName, pos)
+      token = Rley::Lexical::Token.new(aLexeme.dup, symbol_name, pos)
     rescue StandardError => e
-      puts "Failing with '#{aSymbolName}' and '#{aLexeme}'"
+      puts "Failing with '#{symbol_name}' and '#{aLexeme}'"
       raise e
     end
 
@@ -248,10 +246,9 @@ class TOMLTokenizer
     token
   end
 
-  def build_special_float(aLexeme)
+  def special_float_scanned(aLexeme)
     lex_length = aLexeme ? aLexeme.size : 0
     col = scanner.pos - lex_length - @line_start + 1
-    pos = Rley::Lexical::Position.new(@lineno, col)
     value = case aLexeme
       when 'inf', '+inf'
         TOMLFloat::INFINITY
@@ -262,18 +259,24 @@ class TOMLTokenizer
       when '-nan'
         TOMLFloat::NAN_MIN
     end
-    token = Rley::Lexical::Literal.new(value, aLexeme.dup, 'FLOAT', pos)
-    update_keyval_state(token)
-    token
+    build_literal('FLOAT', value, aLexeme, col)
   end
 
-  def build_literal(aSymbolName, aLexeme, aClass, aFormat = nil)
+  def literal_scanned(aSymbolName, aLexeme, aClass, aFormat = nil)
     value = aClass.new(aLexeme, aFormat)
     lex_length = aLexeme ? aLexeme.size : 0
     col = scanner.pos - lex_length - @line_start + 1
-    pos = Rley::Lexical::Position.new(@lineno, col)
-    literal = Rley::Lexical::Literal.new(value, aLexeme.dup, aSymbolName, pos)
+    build_literal(aSymbolName, value, aLexeme, col)
+  end
 
+  def build_literal(aSymbolName, aValue, aLexeme, aPosition)
+    pos = if aPosition.kind_of?(Integer)
+      col = aPosition
+      Rley::Lexical::Position.new(@lineno, col)
+    else
+      aPosition
+    end
+    literal = Rley::Lexical::Literal.new(aValue, aLexeme.dup, aSymbolName, pos)
     update_keyval_state(literal)
     literal
   end
@@ -313,11 +316,9 @@ class TOMLTokenizer
       unterminated(line, column_start) unless literal
       if literal =~ /'''$/
         # ... single-line string
-        string_value = TOMLString.new(literal[0..-4])
-        lexeme = scanner.string[(@scan_pos - 3)..scanner.pos - 1]
-        Rley::Lexical::Literal.new(string_value, lexeme, 'STRING', @string_start)
+        build_single_line(literal)
       else
-        # ... multi-line lliteral string
+        # ... multi-line literal string
         @state = :multiline
         @string_delimiter = delimiter
         @multilines = literal.empty? ? [] : [literal, "\n"]
@@ -327,9 +328,7 @@ class TOMLTokenizer
       unterminated(line, column_start) unless literal
       if literal.slice!(/"""$/)
         # ... single-line string
-        string_value = TOMLString.new(unescape(literal))
-        lexeme = scanner.string[(@scan_pos - 3)..scanner.pos - 1]
-        Rley::Lexical::Literal.new(string_value, lexeme, 'STRING', @string_start)
+        build_single_line(unescape(literal))
       else
         # ... multi-line basic string
         @state = :multiline
@@ -347,6 +346,12 @@ class TOMLTokenizer
         end
       end
     end
+  end
+
+  def build_single_line(aText)
+    string_value = TOMLString.new(aText)
+    lexeme = scanner.string[(@scan_pos - 3)..scanner.pos - 1]
+    build_literal('STRING', string_value, lexeme, @string_start)
   end
 
   def add_next_line
@@ -389,10 +394,10 @@ class TOMLTokenizer
     end
   end
 
-  def build_multiline_string
+  def multiline_string_scanned
     string_value = TOMLString.new(@multilines.join)
     lexeme = scanner.string[(@scan_pos - 3)..scanner.pos - 1]
-    Rley::Lexical::Literal.new(string_value, lexeme, 'STRING', @string_start)
+    build_literal('STRING', string_value, lexeme, @string_start)
   end
 
   def unterminated(_line, _col)
@@ -404,17 +409,11 @@ class TOMLTokenizer
       match.slice!(0)
       case match[0]
       when ?u
-        if match.length < 5
-          raise ScanError, "#{error_prefix}: escape sequence \\#{match} must have exactly 4 hexdigits."
-        end
+        codepoint2char(match, 4)
 
-        [match[1..-1].hex].pack('U') # Ugly: conversion from codepoint to character
       when ?U
-        if match.length < 9
-          raise ScanError, "#{error_prefix}: escape sequence \\#{match} must have exactly 8 hexdigits."
-        end
+        codepoint2char(match, 8)
 
-        [match[1..-1].hex].pack('U') # Ugly: conversion from codepoint to character
       else
         ch = @@escape_chars[match[0]]
         if ch.nil?
@@ -426,71 +425,79 @@ class TOMLTokenizer
     end
   end
 
+  def codepoint2char(codepoint, length)
+    if codepoint.length < length
+      raise ScanError, "#{error_prefix}: escape sequence \\#{match} must have exactly #{length} hexdigits."
+    end
+
+    [codepoint[1..-1].hex].pack('U') # Ugly: conversion from codepoint to character
+  end
+
   def update_keyval_state(aToken)
     case aToken.terminal
     when 'EQUAL'
-      equal_scanned
+      equal_found
     when 'LBRACKET'
-      lbracket_scanned
+      lbracket_found
     when 'RBRACKET'
-      rbracket_scanned
+      rbracket_found
     when 'LACCOLADE'
-      laccolade_scanned
+      laccolade_found
     when 'RACCOLADE'
-      raccolade_scanned
+      raccolade_found
     when 'COMMA', 'UNQUOTED-KEY'
       # Do nothing
     else
-      literal_scanned
+      literal_found
     end
   end
 
   # Event: a data literal detected.
-  def literal_scanned
+  def literal_found
     @keyval_stack[-1] = 0 if keyval_stack[-1] == 1
   end
 
   # Event: an equal sign '=' detected.
   # This forces a transition from :default state to :expecting_value state
-  def equal_scanned
+  def equal_found
     @keyval_stack[-1] = 1
   end
 
   # Event: an opening square bracket '[' detected.
-  def lbracket_scanned
+  def lbracket_found
     @keyval_stack[-1] += 1 if state == :expecting_value
   end
 
   # Event: a closing square bracket ']' detected.
-  def rbracket_scanned
+  def rbracket_found
     return unless state == :expecting_value
 
-    if @keyval_stack.last == 2
-      keyval_stack[-1] = 0
-    else
-      keyval_stack[-1] -= 1
-    end
+    decr_keyval_top
   end
 
   # Event: an opening curly accolade '{' detected.
-  def laccolade_scanned
+  def laccolade_found
     @keyval_stack.push(0)
   end
 
   # Event: a closing curly accolade '}' detected.
-  def raccolade_scanned
+  def raccolade_found
     @keyval_stack.pop
-    if @keyval_stack.last == 2
-      keyval_stack[-1] = 0
-    else
-      keyval_stack[-1] -= 1
-    end
+    decr_keyval_top
   end
 
   # Event: next line detected.
   def next_line_scanned
     @lineno += 1
     @line_start = scanner.pos
+  end
+
+  def decr_keyval_top
+    if @keyval_stack.last == 2
+      keyval_stack[-1] = 0
+    else
+      keyval_stack[-1] -= 1
+    end
   end
 
   def error_prefix
