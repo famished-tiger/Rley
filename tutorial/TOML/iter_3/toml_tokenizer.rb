@@ -78,7 +78,7 @@ class TOMLTokenizer
     ?r => "\r",
     ?t => "\t",
     ?" => ?",
-    ?\ => ?\
+    '\\' => '\\'
   }.freeze
 
   # Constructor. Initialize a tokenizer for TOML input.
@@ -133,7 +133,7 @@ class TOMLTokenizer
     token = nil
 
     # Loop until end of input reached or token found
-    until scanner.eos? || token
+    until token || scanner.eos?
       nl_found = scanner.skip(PATT_NEWLINE)
       if nl_found
         next_line_scanned
@@ -316,7 +316,7 @@ class TOMLTokenizer
       unterminated(line, column_start) unless literal
       if literal =~ /'''$/
         # ... single-line string
-        build_single_line(literal)
+        build_single_line(literal[0..-4])
       else
         # ... multi-line literal string
         @state = :multiline
