@@ -8,6 +8,8 @@ class TOMLDatatype
   attr_reader :value
 
   # Constructor. Initialize a TOML value from one of its built-in data type.
+  # @param aValue [String] Text representation of data type in TOML.
+  # @param aFormant [Symbol, NilClass] A symbolic name of the input format.
   def initialize(aValue, aFormat = nil)
     @value = validated_value(aValue, aFormat)
   end
