@@ -116,6 +116,20 @@ end # class
 
 # Class implementing the TOML string data type.
 class TOMLString < TOMLDatatype
+  PATT_STRING_ESCAPE = /\\(?:[^Uu]|u[0-9A-Fa-f]{0,4}|U[0-9A-Fa-f]{0,8})/.freeze
+
+  # Single character that have a special meaning when escaped
+  # @return [{Char => String}]
+  @@escape_chars = {
+    ?b => "\b",
+    ?f => "\f",
+    ?n => "\n",
+    ?r => "\r",
+    ?t => "\t",
+    ?" => ?",
+    '\\' => '\\'
+  }.freeze
+
   # Method to obtain the text representation of the object.
   # @return [String]
   def to_str
@@ -124,11 +138,42 @@ class TOMLString < TOMLDatatype
 
   protected
 
-  def validated_value(aValue, _format)
+  def validated_value(aValue, format)
     unless aValue.is_a?(String)
       raise StandardError, "Invalid string value #{aValue}"
     end
 
-    aValue
+    (format == :basic) ? unescape(aValue) : aValue
+  end
+
+  private
+
+  def unescape(aString)
+    aString.gsub(PATT_STRING_ESCAPE) do |match|
+      match.slice!(0)
+      case match[0]
+      when ?u
+        codepoint2char(match, 4)
+
+      when ?U
+        codepoint2char(match, 8)
+
+      else
+        ch = @@escape_chars[match[0]]
+        if ch.nil?
+          raise ScanError, "#{error_prefix}: Reserved escape code \\#{match}."
+        end
+
+        ch
+      end
+    end
+  end
+
+  def codepoint2char(codepoint, length)
+    if codepoint.length < length
+      raise StandardError, "#{error_prefix}: escape sequence \\#{match} must have exactly #{length} hexdigits."
+    end
+
+    [codepoint[1..-1].hex].pack('U') # Ugly: conversion from codepoint to character
   end
 end # class

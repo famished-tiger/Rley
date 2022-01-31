@@ -25,7 +25,6 @@ class TOMLTokenizer
   PATT_NEWLINE = /(?:\r\n)|\r|\n/.freeze
   PATT_MULTI_LINE_STRING_DELIM = /(?:''')|(?:""")/.freeze
   PATT_SINGLE_LINE_STRING_DELIM = /'|"/.freeze
-  PATT_STRING_ESCAPE = /\\(?:[^Uu]|u[0-9A-Fa-f]{0,4}|U[0-9A-Fa-f]{0,8})/.freeze
   PATT_STRING_END_LITERAL = /(?:[^']|(?:'(?!''))|(?:''(?!')))*?(?:'''|$)/.freeze
   PATT_STRING_END_ML_BASIC = /(?:[^"\\]
     | (?:"(?!""))
@@ -38,9 +37,6 @@ class TOMLTokenizer
   PATT_WHITESPACE = /[ \t\f]+/.freeze
   # @return [StringScanner] Low-level input scanner
   attr_reader(:scanner)
-
-  # @return [Symbol] Current lexical state; One of { :default, :multiline }
-  attr_reader(:state)
 
   # Key track of whether the scanner expects a key or a value
   # This is necessary since the lexeme 1234 can be a bare key or an integer
@@ -61,34 +57,30 @@ class TOMLTokenizer
     ']' => 'RBRACKET'
   }.freeze
 
-  # Single character that have a special meaning when escaped
-  # @return [{Char => String}]
-  @@escape_chars = {
-    ?b => "\b",
-    ?f => "\f",
-    ?n => "\n",
-    ?r => "\r",
-    ?t => "\t",
-    ?" => ?",
-    '\\' => '\\'
-  }.freeze
-
   # Constructor. Initialize a tokenizer for TOML input.
   # @param source [String] TOML text to tokenize.
   def initialize(source = nil)
-    @scanner = StringScanner.new('')
-    @state = :default
-    @keyval_stack = [0]
-    start_with(source) if source
+    reset
+    input = source || ''
+    @scanner = StringScanner.new(input)
   end
 
   # Reset the tokenizer and make the given text, the current input.
   # @param source [String] TOML text to tokenize.
   def start_with(source)
+    reset
     @scanner.string = source
-    @state = :default
-    @lineno = 1
-    @line_start = 0
+  end
+
+  # Return the current lexical state
+  # State can be one of:
+  # :default # expecting a key, a table name or equal sign
+  # :expecting_value # expecting a value to associate with a key
+  # :multiline # Processing a multiline string
+  def state
+    return :expecting_value if @state == :default && expecting_value?
+
+    @state
   end
 
   # Scan the source and return an array of tokens.
@@ -105,6 +97,13 @@ class TOMLTokenizer
 
   private
 
+  def reset
+    @state = :default
+    @keyval_stack = [0]
+    @lineno = 1
+    @line_start = 0
+  end
+
   def _next_token
     token = nil
 
@@ -116,17 +115,29 @@ class TOMLTokenizer
         next
       end
 
+      unless state == :multiline
+        # Code common to :default and :expecting_value states
+        next if scanner.skip(PATT_WHITESPACE) # Skip whitespaces
+
+        curr_ch = scanner.peek(1)
+
+        if curr_ch == '#'
+          # Start of comment detected...
+          scanner.skip(PATT_COMMENT) # Skip line comment
+          next
+        end
+      end
+
       token = case state
         when :default
-          next if scanner.skip(PATT_WHITESPACE) # Skip whitespaces
+          if (lexeme = scanner.scan(PATT_CHAR_SINGLE))
+            verbatim_scanned(lexeme)
+          elsif (lexeme = scanner.scan(PATT_UNQUOTED_KEY))
+            literal_scanned('UNQUOTED-KEY', lexeme, UnquotedKey)
+          end
 
-          curr_ch = scanner.peek(1)
-
-          if curr_ch == '#'
-            # Start of comment detected...
-            scanner.skip(PATT_COMMENT) # Skip line comment
-            next
-          elsif (lexeme = scanner.scan(PATT_MULTI_LINE_STRING_DELIM))
+        when :expecting_value
+          if (lexeme = scanner.scan(PATT_MULTI_LINE_STRING_DELIM))
             # Start of multi-line string detected...
             string_token = begin_ml_string_token(lexeme)
             next if state == :multiline
@@ -141,20 +152,18 @@ class TOMLTokenizer
             verbatim_scanned(lexeme)
           elsif (lexeme = scanner.scan(PATT_BOOLEAN))
             literal_scanned('BOOLEAN', lexeme, TOMLBoolean)
-          elsif expecting_value && (lexeme = scanner.scan(PATT_INT_HEX))
-            literal_scanned('INTEGER', lexeme, TOMLInteger, :hex)
-          elsif expecting_value && (lexeme = scanner.scan(PATT_INT_OCT))
-            literal_scanned('INTEGER', lexeme, TOMLInteger, :oct)
-          elsif expecting_value && (lexeme = scanner.scan(PATT_INT_BIN))
-            literal_scanned('INTEGER', lexeme, TOMLInteger, :bin)
-          elsif expecting_value && (lexeme = scanner.scan(PATT_INT_DEC))
-            literal_scanned('INTEGER', lexeme, TOMLInteger)
           elsif (lexeme = scanner.scan(PATT_FLOAT))
             literal_scanned('FLOAT', lexeme, TOMLFloat)
+          elsif (lexeme = scanner.scan(PATT_INT_HEX))
+            literal_scanned('INTEGER', lexeme, TOMLInteger, :hex)
+          elsif (lexeme = scanner.scan(PATT_INT_OCT))
+            literal_scanned('INTEGER', lexeme, TOMLInteger, :oct)
+          elsif (lexeme = scanner.scan(PATT_INT_BIN))
+            literal_scanned('INTEGER', lexeme, TOMLInteger, :bin)
+          elsif (lexeme = scanner.scan(PATT_INT_DEC))
+            literal_scanned('INTEGER', lexeme, TOMLInteger)
           elsif (lexeme = scanner.scan(PATT_FLOAT_SPECIAL))
             build_special_float(lexeme)
-          elsif (lexeme = scanner.scan(PATT_UNQUOTED_KEY))
-            literal_scanned('UNQUOTED-KEY', lexeme, UnquotedKey)
           else # Unknown token
             col = scanner.pos - @line_start + 1
             erroneous = curr_ch.nil? ? '' : scanner.scan(/./)
@@ -176,7 +185,7 @@ class TOMLTokenizer
   # Is the tokenizer expecting a data value?
   # ToS keyval_stack == 0 => false (:default state)
   # ToS keyval_stack > 0 => true (:expecting_value state)
-  def expecting_value
+  def expecting_value?
     @keyval_stack.last.positive?
   end
 
@@ -196,6 +205,13 @@ class TOMLTokenizer
     token
   end
 
+  def literal_scanned(aSymbolName, aLexeme, aClass, aFormat = nil)
+    value = aClass.new(aLexeme, aFormat)
+    lex_length = aLexeme ? aLexeme.size : 0
+    col = scanner.pos - lex_length - @line_start + 1
+    build_literal(aSymbolName, value, aLexeme, col)
+  end
+
   def build_special_float(aLexeme)
     lex_length = aLexeme ? aLexeme.size : 0
     col = scanner.pos - lex_length - @line_start + 1
@@ -210,13 +226,6 @@ class TOMLTokenizer
         TOMLFloat::NAN_MIN
     end
     build_literal('FLOAT', value, aLexeme, col)
-  end
-
-  def literal_scanned(aSymbolName, aLexeme, aClass, aFormat = nil)
-    value = aClass.new(aLexeme, aFormat)
-    lex_length = aLexeme ? aLexeme.size : 0
-    col = scanner.pos - lex_length - @line_start + 1
-    build_literal(aSymbolName, value, aLexeme, col)
   end
 
   def build_literal(aSymbolName, aValue, aLexeme, aPosition)
@@ -240,8 +249,10 @@ class TOMLTokenizer
 
     literal = scanner.scan(remainder_pattern)
     unterminated(line, column_start) unless literal
-    raw_value = delimiter == "'" ? literal[0..-2] : unescape(literal[0..-2])
-    string_value = TOMLString.new(raw_value)
+    # raw_value = delimiter == "'" ? literal[0..-2] : unescape(literal[0..-2])
+    # string_value = TOMLString.new(raw_value)
+    format = delimiter == "'" ? :literal : :basic
+    string_value = TOMLString.new(literal[0..-2], format)
     lexeme = scanner.string[(@scan_pos - 1)..scanner.pos - 1]
     Rley::Lexical::Literal.new(string_value, lexeme, 'STRING', @string_start)
   end
@@ -259,7 +270,7 @@ class TOMLTokenizer
       unterminated(line, column_start) unless literal
       if literal =~ /'''$/
         # ... single-line string
-        build_single_line(literal[0..-4])
+        build_single_line(literal[0..-4], :literal)
       else
         # ... multi-line literal string
         @state = :multiline
@@ -271,7 +282,8 @@ class TOMLTokenizer
       unterminated(line, column_start) unless literal
       if literal.slice!(/"""$/)
         # ... single-line string
-        build_single_line(unescape(literal))
+        # build_single_line(unescape(literal), :basic)
+        build_single_line(literal, :basic)
       else
         # ... multi-line basic string
         @state = :multiline
@@ -284,15 +296,15 @@ class TOMLTokenizer
             literal.chop!
             @trimming = true
           end
-          @multilines = literal.empty? ? [] : [unescape(literal)]
+          @multilines = literal.empty? ? [] : [literal]
           @multilines << "\n" unless @trimming
         end
       end
     end
   end
 
-  def build_single_line(aText)
-    string_value = TOMLString.new(aText)
+  def build_single_line(aText, format)
+    string_value = TOMLString.new(aText, format)
     lexeme = scanner.string[(@scan_pos - 3)..scanner.pos - 1]
     build_literal('STRING', string_value, lexeme, @string_start)
   end
@@ -317,7 +329,7 @@ class TOMLTokenizer
       if literal.slice!(/"""$/)
         # ... end demimiter found
         @state = :default
-        @multilines << unescape(literal) unless @trimming && literal.empty?
+        @multilines << literal unless @trimming && literal.empty?
         @trimming = false
       else
         @trimming = false unless literal.empty?
@@ -329,51 +341,23 @@ class TOMLTokenizer
         return if @trimming && literal.empty?
 
         if @trimming
-          @multilines << unescape(literal)
+          @multilines << literal
         else
-          @multilines.concat([unescape(literal), "\n"])
+          @multilines.concat([literal, "\n"])
         end
       end
     end
   end
 
   def multiline_string_scanned
-    string_value = TOMLString.new(@multilines.join)
     lexeme = scanner.string[(@scan_pos - 3)..scanner.pos - 1]
+    format = (lexeme[0..2] == "'''") ? :literal : :basic
+    string_value = TOMLString.new(@multilines.join, format)
     build_literal('STRING', string_value, lexeme, @string_start)
   end
 
   def unterminated(_line, _col)
     raise ScanError, "#{error_prefix}: Unterminated string."
-  end
-
-  def unescape(aString)
-    aString.gsub(PATT_STRING_ESCAPE) do |match|
-      match.slice!(0)
-      case match[0]
-      when ?u
-        codepoint2char(match, 4)
-
-      when ?U
-        codepoint2char(match, 8)
-
-      else
-        ch = @@escape_chars[match[0]]
-        if ch.nil?
-          raise ScanError, "#{error_prefix}: Reserved escape code \\#{match}."
-        end
-
-        ch
-      end
-    end
-  end
-
-  def codepoint2char(codepoint, length)
-    if codepoint.length < length
-      raise ScanError, "#{error_prefix}: escape sequence \\#{match} must have exactly #{length} hexdigits."
-    end
-
-    [codepoint[1..-1].hex].pack('U') # Ugly: conversion from codepoint to character
   end
 
   def update_keyval_state(aToken)
@@ -384,7 +368,7 @@ class TOMLTokenizer
       lbracket_found
     when 'RBRACKET'
       rbracket_found
-    when 'UNQUOTED-KEY'
+    when 'COMMA', 'UNQUOTED-KEY'
       # Do nothing
     else
       literal_found

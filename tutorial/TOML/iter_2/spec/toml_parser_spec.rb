@@ -43,4 +43,15 @@ describe TOMLParser do
       end
     end
   end # context
+
+
+  context 'Parsing TOML expressions' do
+    it 'should support array' do
+      source = 'ports = [ 8000, 8001, 8002 ]'
+      ptree = subject.parse(source)
+      root = ptree.root
+      expect(root).to be_kind_of(Rley::PTree::NonTerminalNode)
+      expect(root.symbol.name).to eq('toml')
+    end
+  end # context
 end # describe

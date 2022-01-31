@@ -66,6 +66,7 @@ TOML
     it 'should recognize a boolean literal' do
       [['true', TrueClass], ['false', FalseClass]].each do |(str, klass)|
         subject.start_with(str)
+        subject.send(:equal_found)
         token = subject.tokens[0]
         expect(token).to be_kind_of(Rley::Lexical::Literal)
         expect(token.terminal).to eq('BOOLEAN')
@@ -94,6 +95,7 @@ TOML
       ]
       cases.each do |(str, val)|
         subject.start_with(str)
+        subject.send(:equal_found)
         int_token = subject.tokens[0]
         expect(int_token).to be_kind_of(Rley::Lexical::Literal)
         expect(int_token.terminal).to eq('INTEGER')
@@ -116,6 +118,7 @@ TOML
       ]
       cases.each do |(str, val)|
         subject.start_with(str)
+        subject.send(:equal_found)
         int_token = subject.tokens[0]
         expect(int_token).to be_kind_of(Rley::Lexical::Literal)
         expect(int_token.terminal).to eq('INTEGER')
@@ -137,6 +140,7 @@ TOML
       ]
       cases.each do |(str, val)|
         subject.start_with(str)
+        subject.send(:equal_found)
         int_token = subject.tokens[0]
         expect(int_token).to be_kind_of(Rley::Lexical::Literal)
         expect(int_token.terminal).to eq('INTEGER')
@@ -157,6 +161,7 @@ TOML
       ]
       cases.each do |(str, val)|
         subject.start_with(str)
+        subject.send(:equal_found)
         int_token = subject.tokens[0]
         expect(int_token).to be_kind_of(Rley::Lexical::Literal)
         expect(int_token.terminal).to eq('INTEGER')
@@ -180,6 +185,7 @@ TOML
       ]
       cases.each do |(str, val)|
         subject.start_with(str)
+        subject.send(:equal_found)
         float_token = subject.tokens[0]
         expect(float_token).to be_kind_of(Rley::Lexical::Literal)
         expect(float_token.terminal).to eq('FLOAT')
@@ -198,6 +204,7 @@ TOML
       ]
       cases.each do |(str, val)|
         subject.start_with(str)
+        subject.send(:equal_found)
         float_token = subject.tokens[0]
         expect(float_token).to be_kind_of(Rley::Lexical::Literal)
         expect(float_token.terminal).to eq('FLOAT')
@@ -216,6 +223,7 @@ TOML
       ]
       cases.each do |(str, _val)|
         subject.start_with(str)
+        subject.send(:equal_found)
         float_token = subject.tokens[0]
         expect(float_token).to be_kind_of(Rley::Lexical::Literal)
         expect(float_token.terminal).to eq('FLOAT')
@@ -248,6 +256,7 @@ TOML
       ]
       cases.each do |str|
         subject.start_with(str)
+        subject.send(:equal_found)
         token = subject.tokens[0]
         expect(token).to be_kind_of(Rley::Lexical::Literal)
         expect(token.terminal).to eq('STRING')
@@ -270,6 +279,7 @@ TOML
       ]
       cases.each do |str|
         subject.start_with(str)
+        subject.send(:equal_found)
         token = subject.tokens[0]
         expect(token).to be_kind_of(Rley::Lexical::Literal)
         expect(token.terminal).to eq('STRING')
@@ -289,6 +299,7 @@ trimmed in raw strings.
 '''
       TOML
       subject.start_with(str)
+      subject.send(:equal_found)
       token = subject.tokens[0]
       expect(token).to be_kind_of(Rley::Lexical::Literal)
       expect(token.terminal).to eq('STRING')
@@ -308,6 +319,7 @@ trimmed in raw strings.
       ]
       cases.each do |str, expected|
         subject.start_with(str)
+        subject.send(:equal_found)
         token = subject.tokens[0]
         expect(token).to be_kind_of(Rley::Lexical::Literal)
         expect(token.terminal).to eq('STRING')
@@ -326,6 +338,7 @@ trimmed in raw strings.
       ]
       cases.each do |str, expected|
         subject.start_with(str)
+        subject.send(:equal_found)
         token = subject.tokens[0]
         expect(token).to be_kind_of(Rley::Lexical::Literal)
         expect(token.terminal).to eq('STRING')
@@ -354,6 +367,7 @@ trimmed in raw strings.
       TOML
       [str2, str3].each do |str|
         subject.start_with(str)
+        subject.send(:equal_found)
         token = subject.tokens[0]
         expect(token).to be_kind_of(Rley::Lexical::Literal)
         expect(token.terminal).to eq('STRING')
