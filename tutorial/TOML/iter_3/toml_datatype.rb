@@ -6,22 +6,7 @@ require 'date'
 require 'forwardable'
 
 # Class implementing the TOML unquoted key data type.
-class QuotedKey < TOMLDatatype
-  # Method to obtain the text representation of the object.
-  # @return [String]
-  def to_str
-    value
-  end
-
-  protected
-
-  def validated_value(aValue, _format)
-    unless aValue.is_a?(String)
-      raise StandardError, "Invalid string value #{aValue}"
-    end
-
-    aValue
-  end
+class QuotedKey < TOMLString
 end # class
 
 # Class implementing the TOML offset date-time data type.

@@ -32,7 +32,6 @@ class TOMLTokenizer
   PATT_NEWLINE = /(?:\r\n)|\r|\n/.freeze
   PATT_MULTI_LINE_STRING_DELIM = /(?:''')|(?:""")/.freeze
   PATT_SINGLE_LINE_STRING_DELIM = /'|"/.freeze
-  PATT_STRING_ESCAPE = /\\(?:[^Uu]|u[0-9A-Fa-f]{0,4}|U[0-9A-Fa-f]{0,8})/.freeze
   PATT_STRING_END_LITERAL = /(?:[^']|(?:'(?!''))|(?:''(?!')))*?(?:'''|$)/.freeze
   PATT_STRING_END_ML_BASIC = /(?:[^"\\]
     | (?:"(?!""))
@@ -67,18 +66,6 @@ class TOMLTokenizer
     ']' => 'RBRACKET',
     '{' => 'LACCOLADE',
     '}' => 'RACCOLADE'
-  }.freeze
-
-  # Single character that have a special meaning when escaped
-  # @return [{Char => String}]
-  @@escape_chars = {
-    ?b => "\b",
-    ?f => "\f",
-    ?n => "\n",
-    ?r => "\r",
-    ?t => "\t",
-    ?" => ?",
-    '\\' => '\\'
   }.freeze
 
   # Constructor. Initialize a tokenizer for TOML input.
@@ -157,7 +144,7 @@ class TOMLTokenizer
         when :default
           if (lexeme = scanner.scan(PATT_KEY_QUOTED_DELIM))
             # Start of quoted key detected...
-            single_line_quoted_token(lexeme, :key)
+            single_line_string_token(lexeme, :key)
           elsif (lexeme = scanner.scan(PATT_CHAR_SINGLE_KEY))
             verbatim_scanned(lexeme)
           elsif (lexeme = scanner.scan(PATT_KEY_UNQUOTED))
@@ -177,7 +164,7 @@ class TOMLTokenizer
             string_token
           elsif (lexeme = scanner.scan(PATT_SINGLE_LINE_STRING_DELIM))
             # Start of single line string detected...
-            string_token = single_line_quoted_token(lexeme, :string)
+            string_token = single_line_string_token(lexeme, :string)
             update_keyval_state(string_token)
             string_token
           elsif (lexeme = scanner.scan(PATT_CHAR_SINGLE_VAL))
@@ -282,7 +269,7 @@ class TOMLTokenizer
   end
 
   # precondition: current position at leading delimiter
-  def single_line_quoted_token(delimiter, token_type)
+  def single_line_string_token(delimiter, token_type)
     @scan_pos = scanner.pos
     line = @lineno
     column_start = @scan_pos - @line_start
@@ -291,13 +278,15 @@ class TOMLTokenizer
 
     literal = scanner.scan(remainder_pattern)
     unterminated(line, column_start) unless literal
-    raw_value = delimiter == "'" ? literal[0..-2] : unescape(literal[0..-2])
+    # raw_value = delimiter == "'" ? literal[0..-2] : unescape(literal[0..-2])
+    format = delimiter == "'" ? :literal : :basic
+
     if token_type == :key
       token_kind = 'QUOTED-KEY'
-      token_value = QuotedKey.new(raw_value)
+      token_value = QuotedKey.new(literal[0..-2], format)
     else
       token_kind = 'STRING'
-      token_value = TOMLString.new(raw_value)
+      token_value = TOMLString.new(literal[0..-2], format)
     end
     lexeme = scanner.string[(@scan_pos - 1)..scanner.pos - 1]
     Rley::Lexical::Literal.new(token_value, lexeme, token_kind, @string_start)
@@ -316,7 +305,7 @@ class TOMLTokenizer
       unterminated(line, column_start) unless literal
       if literal =~ /'''$/
         # ... single-line string
-        build_single_line(literal[0..-4])
+        build_single_line(literal[0..-4], :literal)
       else
         # ... multi-line literal string
         @state = :multiline
@@ -328,7 +317,7 @@ class TOMLTokenizer
       unterminated(line, column_start) unless literal
       if literal.slice!(/"""$/)
         # ... single-line string
-        build_single_line(unescape(literal))
+        build_single_line(literal, :basic)
       else
         # ... multi-line basic string
         @state = :multiline
@@ -341,15 +330,15 @@ class TOMLTokenizer
             literal.chop!
             @trimming = true
           end
-          @multilines = literal.empty? ? [] : [unescape(literal)]
+          @multilines = literal.empty? ? [] : [literal]
           @multilines << "\n" unless @trimming
         end
       end
     end
   end
 
-  def build_single_line(aText)
-    string_value = TOMLString.new(aText)
+  def build_single_line(aText, format)
+    string_value = TOMLString.new(aText, format)
     lexeme = scanner.string[(@scan_pos - 3)..scanner.pos - 1]
     build_literal('STRING', string_value, lexeme, @string_start)
   end
@@ -374,7 +363,7 @@ class TOMLTokenizer
       if literal.slice!(/"""$/)
         # ... end demimiter found
         @state = :default
-        @multilines << unescape(literal) unless @trimming && literal.empty?
+        @multilines << literal unless @trimming && literal.empty?
         @trimming = false
       else
         @trimming = false unless literal.empty?
@@ -386,9 +375,9 @@ class TOMLTokenizer
         return if @trimming && literal.empty?
 
         if @trimming
-          @multilines << unescape(literal)
+          @multilines << literal
         else
-          @multilines.concat([unescape(literal), "\n"])
+          @multilines.concat([literal, "\n"])
         end
       end
     end
@@ -402,35 +391,6 @@ class TOMLTokenizer
 
   def unterminated(_line, _col)
     raise ScanError, "#{error_prefix}: Unterminated string."
-  end
-
-  def unescape(aString)
-    aString.gsub(PATT_STRING_ESCAPE) do |match|
-      match.slice!(0)
-      case match[0]
-      when ?u
-        codepoint2char(match, 4)
-
-      when ?U
-        codepoint2char(match, 8)
-
-      else
-        ch = @@escape_chars[match[0]]
-        if ch.nil?
-          raise ScanError, "#{error_prefix}: Reserved escape code \\#{match}."
-        end
-
-        ch
-      end
-    end
-  end
-
-  def codepoint2char(codepoint, length)
-    if codepoint.length < length
-      raise ScanError, "#{error_prefix}: escape sequence \\#{match} must have exactly #{length} hexdigits."
-    end
-
-    [codepoint[1..-1].hex].pack('U') # Ugly: conversion from codepoint to character
   end
 
   def update_keyval_state(aToken)
