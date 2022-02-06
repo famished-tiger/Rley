@@ -22,9 +22,6 @@ class TOMLTokenizer
   # @return [StringScanner] Low-level input scanner
   attr_reader(:scanner)
 
-  # @return [Symbol] Current lexical state
-  attr_reader(:state)
-
   # @return [Integer] The current line number
   attr_reader(:lineno)
 
@@ -40,7 +37,6 @@ class TOMLTokenizer
   # @param source [String] TOML text to tokenize.
   def initialize(source = nil)
     @scanner = StringScanner.new('')
-    @state = :default
     start_with(source) if source
   end
 
@@ -48,7 +44,6 @@ class TOMLTokenizer
   # @param source [String] TOML text to tokenize.
   def start_with(source)
     @scanner.string = source
-    @state = :default
     @lineno = 1
     @line_start = 0
   end
@@ -78,31 +73,30 @@ class TOMLTokenizer
         next
       end
 
-      token = case state
-        when :default
-          next if scanner.skip(PATT_WHITESPACE) # Skip whitespaces
+      token = begin
+        next if scanner.skip(PATT_WHITESPACE) # Skip whitespaces
 
-          curr_ch = scanner.peek(1)
+        curr_ch = scanner.peek(1)
 
-          if curr_ch == '#'
-            # Start of comment detected...
-            scanner.skip(PATT_COMMENT) # Skip line comment
-            next
-          elsif curr_ch == '"'
-            # Start of string detected...
-            build_string_token
-          elsif (lexeme = scanner.scan(PATT_SINGLE_CHAR))
-            build_token(@@lexeme2name[curr_ch], lexeme)
-          elsif (lexeme = scanner.scan(PATT_BOOLEAN))
-            build_token('BOOLEAN', lexeme)
-          elsif (lexeme = scanner.scan(PATT_UNQUOTED_KEY))
-            build_token('UNQUOTED-KEY', lexeme)
-          else # Unknown token
-            col = scanner.pos - @line_start + 1
-            _erroneous = curr_ch.nil? ? '' : scanner.scan(/./)
-            raise ScanError, "Error: [line #{lineno}:#{col}]: Unexpected character."
-          end
-      end # case state
+        if curr_ch == '#'
+          # Start of comment detected...
+          scanner.skip(PATT_COMMENT) # Skip line comment
+          next
+        elsif curr_ch == '"'
+          # Start of string detected...
+          build_string_token
+        elsif (lexeme = scanner.scan(PATT_SINGLE_CHAR))
+          build_token(@@lexeme2name[curr_ch], lexeme)
+        elsif (lexeme = scanner.scan(PATT_BOOLEAN))
+          build_token('BOOLEAN', lexeme)
+        elsif (lexeme = scanner.scan(PATT_UNQUOTED_KEY))
+          build_token('UNQUOTED-KEY', lexeme)
+        else # Unknown token
+          col = scanner.pos - @line_start + 1
+          _erroneous = curr_ch.nil? ? '' : scanner.scan(/./)
+          raise ScanError, "Error: [line #{lineno}:#{col}]: Unexpected character."
+        end
+      end # begin
     end # until
 
     token
@@ -143,7 +137,6 @@ class TOMLTokenizer
 
   # precondition: current position at leading quote
   def build_string_token
-    @state = :in_string
     scan_pos = scanner.pos
     line = @lineno
     column_start = scan_pos - @line_start
@@ -154,7 +147,6 @@ class TOMLTokenizer
       raise ScanError, "Error: [#{pos_start}]: Unterminated string."
     end
 
-    @state = :default
     pos = Rley::Lexical::Position.new(line, column_start)
     basic_string = TOMLString.new(literal[1..-2])
     lexeme = scanner.string[scan_pos..scanner.pos - 1]

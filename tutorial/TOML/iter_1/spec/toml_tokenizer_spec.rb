@@ -39,10 +39,6 @@ TOML
     it 'should have its scanner initialized' do
       expect(subject.scanner).to be_kind_of(StringScanner)
     end
-
-    it 'should be indefault state' do
-      expect(subject.state).to eq(:default)
-    end
   end # context
 
   context 'Data type tokenization:' do

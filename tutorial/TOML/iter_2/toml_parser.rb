@@ -31,8 +31,8 @@ class TOMLParser
     @engine.use_grammar(TOMLGrammar)
   end
 
-  # Parse the given TOML program into a parse tree.
-  # @param source [String] TOML program to parse
+  # Parse the given TOML file into a parse tree.
+  # @param source [String] TOML source to parse
   # @return [Rley::ParseTree] A parse tree equivalent to the TOML input.
   def parse(source)
     tokenizer = TOMLTokenizer.new(source)
