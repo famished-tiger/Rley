@@ -56,9 +56,9 @@ class TOMLTokenizer
   # @return [Integer] Position of last start of line in the input string
   attr_reader(:line_start)
 
-  # Single special character tokens.
+  # Mapping special character tokens to symbolic names
   # @return [{Char => String}]
-  @@lexeme2name = {
+  Lexeme2name = {
     ',' => 'COMMA',
     '.' => 'DOT',
     '=' => 'EQUAL',
@@ -218,7 +218,7 @@ class TOMLTokenizer
   end
 
   def verbatim_scanned(aLexeme)
-    symbol_name = @@lexeme2name[aLexeme]
+    symbol_name = Lexeme2name[aLexeme]
     begin
       lex_length = aLexeme ? aLexeme.size : 0
       col = scanner.pos - lex_length - @line_start + 1

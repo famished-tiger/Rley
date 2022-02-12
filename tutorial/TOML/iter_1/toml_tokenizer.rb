@@ -28,8 +28,9 @@ class TOMLTokenizer
   # @return [Integer] Position of last start of line in the input string
   attr_reader(:line_start)
 
-  # One or two special character tokens.
-  @@lexeme2name = {
+  # Mapping special character tokens to symbolic names
+  # @return [{Char => String}]  
+  Lexeme2name = {
     '=' => 'EQUAL'
   }.freeze
 
@@ -86,7 +87,7 @@ class TOMLTokenizer
           # Start of string detected...
           build_string_token
         elsif (lexeme = scanner.scan(PATT_SINGLE_CHAR))
-          build_token(@@lexeme2name[curr_ch], lexeme)
+          build_token(Lexeme2name[curr_ch], lexeme)
         elsif (lexeme = scanner.scan(PATT_BOOLEAN))
           build_token('BOOLEAN', lexeme)
         elsif (lexeme = scanner.scan(PATT_UNQUOTED_KEY))
