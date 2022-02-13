@@ -3,6 +3,7 @@
 require 'strscan'
 require 'rley'
 require_relative 'toml_datatype'
+require_relative 'toml_key'
 
 # A tokenizer for a very limited subset of TOML.
 # Responsibilities:

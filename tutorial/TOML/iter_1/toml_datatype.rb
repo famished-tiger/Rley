@@ -4,7 +4,7 @@
 # An instance acts merely as a wrapper around a Ruby representation
 # of the value.
 class TOMLDatatype
-  # @return [Object] The Ruby representation
+  # @return [Object] The Ruby representation of the value
   attr_reader :value
 
   # Constructor. Initialize a TOML value from one of its built-in data type.
@@ -33,25 +33,6 @@ end # class
 
 # Class implementing the TOML boolean data type.
 class TOMLBoolean < TOMLDatatype
-end # class
-
-# Class implementing the TOML unquoted key data type.
-class UnquotedKey < TOMLDatatype
-  # Method called from TOML to obtain the text representation of the object.
-  # @return [String]
-  def to_str
-    value
-  end
-
-  protected
-
-  def validated_value(aValue)
-    unless aValue.is_a?(String)
-      raise StandardError, "Invalid string value #{aValue}"
-    end
-
-    aValue
-  end
 end # class
 
 # Class implementing the TOML string data type.
