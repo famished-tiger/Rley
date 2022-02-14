@@ -88,7 +88,7 @@ class TOMLFloat < TOMLDatatype
     compacted.to_f
   end
 end # class
-
+=begin
 # Class implementing the TOML unquoted key data type.
 class UnquotedKey < TOMLDatatype
   # Method to obtain the text representation of the object.
@@ -113,7 +113,7 @@ class UnquotedKey < TOMLDatatype
     aValue
   end
 end # class
-
+=end
 # Class implementing the TOML string data type.
 class TOMLString < TOMLDatatype
   PATT_STRING_ESCAPE = /\\(?:[^Uu]|u[0-9A-Fa-f]{0,4}|U[0-9A-Fa-f]{0,8})/.freeze

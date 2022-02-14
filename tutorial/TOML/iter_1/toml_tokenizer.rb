@@ -30,7 +30,7 @@ class TOMLTokenizer
   attr_reader(:line_start)
 
   # Mapping special character tokens to symbolic names
-  # @return [{Char => String}]  
+  # @return [{Char => String}]
   Lexeme2name = {
     '=' => 'EQUAL'
   }.freeze

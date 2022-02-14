@@ -5,10 +5,6 @@ require_relative '../iter_2/toml_datatype'
 require 'date'
 require 'forwardable'
 
-# Class implementing the TOML unquoted key data type.
-class QuotedKey < TOMLString
-end # class
-
 # Class implementing the TOML offset date-time data type.
 class TOMLOffsetDateTime < TOMLDatatype
   extend Forwardable
