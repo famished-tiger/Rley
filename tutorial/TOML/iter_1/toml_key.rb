@@ -16,12 +16,15 @@ class TOMLKey
     to_key
   end
 
-  # Method called from TOML to obtain the text representation of the boolean.
+  # Method called from TOML to obtain the text representation of the key.
   # @return [String]
   def to_str
     key.to_s # Default implementation...
   end
 
+  # Key text equality test
+  # @param other [TOMLKey, String]
+  # @return [Boolean]
   def ==(other)
     return true if equal?(other)
 
