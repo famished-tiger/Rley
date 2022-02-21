@@ -156,5 +156,34 @@ describe TOMLParser do
       expect(alpha_table['ip'].value).to eq('10.0.0.1')
       expect(alpha_table['role'].value).to eq('frontend')
     end
+
+    it 'should parse arrays' do
+      source = <<-TOML
+        ports = [25, 443]
+      TOML
+      ptree = subject.parse(source)
+      root = ptree.root
+      expect(root).to be_kind_of(TOMLTableNode)
+      expect(root.subnodes.size).to eq(1)
+      port_array = root['ports']
+      expect(port_array).to be_kind_of(TOMLArrayNode)
+      expect(port_array.subnodes[0].value).to eq(25)
+      expect(port_array.subnodes[1].value).to eq(443)
+    end
+
+    it 'should parse inline tables' do
+      source = <<-TOML
+        center = { x = 5, y = -17 }
+      TOML
+      ptree = subject.parse(source)
+      root = ptree.root
+      expect(root).to be_kind_of(TOMLTableNode)
+      expect(root.subnodes.size).to eq(1)
+      center_table = root['center']
+      expect(center_table.subnodes[0].key.value).to eq('x')
+      expect(center_table.subnodes[0].val.value).to eq(5)
+      expect(center_table.subnodes[1].key.value).to eq('y')
+      expect(center_table.subnodes[1].val.value).to eq(-17)
+    end
   end
 end # describe

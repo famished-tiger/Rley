@@ -60,8 +60,7 @@ builder = Rley::grammar_builder do
   rule('val' => 'date-time').tag 'atomic_literal'
   rule('array' => 'LBRACKET array-values RBRACKET').tag 'array'
   rule('array' => 'LBRACKET array-values COMMA RBRACKET').tag 'array'
-  rule('array-values' => 'array-values COMMA val').tag 'more_array_values'
-  rule('array-values' => 'val').tag 'one_array_value'
+  rule('array-values' => 'val (COMMA val)*').tag 'comma_separated'
   rule 'date-time' => 'OFFSET-DATE-TIME'
   rule 'date-time' => 'LOCAL-DATE-TIME'
   rule 'date-time' => 'LOCAL-DATE'
@@ -70,8 +69,7 @@ builder = Rley::grammar_builder do
   rule 'table' => 'array-table'
   rule('std-table' => 'LBRACKET key RBRACKET').tag 'std_table'
   rule('inline-table' => 'LACCOLADE inline-table-keyvals RACCOLADE').tag 'inline_table'
-  rule('inline-table-keyvals' => 'inline-table-keyvals COMMA keyval').tag 'more_keyval'
-  rule('inline-table-keyvals' => 'keyval').tag 'one_keyval'
+  rule('inline-table-keyvals' => 'keyval (COMMA keyval)*').tag 'comma_separated'
   rule 'array-table' => 'LBRACKET LBRACKET key RBRACKET RBRACKET'
 end
 

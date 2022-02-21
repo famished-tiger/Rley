@@ -66,6 +66,16 @@ class TOMLASTBuilder < Rley::ParseRep::ASTBaseBuilder
   #  TOML SEMANTIC ACTIONS
   #####################################
 
+  # Semantic action for sequence of one or more items separated by a delimiter (say, a comma)
+  # rule('comma-separated' => 'item (COMMA item)*')
+  def reduce_comma_separated(_production, _range, _tokens, theChildren)
+    items = [theChildren[0]]
+    return items if theChildren[1].empty?
+
+    more_items = theChildren[1].map { |(_, entry)| entry }
+    items.concat(more_items)
+  end
+
   # rule('toml' => 'expression*')
   def reduce_toml(_production, _range, _tokens, theChildren)
     @top_table = TOMLTableNode.new([])
@@ -137,16 +147,6 @@ class TOMLASTBuilder < Rley::ParseRep::ASTBaseBuilder
     TOMLArrayNode.new(theChildren[1])
   end
 
-  # rule('array-values' => 'array-values COMMA val')
-  def reduce_more_array_values(_production, _range, _tokens, theChildren)
-    theChildren[0] << theChildren[2]
-  end
-
-  # rule('array-values' => 'val')
-  def reduce_one_array_value(_production, _range, _tokens, theChildren)
-    [theChildren[0]]
-  end
-
   # rule('std-table' => 'LBRACKET key RBRACKET')
   def reduce_std_table(_production, _range, _tokens, theChildren)
     theChildren[1]
@@ -155,15 +155,5 @@ class TOMLASTBuilder < Rley::ParseRep::ASTBaseBuilder
   # rule('inline-table' => 'LACCOLADE inline-table-keyvals RACCOLADE')
   def reduce_inline_table(_production, _range, _tokens, theChildren)
     TOMLiTableNode.new(theChildren[1])
-  end
-
-  # rule('inline-table-keyvals' => 'inline-table-keyvals COMMA keyval')
-  def reduce_more_keyval(_production, _range, _tokens, theChildren)
-    theChildren[0] << theChildren[2]
-  end
-
-  # rule('inline-table-keyvals' => 'keyval')
-  def reduce_one_keyval(_production, _range, _tokens, theChildren)
-    [theChildren[0]]
   end
 end # class
