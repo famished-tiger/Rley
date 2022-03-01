@@ -4,6 +4,7 @@
 # Instances of its subclasses represent nodes of an abstract syntax tree
 # that is the product of the parse of an input text.
 class TOMLASTNode
+  # Default constructor
   def initialize; end
 
   # Notification that the parsing has successfully completed
