@@ -43,7 +43,7 @@ builder = Rley::grammar_builder do
   # Reminder: first found rule is considered to be the top-level rule
   rule('toml' => 'expression*').tag 'toml'
 
-  rule('expression' => 'keyval')
+  rule 'expression' => 'keyval'
   rule('expression' => 'table').tag 'table_expr'
   rule('keyval' => 'key EQUAL val').tag 'keyval'
   rule('key' => 'simple-key')

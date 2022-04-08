@@ -41,6 +41,7 @@ class TOMLASTBuilder < Rley::ParseRep::ASTBaseBuilder
   def new_parent_node(aProduction, aRange, theTokens, theChildren)
     mth_name = method_name(aProduction.name)
     if respond_to?(mth_name, true)
+      # p mth_name # Uncomment this line to get the reduce method call sequence
       node = send(mth_name, aProduction, aRange, theTokens, theChildren)
     else
       # Default action...

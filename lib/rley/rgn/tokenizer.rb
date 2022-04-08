@@ -14,6 +14,13 @@ module Rley
     # Delimiters: e.g. parentheses '(',  ')'
     # Separators: e.g. comma
     class Tokenizer
+      PATT_KEY = /[a-zA-Z_][a-zA-Z_0-9]*:/.freeze
+      PATT_INTEGER = /\d+/.freeze
+      PATT_NEWLINE = /(?:\r\n)|\r|\n/.freeze
+      PATT_STRING_START = /"|'/.freeze
+      PATT_SYMBOL = /[^?*+,:(){}\s]+/.freeze
+      PATT_WHITESPACE = /[ \t\f]+/.freeze
+
       # @return [StringScanner] Low-level input scanner
       attr_reader(:scanner)
 
@@ -24,7 +31,7 @@ module Rley
       attr_reader(:line_start)
 
       # One or two special character tokens.
-      @@lexeme2name = {
+      Lexeme2name = {
         '(' => 'LEFT_PAREN',
         ')' => 'RIGHT_PAREN',
         '{' => 'LEFT_BRACE',
@@ -44,16 +51,16 @@ module Rley
       # Constructor. Initialize a tokenizer for RGN input.
       # @param source [String] RGN text to tokenize.
       def initialize(source = nil)
-        @scanner = StringScanner.new('')
-        start_with(source) if source
+        reset
+        input = source || ''
+        @scanner = StringScanner.new(input)
       end
 
       # Reset the tokenizer and make the given text, the current input.
       # @param source [String] RGN text to tokenize.
       def start_with(source)
+        reset
         @scanner.string = source
-        @lineno = 1
-        @line_start = 0
       end
 
       # Scan the source and return an array of tokens.
@@ -65,47 +72,67 @@ module Rley
           tok_sequence << token unless token.nil?
         end
 
-        return tok_sequence
+        tok_sequence
       end
 
       private
 
+      def reset
+        @lineno = 1
+        @line_start = 0
+      end
+
       def _next_token
-        pos_before = scanner.pos
-        skip_intertoken_spaces
-        ws_found = true if scanner.pos > pos_before
-        curr_ch = scanner.peek(1)
-        return nil if curr_ch.nil? || curr_ch.empty?
-
         token = nil
+        ws_found = false
 
-        if '(){},'.include? curr_ch
-          # Single delimiter, separator or character
-          token = build_token(@@lexeme2name[curr_ch], scanner.getch)
-        elsif '?*+,'.include? curr_ch # modifier character
-          # modifiers without prefix text are symbols
-          symb = ws_found ? 'SYMBOL' : @@lexeme2name[curr_ch]
-          token = build_token(symb, scanner.getch)
-        elsif (lexeme = scanner.scan(/\.\./))
-          # One or two special character tokens
-          token = build_token(@@lexeme2name[lexeme], lexeme)
-        elsif scanner.check(/"|'/) # Start of string detected...
-          token = build_string_token
-        elsif (lexeme = scanner.scan(/\d+/))
-          token = build_token('INT_LIT', lexeme)
-        elsif (lexeme = scanner.scan(/[a-zA-Z_][a-zA-Z_0-9]*:/))
-          keyw = @@keywords[lexeme.chop!]
-          token = build_token('KEY', lexeme) if keyw
-          # ... error case
-        elsif (lexeme = scanner.scan(/[^?*+,:(){}\s]+/))
-           token = build_token('SYMBOL', lexeme)
-        else # Unknown token
-          col = scanner.pos - @line_start + 1
-          _erroneous = curr_ch.nil? ? '' : scanner.scan(/./)
-          raise ScanError, "Error: [line #{lineno}:#{col}]: Unexpected character."
-        end
+        # Loop until end of input reached or token found
+        until token || scanner.eos?
 
-        return token
+          nl_found = scanner.skip(PATT_NEWLINE)
+          if nl_found
+            next_line_scanned
+            next
+          end
+          if scanner.skip(PATT_WHITESPACE) # Skip whitespaces
+            ws_found = true
+            next
+          end
+
+          curr_ch = scanner.peek(1)
+
+          if '(){},'.include? curr_ch
+            # Single delimiter, separator or character
+            token = build_token(Lexeme2name[curr_ch], scanner.getch)
+          elsif '?*+,'.include? curr_ch # modifier character
+            # modifiers without prefix text are symbols
+            symb = (ws_found || nl_found) ? 'SYMBOL' : Lexeme2name[curr_ch]
+            token = build_token(symb, scanner.getch)
+          elsif (lexeme = scanner.scan(/\.\./))
+            # One or two special character tokens
+            token = build_token(Lexeme2name[lexeme], lexeme)
+          elsif scanner.check(PATT_STRING_START) # Start of string detected...
+            token = build_string_token
+          elsif (lexeme = scanner.scan(PATT_INTEGER))
+            token = build_token('INT_LIT', lexeme)
+          elsif (lexeme = scanner.scan(PATT_KEY))
+            keyw = @@keywords[lexeme.chop!]
+            token = build_token('KEY', lexeme) if keyw
+            # ... error case
+          elsif (lexeme = scanner.scan(PATT_SYMBOL))
+             token = build_token('SYMBOL', lexeme)
+          else # Unknown token
+            col = scanner.pos - @line_start + 1
+            _erroneous = curr_ch.nil? ? '' : scanner.scan(/./)
+            raise ScanError, "Error: [line #{lineno}:#{col}]: Unexpected character."
+          end
+          ws_found = false
+        end # until
+
+        # unterminated(@string_start.line, @string_start.column) if state == :multiline
+        token
+
+        # return token
       end
 
       def build_token(aSymbolName, aLexeme)
@@ -154,24 +181,8 @@ module Rley
         Rley::Lexical::Token.new(literal, 'STR_LIT', pos)
       end
 
-      # Skip non-significant whitespaces and comments.
-      # Advance the scanner until something significant is found.
-      def skip_intertoken_spaces
-        loop do
-          ws_found = scanner.skip(/[ \t\f]+/) ? true : false
-          nl_found = scanner.skip(/(?:\r\n)|\r|\n/)
-          if nl_found
-            ws_found = true
-            next_line
-          end
-
-          break unless ws_found
-        end
-
-        scanner.pos
-      end
-
-      def next_line
+      # Event: next line detected.
+      def next_line_scanned
         @lineno += 1
         @line_start = scanner.pos
       end

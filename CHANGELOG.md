@@ -1,3 +1,7 @@
+### 0.8.10 / 2022-04-08
+- Refactoring of `RGN::Tokenizer` class.
+* [CHANGE] Class `RGN::Tokenizer` changes.
+
 ### 0.8.09 / 2022-01-28
 - Added code for coming tutorial
 
