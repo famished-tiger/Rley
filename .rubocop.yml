@@ -133,6 +133,9 @@ Lint/RaiseException:
 
 Lint/RedundantDirGlobSort:
   Enabled: true
+  
+Lint/RefinementImportMethods: # new in 1.27
+  Enabled: true  
 
 Lint/RequireRelativeSelfPath:
   Enabled: true
@@ -328,6 +331,9 @@ Style/MultilineInPatternThen:
 
 Style/NegatedIfElseCondition:
   Enabled: true
+  
+Style/NestedFileDirname: # new in 1.26
+  Enabled: true
 
 Style/Next:
   Enabled: false
@@ -355,6 +361,9 @@ Style/RaiseArgs:
 
 Style/RedundantArgument:
   Enabled: true
+  
+Style/RedundantInitialize: # new in 1.27
+  Enabled: true  
 
 Style/RedundantReturn:
   Enabled: false

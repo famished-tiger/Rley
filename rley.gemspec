@@ -59,12 +59,15 @@ RLEY_GEMSPEC = Gem::Specification.new do |pkg|
   pkg_files(pkg)
   pkg_documentation(pkg)
 
-  # Here we have the external dependencies
+  # Here we have the runtime external dependency (prime library has been demoted to a bundled gem)
+  pkg.add_runtime_dependency('prime', '~> 0.1.0')
+
+  # Here we have the development external dependencies
   pkg.add_development_dependency 'rake', '~> 13.0', '>= 13.0.0'
   pkg.add_development_dependency 'rspec', '~> 3.5', '>= 3.5.0'
   pkg.add_development_dependency 'rubygems', '~> 2.0', '>= 2.0.0'
   pkg.license = 'MIT'
-  pkg.required_ruby_version = '>= 2.5.0'
+  pkg.required_ruby_version = '>= 2.6.0'
 end
 
 if $PROGRAM_NAME == __FILE__

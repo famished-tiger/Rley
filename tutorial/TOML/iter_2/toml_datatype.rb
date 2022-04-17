@@ -88,32 +88,7 @@ class TOMLFloat < TOMLDatatype
     compacted.to_f
   end
 end # class
-=begin
-# Class implementing the TOML unquoted key data type.
-class UnquotedKey < TOMLDatatype
-  # Method to obtain the text representation of the object.
-  # @return [String]
-  def to_str
-    value
-  end
 
-  # Part of the 'visitee' role in Visitor design pattern.
-  # @param visitor [TOMLASTVisitor] the visitor
-  def accept(visitor)
-    visitor.visit_unquoted_key(self)
-  end
-
-  protected
-
-  def validated_value(aValue, _format)
-    unless aValue.is_a?(String)
-      raise StandardError, "Invalid string value #{aValue}"
-    end
-
-    aValue
-  end
-end # class
-=end
 # Class implementing the TOML string data type.
 class TOMLString < TOMLDatatype
   PATT_STRING_ESCAPE = /\\(?:[^Uu]|u[0-9A-Fa-f]{0,4}|U[0-9A-Fa-f]{0,8})/.freeze
@@ -174,6 +149,6 @@ class TOMLString < TOMLDatatype
       raise StandardError, "#{error_prefix}: escape sequence \\#{match} must have exactly #{length} hexdigits."
     end
 
-    [codepoint[1..-1].hex].pack('U') # Ugly: conversion from codepoint to character
+    [codepoint[1..].hex].pack('U') # Ugly: conversion from codepoint to character
   end
 end # class

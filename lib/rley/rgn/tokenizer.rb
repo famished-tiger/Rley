@@ -46,7 +46,7 @@ module Rley
       # Here are all the implemented Rley notation keywords
       @@keywords = %w[
         match_closest repeat
-      ].map { |x| [x, x] }.to_h
+      ].to_h { |x| [x, x] }
 
       # Constructor. Initialize a tokenizer for RGN input.
       # @param source [String] RGN text to tokenize.
@@ -129,10 +129,7 @@ module Rley
           ws_found = false
         end # until
 
-        # unterminated(@string_start.line, @string_start.column) if state == :multiline
         token
-
-        # return token
       end
 
       def build_token(aSymbolName, aLexeme)

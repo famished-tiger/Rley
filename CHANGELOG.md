@@ -1,3 +1,9 @@
+### 0.8.11 / 2022-04-17
+- Moved dependency on `prime` to gem.
+
+* [CHANGE] File `rley.gemspec` added runtime dependency on `prime` gem (rationale: was part of stdlib, from 3.1 it is demoted to a bundled gem)
+* [CHANGE] File `rgn\tokenizer.rb` minor style refactoring to please Rubocop 1.27
+
 ### 0.8.10 / 2022-04-08
 - Refactoring of `RGN::Tokenizer` class.
 * [CHANGE] Class `RGN::Tokenizer` changes.
