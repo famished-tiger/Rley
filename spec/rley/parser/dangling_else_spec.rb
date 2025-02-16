@@ -49,7 +49,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
               term_name = 'INTEGER'
             else
               err_msg = "Unknown token '#{lexeme}'"
-              raise StandardError,  err_msg
+              raise StandardError, err_msg
             end
           end
           pos = Rley::Lexical::Position.new(1, curr_pos + 1)

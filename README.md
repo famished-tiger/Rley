@@ -51,9 +51,9 @@ application range such as:
 
 ### Compatibility
 Rley supports the following Ruby implementations:
-- MRI 2.5
-- MRI 2.6 
-- MRI 2.7
+- MRI 3.2
+- MRI 3.3 
+- MRI 3.4
 - JRuby 9.1+  
 
 ---

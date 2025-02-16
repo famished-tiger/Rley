@@ -72,5 +72,5 @@ print_tree('Abstract Syntax Tree (AST)', ast_ptree)
 # Now perform the computation of math expression
 root = ast_ptree.root
 print_title('Result:')
-puts root.interpret.to_s # Output the expression result
+puts root.interpret # Output the expression result
 # End of file

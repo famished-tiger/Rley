@@ -386,23 +386,6 @@ module Rley # This module is used as a namespace
         end
       end
 
-      # def sequence_name(aSequenceNode)
-      #   subnode_names = +''
-      #   aSequenceNode.subnodes.each do |subn|
-      #     case subn
-      #     when SymbolNode
-      #       subnode_names << "_#{subn.name}"
-      #     when SequenceNode
-      #       subnode_names << "_#{sequence_name(subn)}"
-      #     when RepetitionNode
-      #       suffix = repetition2suffix(subn.repetition)
-      #       subnode_names << suffix
-      #     end
-      #   end
-      #
-      #   "seq#{subnode_names}"
-      # end
-
       def node_base_name(aNode)
         if aNode.kind_of?(SymbolNode)
           aNode.name
@@ -417,24 +400,6 @@ module Rley # This module is used as a namespace
 
         "#{base_name}#{suffix}"
       end
-
-      # def serialize_sequence(aSequenceNode)
-      #   text = +''
-      #   aSequenceNode.subnodes.each do |sn|
-      #     text << ' '
-      #     case sn
-      #     when SymbolNode
-      #       text << sn.name
-      #     when SequenceNode
-      #       text << sequence_name(sn)
-      #     when RepetitionNode
-      #       suffix = repetition2suffix(sn.repetition)
-      #       text << suffix
-      #     end
-      #   end
-      #
-      #   text.strip
-      # end
 
       def add_raw_rule(aSymbol, aRHS, aTag, simplified = false, constraints = [])
         raw_rule = RawRule.new(aSymbol, aRHS, aTag, simplified, constraints)

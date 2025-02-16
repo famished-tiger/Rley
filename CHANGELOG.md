@@ -1,3 +1,7 @@
+### 0.8.13 / 2025-02-16
+- Tested against MRI Ruby 3.4.1.
+- [FIX] Fixed most "offenses" reported by Rubocop 1.72.0
+
 ### 0.8.11 / 2022-04-17
 - Moved dependency on `prime` to gem.
 

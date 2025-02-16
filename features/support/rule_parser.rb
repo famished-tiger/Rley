@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require 'pp'
 require 'strscan'
 require_relative '../../lib/rley/syntax/grammar_builder'
 require_relative '../../spec/rley/support/grammar_helper'

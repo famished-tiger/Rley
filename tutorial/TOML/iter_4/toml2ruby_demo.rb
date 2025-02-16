@@ -44,6 +44,6 @@ if ARGV.empty?
   puts 'Command line: ruby tom2ruby_demo.rb <TOML file>'
   exit 1
 else
- result = agent.convert_file(ARGV[0])  # Parse TOML get its Ruby representation
- puts result.to_s
+ result = agent.convert_file(ARGV[0]) # Parse TOML get its Ruby representation
+ puts result
 end

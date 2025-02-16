@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require 'pp'
 require_relative '../../lib/rley/lexical/token_range'
 require_relative '../../lib/rley/sppf/non_terminal_node'
 require_relative '../../lib/rley/sppf/parse_forest'

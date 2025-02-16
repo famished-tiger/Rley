@@ -23,7 +23,7 @@ class LoxxyTokenizer
     lookup = %w[
       and class else false fun for if nil or
       print return super this true var while
-    ].map { |x| [x, x.upcase] }.to_h
+    ].to_h { |x| [x, x.upcase] }
     lookup.default = 'IDENTIFIER'
     lookup.freeze
   end

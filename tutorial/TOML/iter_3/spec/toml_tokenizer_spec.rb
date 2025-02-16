@@ -5,6 +5,8 @@ require_relative 'spec_helper' # Use the RSpec framework
 # Load the class under test
 require_relative '../toml_tokenizer'
 
+# rubocop: disable Metrics/BlockLength
+
 describe TOMLTokenizer do
   # Utility method for comparing actual and expected token
   # sequence.
@@ -753,3 +755,5 @@ trimmed in raw strings.
     end
   end # context
 end # describe
+
+# rubocop: enable Metrics/BlockLength

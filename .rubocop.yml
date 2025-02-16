@@ -2,8 +2,8 @@ AllCops:
   Exclude:
     - 'exp/**/*'
 
-Gemspec/DateAssignment:
-  Enabled: true
+#Gemspec/DateAssignment:
+#  Enabled: true
 
 Gemspec/RequireMFA: # new in 1.23
   Enabled: false

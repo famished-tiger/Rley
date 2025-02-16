@@ -6,7 +6,6 @@
 # It also demonstrates what to do in your env.rb file
 # to use the Macros4Cuke gem.
 
-require 'pp'
 require 'rspec/expectations'
 require_relative 'rule_parser'
 require_relative 'parse_forest_builder'

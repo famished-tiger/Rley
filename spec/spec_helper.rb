@@ -3,7 +3,6 @@
 # File: spec_helper.rb
 # Purpose: utility file that is loaded by all our RSpec files
 
-require 'pp'    # Use pretty-print for debugging purposes
 require 'rspec' # Use the RSpec framework
 
 

@@ -104,9 +104,9 @@ module Rley # Open this namespace to avoid module qualifier prefixes
       context 'Parsing: ' do
         # rubocop: disable Naming/VariableNumber
         it 'should parse a valid simple input' do
-          parse_result = subject.parse(grm1_tokens)
+          parse_result = subject.parse(build_token_sequence(%w[a a b c c], grammar_abc))
           expect(parse_result.success?).to eq(true)
-          # expect(parse_result.ambiguous?).to eq(false)
+          expect(parse_result.ambiguous?).to eq(false)
           ######################
           # Expectation chart[0]:
           expected = [

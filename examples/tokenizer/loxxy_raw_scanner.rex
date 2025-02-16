@@ -1,14 +1,17 @@
-# As Rubocop shouts about "offences" in the generated code, 
+# As Rubocop shouts about "offences" in the generated code,
 # we disable the detection of most of them...
 # rubocop: disable Style/MutableConstant
 # rubocop: disable Layout/SpaceBeforeSemicolon
 # rubocop: disable Style/Alias
 # rubocop: disable Style/AndOr
 # rubocop: disable Style/MultilineIfModifier
+# rubocop: disable Style/MultilineIfThen
 # rubocop: disable Style/StringLiterals
 # rubocop: disable Style/MethodDefParentheses
-# rubocop: disable Security/Open
+# rubocop: disable Style/RedundantParentheses
+# rubocop: disable Style/SlicingWithRange
 # rubocop: disable Style/TrailingCommaInArrayLiteral
+# rubocop: disable Security/Open#
 # rubocop: disable Layout/EmptyLinesAroundMethodBody
 # rubocop: disable Style/WhileUntilDo
 # rubocop: disable Style/MultilineWhenThen
@@ -94,6 +97,9 @@ end
 # rubocop: enable Style/MultilineIfModifier
 # rubocop: enable Style/StringLiterals
 # rubocop: enable Style/MethodDefParentheses
+# rubocop: enable Style/MultilineIfThen:
+# rubocop: enable Style/RedundantParentheses
+# rubocop: enable Style/SlicingWithRange
 # rubocop: enable Security/Open
 # rubocop: enable Style/TrailingCommaInArrayLiteral
 # rubocop: enable Layout/EmptyLinesAroundMethodBody
