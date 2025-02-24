@@ -10,32 +10,32 @@ require_relative 'toml_key'
 #   - read characters from input string ...
 #   - and transform them into a sequence of token objects.
 class TOMLTokenizer
-  PATT_BOOLEAN = /true|false/.freeze
-  PATT_CHAR_SINGLE = /[,=\[\]]/.freeze # Single delimiter or separator character
-  PATT_COMMENT = /#[^\r\n]*/.freeze
-  PATT_INT_DEC = /[-+]?(?:0|(?:[1-9](?:(?:_\d)|\d)*))(?!\.)/.freeze
-  PATT_INT_HEX = /0x[0-9A-Fa-f](?:(?:_[0-9A-Fa-f])|[0-9A-Fa-f])*/.freeze
-  PATT_INT_OCT = /0o[0-7](?:(?:_[0-7])|[0-7])*/.freeze
-  PATT_INT_BIN = /0b[01](?:(?:_[01])|[01])*/.freeze
+  PATT_BOOLEAN = /true|false/
+  PATT_CHAR_SINGLE = /[,=\[\]]/ # Single delimiter or separator character
+  PATT_COMMENT = /#[^\r\n]*/
+  PATT_INT_DEC = /[-+]?(?:0|(?:[1-9](?:(?:_\d)|\d)*))(?!\.)/
+  PATT_INT_HEX = /0x[0-9A-Fa-f](?:(?:_[0-9A-Fa-f])|[0-9A-Fa-f])*/
+  PATT_INT_OCT = /0o[0-7](?:(?:_[0-7])|[0-7])*/
+  PATT_INT_BIN = /0b[01](?:(?:_[01])|[01])*/
   PATT_FLOAT = /[-+]? # Optional sign
     (?:0|(?:[1-9](?:(?:_\d)|\d)*)) # Integer part
     (?:
       ((?: \. (?:[0-9](?:(?:_\d)|\d)*)) (?:[eE][-+]?\d+)?) # fractional part with optional exponent part
-      |  (?:[eE][-+]?\d+))/x.freeze # or exponent part
-  PATT_FLOAT_SPECIAL = /[-+]?(?:inf|nan)/.freeze
-  PATT_NEWLINE = /(?:\r\n)|\r|\n/.freeze
-  PATT_MULTI_LINE_STRING_DELIM = /(?:''')|(?:""")/.freeze
-  PATT_SINGLE_LINE_STRING_DELIM = /'|"/.freeze
-  PATT_STRING_END_LITERAL = /(?:[^']|(?:'(?!''))|(?:''(?!')))*?(?:'''|$)/.freeze
+      |  (?:[eE][-+]?\d+))/x # or exponent part
+  PATT_FLOAT_SPECIAL = /[-+]?(?:inf|nan)/
+  PATT_NEWLINE = /(?:\r\n)|\r|\n/
+  PATT_MULTI_LINE_STRING_DELIM = /(?:''')|(?:""")/
+  PATT_SINGLE_LINE_STRING_DELIM = /'|"/
+  PATT_STRING_END_LITERAL = /(?:[^']|(?:'(?!''))|(?:''(?!')))*?(?:'''|$)/
   PATT_STRING_END_ML_BASIC = /(?:[^"\\]
     | (?:"(?!""))
     | (?:""[^"\n\r])
     | (?:\\+"?[^"\n\r])
     | (?:\\(?=\n|\r))
     | (?:(\\\\)+\\"""))*?
-    (?:"""|$)/x.freeze
-  PATT_UNQUOTED_KEY = /[A-Za-z0-9\-_]+/.freeze
-  PATT_WHITESPACE = /[ \t\f]+/.freeze
+    (?:"""|$)/x
+  PATT_UNQUOTED_KEY = /[A-Za-z0-9\-_]+/
+  PATT_WHITESPACE = /[ \t\f]+/
   # @return [StringScanner] Low-level input scanner
   attr_reader(:scanner)
 

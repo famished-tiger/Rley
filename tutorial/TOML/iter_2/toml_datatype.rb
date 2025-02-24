@@ -75,10 +75,10 @@ end # class
 
 # Class implementing the TOML float data type.
 class TOMLFloat < TOMLDatatype
-  INFINITY = TOMLFloat.new(Float::INFINITY).freeze
-  INFINITY_MIN = TOMLFloat.new(-Float::INFINITY).freeze
-  NAN = TOMLFloat.new(Float::NAN).freeze
-  NAN_MIN = TOMLFloat.new(-Float::NAN).freeze
+  INFINITY = TOMLFloat.new(Float::INFINITY)
+  INFINITY_MIN = TOMLFloat.new(-Float::INFINITY)
+  NAN = TOMLFloat.new(Float::NAN)
+  NAN_MIN = TOMLFloat.new(-Float::NAN)
 
   protected
 
@@ -91,7 +91,7 @@ end # class
 
 # Class implementing the TOML string data type.
 class TOMLString < TOMLDatatype
-  PATT_STRING_ESCAPE = /\\(?:[^Uu]|u[0-9A-Fa-f]{0,4}|U[0-9A-Fa-f]{0,8})/.freeze
+  PATT_STRING_ESCAPE = /\\(?:[^Uu]|u[0-9A-Fa-f]{0,4}|U[0-9A-Fa-f]{0,8})/
 
   # Single character that have a special meaning when escaped
   # @return [{Char => String}]

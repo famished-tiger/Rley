@@ -4,7 +4,7 @@ require 'rley'
 require 'engtagger' # Load POS (Part-Of-Speech) tagger EngTagger
 
 # REGEX to remove XML tags from Engtagger output
-GET_TAG = /<(.+?)>(.*?)<.+?>/.freeze
+GET_TAG = /<(.+?)>(.*?)<.+?>/
 
 # Text tokenizer
 # Taken directly from Engtagger, will ensure uniform indexing while parsing

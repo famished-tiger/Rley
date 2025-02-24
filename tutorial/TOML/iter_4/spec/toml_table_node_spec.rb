@@ -9,15 +9,15 @@ require_relative '../toml_keyval_node'
 require_relative '../toml_table_node'
 
 describe TOMLTableNode do
-  subject { TOMLTableNode.new([]) }
+  subject(:table_node) { described_class.new([]) }
 
   context 'Initialization:' do
-    it 'should be initialized with an array' do
-      expect { TOMLTableNode.new([]) }.not_to raise_error
+    it 'is initialized with an array' do
+      expect { described_class.new([]) }.not_to raise_error
     end
 
-    it 'should be empty' do
-      expect(subject.subnodes).to be_empty
+    it 'is empty' do
+      expect(table_node.subnodes).to be_empty
     end
   end # context
 
@@ -32,31 +32,31 @@ describe TOMLTableNode do
       TOMLKeyvalNode.new([UnquotedKey.new('a'), TOMLString.new('c')])
     end
 
-    it 'should accept the addition of keyval' do
-      subject.add_keyval(keyval_aa)
-      expect(subject.subnodes.size).to eq(1)
-      expect(subject.subnodes[0].key).to eq('a')
-      expect(subject.subnodes[0].val).to eq('a')
+    it 'accepts the addition of keyval' do
+      table_node.add_keyval(keyval_aa)
+      expect(table_node.subnodes.size).to eq(1)
+      expect(table_node.subnodes[0].key).to eq('a')
+      expect(table_node.subnodes[0].val).to eq('a')
 
-      subject.add_keyval(keyval_bb)
-      expect(subject.subnodes.size).to eq(2)
-      expect(subject.subnodes[1].key).to eq('b')
-      expect(subject.subnodes[1].val).to eq('b')
+      table_node.add_keyval(keyval_bb)
+      expect(table_node.subnodes.size).to eq(2)
+      expect(table_node.subnodes[1].key).to eq('b')
+      expect(table_node.subnodes[1].val).to eq('b')
     end
 
-    it 'should retrieve a keyval with given key value' do
-      expect(subject[keyval_aa.key]).to be_nil
+    it 'retrieves a keyval with given key value' do
+      expect(table_node[keyval_aa.key]).to be_nil
 
-      subject.add_keyval(keyval_aa)
-      expect(subject[keyval_aa.key]).to eq(keyval_aa.val)
-      expect(subject['a']).to eq(keyval_aa.val)
+      table_node.add_keyval(keyval_aa)
+      expect(table_node[keyval_aa.key]).to eq(keyval_aa.val)
+      expect(table_node['a']).to eq(keyval_aa.val)
 
-      subject.add_keyval(keyval_bb)
-      expect(subject[keyval_aa.key]).to eq(keyval_aa.val)
-      expect(subject[keyval_bb.key]).to eq(keyval_bb.val)
-      expect(subject['b']).to eq(keyval_bb.val)
+      table_node.add_keyval(keyval_bb)
+      expect(table_node[keyval_aa.key]).to eq(keyval_aa.val)
+      expect(table_node[keyval_bb.key]).to eq(keyval_bb.val)
+      expect(table_node['b']).to eq(keyval_bb.val)
 
-      expect(subject[keyval_ac.key]).to eq(keyval_aa.val)
+      expect(table_node[keyval_ac.key]).to eq(keyval_aa.val)
     end
   end # context
 end # describe

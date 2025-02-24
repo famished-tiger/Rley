@@ -14,12 +14,12 @@ module Rley
     # Delimiters: e.g. parentheses '(',  ')'
     # Separators: e.g. comma
     class Tokenizer
-      PATT_KEY = /[a-zA-Z_][a-zA-Z_0-9]*:/.freeze
-      PATT_INTEGER = /\d+/.freeze
-      PATT_NEWLINE = /(?:\r\n)|\r|\n/.freeze
-      PATT_STRING_START = /"|'/.freeze
-      PATT_SYMBOL = /[^?*+,:(){}\s]+/.freeze
-      PATT_WHITESPACE = /[ \t\f]+/.freeze
+      PATT_KEY = /[a-zA-Z_][a-zA-Z_0-9]*:/
+      PATT_INTEGER = /\d+/
+      PATT_NEWLINE = /(?:\r\n)|\r|\n/
+      PATT_STRING_START = /"|'/
+      PATT_SYMBOL = /[^?*+,:(){}\s]+/
+      PATT_WHITESPACE = /[ \t\f]+/
 
       # @return [StringScanner] Low-level input scanner
       attr_reader(:scanner)
@@ -41,7 +41,7 @@ module Rley
         '?' => 'QUESTION_MARK',
         '*' => 'STAR',
         '..' => 'ELLIPSIS'
-      }.freeze
+      }
 
       # Here are all the implemented Rley notation keywords
       @@keywords = %w[

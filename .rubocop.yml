@@ -500,3 +500,12 @@ Style/StringChars:
 
 Style/StringConcatenation:
   Enabled: true
+
+#RSpec/ContextWording:
+#  Enabled: false
+#
+#RSpec/ExampleLength:
+#  Max: 50
+#
+#RSpec/MultipleExpectations:
+#  Max: 10

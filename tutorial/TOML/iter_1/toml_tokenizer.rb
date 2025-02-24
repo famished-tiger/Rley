@@ -12,12 +12,23 @@ require_relative 'toml_key'
 class TOMLTokenizer
   # rubocop: disable Style/RedundantRegexpCharacterClass
 
-  PATT_BOOLEAN = /true|false/.freeze
-  PATT_COMMENT = /#[^\r\n]*/.freeze
-  PATT_NEWLINE = /(?:\r\n)|\r|\n/.freeze
-  PATT_SINGLE_CHAR = /[=]/.freeze # Single delimiter or separator character
-  PATT_UNQUOTED_KEY = /[A-Za-z0-9\-_]+/.freeze
-  PATT_WHITESPACE = /[ \t\f]+/.freeze
+  # @return [Regexp] Matches a TOML boolean literal
+  PATT_BOOLEAN = /true|false/
+
+  # @return [Regexp] Matches a TOML comment
+  PATT_COMMENT = /#[^\r\n]*/
+
+  # @return [Regexp] Matches a new line (cross-platform)
+  PATT_NEWLINE = /(?:\r\n)|\r|\n/
+
+  # @return [Regexp] Matches a TOML single delimiter or separator character
+  PATT_SINGLE_CHAR = /[=]/
+
+  # @return [Regexp] Matches a TOML unquoted key
+  PATT_UNQUOTED_KEY = /[A-Za-z0-9\-_]+/
+
+  # # @return [Regexp] Matches a TOML whitespace character
+  PATT_WHITESPACE = /[ \t\f]+/
   # rubocop: enable Style/RedundantRegexpCharacterClass
 
   # @return [StringScanner] Low-level input scanner
