@@ -1,3 +1,6 @@
+### 0.8.14 / 2025-02-26
+- [FIX] Re-styled spec files of tutorial/iter4 folder
+
 ### 0.8.13 / 2025-02-16
 - Tested against MRI Ruby 3.4.1.
 - [FIX] Fixed most "offenses" reported by Rubocop 1.72.0

@@ -18,17 +18,17 @@ describe TOML2Ruby do
   subject(:translator) { described_class.new }
 
   context 'Initialization:' do
-    it 'should be initialized with an array' do
+    it 'is initialized with an array' do
       expect { described_class.new }.not_to raise_error
     end
   end # context
 
   context 'Conversion to Ruby:' do
-    it 'should convert an empty input to an empty Hash' do
+    it 'converts an empty input to an empty Hash' do
       expect(translator.convert(visitor_for(''))).to be_empty
     end
 
-    it 'should convert a single keyval to one Hash pair' do
+    it 'converts a single keyval to one Hash pair' do
       source = <<-TOML
         title = "TOML Example"
       TOML
@@ -37,7 +37,7 @@ describe TOML2Ruby do
       expect(converted.to_s).to eq('{"title" => "TOML Example"}')
     end
 
-    it 'should convert a table to a nested Hash' do
+    it 'converts a table to a nested Hash' do
       source = <<-TOML
         title = "TOML Example"
 
@@ -56,7 +56,7 @@ describe TOML2Ruby do
       expect(nested.to_s).to eq(nested_str)
     end
 
-    it 'should convert tables, arrays, inline tables' do
+    it 'converts tables, arrays, inline tables' do
       source = <<-TOML
         title = "TOML Example"
 
@@ -87,7 +87,7 @@ describe TOML2Ruby do
       expect(db_table['temp_targets'].to_s).to eq('{"cpu" => 79.5, "case" => 72.0}')
     end
 
-    it 'should convert dotted keys,' do
+    it 'converts dotted keys,' do
       source = <<-TOML
         title = "TOML Example"
 

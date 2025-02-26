@@ -508,4 +508,4 @@ Style/StringConcatenation:
 #  Max: 50
 #
 #RSpec/MultipleExpectations:
-#  Max: 10
+#  Max: 15
