@@ -438,6 +438,9 @@ Lint/TopLevelReturnWithArgument:
 Lint/UnreachableLoop:
   Enabled: true
 
+Naming/BlockForwarding:
+  EnforcedStyle: explicit
+
 Style/AccessorGrouping:
   Enabled: true
 
@@ -505,7 +508,22 @@ Style/StringConcatenation:
 #  Enabled: false
 #
 #RSpec/ExampleLength:
-#  Max: 50
+#  Max: 350
+#
+#RSpec/IndexedLet:
+#  Enabled: false
+#
+#RSpec/MultipleDescribes:
+#  Enabled: false
 #
 #RSpec/MultipleExpectations:
-#  Max: 15
+#  Max: 55
+#
+#RSpec/MultipleMemoizedHelpers:
+#  Max: 30
+#
+#RSpec/NoExpectationExample:
+#  Enabled: false
+#
+#RSpec/VerifiedDoubles:
+#  Enabled: false

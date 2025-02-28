@@ -16,14 +16,14 @@ module Rley # Open this namespace to avoid module qualifier prefixes
 
       context 'Initialization:' do
         # Default instantiation rule
-        subject { Literal.new(lexeme.to_f, lexeme, a_terminal, a_pos) }
+        subject(:a_literal) { described_class.new(lexeme.to_f, lexeme, a_terminal, a_pos) }
 
-        it 'should be created with a value, lexeme, terminal and position' do
-          expect { Literal.new(lexeme.to_f, lexeme, a_terminal, a_pos) }.not_to raise_error
+        it 'is created with a value, lexeme, terminal and position' do
+          expect { described_class.new(lexeme.to_f, lexeme, a_terminal, a_pos) }.not_to raise_error
         end
 
-        it 'should know its value' do
-          expect(subject.value).to eq(lexeme.to_f)
+        it 'knows its value' do
+          expect(a_literal.value).to eq(lexeme.to_f)
         end
       end # context
     end # describe

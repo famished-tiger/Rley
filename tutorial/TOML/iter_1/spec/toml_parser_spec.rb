@@ -6,20 +6,20 @@ require_relative 'spec_helper' # Use the RSpec framework
 require_relative '../toml_parser'
 
 describe TOMLParser do
-  subject { TOMLParser.new }
+  subject(:parser) { described_class.new }
 
   context 'Initialization:' do
-    it 'should be initialized without argument' do
-      expect { TOMLParser.new }.not_to raise_error
+    it 'is initialized without argument' do
+      expect { described_class.new }.not_to raise_error
     end
 
-    it 'should have its parse engine initialized' do
-      expect(subject.engine).to be_kind_of(Rley::Engine)
+    it 'has its parse engine initialized' do
+      expect(parser.engine).to be_a(Rley::Engine)
     end
   end # context
 
   context 'Parsing blank files:' do
-    it 'should cope with a blank input' do
+    it 'copes with a blank input' do
       blank_inputs = [
         '', # Empty input
         (' ' * 80) + ("\n" * 20), # spaces and newlines
@@ -32,12 +32,12 @@ describe TOMLParser do
         end # comments only
       ]
       blank_inputs.each do |input_string|
-        ptree = subject.parse(input_string)
+        ptree = parser.parse(input_string)
         root = ptree.root
-        expect(root).to be_kind_of(Rley::PTree::NonTerminalNode)
+        expect(root).to be_a(Rley::PTree::NonTerminalNode)
         expect(root.symbol.name).to eq('toml')
         expect(root.subnodes.size).to eq(1)
-        expect(root.subnodes[0]).to be_kind_of(Rley::PTree::NonTerminalNode)
+        expect(root.subnodes[0]).to be_a(Rley::PTree::NonTerminalNode)
         expect(root.subnodes[0].symbol.name).to eq('expr-list')
         expect(root.subnodes[0].subnodes).to be_empty
       end

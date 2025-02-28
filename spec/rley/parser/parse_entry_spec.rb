@@ -13,6 +13,9 @@ require_relative '../../../lib/rley/parser/parse_entry'
 module Rley # Open this namespace to avoid module qualifier prefixes
   module Parser # Open this namespace to avoid module qualifier prefixes
     describe ParseEntry do
+      # Default instantiation rule
+      subject(:an_entry) { described_class.new(sample_vertex, origin_val) }
+
       let(:t_a) { Syntax::Terminal.new('A') }
       let(:t_b) { Syntax::Terminal.new('B') }
       let(:t_c) { Syntax::Terminal.new('C') }
@@ -30,186 +33,185 @@ module Rley # Open this namespace to avoid module qualifier prefixes
       let(:origin_val) { 3 }
       let(:sample_vertex) { GFG::StartVertex.new(nt_sentence) }
       let(:vertex2) { double('vertex-mock') }
-      # Default instantiation rule
-      subject { ParseEntry.new(sample_vertex, origin_val) }
+
 
       context 'Initialization:' do
-        it 'should be created with a vertex and an origin position' do
+        it 'is created with a vertex and an origin position' do
           args = [sample_vertex, origin_val]
-          expect { ParseEntry.new(*args) }.not_to raise_error
+          expect { described_class.new(*args) }.not_to raise_error
         end
 
-        it 'should complain when the vertex is nil' do
+        it 'complains when the vertex is nil' do
           err = StandardError
           msg = 'GFG vertex cannot be nil'
-          expect { ParseEntry.new(nil, 2) }.to raise_error(err, msg)
+          expect { described_class.new(nil, 2) }.to raise_error(err, msg)
         end
 
-        it 'should know the vertex' do
-          expect(subject.vertex).to eq(sample_vertex)
+        it 'knows the vertex' do
+          expect(an_entry.vertex).to eq(sample_vertex)
         end
 
-        it 'should know the origin value' do
-          expect(subject.origin).to eq(origin_val)
+        it 'knows the origin value' do
+          expect(an_entry.origin).to eq(origin_val)
         end
 
-        it 'should have not antecedent at creation' do
-          expect(subject.antecedents).to be_empty
-          expect(subject).to be_orphan
+        it 'has not antecedent at creation' do
+          expect(an_entry.antecedents).to be_empty
+          expect(an_entry).to be_orphan
         end
       end # context
 
       context 'Provided services:' do
-        it 'should compare with itself' do
-          synonym = subject # Fool Rubocop
-          expect(subject == synonym).to eq(true)
+        it 'compares with itself' do
+          synonym = an_entry # Fool Rubocop
+          expect(an_entry == synonym).to be(true)
         end
 
-        it 'should compare with another' do
-          equal = ParseEntry.new(sample_vertex, origin_val)
-          expect(subject == equal).to eq(true)
+        it 'compares with another' do
+          equal = described_class.new(sample_vertex, origin_val)
+          expect(an_entry == equal).to be(true)
 
           # Same vertex, different origin
-          diff_origin = ParseEntry.new(sample_vertex, 2)
-          expect(subject == diff_origin).to eq(false)
+          diff_origin = described_class.new(sample_vertex, 2)
+          expect(an_entry == diff_origin).to be(false)
 
           # Different vertices, same origin
-          diff_vertex = ParseEntry.new(double('other_sample_vertex'), 3)
-          expect(subject == diff_vertex).to eq(false)
+          diff_vertex = described_class.new(double('other_sample_vertex'), 3)
+          expect(an_entry == diff_vertex).to be(false)
         end
 
-        it 'should know if the vertex is a start vertex' do
-          expect(subject).to be_start_entry
+        it 'knows if the vertex is a start vertex' do
+          expect(an_entry).to be_start_entry
 
-          instance = ParseEntry.new(GFG::EndVertex.new('.NT'), 3)
+          instance = described_class.new(GFG::EndVertex.new('.NT'), 3)
           expect(instance).not_to be_start_entry
         end
 
-        it 'should know if the vertex is an end vertex' do
-          expect(subject).not_to be_end_entry
+        it 'knows if the vertex is an end vertex' do
+          expect(an_entry).not_to be_end_entry
 
-          instance = ParseEntry.new(GFG::EndVertex.new('NT.'), 3)
+          instance = described_class.new(GFG::EndVertex.new('NT.'), 3)
           expect(instance).to be_end_entry
         end
 
-        it 'should know if the entry is a dotted item vertex' do
-          expect(subject).not_to be_dotted_entry
+        it 'knows if the entry is a dotted item vertex' do
+          expect(an_entry).not_to be_dotted_entry
 
-          instance = ParseEntry.new(GFG::ItemVertex.new('P => S.'), 3)
+          instance = described_class.new(GFG::ItemVertex.new('P => S.'), 3)
           expect(instance).to be_dotted_entry
         end
 
-        it 'should know if the vertex is at end of production (if any)' do
+        it 'knows if the vertex is at end of production (if any)' do
           # Case: start vertex
-          instance1 = ParseEntry.new(GFG::StartVertex.new('.NT'), 3)
+          instance1 = described_class.new(GFG::StartVertex.new('.NT'), 3)
           expect(instance1).not_to be_exit_entry
 
           # Case: end vertex
-          instance2 = ParseEntry.new(GFG::EndVertex.new('NT.'), 3)
+          instance2 = described_class.new(GFG::EndVertex.new('NT.'), 3)
           expect(instance2).not_to be_exit_entry
 
           # Case: item vertex not at end of rhs
           v1 = double('vertex-not-at-end')
-          expect(v1).to receive(:complete?).and_return(false)
-          instance3 = ParseEntry.new(v1, 3)
+          allow(v1).to receive(:complete?).and_return(false)
+          instance3 = described_class.new(v1, 3)
           expect(instance3).not_to be_exit_entry
 
           # Case: item vertex at end of rhs
           v2 = double('vertex-at-end')
-          expect(v2).to receive(:complete?).and_return(true)
-          instance4 = ParseEntry.new(v2, 3)
+          allow(v2).to receive(:complete?).and_return(true)
+          instance4 = described_class.new(v2, 3)
           expect(instance4).to be_exit_entry
         end
 
-        it 'should know if the vertex is at begin of production (if any)' do
+        it 'knows if the vertex is at begin of production (if any)' do
           # Case: start vertex
-          instance1 = ParseEntry.new(GFG::StartVertex.new('.NT'), 3)
+          instance1 = described_class.new(GFG::StartVertex.new('.NT'), 3)
           expect(instance1).not_to be_entry_entry
 
           # Case: end vertex
-          instance2 = ParseEntry.new(GFG::EndVertex.new('NT.'), 3)
+          instance2 = described_class.new(GFG::EndVertex.new('NT.'), 3)
           expect(instance2).not_to be_entry_entry
 
           # Case: item vertex not at begin of rhs
           d1 = Base::DottedItem.new(sample_prod, 1)
           v1 = GFG::ItemVertex.new(d1)
-          instance3 = ParseEntry.new(v1, 3)
+          instance3 = described_class.new(v1, 3)
           expect(instance3).not_to be_entry_entry
 
           # Case: item vertex at end of rhs
           d2 = Base::DottedItem.new(sample_prod, 0)
           v2 = GFG::ItemVertex.new(d2)
-          instance4 = ParseEntry.new(v2, 3)
+          instance4 = described_class.new(v2, 3)
           expect(instance4).to be_entry_entry
         end
 
-        it 'should know the symbol before the dot (if any)' do
+        it 'knows the symbol before the dot (if any)' do
           # Case: start vertex
-          instance1 = ParseEntry.new(GFG::StartVertex.new('.NT'), 3)
+          instance1 = described_class.new(GFG::StartVertex.new('.NT'), 3)
           expect(instance1.prev_symbol).to be_nil
 
           # Case: end vertex
-          instance2 = ParseEntry.new(GFG::EndVertex.new('NT.'), 3)
+          instance2 = described_class.new(GFG::EndVertex.new('NT.'), 3)
           expect(instance2.prev_symbol).to be_nil # Really correct?
 
           # Case: item vertex not at start of rhs
           v1 = double('vertex-not-at-start')
-          expect(v1).to receive(:prev_symbol).and_return('symbol')
-          instance3 = ParseEntry.new(v1, 3)
+          allow(v1).to receive(:prev_symbol).and_return('symbol')
+          instance3 = described_class.new(v1, 3)
           expect(instance3.prev_symbol).to eq('symbol')
 
           # Case: item vertex at start of rhs
           v2 = double('vertex-at-start')
-          expect(v2).to receive(:prev_symbol).and_return(nil)
-          instance4 = ParseEntry.new(v2, 0)
+          allow(v2).to receive(:prev_symbol).and_return(nil)
+          instance4 = described_class.new(v2, 0)
           expect(instance4.prev_symbol).to be_nil
         end
 
-        it 'should know the next expected symbol (if any)' do
+        it 'knows the next expected symbol (if any)' do
           # Case: start vertex
-          instance1 = ParseEntry.new(GFG::StartVertex.new('.NT'), 3)
+          instance1 = described_class.new(GFG::StartVertex.new('.NT'), 3)
           expect(instance1.next_symbol).to be_nil
 
           # Case: end vertex
-          instance2 = ParseEntry.new(GFG::EndVertex.new('NT.'), 3)
+          instance2 = described_class.new(GFG::EndVertex.new('NT.'), 3)
           expect(instance2.next_symbol).to be_nil
 
           # Case: item vertex not at end of rhs
           v1 = double('vertex-not-at-end')
-          expect(v1).to receive(:next_symbol).and_return('symbol')
-          instance3 = ParseEntry.new(v1, 3)
+          allow(v1).to receive(:next_symbol).and_return('symbol')
+          instance3 = described_class.new(v1, 3)
           expect(instance3.next_symbol).to eq('symbol')
 
           # Case: item vertex at end of rhs
           v2 = double('vertex-at-end')
-          expect(v2).to receive(:next_symbol).and_return(nil)
-          instance4 = ParseEntry.new(v2, 3)
+          allow(v2).to receive(:next_symbol).and_return(nil)
+          instance4 = described_class.new(v2, 3)
           expect(instance4.next_symbol).to be_nil
         end
 
-        it 'should accept antecedents' do
-          antecedent = ParseEntry.new(vertex2, origin_val)
-          subject.add_antecedent(antecedent)
-          expect(subject.antecedents).to eql([antecedent])
-          expect(subject).not_to be_orphan
+        it 'accepts antecedents' do
+          antecedent = described_class.new(vertex2, origin_val)
+          an_entry.add_antecedent(antecedent)
+          expect(an_entry.antecedents).to eql([antecedent])
+          expect(an_entry).not_to be_orphan
         end
 
-        it 'should know its text representation' do
+        it 'knows its text representation' do
           expected = '.sentence | 3'
-          expect(subject.to_s).to eq(expected)
+          expect(an_entry.to_s).to eq(expected)
         end
 
-        it 'should be inspectable' do
-          subject.add_antecedent(subject) # Cheat for the good cause...
+        it 'is be inspectable' do
+          an_entry.add_antecedent(an_entry) # Cheat for the good cause...
           # expected = '.sentence | 3'
           prefix = /^#<Rley::Parser::ParseEntry:\d+ @vertex/
-          expect(subject.inspect).to match(prefix)
+          expect(an_entry.inspect).to match(prefix)
           pattern = /@vertex=<Rley::GFG::StartVertex:\d+ label=\.sentence/
-          expect(subject.inspect).to match(pattern)
+          expect(an_entry.inspect).to match(pattern)
           pattern2 = /@origin=3 @antecedents=\[/
-          expect(subject.inspect).to match(pattern2)
+          expect(an_entry.inspect).to match(pattern2)
           suffix = /<Rley::GFG::StartVertex:\d+ label=\.sentence> @origin=3\]>$/
-          expect(subject.inspect).to match(suffix)
+          expect(an_entry.inspect).to match(suffix)
         end
       end # context
     end # describe

@@ -54,24 +54,23 @@ module Rley # Re-open the module to get rid of qualified names
         ptree = engine.convert(parse_result)
         ptree
       end
-
       let(:destination) { StringIO.new(+'', 'w') }
 
       context 'Standard creation & initialization:' do
-        it 'should be initialized with an IO argument' do
-          expect { Json.new(StringIO.new(+'', 'w')) }.not_to raise_error
+        it 'is initialized with an IO argument' do
+          expect { described_class.new(StringIO.new(+'', 'w')) }.not_to raise_error
         end
 
-        it 'should know its output destination' do
-          instance = Json.new(destination)
+        it 'knows its output destination' do
+          instance = described_class.new(destination)
           expect(instance.output).to eq(destination)
         end
       end # context
 
 
       context 'Formatting events:' do
-        it 'should render a parse tree in JSON' do
-          instance = Json.new(destination)
+        it 'renders a parse tree in JSON' do
+          instance = described_class.new(destination)
           visitor = Rley::ParseTreeVisitor.new(grm_abc_ptree1)
           instance.render(visitor)
           expectations = <<-SNIPPET

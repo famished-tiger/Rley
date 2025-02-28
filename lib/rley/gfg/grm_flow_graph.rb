@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require 'set'
 require_relative 'start_vertex'
 require_relative 'end_vertex'
 require_relative 'item_vertex'

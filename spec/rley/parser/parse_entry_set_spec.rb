@@ -19,6 +19,8 @@ module Rley # Open this namespace to avoid module qualifier prefixes
         return Syntax::Production.new(theLHS, theRHSSymbols)
       end
 
+      subject(:a_set) { described_class.new }
+
       let(:t_a) { Rley::Syntax::Terminal.new('a') }
       let(:t_b) { Rley::Syntax::Terminal.new('b') }
       let(:t_c) { Rley::Syntax::Terminal.new('c') }
@@ -39,153 +41,153 @@ module Rley # Open this namespace to avoid module qualifier prefixes
       let(:entry3) { ParseEntry.new(vertex3, 4) }
 
       context 'Initialization:' do
-        it 'should be created without argument' do
-          expect { ParseEntrySet.new }.not_to raise_error
+        it 'is created without argument' do
+          expect { described_class.new }.not_to raise_error
         end
 
-        it 'should be empty after creation' do
-          expect(subject.entries).to be_empty
+        it 'is empty after creation' do
+          expect(a_set.entries).to be_empty
         end
       end # context
 
       context 'Provided services:' do
-        it 'should accept the addition of an entry' do
+        it 'accepts the addition of an entry' do
           # Case: first time entry addition
-          expect(subject.push_entry(entry1)).to eq(entry1)
-          expect(subject).not_to be_empty
+          expect(a_set.push_entry(entry1)).to eq(entry1)
+          expect(a_set).not_to be_empty
 
           # Case: duplicate entry
-          expect(subject.push_entry(entry1)).to eq(entry1)
+          expect(a_set.push_entry(entry1)).to eq(entry1)
 
           # Yet another entry
-          expect(subject.push_entry(entry2)).to eq(entry2)
-          expect(subject.entries).to eq([entry1, entry2])
+          expect(a_set.push_entry(entry2)).to eq(entry2)
+          expect(a_set.entries).to eq([entry1, entry2])
         end
 
-        it 'should retrieve the entry at given position' do
-          subject.push_entry(entry1)
-          subject.push_entry(entry2)
-          expect(subject[0]).to eq(entry1)
-          expect(subject[1]).to eq(entry2)
+        it 'retrieves the entry at given position' do
+          a_set.push_entry(entry1)
+          a_set.push_entry(entry2)
+          expect(a_set[0]).to eq(entry1)
+          expect(a_set[1]).to eq(entry2)
         end
 
-        it 'should list the entries expecting a given terminal' do
+        it 'lists the entries expecting a given terminal' do
           # Case: an entry expecting a terminal
-          subject.push_entry(entry1)
-          expect(subject.entries4term(t_b)).to eq([entry1])
+          a_set.push_entry(entry1)
+          expect(a_set.entries4term(t_b)).to eq([entry1])
 
           # Case: a second entry expecting same terminal
-          subject.push_entry(entry2)
-          expect(subject.entries4term(t_b)).to eq([entry1, entry2])
+          a_set.push_entry(entry2)
+          expect(a_set.entries4term(t_b)).to eq([entry1, entry2])
         end
 
-        it 'should list the expected terminals' do
-          subject.push_entry(entry1)
-          subject.push_entry(entry2)
-          subject.push_entry(entry3)
+        it 'lists the expected terminals' do
+          a_set.push_entry(entry1)
+          a_set.push_entry(entry2)
+          a_set.push_entry(entry3)
 
-          expect(subject.expected_terminals).to eq([t_b])
+          expect(a_set.expected_terminals).to eq([t_b])
         end
 
-        it 'should list the entries expecting a given non-terminal' do
+        it 'lists the entries expecting a given non-terminal' do
           # Case: an entry expecting a non-terminal
-          subject.push_entry(entry3)
-          expect(subject.entries4n_term(nt_rep_c)).to eq([entry3])
+          a_set.push_entry(entry3)
+          expect(a_set.entries4n_term(nt_rep_c)).to eq([entry3])
         end
 
-        it 'should provide human-readable representation of itself' do
+        it 'provides human-readable representation of itself' do
           # Case 1: empty set
           pattern_empty = /^#<Rley::Parser::ParseEntrySet:\d+ @entries=\[\]>$/
-          expect(subject.inspect).to match(pattern_empty)
+          expect(a_set.inspect).to match(pattern_empty)
 
           # Case 2: non-empty set
-          subject.push_entry(entry1)
+          a_set.push_entry(entry1)
           prefix = /^#<Rley::Parser::ParseEntrySet:\d+ @entries=\[#<Rley/
-          expect(subject.inspect).to match(prefix)
+          expect(a_set.inspect).to match(prefix)
           pattern_entry = /ParseEntry:\d+ @vertex=<Rley::GFG::ItemVertex:\d+/
-          expect(subject.inspect).to match(pattern_entry)
+          expect(a_set.inspect).to match(pattern_entry)
           suffix = /=> a \. b b Repetition> @origin=2 @antecedents=\[\]>\]>$/
-          expect(subject.inspect).to match(suffix)
+          expect(a_set.inspect).to match(suffix)
         end
 
 =begin
-        it 'should list of ambiguous states' do
+        it 'lists of ambiguous states' do
           prod1 = double('fake-production1')
           prod2 = double('fake-production2')
-          expect(subject.ambiguities.size).to eq(0)
+          expect(a_set.ambiguities.size).to eq(0)
 
           # Adding states
-          subject.push_entry(entry1)
+          a_set.push_entry(entry1)
           expect(vertex1).to receive(:production).and_return(prod1)
           expect(vertex1).to receive(:"reduce_item?").and_return(true)
           expect(vertex1).to receive(:lhs).and_return(:something)
-          expect(subject.ambiguities.size).to eq(0)
+          expect(a_set.ambiguities.size).to eq(0)
           expect(vertex2).to receive(:production).and_return(prod2)
           expect(vertex2).to receive(:"reduce_item?").and_return(true)
           expect(vertex2).to receive(:lhs).and_return(:something_else)
-          subject.push_entry(entry2)
-          expect(subject.ambiguities.size).to eq(0)
+          a_set.push_entry(entry2)
+          expect(a_set.ambiguities.size).to eq(0)
           # dotted_rule3 = double('fake_dotted_rule3')
           # expect(dotted_rule3).to receive(:production).and_return(prod2)
           # expect(dotted_rule3).to receive(:"reduce_item?").and_return(true)
           # expect(dotted_rule3).to receive(:lhs).and_return(:something_else)
           # entry3 = ParseEntry.new(dotted_rule3, 5)
-          subject.push_entry(entry3)
-          expect(subject.ambiguities[0]).to eq([entry2, entry3])
+          a_set.push_entry(entry3)
+          expect(a_set.ambiguities[0]).to eq([entry2, entry3])
         end
 =end
 =begin
-        it 'should list the states expecting a given terminal' do
+        it 'lists the states expecting a given terminal' do
           # Case of no state
-          expect(subject.states_expecting(:a)).to be_empty
+          expect(a_set.states_expecting(:a)).to be_empty
 
           # Adding states
-          subject.push_entry(entry1)
-          subject.push_entry(entry2)
+          a_set.push_entry(entry1)
+          a_set.push_entry(entry2)
           expect(vertex1).to receive(:next_symbol).and_return(:b)
           expect(vertex2).to receive(:next_symbol).and_return(:a)
-          expect(subject.states_expecting(:a)).to eq([entry2])
-          expect(subject.states_expecting(:b)).to eq([entry1])
+          expect(a_set.states_expecting(:a)).to eq([entry2])
+          expect(a_set.states_expecting(:b)).to eq([entry1])
         end
 
-        it 'should list the states related to a production' do
+        it 'lists the states related to a production' do
           a_prod = double('fake-production')
 
           # Case of no state
-          expect(subject.states_for(a_prod)).to be_empty
+          expect(a_set.states_for(a_prod)).to be_empty
 
           # Adding states
-          subject.push_entry(entry1)
-          subject.push_entry(entry2)
+          a_set.push_entry(entry1)
+          a_set.push_entry(entry2)
           expect(vertex1).to receive(:production).and_return(:dummy)
           expect(vertex2).to receive(:production).and_return(a_prod)
-          expect(subject.states_for(a_prod)).to eq([entry2])
+          expect(a_set.states_for(a_prod)).to eq([entry2])
         end
 
-        it 'should list the states that rewrite a given non-terminal' do
+        it 'lists the states that rewrite a given non-terminal' do
           non_term = double('fake-non-terminal')
           prod1 = double('fake-production1')
           prod2 = double('fake-production2')
 
           # Adding states
-          subject.push_entry(entry1)
-          subject.push_entry(entry2)
+          a_set.push_entry(entry1)
+          a_set.push_entry(entry2)
           expect(vertex1).to receive(:production).and_return(prod1)
           expect(prod1).to receive(:lhs).and_return(:dummy)
           expect(vertex2).to receive(:production).and_return(prod2)
           expect(vertex2).to receive(:reduce_item?).and_return(true)
           expect(prod2).to receive(:lhs).and_return(non_term)
-          expect(subject.states_rewriting(non_term)).to eq([entry2])
+          expect(a_set.states_rewriting(non_term)).to eq([entry2])
         end
 
 
 
-        it 'should complain when impossible predecessor of parse state' do
-          subject.push_entry(entry1)
-          subject.push_entry(entry2)
+        it 'complains when impossible predecessor of parse state' do
+          a_set.push_entry(entry1)
+          a_set.push_entry(entry2)
           expect(vertex1).to receive(:prev_position).and_return(nil)
           err = StandardError
-          expect { subject.predecessor_state(entry1) }.to raise_error(err)
+          expect { a_set.predecessor_state(entry1) }.to raise_error(err)
         end
 =end
       end # context

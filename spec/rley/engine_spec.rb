@@ -11,37 +11,37 @@ require_relative '../../lib/rley/engine'
 
 module Rley # Open this namespace to avoid module qualifier prefixes
   describe Engine do
-    subject { Engine.new }
+    subject(:an_engine) { described_class.new }
 
     context 'Creation and initialization:' do
-      it 'could be created without argument' do
-        expect { Engine.new }.not_to raise_error
+      it 'is created without argument' do
+        expect { described_class.new }.not_to raise_error
       end
 
-      it 'could be created with block argument' do
+      it 'is created with block argument' do
         expect do
-          Engine.new do |config|
+          described_class.new do |config|
             config.parse_repr = :raw
           end
         end.not_to raise_error
       end
 
-      it "shouldn't have a link to a grammar yet" do
-        expect(subject.grammar).to be_nil
+      it "doesn't have a link to a grammar yet" do
+        expect(an_engine.grammar).to be_nil
       end
     end # context
 
     context 'Grammar building:' do
-      it 'should build grammar' do
-        subject.build_grammar do
+      it 'builds grammar' do
+        an_engine.build_grammar do
           add_terminals('a', 'b', 'c')
           add_production('S' => 'A')
           add_production('A' => 'a A c')
           add_production('A' => 'b')
         end
 
-        expect(subject.grammar).to be_kind_of(Rley::Syntax::Grammar)
-        expect(subject.grammar.rules.size).to eq(3)
+        expect(an_engine.grammar).to be_a(Rley::Syntax::Grammar)
+        expect(an_engine.grammar.rules.size).to eq(3)
       end
     end # context
 
@@ -78,34 +78,34 @@ module Rley # Open this namespace to avoid module qualifier prefixes
     end
 
     context 'Parsing:' do
-      subject do
-        instance = Engine.new
+      subject(:an_engine) do
+        instance = described_class.new
         add_sample_grammar(instance)
         instance
       end
 
-      it 'should parse a stream of tokens' do
+      it 'parses a stream of tokens' do
         sample_text = 'a a b c c'
         tokenizer = ABCTokenizer.new(sample_text)
-        result = subject.parse(tokenizer)
+        result = an_engine.parse(tokenizer)
         expect(result).to be_success
       end
     end # context
 
     context 'Parse tree manipulation:' do
-      subject do
-        instance = Engine.new
-        add_sample_grammar(instance)
-        instance
-      end
-
       let(:sample_tokenizer) do
         sample_text = 'a a b c c'
         ABCTokenizer.new(sample_text)
       end
 
-      it 'should build a parse tree even for a nullable production' do
-        instance = Engine.new
+      subject(:an_engine) do
+        instance = described_class.new
+        add_sample_grammar(instance)
+        instance
+      end
+
+      it 'builds a parse tree even for a nullable production' do
+        instance = described_class.new
         instance.build_grammar do
           add_terminals('a', 'b', 'c')
           add_production 'S' => 'A BC'
@@ -121,31 +121,31 @@ module Rley # Open this namespace to avoid module qualifier prefixes
         expect { instance.to_ptree(raw_result) }.not_to raise_error
       end
 
-      it 'should build default parse trees' do
-        raw_result = subject.parse(sample_tokenizer)
-        ptree = subject.convert(raw_result)
-        expect(ptree).to be_kind_of(PTree::ParseTree)
+      it 'builds default parse trees' do
+        raw_result = an_engine.parse(sample_tokenizer)
+        ptree = an_engine.convert(raw_result)
+        expect(ptree).to be_a(PTree::ParseTree)
       end
 
-      it 'should build custom parse trees' do
+      it 'builds custom parse trees' do
         # Cheating: we point to default tree builder (CST)
-        subject.configuration.repr_builder = ParseRep::CSTBuilder
-        raw_result = subject.parse(sample_tokenizer)
-        ptree = subject.convert(raw_result)
-        expect(ptree).to be_kind_of(PTree::ParseTree)
+        an_engine.configuration.repr_builder = ParseRep::CSTBuilder
+        raw_result = an_engine.parse(sample_tokenizer)
+        ptree = an_engine.convert(raw_result)
+        expect(ptree).to be_a(PTree::ParseTree)
       end
 
-      it 'should provide a parse visitor' do
-        raw_result = subject.parse(sample_tokenizer)
-        ptree = subject.to_ptree(raw_result)
-        visitor = subject.ptree_visitor(ptree)
-        expect(visitor).to be_kind_of(ParseTreeVisitor)
+      it 'provides a parse visitor' do
+        raw_result = an_engine.parse(sample_tokenizer)
+        ptree = an_engine.to_ptree(raw_result)
+        visitor = an_engine.ptree_visitor(ptree)
+        expect(visitor).to be_a(ParseTreeVisitor)
       end
     end # context
 
     context 'Parse forest manipulation:' do
-      subject do
-        instance = Engine.new
+      subject(:an_engine) do
+        instance = described_class.new
         add_sample_grammar(instance)
         instance
       end
@@ -155,8 +155,8 @@ module Rley # Open this namespace to avoid module qualifier prefixes
         ABCTokenizer.new(sample_text)
       end
 
-      it 'should build a parse forest even for a nullable production' do
-        instance = Engine.new
+      it 'builds a parse forest even for a nullable production' do
+        instance = described_class.new
         instance.build_grammar do
           add_terminals('a', 'b', 'c')
           add_production 'S' => 'A BC'
@@ -172,17 +172,17 @@ module Rley # Open this namespace to avoid module qualifier prefixes
         expect { instance.to_pforest(raw_result) }.not_to raise_error
       end
 
-      it 'should build parse forest' do
-        raw_result = subject.parse(sample_tokenizer)
-        pforest = subject.to_pforest(raw_result)
-        expect(pforest).to be_kind_of(SPPF::ParseForest)
+      it 'builds parse forest' do
+        raw_result = an_engine.parse(sample_tokenizer)
+        pforest = an_engine.to_pforest(raw_result)
+        expect(pforest).to be_a(SPPF::ParseForest)
       end
 
-      it 'should provide a parse visitor' do
-        raw_result = subject.parse(sample_tokenizer)
-        ptree = subject.to_pforest(raw_result)
-        visitor = subject.pforest_visitor(ptree)
-        expect(visitor).to be_kind_of(ParseForestVisitor)
+      it 'provides a parse visitor' do
+        raw_result = an_engine.parse(sample_tokenizer)
+        ptree = an_engine.to_pforest(raw_result)
+        visitor = an_engine.pforest_visitor(ptree)
+        expect(visitor).to be_a(ParseForestVisitor)
       end
     end # context
   end # describe

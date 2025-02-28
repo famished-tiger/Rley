@@ -18,28 +18,23 @@ module Rley # Open this namespace to avoid module qualifier prefixes
       include ExpectationHelper # Mix-in with expectation on parse entry sets
       include GrammarABCHelper  # Mix-in for a sample grammar
 
+      subject(:a_factory) { described_class.new(sample_result) }
+
       let(:sample_grammar) do
         builder = grammar_abc_builder
         builder.grammar
       end
-
       let(:sample_tokens) do
         build_token_sequence(%w[a b c], sample_grammar)
       end
-
       let(:sample_result) do
         parser = Parser::GFGEarleyParser.new(sample_grammar)
         parser.parse(sample_tokens)
       end
 
-
-      subject do
-        ParseTreeFactory.new(sample_result)
-      end
-
       # Emit a text representation of the current path.
       def path_to_s
-        text_parts = subject.curr_path.map do |path_element|
+        text_parts = a_factory.curr_path.map do |path_element|
           path_element.to_string(0)
         end
         text_parts.join('/')
@@ -47,19 +42,19 @@ module Rley # Open this namespace to avoid module qualifier prefixes
 
 
       context 'Initialization:' do
-        it 'should be created with a GFGParsing' do
-          expect { ParseTreeFactory.new(sample_result) }.not_to raise_error
+        it 'is created with a GFGParsing' do
+          expect { described_class.new(sample_result) }.not_to raise_error
         end
 
-        it 'should know the parse result' do
-          expect(subject.parsing).to eq(sample_result)
+        it 'knows the parse result' do
+          expect(a_factory.parsing).to eq(sample_result)
         end
       end
 
       context 'Parse tree construction' do
-        it 'should build a parse tree' do
-          forest = subject.create
-          expect(forest).to be_kind_of(PTree::ParseTree)
+        it 'builds a parse tree' do
+          forest = a_factory.create
+          expect(forest).to be_a(PTree::ParseTree)
         end
       end # context
     end # describe

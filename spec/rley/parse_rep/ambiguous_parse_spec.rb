@@ -46,7 +46,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           expect(child.to_string(0)).to eq(anExpectation)
       end
 
-      before(:each) do
+      before do
         factory = Parser::ParseWalkerFactory.new
         accept_entry = sentence_result.accepting_entry
         accept_index = sentence_result.chart.last_index
@@ -73,7 +73,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
 
         subject { ParseForestBuilder.new(expr_tokens) }
 
-        it 'should handle walker events' do
+        it 'handles walker events' do
           next_event(:visit, 'P. | 0') # Event 1
           expected_curr_path('P[0, 5]')
 

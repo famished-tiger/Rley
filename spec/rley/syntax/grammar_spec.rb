@@ -29,6 +29,11 @@ module Rley # Open this namespace to avoid module qualifier prefixes
         result
       end
 
+      subject(:a_grammar) do
+        productions = [prod_S, prod_A1, prod_A2]
+        described_class.new(productions)
+      end
+
       # Grammar 1: arithmetical expressions with integers
       let(:grm1_ops) do
         operators = %w[+ - * / ( )]
@@ -83,91 +88,50 @@ module Rley # Open this namespace to avoid module qualifier prefixes
       let(:prod_A2) { Production.new(nt_A, [b_]) }
       let(:prod_A3) { Production.new(nt_A, [c_, nt_C]) }
 
-=begin
-      # Non-terminals that specify the lexicon of the language
-      let(:noun) { NonTerminal.new('Noun') }
-      let(:noun_list) { %w(flights breeze trip morning) }
-      let(:verb) { NonTerminal.new('Verb') }
-      let(:verb_list) { %w(is prefer like need want fly) }
-      let(:adjective) { NonTerminal.new('Adjective') }
-      let(:adjective_list) { %w(cheapest non-stop first latest other direct) }
-      let(:pronoun) { NonTerminal.new('Pronoun') }
-      let(:pronoun_list) { %w(me I you it) }
-      let(:proper_noun) { NonTerminal.new('Proper_noun') }
-      let(:proper_noun_list) do [ 'Alaska', 'Baltimore', 'Los Angeles',
-        'Chicago', 'United', 'American' ]
-      end
-      let(:determiner) { NonTerminal.new('Determiner') }
-      let(:determiner_list) { %w(the a an this these that) }
-      let(:preposition) { NonTerminal.new('Preposition') }
-      let(:preposition_list) { %w(from to on near) }
-      let(:conjunction) { NonTerminal.new('Conjunction') }
-      let(:conjunction_list) { %w(and or but) }
-
-      let(:noun_prods) { prods_for_list(noun, noun_list) }
-      let(:verb_prods) { prods_for_list(verb, verb_list) }
-      let(:adjective_prods) { prods_for_list(adjective, adjective_list) }
-      let(:pronoun_prods) { prods_for_list(pronoun, pronoun_list) }
-      let(:proper_pronoun_prods) do
-        prods_for_list(proper_pronoun, proper_pronoun_list)
-      end
-      let(:determiner_prods) { prods_for_list(determiner, determiner_list) }
-      let(:preposition_prods) { prods_for_list(preposition, preposition_list) }
-      let(:conjunction_prods) { prods_for_list(conjunction, conjunction_list) }
-
-      # Productions for the L0 language (from Jurafki & Martin)
-      let(:nominal_prods) { Production}
-=end
-
-      subject do
-        productions = [prod_S, prod_A1, prod_A2]
-        Grammar.new(productions)
-      end
-
       context 'Initialization:' do
-        it 'should be created with a list of productions' do
-          expect { Grammar.new([prod_S, prod_A1, prod_A2]) }.not_to raise_error
+        it 'is created with a list of productions' do
+          expect { described_class.new([prod_S, prod_A1, prod_A2]) }.not_to raise_error
         end
 
-        it 'should know its productions' do
-          expect(subject.rules).to eq([prod_S, prod_A1, prod_A2])
+        it 'knows its productions' do
+          expect(a_grammar.rules).to eq([prod_S, prod_A1, prod_A2])
         end
 
-        it 'should know its start symbol' do
-          expect(subject.start_symbol).to eq(nt_S)
+        it 'knows its start symbol' do
+          expect(a_grammar.start_symbol).to eq(nt_S)
         end
 
-        it 'should know all its symbols' do
-          expect(subject.symbols).to eq([nt_S, nt_A, a_, c_, b_])
+        it 'knows all its symbols' do
+          expect(a_grammar.symbols).to eq([nt_S, nt_A, a_, c_, b_])
         end
 
-        it 'should know all its non-terminal symbols' do
-          expect(subject.non_terminals).to eq([nt_S, nt_A])
+        it 'knows all its non-terminal symbols' do
+          expect(a_grammar.non_terminals).to eq([nt_S, nt_A])
         end
 
-        it 'should know its start production' do
-          expect(subject.start_production).to eq(prod_S)
+        it 'knows its start production' do
+          expect(a_grammar.start_production).to eq(prod_S)
         end
       end # context
 
       context 'Provided services:' do
-        it 'should retrieve its symbols from their name' do
-          expect(subject.name2symbol['S']).to eq(nt_S)
-          expect(subject.name2symbol['A']).to eq(nt_A)
-          expect(subject.name2symbol['a']).to eq(a_)
-          expect(subject.name2symbol['b']).to eq(b_)
-          expect(subject.name2symbol['c']).to eq(c_)
+        it 'retrieves its symbols from their name' do
+          expect(a_grammar.name2symbol['S']).to eq(nt_S)
+          expect(a_grammar.name2symbol['A']).to eq(nt_A)
+          expect(a_grammar.name2symbol['a']).to eq(a_)
+          expect(a_grammar.name2symbol['b']).to eq(b_)
+          expect(a_grammar.name2symbol['c']).to eq(c_)
         end
 
-        it 'should ensure that each production has a name' do
-          subject.rules.each do |prod|
+        it 'ensures that each production has a name' do
+          a_grammar.rules.each do |prod|
             expect(prod.name).to match(Regexp.new("#{prod.lhs.name}_\\d$"))
           end
         end
       end # context
 
       context 'Grammar diagnosis:' do
-        it 'should mark any non-terminal that has no production' do
+        it 'marks any non-terminal that has no production' do
           # S ::= A.
           # S ::= B.
           # A ::= "a" .
@@ -176,13 +140,13 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           prod_S2 = Rley::Syntax::Production.new(nt_S, [nt_B])
           prod_A = Rley::Syntax::Production.new(nt_A, [a_])
           prod_B = Rley::Syntax::Production.new(nt_B, [nt_C, b_]) # C undefined
-          instance = Grammar.new([prod_S1, prod_S2, prod_A, prod_B])
+          instance = described_class.new([prod_S1, prod_S2, prod_A, prod_B])
           undefineds = instance.non_terminals.select(&:undefined?)
           expect(undefineds.size).to eq(1)
           expect(undefineds.first).to eq(nt_C)
         end
 
-        it 'should mark any non-terminal as generative or not' do
+        it 'marks any non-terminal as generative or not' do
           # S ::= A.
           # S ::= B.
           # A ::= "a" .
@@ -191,14 +155,14 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           prod_S2 = Rley::Syntax::Production.new(nt_S, [nt_B])
           prod_A = Rley::Syntax::Production.new(nt_A, [a_])
           prod_B = Rley::Syntax::Production.new(nt_B, [nt_C, b_]) # C undefined
-          instance = Grammar.new([prod_S1, prod_S2, prod_A, prod_B])
+          instance = described_class.new([prod_S1, prod_S2, prod_A, prod_B])
           partitioning = instance.non_terminals.partition(&:generative?)
           expect(partitioning[0].size).to eq(2)
           expect(partitioning[0]).to eq([nt_S, nt_A])
           expect(partitioning[1]).to eq([nt_B, nt_C])
         end
 
-        it "should do a diagnosis even for 'loopy' grammars" do
+        it "does a diagnosis even for 'loopy' grammars" do
           # 'S' => 'A'
           # 'S' => 'B'
           # 'A' => 'a'
@@ -211,7 +175,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           prd_B = Rley::Syntax::Production.new(nt_B, [nt_C])
           prd_C = Rley::Syntax::Production.new(nt_C, [nt_D])
           prd_D = Rley::Syntax::Production.new(nt_D, [nt_B])
-          instance = Grammar.new([prd_S1, prd_S2, prd_A, prd_B, prd_C, prd_D])
+          instance = described_class.new([prd_S1, prd_S2, prd_A, prd_B, prd_C, prd_D])
           partitioning = instance.non_terminals.partition(&:generative?)
           expect(partitioning[0].size).to eq(2)
           expect(partitioning[0]).to eq([nt_S, nt_A])
@@ -223,8 +187,8 @@ module Rley # Open this namespace to avoid module qualifier prefixes
       end # context
 
       context 'Non-nullable grammar:' do
-        it 'should mark all its nonterminals as non-nullable' do
-          nonterms = subject.non_terminals
+        it 'marks all its nonterminals as non-nullable' do
+          nonterms = a_grammar.non_terminals
           nonterms.each do |nterm|
             expect(nterm).not_to be_nullable
           end
@@ -232,24 +196,22 @@ module Rley # Open this namespace to avoid module qualifier prefixes
       end # context
 
       context 'Nullable grammars:' do
-        subject do
+        subject(:nullable_grammar) do
           prod_A4 = Production.new(nt_A, [])
           productions = [prod_S, prod_A1, prod_A2, prod_A4]
-          Grammar.new(productions)
+          described_class.new(productions)
         end
 
-        it 'should mark its nullable nonterminals' do
+        it 'marks its nullable nonterminals' do
           # In the default grammar, all nonterminals are nullable
-          nonterms = subject.non_terminals
-          nonterms.each do |nterm|
-            expect(nterm).to be_nullable
-          end
+          nonterms = nullable_grammar.non_terminals
+          expect(nonterms).to all(be_nullable)
         end
 
-        it 'should mark its nullable productions' do
+        it 'marks its nullable productions' do
           # Given the above productions, here are our expectations:
           expectations = [true, false, false, true]
-          actuals = subject.rules.map(&:nullable?)
+          actuals = nullable_grammar.rules.map(&:nullable?)
           expect(actuals).to eq(expectations)
         end
       end # context

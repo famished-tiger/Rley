@@ -33,39 +33,39 @@ describe 'Calculator' do
     return result
   end
 
-  it 'should evaluate simple number literals' do
+  it 'evaluates simple number literals' do
     expect_expr('2').to eq(2)
   end
 
-  it 'should evaluate addition' do
+  it 'evaluates addition' do
     expect_expr('2 + 2').to eq(4)
   end
 
-  it 'should evaluate subtraction' do
+  it 'evaluates subtraction' do
     expect_expr('2.1 - 2').to be_within(0.000000000000001).of(0.1)
   end
 
-  it 'should evaluate division' do
+  it 'evaluates division' do
     expect_expr('10.5 / 5').to eq(2.1)
   end
 
-  it 'should evaluate multiplication' do
+  it 'evaluates multiplication' do
     expect_expr('2 * 3.1').to eq(6.2)
   end
 
-  it 'should evaluate parentheses' do
+  it 'evaluates parentheses' do
     expect_expr('2 * (2.1 + 1)').to eq(6.2)
   end
 
-  it 'should evaluate regardless of whitespace' do
+  it 'evaluates regardless of whitespace' do
     expect_expr("2*(1+\t1)").to eq(4)
   end
 
-  it 'should evaluate order of operations' do
+  it 'evaluates order of operations' do
     expect_expr('2 * 2.1 + 1 / 2').to eq 4.7
   end
 
-  it 'should evaluate multiple levels of parentheses' do
+  it 'evaluates multiple levels of parentheses' do
     expect_expr('2*(1/(1+3))').to eq(0.5)
   end
 end # describe

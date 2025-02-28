@@ -143,7 +143,7 @@ find every scan edge
 def build_gfg(aGrammar)
   items_builder = Object.new.extend(Rley::Base::GrmItemsBuilder)
   items = items_builder.build_dotted_items(aGrammar)
-  gfg = Rley::GFG::GrmFlowGraph.new(items)
+  Rley::GFG::GrmFlowGraph.new(items)
 end
 
 graph = build_gfg(right_recursive_grammar)
@@ -326,7 +326,7 @@ module GraphMixin
 
   # visit_action takes two arguments: a vertex and an edge
   # return true/false if false stop traversal
-  def df_traversal(aVertex, &visit_action)
+  def df_traversal(aVertex, &_visit_action)
     visit = [aVertex]
     vtx2count = { aVertex => 0 }
 

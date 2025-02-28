@@ -17,49 +17,49 @@ module Rley # Open this namespace to avoid module qualifier prefixes
         return Lexical::TokenRange.new(low: low, high: high)
       end
 
+      subject(:a_node) { described_class.new(sample_symbol, sample_range) }
+
       let(:sample_symbol) do
         Syntax::NonTerminal.new('VP')
       end
       let(:sample_range) { range(0, 3) }
 
-      subject { NonTerminalNode.new(sample_symbol, sample_range) }
-
       context 'Initialization:' do
-        it 'should know its non-terminal symbol' do
-          expect(subject.symbol).to eq(sample_symbol)
+        it 'knows its non-terminal symbol' do
+          expect(a_node.symbol).to eq(sample_symbol)
         end
 
-        it 'should know its token range' do
-          expect(subject.range).to eq(sample_range)
-          expect(subject.origin).to eq(sample_range.low)
+        it 'knows its token range' do
+          expect(a_node.range).to eq(sample_range)
+          expect(a_node.origin).to eq(sample_range.low)
         end
 
-        it "shouldn't have children yet" do
-          expect(subject.subnodes).to be_empty
+        it "doesn't have children yet" do
+          expect(a_node.subnodes).to be_empty
         end
 
-        it 'should have :and refinement' do
-          expect(subject.refinement).to eq(:and)
+        it 'has :and refinement' do
+          expect(a_node.refinement).to eq(:and)
         end
       end # context
 
       context 'Provided services:' do
-        it 'should accept the addition of subnodes' do
+        it 'accepts the addition of subnodes' do
           subnode1 = double('first_subnode')
           subnode2 = double('second_subnode')
           subnode3 = double('third_subnode')
-          expect { subject.add_subnode(subnode1) }.not_to raise_error
-          subject.add_subnode(subnode2)
-          subject.add_subnode(subnode3)
-          expect(subject.subnodes).to eq([subnode3, subnode2, subnode1])
+          expect { a_node.add_subnode(subnode1) }.not_to raise_error
+          a_node.add_subnode(subnode2)
+          a_node.add_subnode(subnode3)
+          expect(a_node.subnodes).to eq([subnode3, subnode2, subnode1])
         end
 
-        it 'should have a string representation' do
-          expect(subject.to_string(0)).to eq('VP[0, 3]')
+        it 'has a string representation' do
+          expect(a_node.to_string(0)).to eq('VP[0, 3]')
         end
 
-        it 'should return a key value of itself' do
-          expect(subject.key).to eq('VP[0, 3]')
+        it 'returns a key value of itself' do
+          expect(a_node.key).to eq('VP[0, 3]')
         end
       end # context
     end # describe

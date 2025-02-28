@@ -18,6 +18,8 @@ module Rley # Open this namespace to avoid module qualifier prefixes
       include GrammarHelper     # Mix-in with token factory method
       include ExpectationHelper # Mix-in with expectation on parse entry sets
 
+      subject(:a_builder) { described_class.new(sample_tokens) }
+
       let(:sample_grammar) do
           # Grammar based on paper from Elisabeth Scott
           # "SPPF=Style Parsing From Earley Recognizers" in
@@ -45,11 +47,9 @@ module Rley # Open this namespace to avoid module qualifier prefixes
         parser.parse(sample_tokens)
       end
 
-      subject { ParseForestBuilder.new(sample_tokens) }
-
       # Emit a text representation of the current path.
       def path_to_s
-        text_parts = subject.curr_path.map do |path_element|
+        text_parts = a_builder.curr_path.map do |path_element|
           path_element.to_string(0)
         end
         text_parts.join('/')
@@ -57,13 +57,13 @@ module Rley # Open this namespace to avoid module qualifier prefixes
 
       def next_event(eventType, anEntryText)
         event = @walker.next
-        subject.receive_event(*event)
+        a_builder.receive_event(*event)
         expect(event[0]).to eq(eventType)
         expect(event[1].to_s).to eq(anEntryText)
       end
 
       def expected_curr_parent(anExpectation)
-        expect(subject.curr_parent.to_string(0)).to eq(anExpectation)
+        expect(a_builder.curr_parent.to_string(0)).to eq(anExpectation)
       end
 
       def expected_curr_path(anExpectation)
@@ -71,41 +71,41 @@ module Rley # Open this namespace to avoid module qualifier prefixes
       end
 
       def expected_first_child(anExpectation)
-          child = subject.curr_parent.subnodes.first
+          child = a_builder.curr_parent.subnodes.first
           expect(child.to_string(0)).to eq(anExpectation)
       end
 
       context 'Initialization:' do
-        it 'should be created with a sequence of tokens' do
-          expect { ParseForestBuilder.new(sample_tokens) }.not_to raise_error
+        it 'is created with a sequence of tokens' do
+          expect { described_class.new(sample_tokens) }.not_to raise_error
         end
 
-        it 'should know the input tokens' do
-          expect(subject.tokens).to eq(sample_tokens)
+        it 'knows the input tokens' do
+          expect(a_builder.tokens).to eq(sample_tokens)
         end
 
-        it 'should have an empty path' do
-          expect(subject.curr_path).to be_empty
+        it 'has an empty path' do
+          expect(a_builder.curr_path).to be_empty
         end
       end # context
 
       context 'Parse forest construction' do
-        before(:each) do
+        before do
           factory = Parser::ParseWalkerFactory.new
           accept_entry = sample_result.accepting_entry
           accept_index = sample_result.chart.last_index
           @walker = factory.build_walker(accept_entry, accept_index, true)
         end
 
-        it 'should initialize the root node' do
+        it 'initializes the root node' do
           next_event(:visit, 'Phi. | 0')
-          forest = subject.result
+          forest = a_builder.result
 
           expect(forest.root.to_string(0)).to eq('Phi[0, 4]')
           expected_curr_path('Phi[0, 4]')
         end
 
-        it 'should initialize the first child of the root node' do
+        it 'initializes the first child of the root node' do
           next_event(:visit, 'Phi. | 0') # Event 1
           next_event(:visit, 'Phi => S . | 0') # Event 2
           next_event(:visit, 'S. | 0') # Event 3
@@ -113,41 +113,41 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           expected_curr_path('Phi[0, 4]/S[0, 4]')
         end
 
-        it 'should build alternative node when detecting backtrack point' do
+        it 'builds alternative node when detecting backtrack point' do
           3.times do
             event = @walker.next
-            subject.receive_event(*event)
+            a_builder.receive_event(*event)
           end
 
           next_event(:visit, 'S => a T . | 0') # Event 4
           expected_curr_path('Phi[0, 4]/S[0, 4]/Alt(S => a T .)[0, 4]')
-          expect(subject.curr_path[-2].refinement).to eq(:or)
+          expect(a_builder.curr_path[-2].refinement).to eq(:or)
         end
 
-        it 'should build token node when scan edge was detected' do
+        it 'builds token node when scan edge was detected' do
           4.times do
             event = @walker.next
-            subject.receive_event(*event)
+            a_builder.receive_event(*event)
           end
 
           next_event(:visit, 'T. | 1') # Event5
           expected_curr_path('Phi[0, 4]/S[0, 4]/Alt(S => a T .)[0, 4]/T[1, 4]')
-          expect(subject.curr_parent.subnodes).to be_empty
+          expect(a_builder.curr_parent.subnodes).to be_empty
 
           next_event(:visit, 'T => b b b . | 1') # Event 6
-          expect(subject.curr_parent.to_string(0)).to eq('T[1, 4]')
+          expect(a_builder.curr_parent.to_string(0)).to eq('T[1, 4]')
           expected_curr_path('Phi[0, 4]/S[0, 4]/Alt(S => a T .)[0, 4]/T[1, 4]')
-          expect(subject.curr_parent.subnodes.size).to eq(1)
+          expect(a_builder.curr_parent.subnodes.size).to eq(1)
           expected_first_child('b[3, 4]')
 
           next_event(:visit, 'T => b b . b | 1') # Event 7
           expected_curr_path('Phi[0, 4]/S[0, 4]/Alt(S => a T .)[0, 4]/T[1, 4]')
-          expect(subject.curr_parent.subnodes.size).to eq(2)
+          expect(a_builder.curr_parent.subnodes.size).to eq(2)
           expected_first_child('b[2, 3]')
 
           next_event(:visit, 'T => b . b b | 1') # Event 8
           expected_curr_path('Phi[0, 4]/S[0, 4]/Alt(S => a T .)[0, 4]/T[1, 4]')
-          expect(subject.curr_parent.subnodes.size).to eq(3)
+          expect(a_builder.curr_parent.subnodes.size).to eq(3)
           expected_first_child('b[1, 2]')
 
           next_event(:visit, 'T => . b b b | 1') # Event 9
@@ -158,7 +158,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
 
           next_event(:visit, 'S => a . T | 0') # Event 11
           expected_curr_path('Phi[0, 4]/S[0, 4]/Alt(S => a T .)[0, 4]')
-          expect(subject.curr_parent.subnodes.size).to eq(2)
+          expect(a_builder.curr_parent.subnodes.size).to eq(2)
           expected_first_child('a[0, 1]')
 
           next_event(:visit, 'S => . a T | 0') # Event 12
@@ -175,26 +175,26 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           expect(path_to_s).to be_empty
         end
 
-        it 'should handle backtracking' do
+        it 'handles backtracking' do
           15.times do
             event = @walker.next
-            subject.receive_event(*event)
+            a_builder.receive_event(*event)
           end
 
           # Backtracking is occurring
           next_event(:backtrack, 'S. | 0') # Event 16
           expected_curr_path('Phi[0, 4]/S[0, 4]')
 
-          # Alternate node should be created
+          # Alternate node is created
           next_event(:visit, 'S => A T . | 0') # Event 17
           expected_curr_path('Phi[0, 4]/S[0, 4]/Alt(S => A T .)[0, 4]')
-          expect(subject.curr_path[-2].refinement).to eq(:or)
+          expect(a_builder.curr_path[-2].refinement).to eq(:or)
         end
 
-        it 'should detect second time visit of an entry' do
+        it 'detects second time visit of an entry' do
           17.times do
             event = @walker.next
-            subject.receive_event(*event)
+            a_builder.receive_event(*event)
           end
 
           next_event(:revisit, 'T. | 1') # REVISIT Event 18
@@ -210,7 +210,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
 
           next_event(:visit, 'A => a . | 0') # Event 21
           expected_curr_path("#{path_prefix}Alt(A => a .)[0, 1]")
-          expect(subject.curr_path[-2].refinement).to eq(:or)
+          expect(a_builder.curr_path[-2].refinement).to eq(:or)
 
           next_event(:visit, 'A => . a | 0') # Event 22
           expected_curr_path(expected_path20)
@@ -231,10 +231,10 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           expected_curr_path('')
         end
 
-        it 'should handle remaining # Events' do
+        it 'handles remaining # Events' do
           27.times do
             event = @walker.next
-            subject.receive_event(*event)
+            a_builder.receive_event(*event)
           end
 
           # Backtracking is occurring
@@ -280,6 +280,8 @@ module Rley # Open this namespace to avoid module qualifier prefixes
       context 'Natural language processing' do
         include GrammarL0Helper
 
+        subject(:a_builder) { described_class.new(sentence_tokens) }
+
         let(:grammar_l0) do
           builder = grammar_l0_builder
           builder.grammar
@@ -295,16 +297,14 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           parser.parse(sentence_tokens)
         end
 
-        before(:each) do
+        before do
           factory = Parser::ParseWalkerFactory.new
           accept_entry = sentence_result.accepting_entry
           accept_index = sentence_result.chart.last_index
           @walker = factory.build_walker(accept_entry, accept_index)
         end
 
-        subject { ParseForestBuilder.new(sentence_tokens) }
-
-        it 'should handle walker events' do
+        it 'handles walker events' do
           next_event(:visit, 'S. | 0') # Event 1
           expected_curr_path('S[0, 5]')
 
@@ -329,7 +329,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
 
           next_event(:visit, 'Nominal => Nominal Noun . | 3') # Event 8
           expected_curr_path('S[0, 5]/VP[1, 5]/NP[2, 5]/Nominal[3, 5]')
-          expect(subject.curr_parent.subnodes.size).to eq(1)
+          expect(a_builder.curr_parent.subnodes.size).to eq(1)
           expected_first_child('Noun[4, 5]')
 
 
@@ -344,7 +344,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           next_event(:visit, 'Nominal => Noun . | 3') # Event11
           path11 = 'S[0, 5]/VP[1, 5]/NP[2, 5]/Nominal[3, 5]/Nominal[3, 4]'
           expected_curr_path(path11)
-          expect(subject.curr_parent.subnodes.size).to eq(1)
+          expect(a_builder.curr_parent.subnodes.size).to eq(1)
           expected_first_child('Noun[3, 4]')
 
           next_event(:visit, 'Nominal => . Noun | 3') # Event 12

@@ -61,7 +61,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
 
       let(:input) { 'if false then if true then 1 else 2' }
 
-      context 'Ambiguous parse: ' do
+      context 'Ambiguous parse:' do
         # Factory method. Creates a grammar builder for a simple grammar.
         def grammar_if_else_amb
           builder = Rley::RGN::GrammarBuilder.new do
@@ -81,13 +81,13 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           builder.grammar
         end
 
-        subject { GFGEarleyParser.new(grammar_if_else_amb) }
+        subject(:a_parser) { described_class.new(grammar_if_else_amb) }
 
-        it 'should parse a valid simple input' do
+        it 'parses a valid simple input' do
           tokens = tokenizer(input)
-          parse_result = subject.parse(tokens)
-          expect(parse_result.success?).to eq(true)
-          expect(parse_result.ambiguous?).to eq(true)
+          parse_result = a_parser.parse(tokens)
+          expect(parse_result.success?).to be(true)
+          expect(parse_result.ambiguous?).to be(true)
           ######################
           # Expectation chart[0]:
           expected = [
@@ -280,7 +280,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
         end
       end # context
 
-      context 'Disambiguated parse: ' do
+      context 'Disambiguated parse:' do
         def match_else_with_if(grammar)
           # Brittle code
           prod = grammar.rules[2]
@@ -310,13 +310,13 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           builder.grammar
         end
 
-        subject { GFGEarleyParser.new(grammar_if_else) }
+        subject(:a_parser) { described_class.new(grammar_if_else) }
 
-        it 'should cope with dangling else problem' do
+        it 'copes with dangling else problem' do
           tokens = tokenizer(input)
-          parse_result = subject.parse(tokens)
-          expect(parse_result.success?).to eq(true)
-          expect(parse_result.ambiguous?).to eq(true)
+          parse_result = a_parser.parse(tokens)
+          expect(parse_result.success?).to be(true)
+          expect(parse_result.ambiguous?).to be(true)
           ######################
           # Expectation chart[0]:
           expected = [

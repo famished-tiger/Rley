@@ -79,24 +79,24 @@ module Rley # Re-open the module to get rid of qualified names
       let(:destination) { StringIO.new(+'', 'w') }
 
       context 'Standard creation & initialization:' do
-        it 'should be initialized with an IO argument' do
-          expect { Debug.new(StringIO.new(+'', 'w')) }.not_to raise_error
+        it 'is initialized with an IO argument' do
+          expect { described_class.new(StringIO.new(+'', 'w')) }.not_to raise_error
         end
 
-        it 'should know its output destination' do
-          instance = Debug.new(destination)
+        it 'knows its output destination' do
+          instance = described_class.new(destination)
           expect(instance.output).to eq(destination)
         end
 
-        it 'should have a zero indentation' do
-          instance = Debug.new(destination)
+        it 'has a zero indentation' do
+          instance = described_class.new(destination)
           expect(instance.indentation).to be_zero
         end
       end # context
 
       context 'Formatting events:' do
-        it 'should support visit events of a parse tree' do
-          instance = Debug.new(destination)
+        it 'supports visit events of a parse tree' do
+          instance = described_class.new(destination)
           expect(instance.output).to eq(destination)
           visitor = Rley::ParseTreeVisitor.new(grm_abc_ptree1)
           instance.render(visitor)
@@ -133,8 +133,8 @@ SNIPPET
           expect(destination.string).to eq(expectations)
         end
 
-        it 'should support visit events of a parse forest' do
-          instance = Debug.new(destination)
+        it 'supports visit events of a parse forest' do
+          instance = described_class.new(destination)
           expect(instance.output).to eq(destination)
           visitor = Rley::ParseForestVisitor.new(grm_sppf_pforest1)
           instance.render(visitor)

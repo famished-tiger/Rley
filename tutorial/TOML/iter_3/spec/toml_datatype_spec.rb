@@ -6,42 +6,42 @@ require_relative 'spec_helper' # Use the RSpec framework
 require_relative '../toml_datatype'
 
 describe TOMLBoolean do
-  subject { TOMLBoolean.new('true') }
+  subject(:boolean) { described_class.new('true') }
 
   context 'Initialization:' do
-    it "should be initialized with 'true' or 'false' text" do
-      expect { TOMLBoolean.new('true') }.not_to raise_error
+    it "is initialized with 'true' or 'false' text" do
+      expect { described_class.new('true') }.not_to raise_error
     end
 
-    it 'should have a Ruby boolean value' do
-      expect(subject.value).to be_equal(true)
-      instance = TOMLBoolean.new('false')
-      expect(instance.value).to be_equal(false)
+    it 'has a Ruby boolean value' do
+      expect(boolean.value).to equal(true)
+      instance = described_class.new('false')
+      expect(instance.value).to equal(false)
     end
   end # context
 end # describe
 
 describe TOMLInteger do
-  subject { TOMLBoolean.new('true') }
+  subject { described_class.new('true') }
 
   context 'Initialization:' do
-    it 'could be initialized with a decimal integer literal' do
-      expect { TOMLInteger.new('42') }.not_to raise_error
+    it 'is initialized with a decimal integer literal' do
+      expect { described_class.new('42') }.not_to raise_error
     end
 
-    it 'could be initialized with a hexadecimal integer literal' do
-      expect { TOMLInteger.new('0xDEADBEEF', :hex) }.not_to raise_error
+    it 'is initialized with a hexadecimal integer literal' do
+      expect { described_class.new('0xDEADBEEF', :hex) }.not_to raise_error
     end
 
-    it 'could be initialized with a octal integer literal' do
-      expect { TOMLInteger.new('0o01234567', :oct) }.not_to raise_error
+    it 'is initialized with a octal integer literal' do
+      expect { described_class.new('0o01234567', :oct) }.not_to raise_error
     end
 
-    it 'could be initialized with a binary integer literal' do
-      expect { TOMLInteger.new('0b11010110', :bin) }.not_to raise_error
+    it 'is initialized with a binary integer literal' do
+      expect { described_class.new('0b11010110', :bin) }.not_to raise_error
     end
 
-    it 'should initialize its value with a decimal integer literal' do
+    it 'initializes its value with a decimal integer literal' do
       cases = [
         ['+99', 99],
         ['42', 42],
@@ -53,12 +53,12 @@ describe TOMLInteger do
         ['1_2_3_4_5', 12345]
       ]
       cases.each do |(literal, exp_value)|
-        instance = TOMLInteger.new(literal)
+        instance = described_class.new(literal)
         expect(instance.value).to eq(exp_value)
       end
     end
 
-    it 'should initialize its value with a hexadecimal integer literal' do
+    it 'initializes its value with a hexadecimal integer literal' do
       cases = [
         ['0xDEADBEEF', 0xdeadbeef],
         ['0xdeadbeef', 0xdeadbeef],
@@ -66,30 +66,30 @@ describe TOMLInteger do
         ['0x0', 0]
       ]
       cases.each do |(literal, exp_value)|
-        instance = TOMLInteger.new(literal, :hex)
+        instance = described_class.new(literal, :hex)
         expect(instance.value).to eq(exp_value)
       end
     end
 
-    it 'should initialize its value with an octal integer literal' do
+    it 'initializes its value with an octal integer literal' do
       cases = [
         ['0o01234567', 0o01234567],
         ['0o0', 0],
         ['0o755', 0o755]
       ]
       cases.each do |(literal, exp_value)|
-        instance = TOMLInteger.new(literal, :oct)
+        instance = described_class.new(literal, :oct)
         expect(instance.value).to eq(exp_value)
       end
     end
 
-    it 'should initialize its value with a binary integer literal' do
+    it 'initializes its value with a binary integer literal' do
       cases = [
         ['0b11010110', 0b11010110],
         ['0b0', 0]
       ]
       cases.each do |(literal, exp_value)|
-        instance = TOMLInteger.new(literal, :bin)
+        instance = described_class.new(literal, :bin)
         expect(instance.value).to eq(exp_value)
       end
     end
@@ -98,10 +98,10 @@ end # describe
 
 
 describe TOMLOffsetDateTime do
-  subject { TOMLLocalDateTime.new('1979-05-27T07:32:00Z') }
+  subject { described_class.new('1979-05-27T07:32:00Z') }
 
   context 'Initialization:' do
-    # it 'should be initialized with a string' do
+    # it 'is initialized with a string' do
     #   # Case: valid date; capital letters T and Z as separator
     #   expect { TOMLOffsetDateTime.new('1979-05-27T07:32:00Z') }.not_to raise_error
     #
@@ -122,9 +122,9 @@ describe TOMLOffsetDateTime do
     #   expect { TOMLOffsetDateTime.new('1979-02-29T00:32:00Z') }.to raise_error(err, msg)
     # end
 
-    it 'should know its date value' do
-      dt = TOMLOffsetDateTime.new('1979-05-27T05:32:07.999999-07:00')
-      expect(dt.value).to be_kind_of(Time)
+    it 'knows its date value' do
+      dt = described_class.new('1979-05-27T05:32:07.999999-07:00')
+      expect(dt.value).to be_a(Time)
       expect(dt.year).to eq(1979)
       expect(dt.mon).to eq(5)
       expect(dt.mday).to eq(27)
@@ -138,35 +138,35 @@ end # describe
 
 
 describe TOMLLocalDateTime do
-  subject { TOMLLocalDateTime.new('1979-05-27T05:32:07.999999') }
+  subject { described_class.new('1979-05-27T05:32:07.999999') }
 
   context 'Initialization:' do
-    it 'should be initialized with a string' do
+    it 'is initialized with a string' do
       # Case: valid date; capital letter T as separator
-      expect { TOMLLocalDateTime.new('1979-05-27T00:32:00.999999') }.not_to raise_error
+      expect { described_class.new('1979-05-27T00:32:00.999999') }.not_to raise_error
 
       # Case: valid date; small letter t as separator
-      expect { TOMLLocalDateTime.new('1979-05-27t00:32:00.999999') }.not_to raise_error
+      expect { described_class.new('1979-05-27t00:32:00.999999') }.not_to raise_error
 
       # Case: valid date; space as separator
-      expect { TOMLLocalDateTime.new('1979-05-27 00:32:00.999999') }.not_to raise_error
+      expect { described_class.new('1979-05-27 00:32:00.999999') }.not_to raise_error
     end
 
-    it 'should complain when given invalid date' do
+    it 'complains when given invalid date' do
       # Case: invalid date
       err = StandardError
       msg = 'Invalid date value yyyy-mm-dd: 1979-2-29'
       expect { TOMLLocalDate.new('1979-02-29T00:32:00.999999') }.to raise_error(err, msg)
     end
 
-    it 'should know its date value' do
+    it 'knows its date value' do
       cases = [
-        TOMLLocalDateTime.new('1979-05-27T05:32:07.999999'),
-        TOMLLocalDateTime.new('1979-05-27t05:32:07.999999'),
-        TOMLLocalDateTime.new('1979-05-27 05:32:07.999999')
+        described_class.new('1979-05-27T05:32:07.999999'),
+        described_class.new('1979-05-27t05:32:07.999999'),
+        described_class.new('1979-05-27 05:32:07.999999')
       ]
       cases.each do |dt|
-        expect(dt.value).to be_kind_of(Time)
+        expect(dt.value).to be_a(Time)
         expect(dt.year).to eq(1979)
         expect(dt.mon).to eq(5)
         expect(dt.mday).to eq(27)
@@ -180,50 +180,50 @@ describe TOMLLocalDateTime do
 end # describe
 
 describe TOMLLocalDate do
-  subject { TOMLLocalDate.new('1979-05-27') }
+  subject(:local_date) { described_class.new('1979-05-27') }
 
   context 'Initialization:' do
-    it 'should be initialized with a string' do
+    it 'is initialized with a string' do
       # Case: valid date
-      expect { TOMLLocalDate.new('1979-05-27') }.not_to raise_error
+      expect { described_class.new('1979-05-27') }.not_to raise_error
     end
 
-    it 'should complain when given invalid date' do
+    it 'complains when given invalid date' do
       # Case: invalid date
       err = StandardError
       msg = 'Invalid date value yyyy-mm-dd: 1979-2-29'
-      expect { TOMLLocalDate.new('1979-02-29') }.to raise_error(err, msg)
+      expect { described_class.new('1979-02-29') }.to raise_error(err, msg)
     end
 
-    it 'should know its date value' do
-      expect(subject.value).to be_kind_of(Date)
-      expect(subject.year).to eq(1979)
-      expect(subject.mon).to eq(5)
-      expect(subject.mday).to eq(27)
+    it 'knows its date value' do
+      expect(local_date.value).to be_a(Date)
+      expect(local_date.year).to eq(1979)
+      expect(local_date.mon).to eq(5)
+      expect(local_date.mday).to eq(27)
     end
   end # context
 end # describe
 
 describe TOMLLocalTime do
-  subject { TOMLLocalTime.new('07:32:00') }
+  subject(:local_time) { described_class.new('07:32:00') }
 
   context 'Initialization:' do
-    it 'should be initialized with a string' do
+    it 'is initialized with a string' do
       # Case: round second
-      expect { TOMLLocalTime.new('07:32:00') }.not_to raise_error
+      expect { described_class.new('07:32:00') }.not_to raise_error
 
       # Case: fractional part
-      expect { TOMLLocalTime.new('07:32:00.999999') }.not_to raise_error
+      expect { described_class.new('07:32:00.999999') }.not_to raise_error
     end
 
-    it 'should know its time value' do
-      expect(subject.value).to be_kind_of(Time)
-      expect(subject.hour).to eq(7)
-      expect(subject.min).to eq(32)
-      expect(subject.sec).to be_zero
+    it 'knows its time value' do
+      expect(local_time.value).to be_a(Time)
+      expect(local_time.hour).to eq(7)
+      expect(local_time.min).to eq(32)
+      expect(local_time.sec).to be_zero
 
-      instance = TOMLLocalTime.new('07:32:00.999999')
-      expect(instance.value).to be_kind_of(Time)
+      instance = described_class.new('07:32:00.999999')
+      expect(instance.value).to be_a(Time)
       expect(instance.hour).to eq(7)
       expect(instance.min).to eq(32)
       expect(instance.sec).to be_zero

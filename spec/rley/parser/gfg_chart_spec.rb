@@ -28,6 +28,9 @@ module Rley # Open this namespace to avoid module qualifier prefixes
         return helper.build_dotted_items(aGrammar)
       end
 
+      # Default instantiation rule
+      subject(:a_chart) { described_class.new(sample_gfg) }
+
       let(:count_token) { 20 }
       let(:output) { StringIO.new('', 'w') }
 
@@ -50,58 +53,53 @@ module Rley # Open this namespace to avoid module qualifier prefixes
       let(:sample_start_symbol) { sample_gfg.start_vertex.non_terminal }
       let(:second_vertex) { sample_gfg.start_vertex.edges[0].successor }
 
-
-      # Default instantiation rule
-      subject { GFGChart.new(sample_gfg) }
-
-
       context 'Initialization:' do
-        it 'should be created with start vertex, token count' do
-          expect { GFGChart.new(sample_gfg) }.not_to raise_error
+        it 'is created with start vertex, token count' do
+          expect { described_class.new(sample_gfg) }.not_to raise_error
         end
 
-        it 'should have one entry set' do
-          expect(subject.sets.size).to eq(1)
+        it 'has one entry set' do
+          expect(a_chart.sets.size).to eq(1)
         end
 
-        it 'should know the start symbol' do
-          expect(subject.start_symbol).to eq(sample_start_symbol)
+        it 'knows the start symbol' do
+          expect(a_chart.start_symbol).to eq(sample_start_symbol)
         end
 
-        it 'should know the initial parse entry' do
-          expect(subject.initial_entry.vertex).to eq(sample_gfg.start_vertex)
-          expect(subject.initial_entry.origin).to eq(0)
+        it 'knows the initial parse entry' do
+          expect(a_chart.initial_entry.vertex).to eq(sample_gfg.start_vertex)
+          expect(a_chart.initial_entry.origin).to eq(0)
         end
       end # context
 
       context 'Provided services:' do
-        it 'should accept the pushing of a parse entry in existing set' do
-          expect(subject.sets[0].entries.size).to eq(1)
-          subject.push_entry(second_vertex, 0, 0, :scan_rule)
-          expect(subject.sets[0].entries.size).to eq(2)
+        it 'accepts the pushing of a parse entry in existing set' do
+          expect(a_chart.sets[0].entries.size).to eq(1)
+          a_chart.push_entry(second_vertex, 0, 0, :scan_rule)
+          expect(a_chart.sets[0].entries.size).to eq(2)
         end
 
-        it 'should accept the pushing of a parse entry in new set' do
-          expect(subject.sets[0].entries.size).to eq(1)
-          subject.push_entry(second_vertex, 0, 1, :scan_rule)
-          expect(subject.sets[0].entries.size).to eq(1)
-          expect(subject.sets.size).to eq(2)
-          expect(subject.sets[1].entries.size).to eq(1)
+        it 'accepts the pushing of a parse entry in new set' do
+          expect(a_chart.sets[0].entries.size).to eq(1)
+          a_chart.push_entry(second_vertex, 0, 1, :scan_rule)
+          expect(a_chart.sets[0].entries.size).to eq(1)
+          expect(a_chart.sets.size).to eq(2)
+          expect(a_chart.sets[1].entries.size).to eq(1)
         end
 
-        it 'should retrieve an existing set at given position' do
-          expect(subject[0]).to eq(subject.sets[0])
+        it 'retrieves an existing set at given position' do
+          expect(a_chart[0]).to eq(a_chart.sets[0])
         end
 
-        it 'should a user-friendly text representation of itself' do
-          subject.push_entry(second_vertex, 0, 1, :scan_rule)
+        it 'returns a user-friendly text representation of itself' do
+          a_chart.push_entry(second_vertex, 0, 1, :scan_rule)
           representation = <<REPR
 State[0]
   .S | 0
 State[1]
   S => . A | 0
 REPR
-          expect(subject.to_s).to eq(representation)
+          expect(a_chart.to_s).to eq(representation)
         end
       end # context
     end # describe

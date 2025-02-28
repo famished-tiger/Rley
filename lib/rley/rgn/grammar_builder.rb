@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require 'set'
-
 require_relative 'parser'
 require_relative 'ast_visitor'
 require_relative '../syntax/match_closest'

@@ -34,6 +34,9 @@ module Rley # Open this namespace to avoid module qualifier prefixes
         end
       end
 
+      # Default instantiation rule
+      subject(:a_graph) { described_class.new(items_from_grammar) }
+
       # Factory method. Build a production with the given sequence
       # of symbols as its rhs.
       let(:grammar_abc) do
@@ -45,52 +48,48 @@ module Rley # Open this namespace to avoid module qualifier prefixes
       # from the abc grammar
       let(:items_from_grammar) { build_items_for_grammar(grammar_abc) }
 
-      # Default instantiation rule
-      subject { GrmFlowGraph.new(items_from_grammar) }
-
-
       context 'Initialization:' do
-        it 'should be created with an array of dotted items' do
-          expect { GrmFlowGraph.new(items_from_grammar) }.not_to raise_error
+        it 'is created with an array of dotted items' do
+          expect { described_class.new(items_from_grammar) }.not_to raise_error
         end
 
-        it 'should know its main start vertex' do
-          expect(subject.start_vertex).to eq(subject.vertices.first)
+        it 'knows its main start vertex' do
+          expect(a_graph.start_vertex).to eq(a_graph.vertices.first)
         end
 
-        it 'should have the correct number of vertices' do
+        it 'has the correct number of vertices' do
           # Number of vertices = count of dotted items +...
           #   ... 2 * count of non-terminals
           count_vertices = 2 * grammar_abc.non_terminals.size
           count_vertices += items_from_grammar.size
-          expect(subject.vertices.size).to eq(count_vertices)
+          expect(a_graph.vertices.size).to eq(count_vertices)
         end
 
-        it 'should have for each non-terminal one start and end vertex' do
+        it 'has for each non-terminal one start and end vertex' do
           # Iterate over all non-terminals of grammar...
           grammar_abc.non_terminals.each do |nterm|
             # ...to each non-terminal there should be a start vertex
-            start_vertex = subject.start_vertex_for[nterm]
-            expect(start_vertex).to be_kind_of(StartVertex)
+            start_vertex = a_graph.start_vertex_for[nterm]
+            expect(start_vertex).to be_a(StartVertex)
             expect(start_vertex.label).to eq(".#{nterm}")
 
             # ...to each non-terminal there should be an end vertex
-            end_vertex = subject.end_vertex_for[nterm]
-            expect(end_vertex).to be_kind_of(EndVertex)
+            end_vertex = a_graph.end_vertex_for[nterm]
+            expect(end_vertex).to be_a(EndVertex)
             expect(end_vertex.label).to eq("#{nterm}.")
           end
         end
 
-        it 'should have one or more entry edges per start vertex' do
-          subject.start_vertex_for.each_value do |a_start|
+        it 'has one or more entry edges per start vertex' do
+          a_graph.start_vertex_for.each_value do |a_start|
             expect(a_start.edges.size >= 1).to be_truthy
             a_start.edges.each do |edge|
-              expect(edge.successor.dotted_item.at_start?).to be_truthy
+              expect(edge.successor.dotted_item).to be_at_start
             end
           end
         end
 
-        it 'should have the correct graph structure' do
+        it 'has the correct graph structure' do
           # We use the abc grammar
           expected = [
             '.S --> S => . A',
@@ -108,10 +107,10 @@ module Rley # Open this namespace to avoid module qualifier prefixes
             'A => b . --> A.'
           ]
 
-          compare_graph_expectations(subject, expected)
+          compare_graph_expectations(a_graph, expected)
         end
 
-        it 'should handle empty productions' do
+        it 'handles empty productions' do
             builder = Rley::Syntax::BaseGrammarBuilder.new
             builder.add_terminals('a')
             builder.add_production('S' => 'A')
@@ -121,7 +120,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
             grammar = builder.grammar
             items = build_items_for_grammar(grammar)
 
-            graph = GrmFlowGraph.new(items)
+            graph = described_class.new(items)
             expected = [
               '.S --> S => . A',
               '.A --> A => . a',
@@ -137,8 +136,8 @@ module Rley # Open this namespace to avoid module qualifier prefixes
             compare_graph_expectations(graph, expected)
         end
 
-        it 'should have shortcut edges' do
-          subject.vertices.each do |a_vertex|
+        it 'has shortcut edges' do
+          a_graph.vertices.each do |a_vertex|
             next unless a_vertex.kind_of?(ItemVertex)
 
             if a_vertex.next_symbol.kind_of?(Syntax::NonTerminal)
@@ -177,9 +176,9 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           builder.grammar
         end
 
-        it 'should provide depth-first traversal' do
+        it 'provides depth-first traversal' do
           result = []
-          subject.traverse_df(subject.start_vertex) do |vertex|
+          a_graph.traverse_df(a_graph.start_vertex) do |vertex|
             result << vertex.label
           end
 
@@ -200,28 +199,28 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           expect(result).to eq(expected)
         end
 
-        it 'should provide human-readable representation of itself' do
+        it 'provides human-readable representation of itself' do
           prefix = /^#<Rley::GFG::GrmFlowGraph:\d+ @vertices=\[/
-          expect(subject.inspect).to match(prefix)
+          expect(a_graph.inspect).to match(prefix)
           pattern = /@vertices=\[#<Rley::GFG::StartVertex:\d+ label="\.S"/
-          expect(subject.inspect).to match(pattern)
+          expect(a_graph.inspect).to match(pattern)
           suffix = /]>$/
-          expect(subject.inspect).to match(suffix)
+          expect(a_graph.inspect).to match(suffix)
         end
 
-        it 'should perform a diagnosis of a correct grammar' do
-          expect { subject.diagnose }.not_to raise_error
+        it 'performs a diagnosis of a correct grammar' do
+          expect { a_graph.diagnose }.not_to raise_error
           grammar_abc.non_terminals.each do |nterm|
             expect(nterm).not_to be_undefined
             expect(nterm).not_to be_unreachable
           end
         end
 
-        it 'should detect when a non-terminal is unreachable' do
+        it 'detects when a non-terminal is unreachable' do
           grammar = problematic_grammar
           items = build_items_for_grammar(grammar)
 
-          graph = GrmFlowGraph.new(items)
+          graph = described_class.new(items)
           expect { graph.diagnose }.not_to raise_error
           grammar.non_terminals.each do |nterm|
             expect(nterm).not_to be_undefined

@@ -127,7 +127,7 @@ describe TOMLParser do
       expect(physical['shape'].value).to eq('round')
 
       expect(root['site']).to be_a(TOMLTableNode)
-      expect(root['site']['google.com'].value).to eq(true)
+      expect(root['site']['google.com'].value).to be(true)
     end
 
     it 'parses dotted key table' do

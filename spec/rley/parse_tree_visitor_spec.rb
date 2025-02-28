@@ -19,10 +19,12 @@ module Rley # Open this namespace to avoid module qualifier prefixes
       builder.grammar
     end
 
+    # Default instantiation rule
+    subject(:ptree_visitor) { described_class.new(grm_abc_ptree1) }
+
     let(:a_) { grammar_abc.name2symbol['a'] }
     let(:b_) { grammar_abc.name2symbol['b'] }
     let(:c_) { grammar_abc.name2symbol['c'] }
-
 
     # Helper method that mimicks the output of a tokenizer
     # for the language specified by grammar_abc
@@ -51,22 +53,17 @@ module Rley # Open this namespace to avoid module qualifier prefixes
       ptree
     end
 
-
-    # Default instantiation rule
-    subject { ParseTreeVisitor.new(grm_abc_ptree1) }
-
-
     context 'Standard creation & initialization:' do
-      it 'should be initialized with a parse tree argument' do
-        expect { ParseTreeVisitor.new(grm_abc_ptree1) }.not_to raise_error
+      it 'is initialized with a parse tree argument' do
+        expect { described_class.new(grm_abc_ptree1) }.not_to raise_error
       end
 
-      it 'should know the parse tree to visit' do
-        expect(subject.ptree).to eq(grm_abc_ptree1)
+      it 'knows the parse tree to visit' do
+        expect(ptree_visitor.ptree).to eq(grm_abc_ptree1)
       end
 
-      it "shouldn't have subscribers at start" do
-        expect(subject.subscribers).to be_empty
+      it "doesn't have subscribers at start" do
+        expect(ptree_visitor.subscribers).to be_empty
       end
     end # context
 
@@ -75,32 +72,32 @@ module Rley # Open this namespace to avoid module qualifier prefixes
       let(:listener1) { double('fake-subscriber1') }
       let(:listener2) { double('fake-subscriber2') }
 
-      it 'should allow subscriptions' do
-        subject.subscribe(listener1)
-        expect(subject.subscribers.size).to eq(1)
-        expect(subject.subscribers).to eq([listener1])
+      it 'allows subscriptions' do
+        ptree_visitor.subscribe(listener1)
+        expect(ptree_visitor.subscribers.size).to eq(1)
+        expect(ptree_visitor.subscribers).to eq([listener1])
 
-        subject.subscribe(listener2)
-        expect(subject.subscribers.size).to eq(2)
-        expect(subject.subscribers).to eq([listener1, listener2])
+        ptree_visitor.subscribe(listener2)
+        expect(ptree_visitor.subscribers.size).to eq(2)
+        expect(ptree_visitor.subscribers).to eq([listener1, listener2])
       end
 
-      it 'should allow un-subcriptions' do
-        subject.subscribe(listener1)
-        subject.subscribe(listener2)
-        subject.unsubscribe(listener2)
-        expect(subject.subscribers.size).to eq(1)
-        expect(subject.subscribers).to eq([listener1])
-        subject.unsubscribe(listener1)
-        expect(subject.subscribers).to be_empty
+      it 'allows un-subcriptions' do
+        ptree_visitor.subscribe(listener1)
+        ptree_visitor.subscribe(listener2)
+        ptree_visitor.unsubscribe(listener2)
+        expect(ptree_visitor.subscribers.size).to eq(1)
+        expect(ptree_visitor.subscribers).to eq([listener1])
+        ptree_visitor.unsubscribe(listener1)
+        expect(ptree_visitor.subscribers).to be_empty
       end
     end # context
 
 
     context 'Notifying visit events:' do
       # Default instantiation rule
-      subject do
-        instance = ParseTreeVisitor.new(grm_abc_ptree1)
+      subject(:ptree_visitor) do
+        instance = described_class.new(grm_abc_ptree1)
         instance.subscribe(listener1)
         instance
       end
@@ -119,19 +116,19 @@ module Rley # Open this namespace to avoid module qualifier prefixes
       # Sample terminal node
       let(:term_node) { nterm_node.subnodes[0] }
 
-      it 'should react to the start_visit_ptree message' do
+      it 'reacts to the start_visit_ptree message' do
         # Notify subscribers when start the visit of the ptree
         expect(listener1).to receive(:before_ptree).with(grm_abc_ptree1)
-        subject.start_visit_ptree(grm_abc_ptree1)
+        ptree_visitor.start_visit_ptree(grm_abc_ptree1)
       end
 
-      it 'should react to the start_visit_nonterminal message' do
+      it 'reacts to the start_visit_nonterminal message' do
         # Notify subscribers when start the visit of a non-terminal node
         expect(listener1).to receive(:before_non_terminal).with(nterm_node)
-        subject.visit_nonterminal(nterm_node)
+        ptree_visitor.visit_nonterminal(nterm_node)
       end
 
-      it 'should react to the visit_children message' do
+      it 'reacts to the visit_children message' do
         # Notify subscribers when start the visit of children nodes
         children = nterm_node.subnodes
         args = [nterm_node, children]
@@ -139,30 +136,30 @@ module Rley # Open this namespace to avoid module qualifier prefixes
         expect(listener1).to receive(:before_terminal).with(children[0])
         expect(listener1).to receive(:after_terminal).with(children[0])
         expect(listener1).to receive(:after_subnodes).with(nterm_node, children)
-        subject.send(:traverse_subnodes, nterm_node)
+        ptree_visitor.send(:traverse_subnodes, nterm_node)
       end
 
-      it 'should react to the end_visit_nonterminal message' do
+      it 'reacts to the end_visit_nonterminal message' do
         # Notify subscribers when ending the visit of a non-terminal node
         expect(listener1).to receive(:after_non_terminal).with(nterm_node)
-        subject.end_visit_nonterminal(nterm_node)
+        ptree_visitor.end_visit_nonterminal(nterm_node)
       end
 
-      it 'should react to the visit_terminal message' do
+      it 'reacts to the visit_terminal message' do
         # Notify subscribers when start & ending the visit of a terminal node
         expect(listener1).to receive(:before_terminal).with(term_node)
         expect(listener1).to receive(:after_terminal).with(term_node)
-        subject.visit_terminal(term_node)
+        ptree_visitor.visit_terminal(term_node)
       end
 
-      it 'should react to the end_visit_ptree message' do
+      it 'reacts to the end_visit_ptree message' do
         # Notify subscribers when ending the visit of the ptree
         expect(listener1).to receive(:after_ptree).with(grm_abc_ptree1)
-        subject.end_visit_ptree(grm_abc_ptree1)
+        ptree_visitor.end_visit_ptree(grm_abc_ptree1)
       end
 
       # rubocop: disable Naming/VariableNumber
-      it 'should begin the visit when requested' do
+      it 'begins the visit when requested' do
         # Reminder: parse tree structure is
         # S[0,5]
         # +- A[0,5]
@@ -212,10 +209,10 @@ module Rley # Open this namespace to avoid module qualifier prefixes
         end
 
         # Here we go...
-        subject.start
+        ptree_visitor.start
       end
 
-      it 'should also visit in pre-order' do
+      it 'also visits in pre-order' do
         # Reminder: parse tree structure is
         # S[0,5]
         # +- A[0,5]
@@ -228,7 +225,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
         #    +- c[4,5]
         root = grm_abc_ptree1.root
         # Here we defeat encapsulation for the good cause
-        subject.instance_variable_set(:@traversal, :pre_order)
+        ptree_visitor.instance_variable_set(:@traversal, :pre_order)
 
         children = root.subnodes
         big_a_1 = children[0]
@@ -270,7 +267,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
         end
 
         # Here we go...
-        subject.start
+        ptree_visitor.start
       end
       # rubocop: enable Naming/VariableNumber
     end # context

@@ -26,7 +26,7 @@ class TOMLTokenizer
   PATT_INT_BIN = /0b[01](?:(?:_[01])|[01])*/
   PATT_KEY_UNQUOTED = /[A-Za-z0-9\-_]+/
   PATT_KEY_QUOTED_DELIM = /(?:"(?!""))|(?:'(?!''))/
-  PATT_OFFSET_DATE_TIME = /[0-2]\d{3}-[01]\d-[0-3]\d[Tt ][0-2]\d:[0-5]\d:[0-6]\d(?:\.\d+)?(?:[Zz]|(?:[-+][0-6]\d:[0-6]\d))/.freeze
+  PATT_OFFSET_DATE_TIME = /[0-2]\d{3}-[01]\d-[0-3]\d[Tt ][0-2]\d:[0-5]\d:[0-6]\d(?:\.\d+)?(?:[Zz]|(?:[-+][0-6]\d:[0-6]\d))/
   PATT_LOCAL_DATE_TIME = /[0-2]\d{3}-[01]\d-[0-3]\d[Tt ][0-2]\d:[0-5]\d:[0-6]\d(?:\.\d+)?/
   PATT_LOCAL_DATE = /[0-2]\d{3}-[01]\d-[0-3]\d/
   PATT_LOCAL_TIME = /[0-2]\d:[0-5]\d:[0-6]\d(?:\.\d+)?/

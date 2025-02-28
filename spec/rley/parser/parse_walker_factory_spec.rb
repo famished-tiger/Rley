@@ -11,7 +11,6 @@ require_relative '../../../lib/rley/parser/gfg_earley_parser'
 # Load the class under test
 require_relative '../../../lib/rley/parser/parse_walker_factory'
 
-
 module Rley # Open this namespace to avoid module qualifier prefixes
   module Parser
     describe ParseWalkerFactory do
@@ -39,6 +38,8 @@ module Rley # Open this namespace to avoid module qualifier prefixes
         end
         expect(index).to eq(expectations[2])
       end
+
+      subject(:a_factory) { described_class.new }
 
       let(:sample_grammar) do
           # Grammar based on paper from Elisabeth Scott
@@ -69,31 +70,29 @@ module Rley # Open this namespace to avoid module qualifier prefixes
 
       let(:accept_entry) { sample_result.accepting_entry }
       let(:accept_index) { sample_result.chart.last_index }
-      subject { ParseWalkerFactory.new }
-
 
       context 'Initialization:' do
-        it 'should be created without argument' do
-          expect { ParseWalkerFactory.new }.not_to raise_error
+        it 'is created without argument' do
+          expect { described_class.new }.not_to raise_error
         end
       end # context
 
       context 'Parse graph traversal:' do
-        it 'should create an Enumerator as a walker' do
+        it 'creates an Enumerator as a walker' do
           entry = accept_entry
           index = accept_index
-          expect(subject.build_walker(entry, index)).to be_kind_of(Enumerator)
+          expect(a_factory.build_walker(entry, index)).to be_a(Enumerator)
         end
 
-        it 'should return the accepting parse entry in the first place' do
-          walker = subject.build_walker(accept_entry, accept_index, false)
+        it 'returns the accepting parse entry in the first place' do
+          walker = a_factory.build_walker(accept_entry, accept_index, false)
           first_event = walker.next
           expectations = [:visit, sample_result.accepting_entry, 4]
           event_expectations(first_event, expectations)
         end
 
-        it 'could traverse the parse graph backwards' do
-          walker = subject.build_walker(accept_entry, accept_index, false)
+        it 'traverses the parse graph backwards' do
+          walker = a_factory.build_walker(accept_entry, accept_index, false)
           event1 = walker.next
           expectations = [:visit, 'Phi. | 0', 4]
           event_expectations(event1, expectations)
@@ -295,8 +294,8 @@ module Rley # Open this namespace to avoid module qualifier prefixes
         end
 
 
-        it 'could traverse lazily the parse graph backwards' do
-          walker = subject.build_walker(accept_entry, accept_index, true)
+        it 'traverses lazily the parse graph backwards' do
+          walker = a_factory.build_walker(accept_entry, accept_index, true)
 
           17.times { walker.next }
 
@@ -397,8 +396,8 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           event_expectations(event40, expectations)
         end
 
-        it 'should raise an exception at end of visit' do
-          walker = subject.build_walker(accept_entry, accept_index, true)
+        it 'raises an exception at end of visit' do
+          walker = a_factory.build_walker(accept_entry, accept_index, true)
           40.times { walker.next }
 
           expect { walker.next }.to raise_error(StopIteration)

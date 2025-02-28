@@ -13,6 +13,8 @@ module Rley # Open this namespace to avoid module qualifier prefixes
     describe ParseTree do
       include GrammarABCHelper # Mix-in module with builder for grammar abc
 
+      subject(:ptree) { described_class.new(sample_root) }
+
       let(:sample_grammar) do
         builder = grammar_abc_builder
         builder.grammar
@@ -22,17 +24,13 @@ module Rley # Open this namespace to avoid module qualifier prefixes
       let(:sample_range) { { low: 0, high: 5 } }
       let(:sample_root) { ParseTreeNode.new(sample_prod.lhs, sample_range) }
 
-      subject do
-        ParseTree.new(sample_root)
-      end
-
       context 'Initialization:' do
-        it 'should be created with a root node' do
-          expect { ParseTree.new(sample_root) }.not_to raise_error
+        it 'is created with a root node' do
+          expect { described_class.new(sample_root) }.not_to raise_error
         end
 
-        it 'should know its root node' do
-          its_root = subject.root
+        it 'knows its root node' do
+          its_root = ptree.root
           expect(its_root.symbol.name).to eq('S')
           expect(its_root.range).to eq(sample_range)
         end

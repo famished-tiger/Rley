@@ -20,6 +20,8 @@ module Rley # Open this namespace to avoid module qualifier prefixes
         return Lexical::TokenRange.new(low: low, high: high)
       end
 
+      subject(:alt_node) { described_class.new(sample_vertex, sample_range) }
+
       let(:t_a) { Syntax::Terminal.new('A') }
       let(:t_b) { Syntax::Terminal.new('B') }
       let(:t_c) { Syntax::Terminal.new('C') }
@@ -31,40 +33,38 @@ module Rley # Open this namespace to avoid module qualifier prefixes
       let(:sample_vertex) { GFG::ItemVertex.new(sample_item) }
       let(:sample_range) { range(0, 3) }
 
-      subject { AlternativeNode.new(sample_vertex, sample_range) }
-
       context 'Construction:' do
-        it 'should be created with a item vertex and a token range' do
-          expect { AlternativeNode.new(sample_vertex, sample_range) }
+        it 'is created with a item vertex and a token range' do
+          expect { described_class.new(sample_vertex, sample_range) }
             .not_to raise_error
         end
       end
 
       context 'Initialization:' do
-        it 'should know its token range' do
-          expect(subject.range).to eq(sample_range)
-          expect(subject.origin).to eq(sample_range.low)
+        it 'knows its token range' do
+          expect(alt_node.range).to eq(sample_range)
+          expect(alt_node.origin).to eq(sample_range.low)
         end
 
-        it "shouldn't have children yet" do
-          expect(subject.subnodes).to be_empty
+        it "doesn't have children yet" do
+          expect(alt_node.subnodes).to be_empty
         end
       end # context
 
       context 'Provided services:' do
-        it 'should accept the addition of subnodes' do
+        it 'accepts the addition of subnodes' do
           subnode1 = double('first_subnode')
           subnode2 = double('second_subnode')
           subnode3 = double('third_subnode')
-          expect { subject.add_subnode(subnode1) }.not_to raise_error
-          subject.add_subnode(subnode2)
-          subject.add_subnode(subnode3)
-          expect(subject.subnodes).to eq([subnode3, subnode2, subnode1])
+          expect { alt_node.add_subnode(subnode1) }.not_to raise_error
+          alt_node.add_subnode(subnode2)
+          alt_node.add_subnode(subnode3)
+          expect(alt_node.subnodes).to eq([subnode3, subnode2, subnode1])
         end
 
 
-        it 'should have a string representation' do
-          expect(subject.to_string(0)).to eq('Alt(sentence => A B C .)[0, 3]')
+        it 'has a string representation' do
+          expect(alt_node.to_string(0)).to eq('Alt(sentence => A B C .)[0, 3]')
         end
       end # context
     end # describe

@@ -10,21 +10,22 @@ require_relative '../../../lib/rley/gfg/scan_edge'
 
 module Rley # Open this namespace to avoid module qualifier prefixes
   module GFG # Open this namespace to avoid module qualifier prefixes
-    describe Edge do
+    describe ScanEdge do
+      subject(:an_edge) { described_class.new(vertex1, vertex2, sample_terminal) }
+
       let(:vertex1) { StartVertex.new('from') }
       let(:vertex2) { StartVertex.new('to') }
       let(:sample_terminal) { double('fake-terminal') }
-      subject { ScanEdge.new(vertex1, vertex2, sample_terminal) }
 
       context 'Initialization:' do
-        it 'should be created with two vertice arguments & a terminal' do
+        it 'is created with two vertice arguments & a terminal' do
           v1 = vertex1
           v2 = vertex2
-          expect { ScanEdge.new(v1, v2, sample_terminal) }.not_to raise_error
+          expect { described_class.new(v1, v2, sample_terminal) }.not_to raise_error
         end
 
-        it 'should know the related terminal' do
-          expect(subject.terminal).to eq(sample_terminal)
+        it 'knows the related terminal' do
+          expect(an_edge.terminal).to eq(sample_terminal)
         end
       end # context
     end # describe

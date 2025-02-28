@@ -17,6 +17,8 @@ module Rley # Open this namespace to avoid module qualifier prefixes
       include GrammarHelper     # Mix-in with token factory method
       include ExpectationHelper # Mix-in with expectation on parse entry sets
 
+      subject(:a_factory) { described_class.new(sample_result) }
+
       let(:sample_grammar) do
           # Grammar based on paper from Elisabeth Scott
           # "SPPF-Style Parsing From Earley Recognizers" in
@@ -44,32 +46,28 @@ module Rley # Open this namespace to avoid module qualifier prefixes
         parser.parse(sample_tokens)
       end
 
-      subject do
-        ParseForestFactory.new(sample_result)
-      end
-
       # Emit a text representation of the current path.
       def path_to_s
-        text_parts = subject.curr_path.map do |path_element|
+        text_parts = a_factory.curr_path.map do |path_element|
           path_element.to_string(0)
         end
         text_parts.join('/')
       end
 
       context 'Initialization:' do
-        it 'should be created with a GFGParsing' do
-          expect { ParseForestFactory.new(sample_result) }.not_to raise_error
+        it 'is created with a GFGParsing' do
+          expect { described_class.new(sample_result) }.not_to raise_error
         end
 
-        it 'should know the parse result' do
-          expect(subject.parsing).to eq(sample_result)
+        it 'knows the parse result' do
+          expect(a_factory.parsing).to eq(sample_result)
         end
       end
 
       context 'Parse forest construction' do
-        it 'should build a parse forest' do
-          forest = subject.create
-          expect(forest).to be_kind_of(SPPF::ParseForest)
+        it 'builds a parse forest' do
+          forest = a_factory.create
+          expect(forest).to be_a(SPPF::ParseForest)
         end
       end # context
     end # describe

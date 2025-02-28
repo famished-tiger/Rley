@@ -7,19 +7,20 @@ require_relative '../../lib/support/base_tokenizer'
 
 describe BaseTokenizer do
   let(:sample_input) { '7 + (8 + 9)' }
+
   context 'Standard creation & initialization:' do
-    subject { BaseTokenizer.new(sample_input) }
+    subject(:tokenizer) { described_class.new(sample_input) }
 
-    it 'should be initialized with a text argument' do
-      expect { BaseTokenizer.new(sample_input) }.not_to raise_error
+    it 'is initialized with a text argument' do
+      expect { described_class.new(sample_input) }.not_to raise_error
     end
 
-    it 'should have a scanner initialized' do
-      expect(subject.scanner).to be_kind_of(StringScanner)
+    it 'has a scanner initialized' do
+      expect(tokenizer.scanner).to be_a(StringScanner)
     end
 
-    it 'should have line number initialized' do
-      expect(subject.lineno).to eq(1)
+    it 'has line number initialized' do
+      expect(tokenizer.lineno).to eq(1)
     end
   end # context
 
@@ -58,7 +59,7 @@ describe BaseTokenizer do
       tokenizer.tokens
     end
 
-    it 'should return a sequence of tokens' do
+    it 'returns a sequence of tokens' do
       sequence = tokenize(sample_input)
       checks = [
         ['int', 7, [1, 1]],

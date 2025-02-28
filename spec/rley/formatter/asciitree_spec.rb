@@ -15,6 +15,8 @@ require_relative '../../../lib/rley/formatter/asciitree'
 module Rley # Re-open the module to get rid of qualified names
   module Formatter
     describe Asciitree do
+      subject(:a_formatter) { described_class.new(destination) }
+
       # Factory method. Build a production with the given sequence
       # of symbols as its rhs.
       let(:grammar_abc) do
@@ -55,25 +57,23 @@ module Rley # Re-open the module to get rid of qualified names
         ptree = engine.convert(parse_result)
         ptree
       end
-
       let(:destination) { StringIO.new(+'', 'w') }
-      subject { Asciitree.new(destination) }
 
       context 'Standard creation & initialization:' do
-        it 'should be initialized with an IO argument' do
-          expect { Asciitree.new(StringIO.new(+'', 'w')) }.not_to raise_error
+        it 'is initialized with an IO argument' do
+          expect { described_class.new(StringIO.new(+'', 'w')) }.not_to raise_error
         end
 
-        it 'should know its output destination' do
-          expect(subject.output).to eq(destination)
+        it 'knows its output destination' do
+          expect(a_formatter.output).to eq(destination)
         end
       end # context
 
 
       context 'Rendering:' do
-        it 'should render a parse tree' do
+        it 'renders a parse tree' do
           visitor = Rley::ParseTreeVisitor.new(grm_abc_ptree1)
-          subject.render(visitor)
+          a_formatter.render(visitor)
           expectations = <<-SNIPPET
 S
 +-- A

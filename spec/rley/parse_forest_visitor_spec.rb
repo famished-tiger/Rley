@@ -25,6 +25,9 @@ module Rley # Open this namespace to avoid module qualifier prefixes
       return Rley::SPPF::NonTerminalNode.new(a_vertex.non_terminal, aRange)
     end
 
+    # Default instantiation rule
+    subject(:a_visitor) { described_class.new(forest_root) }
+
     let(:grammar_sppf) do
       builder = grammar_sppf_builder
       builder.grammar
@@ -53,22 +56,17 @@ module Rley # Open this namespace to avoid module qualifier prefixes
       factory.create
     end
 
-
-    # Default instantiation rule
-    subject { ParseForestVisitor.new(forest_root) }
-
-
     context 'Standard creation & initialization:' do
-      it 'should be initialized with a parse forest argument' do
-        expect { ParseForestVisitor.new(forest_root) }.not_to raise_error
+      it 'is initialized with a parse forest argument' do
+        expect { described_class.new(forest_root) }.not_to raise_error
       end
 
-      it 'should know the parse forest to visit' do
-        expect(subject.pforest).to eq(forest_root)
+      it 'knows the parse forest to visit' do
+        expect(a_visitor.pforest).to eq(forest_root)
       end
 
-      it "shouldn't have subscribers at start" do
-        expect(subject.subscribers).to be_empty
+      it "doesn't have subscribers at start" do
+        expect(a_visitor.subscribers).to be_empty
       end
     end # context
 
@@ -77,24 +75,24 @@ module Rley # Open this namespace to avoid module qualifier prefixes
       let(:listener1) { double('fake-subscriber1') }
       let(:listener2) { double('fake-subscriber2') }
 
-      it 'should allow subscriptions' do
-        subject.subscribe(listener1)
-        expect(subject.subscribers.size).to eq(1)
-        expect(subject.subscribers).to eq([listener1])
+      it 'allows subscriptions' do
+        a_visitor.subscribe(listener1)
+        expect(a_visitor.subscribers.size).to eq(1)
+        expect(a_visitor.subscribers).to eq([listener1])
 
-        subject.subscribe(listener2)
-        expect(subject.subscribers.size).to eq(2)
-        expect(subject.subscribers).to eq([listener1, listener2])
+        a_visitor.subscribe(listener2)
+        expect(a_visitor.subscribers.size).to eq(2)
+        expect(a_visitor.subscribers).to eq([listener1, listener2])
       end
 
-      it 'should allow un-subcriptions' do
-        subject.subscribe(listener1)
-        subject.subscribe(listener2)
-        subject.unsubscribe(listener2)
-        expect(subject.subscribers.size).to eq(1)
-        expect(subject.subscribers).to eq([listener1])
-        subject.unsubscribe(listener1)
-        expect(subject.subscribers).to be_empty
+      it 'allows un-subcriptions' do
+        a_visitor.subscribe(listener1)
+        a_visitor.subscribe(listener2)
+        a_visitor.unsubscribe(listener2)
+        expect(a_visitor.subscribers.size).to eq(1)
+        expect(a_visitor.subscribers).to eq([listener1])
+        a_visitor.unsubscribe(listener1)
+        expect(a_visitor.subscribers).to be_empty
       end
     end # context
 
@@ -140,13 +138,13 @@ module Rley # Open this namespace to avoid module qualifier prefixes
       end
 
       def check_legs(expectations)
-        (parent, path_signature) = subject.legs[-1]
+        (parent, path_signature) = a_visitor.legs[-1]
         expect(parent.to_string(0)).to eq(expectations[0])
         expect(path_signature).to eq(expectations[1])
       end
 
       def check_node_accesses(node, paths)
-        actual_paths = subject.node_accesses.fetch(node)
+        actual_paths = a_visitor.node_accesses.fetch(node)
         expect(actual_paths).to eq(paths)
       end
 
@@ -154,12 +152,12 @@ module Rley # Open this namespace to avoid module qualifier prefixes
 
       # Default instantiation rule
       subject do
-        instance = ParseForestVisitor.new(grm_sppf_pforest1)
+        instance = described_class.new(grm_sppf_pforest1)
         instance.subscribe(checker)
         instance
       end
 
-      it 'should react to the start_visit_pforest message' do
+      it 'reacts to the start_visit_pforest message' do
         # Notify subscribers when start the visit of the pforest
         # expect(listener1).to receive(:before_pforest).with(forest_root)
         checker.expectations = [
@@ -267,7 +265,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
             check_event(event, item, [:before_alternative, prediction])
             check_legs(['Alt(A => a .)[0, 1]', 7130]) # 2 * 5 * 23 * 31
             check_node_accesses(item, [7130])
-            # p(subject.legs)
+            # p(a_visitor.legs)
           end,
           lambda do |event, parent, children|
             prediction = 'Alt(A => a .)[0, 1]'
@@ -487,7 +485,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
             check_event(event, item, [:after_pforest, grm_sppf_pforest1])
           end
         ]
-        subject.start
+        a_visitor.start
       end
     end # context
   end # describe

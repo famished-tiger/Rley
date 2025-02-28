@@ -19,6 +19,8 @@ module Rley # Open this namespace to avoid module qualifier prefixes
       include GrammarBExprHelper # Mix-in for basic arithmetic language
       include GrammarArrIntHelper # Mix-in for array of integers language
 
+      subject(:a_builder) { described_class.new(sample_tokens) }
+
       let(:sample_grammar) do
           builder = grammar_expr_builder
           builder.grammar
@@ -27,8 +29,6 @@ module Rley # Open this namespace to avoid module qualifier prefixes
       let(:sample_tokens) do
         expr_tokenizer('2 + 3 * 4')
       end
-
-      subject { CSTBuilder.new(sample_tokens) }
 
       def init_walker(theParser, theTokens)
         result = theParser.parse(theTokens)
@@ -41,7 +41,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
       def skip_events(count)
         count.times do
           event = @walker.next
-          subject.receive_event(*event)
+          a_builder.receive_event(*event)
         end
       end
 
@@ -54,27 +54,27 @@ module Rley # Open this namespace to avoid module qualifier prefixes
       end
 
       context 'Initialization:' do
-        it 'should be created with a sequence of tokens' do
-          expect { CSTBuilder.new(sample_tokens) }.not_to raise_error
+        it 'is created with a sequence of tokens' do
+          expect { described_class.new(sample_tokens) }.not_to raise_error
         end
 
-        it 'should know the input tokens' do
-          expect(subject.tokens).to eq(sample_tokens)
+        it 'knows the input tokens' do
+          expect(a_builder.tokens).to eq(sample_tokens)
         end
 
-        it "shouldn't know the result yet" do
-          expect(subject.result).to be_nil
+        it "doesn't know the result yet" do
+          expect(a_builder.result).to be_nil
         end
 
-        it 'should have an empty stack' do
-          expect(subject.send(:stack)).to be_empty
+        it 'has an empty stack' do
+          expect(a_builder.send(:stack)).to be_empty
         end
       end # context
 
 
 
       context 'Parse tree construction (no null symbol):' do
-        before(:each) do
+        before do
           parser = Parser::GFGEarleyParser.new(sample_grammar)
           init_walker(parser, sample_tokens)
         end
@@ -120,196 +120,196 @@ module Rley # Open this namespace to avoid module qualifier prefixes
         # Event: visit P => . S | 0 0
         # Event: visit .P | 0 0
 
-        it 'should react to a first end event' do
+        it 'reacts to a first end event' do
           event = @walker.next
-          expect { subject.receive_event(*event) }.not_to raise_error
-          stack = get_stack(subject)
+          expect { a_builder.receive_event(*event) }.not_to raise_error
+          stack = get_stack(a_builder)
           expect(stack.size).to eq(1)
           expect(stack.last.range).to eq(create_range(0, 5))
           expect(stack.last.children).to be_nil
         end
 
-        it 'should react to a first exit event' do
+        it 'reacts to a first exit event' do
           skip_events(1)
           event = @walker.next
-          expect { subject.receive_event(*event) }.not_to raise_error
-          stack = get_stack(subject)
+          expect { a_builder.receive_event(*event) }.not_to raise_error
+          stack = get_stack(a_builder)
           expect(stack.size).to eq(1)
         end
 
-        it 'should react to a second end event' do
+        it 'reacts to a second end event' do
           skip_events(2)
           event = @walker.next
-          expect { subject.receive_event(*event) }.not_to raise_error
-          stack = get_stack(subject)
+          expect { a_builder.receive_event(*event) }.not_to raise_error
+          stack = get_stack(a_builder)
           expect(stack.size).to eq(2)
           expect(stack.last.range).to eq(create_range(0, 5))
           expect(stack.last.children).to be_nil
         end
 
-        it 'should react to a second exit event' do
+        it 'reacts to a second exit event' do
           skip_events(3)
           event = @walker.next
-          expect { subject.receive_event(*event) }.not_to raise_error
-          stack = get_stack(subject)
+          expect { a_builder.receive_event(*event) }.not_to raise_error
+          stack = get_stack(a_builder)
           expect(stack.size).to eq(2)
           expect(stack.last.children.size).to eq(3)
         end
 
-        it 'should react to an exit event that creates a terminal node' do
+        it 'reacts to an exit event that creates a terminal node' do
           skip_events(7)
           event = @walker.next
-          expect { subject.receive_event(*event) }.not_to raise_error
-          stack = get_stack(subject)
+          expect { a_builder.receive_event(*event) }.not_to raise_error
+          stack = get_stack(a_builder)
           expect(stack.size).to eq(4)
           expect(stack.last.children.size).to eq(1)
           child = stack.last.children[-1]
-          expect(child).to be_kind_of(PTree::TerminalNode)
+          expect(child).to be_a(PTree::TerminalNode)
           expect(child.to_s).to eq("integer[4, 5]: '4'")
         end
 
 
-        it 'should react to a first entry event' do
+        it 'reacts to a first entry event' do
           skip_events(8)
           event = @walker.next
-          expect { subject.receive_event(*event) }.not_to raise_error
-          stack = get_stack(subject)
+          expect { a_builder.receive_event(*event) }.not_to raise_error
+          stack = get_stack(a_builder)
           expect(stack.size).to eq(3) # Element popped
           expect(stack.last.children.size).to eq(3)
           child = stack.last.children[-1]
-          expect(child).to be_kind_of(PTree::NonTerminalNode)
+          expect(child).to be_a(PTree::NonTerminalNode)
           expect(child.to_s).to eq('T[4, 5]')
         end
 
-        it 'should react to a first start event' do
+        it 'reacts to a first start event' do
           skip_events(9)
           event = @walker.next
-          expect { subject.receive_event(*event) }.not_to raise_error
-          stack = get_stack(subject)
+          expect { a_builder.receive_event(*event) }.not_to raise_error
+          stack = get_stack(a_builder)
           expect(stack.size).to eq(3)
         end
 
-        it 'should react to an middle event that creates a terminal node' do
+        it 'reacts to an middle event that creates a terminal node (i)' do
           skip_events(10)
           event = @walker.next
-          expect { subject.receive_event(*event) }.not_to raise_error
-          stack = get_stack(subject)
+          expect { a_builder.receive_event(*event) }.not_to raise_error
+          stack = get_stack(a_builder)
           expect(stack.size).to eq(3)
           expect(stack.last.children.size).to eq(3)
           child = stack.last.children[1]
-          expect(child).to be_kind_of(PTree::TerminalNode)
+          expect(child).to be_a(PTree::TerminalNode)
           expect(child.to_s).to eq("*[3, 4]: '*'")
         end
 
-        it 'should react to an exit event that creates a terminal node' do
+        it 'reacts to an exit event that creates a terminal node (ii)' do
           skip_events(15)
           event = @walker.next
-          expect { subject.receive_event(*event) }.not_to raise_error
-          stack = get_stack(subject)
+          expect { a_builder.receive_event(*event) }.not_to raise_error
+          stack = get_stack(a_builder)
           expect(stack.size).to eq(5)
           expect(stack.last.children.size).to eq(1)
           child = stack.last.children[-1]
-          expect(child).to be_kind_of(PTree::TerminalNode)
+          expect(child).to be_a(PTree::TerminalNode)
           expect(child.to_s).to eq("integer[2, 3]: '3'")
         end
 
-        it 'should ignore to a revisit event' do
+        it 'ignores to a revisit event' do
           skip_events(21)
           event = @walker.next
-          expect { subject.receive_event(*event) }.not_to raise_error
-          stack = get_stack(subject)
+          expect { a_builder.receive_event(*event) }.not_to raise_error
+          stack = get_stack(a_builder)
           expect(stack.size).to eq(2)
           expect(stack.last.children.size).to eq(3)
           child = stack.last.children[-1]
-          expect(child).to be_kind_of(PTree::NonTerminalNode)
+          expect(child).to be_a(PTree::NonTerminalNode)
           expect(child.to_s).to eq('M[2, 5]')
         end
 
-        it 'should react to a 2nd middle event that creates a terminal node' do
+        it 'reacts to a 2nd middle event that creates a terminal node' do
           skip_events(22)
           event = @walker.next
-          expect { subject.receive_event(*event) }.not_to raise_error
-          stack = get_stack(subject)
+          expect { a_builder.receive_event(*event) }.not_to raise_error
+          stack = get_stack(a_builder)
           expect(stack.size).to eq(2)
           expect(stack.last.children.size).to eq(3)
           child = stack.last.children[1]
-          expect(child).to be_kind_of(PTree::TerminalNode)
+          expect(child).to be_a(PTree::TerminalNode)
           expect(child.to_s).to eq("+[1, 2]: '+'")
         end
 
-        it 'should react to a exit event that creates a terminal node' do
+        it 'reacts to a exit event that creates a terminal node' do
           skip_events(29)
           event = @walker.next
-          expect { subject.receive_event(*event) }.not_to raise_error
-          stack = get_stack(subject)
+          expect { a_builder.receive_event(*event) }.not_to raise_error
+          stack = get_stack(a_builder)
           expect(stack.size).to eq(5)
           expect(stack.last.children.size).to eq(1)
           child = stack.last.children[-1]
-          expect(child).to be_kind_of(PTree::TerminalNode)
+          expect(child).to be_a(PTree::TerminalNode)
           expect(child.to_s).to eq("integer[0, 1]: '2'")
         end
 
 
-        it 'should react to entry event 31' do
+        it 'reacts to entry event 31' do
           skip_events(30)
           event = @walker.next
-          expect { subject.receive_event(*event) }.not_to raise_error
-          stack = get_stack(subject)
+          expect { a_builder.receive_event(*event) }.not_to raise_error
+          stack = get_stack(a_builder)
           expect(stack.size).to eq(4)
           expect(stack.last.children.size).to eq(1)
           child = stack.last.children[-1]
-          expect(child).to be_kind_of(PTree::NonTerminalNode)
+          expect(child).to be_a(PTree::NonTerminalNode)
           expect(child.to_s).to eq('T[0, 1]')
         end
 
-        it 'should react to entry event 33' do
+        it 'reacts to entry event 33' do
           skip_events(32)
           event = @walker.next
-          expect { subject.receive_event(*event) }.not_to raise_error
-          stack = get_stack(subject)
+          expect { a_builder.receive_event(*event) }.not_to raise_error
+          stack = get_stack(a_builder)
           expect(stack.size).to eq(3)
           expect(stack.last.children.size).to eq(1)
           child = stack.last.children[-1]
-          expect(child).to be_kind_of(PTree::NonTerminalNode)
+          expect(child).to be_a(PTree::NonTerminalNode)
           expect(child.to_s).to eq('M[0, 1]')
         end
 
-        it 'should react to entry event 35' do
+        it 'reacts to entry event 35' do
           skip_events(34)
           event = @walker.next
-          expect { subject.receive_event(*event) }.not_to raise_error
-          stack = get_stack(subject)
+          expect { a_builder.receive_event(*event) }.not_to raise_error
+          stack = get_stack(a_builder)
           expect(stack.size).to eq(2)
           expect(stack.last.children.size).to eq(3)
           child = stack.last.children[0]
-          expect(child).to be_kind_of(PTree::NonTerminalNode)
+          expect(child).to be_a(PTree::NonTerminalNode)
           expect(child.to_s).to eq('S[0, 1]')
         end
 
-        it 'should react to entry event 37' do
+        it 'reacts to entry event 37' do
           skip_events(36)
           event = @walker.next
-          expect { subject.receive_event(*event) }.not_to raise_error
-          stack = get_stack(subject)
+          expect { a_builder.receive_event(*event) }.not_to raise_error
+          stack = get_stack(a_builder)
           expect(stack.size).to eq(1)
           expect(stack.last.children.size).to eq(1)
           child = stack.last.children[0]
-          expect(child).to be_kind_of(PTree::NonTerminalNode)
+          expect(child).to be_a(PTree::NonTerminalNode)
           expect(child.to_s).to eq('S[0, 5]')
         end
 
-        it 'should react to entry event that creates the tree' do
+        it 'reacts to entry event that creates the tree' do
           skip_events(38)
           event = @walker.next
-          expect { subject.receive_event(*event) }.not_to raise_error
-          stack = get_stack(subject)
+          expect { a_builder.receive_event(*event) }.not_to raise_error
+          stack = get_stack(a_builder)
           expect(stack).to be_empty
-          expect(subject.result).to be_kind_of(PTree::ParseTree)
+          expect(a_builder.result).to be_a(PTree::ParseTree)
 
           # Lightweight sanity check
-          expect(subject.result.root.to_s).to eq('P[0, 5]')
-          expect(subject.result.root.subnodes.size).to eq(1)
-          child_node = subject.result.root.subnodes[0]
+          expect(a_builder.result.root.to_s).to eq('P[0, 5]')
+          expect(a_builder.result.root.subnodes.size).to eq(1)
+          child_node = a_builder.result.root.subnodes[0]
           expect(child_node.to_s).to eq('S[0, 5]')
           expect(child_node.subnodes.size).to eq(3)
           first_grandchild = child_node.subnodes[0]
@@ -335,14 +335,14 @@ module Rley # Open this namespace to avoid module qualifier prefixes
             builder.grammar
         end
 
-        before(:each) do
+        before do
           @parser = Parser::GFGEarleyParser.new(array_grammar)
         end
 
         # The visit events were generated with the following snippets:
         # 13.times do
         #   event = @walker.next
-        #   subject.receive_event(*event)
+        #   a_builder.receive_event(*event)
         # end
         # The events are:
         # Event: visit P. | 0 2
@@ -358,9 +358,9 @@ module Rley # Open this namespace to avoid module qualifier prefixes
         # Event: visit .arr | 0 0
         # Event: visit P => . arr | 0 0
         #   Event: visit .P | 0 0
-        it 'should build a tree for an empty array' do
+        it 'builds a tree for an empty array' do
           empty_arr_tokens = arr_int_tokenizer('[ ]')
-          @instance = CSTBuilder.new(empty_arr_tokens)
+          @instance = described_class.new(empty_arr_tokens)
           init_walker(@parser, empty_arr_tokens)
           stack = get_stack(@instance)
 
@@ -400,7 +400,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           # stack: [arr[0, 2], P[0, 2]]
           expect(stack.last.range).to eq(create_range(0, 2))
           sequence = stack.last.children[1]
-          expect(sequence).to be_kind_of(PTree::NonTerminalNode)
+          expect(sequence).to be_a(PTree::NonTerminalNode)
           expect(sequence.subnodes).to be_empty
           expect(sequence.to_s).to eq('sequence[1, 1]')
 
@@ -411,7 +411,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           expect(stack.size).to eq(2)
           expect(stack.last.range).to eq(create_range(0, 2))
           sequence = stack.last.children[0]
-          expect(sequence).to be_kind_of(PTree::TerminalNode)
+          expect(sequence).to be_a(PTree::TerminalNode)
           expect(sequence.to_s).to eq("[[0, 1]: '['")
 
           next_event('visit arr => . [ sequence ] | 0 0')
@@ -419,7 +419,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           # stack: [P[0, 2]]
           expect(stack.last.range).to eq(create_range(0, 2))
           expect(stack.last.children.size).to eq(1)
-          expect(stack.last.children[0]).to be_kind_of(PTree::NonTerminalNode)
+          expect(stack.last.children[0]).to be_a(PTree::NonTerminalNode)
           expect(stack.last.children[0].to_s).to eq('arr[0, 2]')
 
           next_event('visit .arr | 0 0')

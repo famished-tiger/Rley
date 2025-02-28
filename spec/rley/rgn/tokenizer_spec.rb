@@ -20,27 +20,28 @@ module Rley # Open this namespace to avoid module qualifier prefixes
         end
       end
 
+      subject(:a_tokenizer) { described_class.new }
+
       context 'Initialization:' do
         let(:sample_text) { 'begin-object member-list end-object' }
-        subject { Tokenizer.new }
 
-        it 'could be initialized with a text to tokenize or...' do
-          expect { Tokenizer.new(sample_text) }.not_to raise_error
+        it 'is initialized with a text to tokenize or...' do
+          expect { described_class.new(sample_text) }.not_to raise_error
         end
 
-        it 'could be initialized without argument...' do
-          expect { Tokenizer.new }.not_to raise_error
+        it 'is initialized without argument...' do
+          expect { described_class.new }.not_to raise_error
         end
 
-        it 'should have its scanner initialized' do
-          expect(subject.scanner).to be_kind_of(StringScanner)
+        it 'has its scanner initialized' do
+          expect(a_tokenizer.scanner).to be_a(StringScanner)
         end
       end # context
 
       context 'Input tokenization:' do
-        it 'should recognize single special character token' do
+        it 'recognizes single special character token' do
           input = '(){}?*+,'
-          subject.start_with(input)
+          a_tokenizer.start_with(input)
           expectations = [
             # [token lexeme]
             %w[LEFT_PAREN (],
@@ -52,22 +53,22 @@ module Rley # Open this namespace to avoid module qualifier prefixes
             %w[PLUS +],
             %w[COMMA ,]
           ]
-          match_expectations(subject, expectations)
+          match_expectations(a_tokenizer, expectations)
         end
 
-        it 'should recognize one or two special character tokens' do
+        it 'recognizes one or two special character tokens' do
           input = '..'
-          subject.start_with(input)
+          a_tokenizer.start_with(input)
           expectations = [
             # [token lexeme]
             %w[ELLIPSIS ..]
           ]
-          match_expectations(subject, expectations)
+          match_expectations(a_tokenizer, expectations)
         end
 
-        it 'should treat ? * + as symbols if they occur as suffix' do
+        it 'treats ? * + as symbols if they occur as suffix' do
           input = 'a+ + b* * 3 ?'
-          subject.start_with(input)
+          a_tokenizer.start_with(input)
           expectations = [
             # [token lexeme]
             %w[SYMBOL a],
@@ -79,21 +80,21 @@ module Rley # Open this namespace to avoid module qualifier prefixes
             %w[INT_LIT 3],
             %w[SYMBOL ?]
           ]
-          match_expectations(subject, expectations)
+          match_expectations(a_tokenizer, expectations)
         end
 
-        it 'should recognize annotation keywords' do
+        it 'recognizes annotation keywords' do
           keywords = 'match_closest: repeat:'
-          subject.start_with(keywords)
+          a_tokenizer.start_with(keywords)
           expectations = [
             # [token lexeme]
             %w[KEY match_closest],
             %w[KEY repeat]
           ]
-          match_expectations(subject, expectations)
+          match_expectations(a_tokenizer, expectations)
         end
 
-        it 'should recognize ordinal integer values' do
+        it 'recognizes ordinal integer values' do
           input = <<-RLEY_END
             3      123
             987654 0
@@ -106,16 +107,16 @@ module Rley # Open this namespace to avoid module qualifier prefixes
             ['0', 0]
           ]
 
-          subject.start_with(input)
-          subject.tokens[0..-2].each_with_index do |tok, i|
-            expect(tok).to be_kind_of(Rley::Lexical::Token)
+          a_tokenizer.start_with(input)
+          a_tokenizer.tokens[0..-2].each_with_index do |tok, i|
+            expect(tok).to be_a(Rley::Lexical::Token)
             expect(tok.terminal).to eq('INT_LIT')
             (lexeme,) = expectations[i]
             expect(tok.lexeme).to eq(lexeme)
           end
         end
 
-        it 'should recognize string literals' do
+        it 'recognizes string literals' do
           input = <<-RLEY_END
             ""
             "string"
@@ -131,29 +132,29 @@ module Rley # Open this namespace to avoid module qualifier prefixes
             '123'
           ] * 2
 
-          subject.start_with(input)
-          subject.tokens.each_with_index do |str, i|
-            expect(str).to be_kind_of(Rley::Lexical::Token)
+          a_tokenizer.start_with(input)
+          a_tokenizer.tokens.each_with_index do |str, i|
+            expect(str).to be_a(Rley::Lexical::Token)
             expect(str.terminal).to eq('STR_LIT')
             (lexeme,) = expectations[i]
             expect(str.lexeme).to eq(lexeme)
           end
         end
 
-        it 'should recognize a sequence of symbols' do
+        it 'recognizes a sequence of symbols' do
           input = 'IF ifCondition statement ELSE statement'
           expectations = %w[IF ifCondition statement ELSE statement]
 
-          subject.start_with(input)
-          subject.tokens.each_with_index do |str, i|
-            expect(str).to be_kind_of(Rley::Lexical::Token)
+          a_tokenizer.start_with(input)
+          a_tokenizer.tokens.each_with_index do |str, i|
+            expect(str).to be_a(Rley::Lexical::Token)
             expect(str.terminal).to eq('SYMBOL')
             (lexeme,) = expectations[i]
             expect(str.lexeme).to eq(lexeme)
           end
         end
 
-        it 'should recognize an optional symbol' do
+        it 'recognizes an optional symbol' do
           input = 'RETURN expression? SEMICOLON'
           expectations = [
             %w[RETURN SYMBOL],
@@ -162,16 +163,16 @@ module Rley # Open this namespace to avoid module qualifier prefixes
             %w[SEMICOLON SYMBOL]
           ]
 
-          subject.start_with(input)
-          subject.tokens.each_with_index do |str, i|
-            expect(str).to be_kind_of(Rley::Lexical::Token)
+          a_tokenizer.start_with(input)
+          a_tokenizer.tokens.each_with_index do |str, i|
+            expect(str).to be_a(Rley::Lexical::Token)
             (lexeme, token) = expectations[i]
             expect(str.lexeme).to eq(lexeme)
             expect(str.terminal).to eq(token)
           end
         end
 
-        it 'should recognize a symbol with a star quantifier' do
+        it 'recognizes a symbol with a star quantifier' do
           input = 'declaration* EOF'
           expectations = [
             %w[declaration SYMBOL],
@@ -179,16 +180,16 @@ module Rley # Open this namespace to avoid module qualifier prefixes
             %w[EOF SYMBOL]
           ]
 
-          subject.start_with(input)
-          subject.tokens.each_with_index do |str, i|
-            expect(str).to be_kind_of(Rley::Lexical::Token)
+          a_tokenizer.start_with(input)
+          a_tokenizer.tokens.each_with_index do |str, i|
+            expect(str).to be_a(Rley::Lexical::Token)
             (lexeme, token) = expectations[i]
             expect(str.lexeme).to eq(lexeme)
             expect(str.terminal).to eq(token)
           end
         end
 
-        it 'should recognize a symbol with a plus quantifier' do
+        it 'recognizes a symbol with a plus quantifier' do
           input = 'declaration+ EOF'
           expectations = [
             %w[declaration SYMBOL],
@@ -196,16 +197,16 @@ module Rley # Open this namespace to avoid module qualifier prefixes
             %w[EOF SYMBOL]
           ]
 
-          subject.start_with(input)
-          subject.tokens.each_with_index do |str, i|
-            expect(str).to be_kind_of(Rley::Lexical::Token)
+          a_tokenizer.start_with(input)
+          a_tokenizer.tokens.each_with_index do |str, i|
+            expect(str).to be_a(Rley::Lexical::Token)
             (lexeme, token) = expectations[i]
             expect(str.lexeme).to eq(lexeme)
             expect(str.terminal).to eq(token)
           end
         end
 
-        it 'should recognize a grouping with a quantifier' do
+        it 'recognizes a grouping with a quantifier' do
           input = 'IF ifCondition statement (ELSE statement)?'
           expectations = [
             %w[IF SYMBOL],
@@ -218,16 +219,16 @@ module Rley # Open this namespace to avoid module qualifier prefixes
             %w[? QUESTION_MARK]
           ]
 
-          subject.start_with(input)
-          subject.tokens.each_with_index do |str, i|
-            expect(str).to be_kind_of(Rley::Lexical::Token)
+          a_tokenizer.start_with(input)
+          a_tokenizer.tokens.each_with_index do |str, i|
+            expect(str).to be_a(Rley::Lexical::Token)
             (lexeme, token) = expectations[i]
             expect(str.lexeme).to eq(lexeme)
             expect(str.terminal).to eq(token)
           end
         end
 
-        it 'should recognize a match closest constraint' do
+        it 'recognizes a match closest constraint' do
           input = "IF ifCondition statement ELSE { match_closest: 'IF' } statement"
           expectations = [
             %w[IF SYMBOL],
@@ -241,16 +242,16 @@ module Rley # Open this namespace to avoid module qualifier prefixes
             %w[statement SYMBOL]
           ]
 
-          subject.start_with(input)
-          subject.tokens.each_with_index do |str, i|
-            expect(str).to be_kind_of(Rley::Lexical::Token)
+          a_tokenizer.start_with(input)
+          a_tokenizer.tokens.each_with_index do |str, i|
+            expect(str).to be_a(Rley::Lexical::Token)
             (lexeme, token) = expectations[i]
             expect(str.lexeme).to eq(lexeme)
             expect(str.terminal).to eq(token)
           end
         end
 
-        it 'should recognize a repeat constraint' do
+        it 'recognizes a repeat constraint' do
           input = 'IF ifCondition statement { repeat: 1 }  ELSE statement'
           expectations = [
             %w[IF SYMBOL],
@@ -264,16 +265,16 @@ module Rley # Open this namespace to avoid module qualifier prefixes
             %w[statement SYMBOL]
           ]
 
-          subject.start_with(input)
-          subject.tokens.each_with_index do |str, i|
-            expect(str).to be_kind_of(Rley::Lexical::Token)
+          a_tokenizer.start_with(input)
+          a_tokenizer.tokens.each_with_index do |str, i|
+            expect(str).to be_a(Rley::Lexical::Token)
             (lexeme, token) = expectations[i]
             expect(str.lexeme).to eq(lexeme)
             expect(str.terminal).to eq(token)
           end
         end
 
-        it 'should recognize a grouping with a repeat constraint' do
+        it 'recognizes a grouping with a repeat constraint' do
           input = 'IF ifCondition statement ( ELSE statement ){ repeat: 0..1 }'
           expectations = [
             %w[IF SYMBOL],
@@ -291,16 +292,16 @@ module Rley # Open this namespace to avoid module qualifier prefixes
             %w[} RIGHT_BRACE]
           ]
 
-          subject.start_with(input)
-          subject.tokens.each_with_index do |str, i|
-            expect(str).to be_kind_of(Rley::Lexical::Token)
+          a_tokenizer.start_with(input)
+          a_tokenizer.tokens.each_with_index do |str, i|
+            expect(str).to be_a(Rley::Lexical::Token)
             (lexeme, token) = expectations[i]
             expect(str.lexeme).to eq(lexeme)
             expect(str.terminal).to eq(token)
           end
         end
 
-        it 'should recognize a combination of constraints' do
+        it 'recognizes a combination of constraints' do
           input = "IF ifCondition statement ELSE { repeat: 1, match_closest: 'IF' } statement"
           expectations = [
             %w[IF SYMBOL],
@@ -317,16 +318,16 @@ module Rley # Open this namespace to avoid module qualifier prefixes
             %w[statement SYMBOL]
           ]
 
-          subject.start_with(input)
-          subject.tokens.each_with_index do |str, i|
-            expect(str).to be_kind_of(Rley::Lexical::Token)
+          a_tokenizer.start_with(input)
+          a_tokenizer.tokens.each_with_index do |str, i|
+            expect(str).to be_a(Rley::Lexical::Token)
             (lexeme, token) = expectations[i]
             expect(str.lexeme).to eq(lexeme)
             expect(str.terminal).to eq(token)
           end
         end
 
-        it 'should recognize a grouping with a nested constraint' do
+        it 'recognizes a grouping with a nested constraint' do
           input = "IF ifCondition statement ( ELSE { match_closest: 'IF' } statement ){ repeat: 0..1 }"
           expectations = [
             %w[IF SYMBOL],
@@ -348,9 +349,9 @@ module Rley # Open this namespace to avoid module qualifier prefixes
             %w[} RIGHT_BRACE]
           ]
 
-          subject.start_with(input)
-          subject.tokens.each_with_index do |str, i|
-            expect(str).to be_kind_of(Rley::Lexical::Token)
+          a_tokenizer.start_with(input)
+          a_tokenizer.tokens.each_with_index do |str, i|
+            expect(str).to be_a(Rley::Lexical::Token)
             (lexeme, token) = expectations[i]
             expect(str.lexeme).to eq(lexeme)
             expect(str.terminal).to eq(token)

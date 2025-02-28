@@ -21,6 +21,8 @@ module Rley # Open this namespace to avoid module qualifier prefixes
         return Syntax::Production.new(theLHS, theRHSSymbols)
       end
 
+      subject(:an_edge) { described_class.new(vertex1, vertex2) }
+
       let(:t_a) { Rley::Syntax::Terminal.new('a') }
       let(:t_b) { Rley::Syntax::Terminal.new('b') }
       let(:t_c) { Rley::Syntax::Terminal.new('c') }
@@ -28,22 +30,20 @@ module Rley # Open this namespace to avoid module qualifier prefixes
       let(:nt_b_sequence) { Rley::Syntax::NonTerminal.new('b_sequence') }
       let(:sample_prod) { build_prod(nt_sentence, t_a, nt_b_sequence, t_c) }
       let(:sample_item) { Base::DottedItem.new(sample_prod, 1) }
-
       let(:vertex1) { EndVertex.new('from') }
       let(:vertex2) { ItemVertex.new(sample_item) }
-      subject { ReturnEdge.new(vertex1, vertex2) }
 
       context 'Initialization:' do
-        it 'should be created with two vertice arguments' do
-          expect { ReturnEdge.new(vertex1, vertex2) }.not_to raise_error
+        it 'is created with two vertice arguments' do
+          expect { described_class.new(vertex1, vertex2) }.not_to raise_error
         end
       end # context
 
       context 'Provided services:' do
-        it 'should know its key' do
+        it 'knows its key' do
           pos = sample_item.position
           expectation = "RET_#{sample_prod.object_id}_#{pos - 1}"
-          expect(subject.key).to eq(expectation)
+          expect(an_edge.key).to eq(expectation)
         end
       end # context
     end # describe

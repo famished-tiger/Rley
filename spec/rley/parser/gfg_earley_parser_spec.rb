@@ -28,6 +28,9 @@ module Rley # Open this namespace to avoid module qualifier prefixes
       include GrammarHelper # Mix-in with method for creating token sequence
       include ExpectationHelper # Mix-in with expectation on parse entry sets
 
+      # Default instantiation rule
+      subject(:a_parser) { described_class.new(grammar_abc) }
+
       # Factory method. Build a production with the given sequence
       # of symbols as its rhs.
       let(:grammar_abc) do
@@ -38,7 +41,6 @@ module Rley # Open this namespace to avoid module qualifier prefixes
       let(:grm1_tokens) do
         build_token_sequence(%w[a a b c c], grammar_abc)
       end
-
 
       # Grammar 2: A simple arithmetic expression language
       # (based on example in article on Earley's algorithm in Wikipedia)
@@ -80,33 +82,30 @@ module Rley # Open this namespace to avoid module qualifier prefixes
         build_token_sequence(input_sequence, grammar_expr)
       end
 
-      # Default instantiation rule
-      subject { GFGEarleyParser.new(grammar_abc) }
-
       context 'Initialization:' do
-        it 'should be created with a grammar' do
-          expect { GFGEarleyParser.new(grammar_abc) }.not_to raise_error
+        it 'is created with a grammar' do
+          expect { described_class.new(grammar_abc) }.not_to raise_error
         end
 
-        it 'should know its grammar' do
-          expect(subject.grammar).to eq(grammar_abc)
+        it 'knows its grammar' do
+          expect(a_parser.grammar).to eq(grammar_abc)
         end
 
-        it 'should know its dotted items' do
-          expect(subject.dotted_items.size).to eq(8)
+        it 'knows its dotted items' do
+          expect(a_parser.dotted_items.size).to eq(8)
         end
 
-        it 'should know its flow graph' do
-          expect(subject.gf_graph).to be_kind_of(GFG::GrmFlowGraph)
+        it 'knows its flow graph' do
+          expect(a_parser.gf_graph).to be_a(GFG::GrmFlowGraph)
         end
       end # context
 
-      context 'Parsing: ' do
+      context 'Parsing:' do
         # rubocop: disable Naming/VariableNumber
-        it 'should parse a valid simple input' do
-          parse_result = subject.parse(build_token_sequence(%w[a a b c c], grammar_abc))
-          expect(parse_result.success?).to eq(true)
-          expect(parse_result.ambiguous?).to eq(false)
+        it 'parses a valid simple input' do
+          parse_result = a_parser.parse(build_token_sequence(%w[a a b c c], grammar_abc))
+          expect(parse_result.success?).to be(true)
+          expect(parse_result.ambiguous?).to be(false)
           ######################
           # Expectation chart[0]:
           expected = [
@@ -184,11 +183,11 @@ module Rley # Open this namespace to avoid module qualifier prefixes
         end
         # rubocop: enable Naming/VariableNumber
 
-        it 'should parse a valid simple expression' do
-          instance = GFGEarleyParser.new(grammar_expr)
+        it 'parses a valid simple expression' do
+          instance = described_class.new(grammar_expr)
           parse_result = instance.parse(grm2_tokens)
-          expect(parse_result.success?).to eq(true)
-          # expect(parse_result.ambiguous?).to eq(false)
+          expect(parse_result.success?).to be(true)
+          # expect(parse_result.ambiguous?).to be(false)
 
           ###################### S(0): . 2 + 3 * 4
           # Expectation chart[0]:
@@ -279,14 +278,14 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           compare_entry_texts(parse_result.chart[5], expected)
         end
 
-        it 'should support Kleene plus ' do
+        it 'supports Kleene plus' do
           extend(GrammarIntSeqHelper)
           grammar = grammar_int_seq_builder.grammar
-          instance = GFGEarleyParser.new(grammar)
+          instance = described_class.new(grammar)
           tokens = int_seq_tokenizer('6, 36, 216')
           parse_result = nil
           expect { parse_result = instance.parse(tokens) }.not_to raise_error
-          expect(parse_result.success?).to eq(true)
+          expect(parse_result.success?).to be(true)
 
           ###################### S(0): . 6, 36, 216
           # Expectation chart[0]:
@@ -364,7 +363,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           compare_entry_texts(parse_result.chart[4], expected)
         end
 
-        it 'should parse a nullable grammar' do
+        it 'parses a nullable grammar' do
           # Simple but problematic grammar for the original Earley parser
           # (based on example in D. Grune, C. Jacobs "Parsing Techniques" book)
           # Ss =>  A A 'x';
@@ -379,10 +378,10 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           pos = Lexical::Position.new(1, 1)
           tokens = [Lexical::Token.new('x', t_x, pos)]
 
-          instance = GFGEarleyParser.new(builder.grammar)
+          instance = described_class.new(builder.grammar)
           expect { instance.parse(tokens) }.not_to raise_error
           parse_result = instance.parse(tokens)
-          expect(parse_result.success?).to eq(true)
+          expect(parse_result.success?).to be(true)
           ###################### S(0): . x
           # Expectation chart[0]:
           expected = [
@@ -405,7 +404,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           compare_entry_texts(parse_result.chart[1], expected)
         end
 
-        it 'should parse an ambiguous grammar (I)' do
+        it 'parses an ambiguous grammar (I)' do
           # Grammar 3: A ambiguous arithmetic expression language
           # (based on example in article on Earley's algorithm in Wikipedia)
           # P => S.
@@ -433,11 +432,11 @@ module Rley # Open this namespace to avoid module qualifier prefixes
             { '4' => 'integer' }
           ]
           tokens = build_token_sequence(input_sequence, builder.grammar)
-          instance = GFGEarleyParser.new(builder.grammar)
+          instance = described_class.new(builder.grammar)
           expect { instance.parse(tokens) }.not_to raise_error
           parse_result = instance.parse(tokens)
-          expect(parse_result.success?).to eq(true)
-          # expect(parse_result.ambiguous?).to eq(true)
+          expect(parse_result.success?).to be(true)
+          # expect(parse_result.ambiguous?).to be(true)
 
           ###################### S(0): . 2 + 3 * 4
           # Expectation chart[0]:
@@ -557,15 +556,15 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           check_antecedence(parse_result, 5, expected_antecedents)
         end
 
-        it 'should parse an ambiguous grammar (II)' do
+        it 'parses an ambiguous grammar (II)' do
           extend(AmbiguousGrammarHelper)
           grammar = grammar_builder.grammar
-          instance = GFGEarleyParser.new(grammar)
+          instance = described_class.new(grammar)
           tokens = tokenize('abc + def + ghi', grammar)
           expect { instance.parse(tokens) }.not_to raise_error
           parse_result = instance.parse(tokens)
-          expect(parse_result.success?).to eq(true)
-          # expect(parse_result.ambiguous?).to eq(true)
+          expect(parse_result.success?).to be(true)
+          # expect(parse_result.ambiguous?).to be(true)
 
           ###################### S(0): . abc + def + ghi
           # Expectation chart[0]:
@@ -642,11 +641,11 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           compare_entry_texts(parse_result.chart[5], expected)
         end
 
-        it 'should parse an invalid simple input' do
+        it 'parses an invalid simple input' do
           # Parse an erroneous input (b is missing)
           wrong = build_token_sequence(%w[a a c c], grammar_abc)
-          parse_result = subject.parse(wrong)
-          expect(parse_result.success?).to eq(false)
+          parse_result = a_parser.parse(wrong)
+          expect(parse_result.success?).to be(false)
           err_msg = <<-MSG
 Syntax error at or near token line 1, column 5 >>>c<<<
 Expected one of: ['a', 'b'], found a 'c' instead.
@@ -654,24 +653,24 @@ MSG
           expect(parse_result.failure_reason.message).to eq(err_msg.chomp)
         end
 
-        it 'should report error when no input provided but was required' do
+        it 'reports error when no input provided but was required' do
           helper = GrammarPBHelper.new
           grammar = helper.grammar
-          instance = GFGEarleyParser.new(grammar)
+          instance = described_class.new(grammar)
           tokens = helper.tokenize('')
           parse_result = instance.parse(tokens)
-          expect(parse_result.success?).to eq(false)
+          expect(parse_result.success?).to be(false)
           err_msg = 'Input cannot be empty.'
           expect(parse_result.failure_reason.message).to eq(err_msg)
         end
 
-        it 'should report error when input ends prematurely' do
+        it 'reports error when input ends prematurely' do
           helper = GrammarPBHelper.new
           grammar = helper.grammar
-          instance = GFGEarleyParser.new(grammar)
+          instance = described_class.new(grammar)
           tokens = helper.tokenize('1 +')
           parse_result = instance.parse(tokens)
-          expect(parse_result.success?).to eq(false)
+          expect(parse_result.success?).to be(false)
           ###################### S(0) == . 1 +
           # Expectation chart[0]:
           expected = [
@@ -713,16 +712,16 @@ MSG
         end
 
 
-        it 'should parse a common sample' do
+        it 'parses a common sample' do
           # Use grammar based on example found in paper of
           # K. Pingali and G. Bilardi:
           # "A Graphical Model for Context-Free Grammar Parsing"
           helper = GrammarPBHelper.new
           grammar = helper.grammar
-          instance = GFGEarleyParser.new(grammar)
+          instance = described_class.new(grammar)
           tokens = helper.tokenize('7 + 8 + 9')
           parse_result = instance.parse(tokens)
-          expect(parse_result.success?).to eq(true)
+          expect(parse_result.success?).to be(true)
           ###################### S(0) == . 7 + 8 + 9
           # Expectation chart[0]:
           expected = [
@@ -801,7 +800,7 @@ MSG
           compare_entry_texts(parse_result.chart[5], expected)
         end
 
-        it 'should parse a grammar with nullable nonterminals' do
+        it 'parses a grammar with nullable nonterminals' do
           # Grammar 4: A grammar with nullable nonterminal
           # based on example from "Parsing Techniques" book
           # (D. Grune, C. Jabobs)
@@ -828,10 +827,10 @@ MSG
           end
 
           tokens = build_token_sequence(%w[a a / a], builder.grammar)
-          instance = GFGEarleyParser.new(builder.grammar)
+          instance = described_class.new(builder.grammar)
           expect { instance.parse(tokens) }.not_to raise_error
           parse_result = instance.parse(tokens)
-          expect(parse_result.success?).to eq(true)
+          expect(parse_result.success?).to be(true)
 
           ###################### S(0) == . a a / a
           # Expectation chart[0]:
@@ -923,7 +922,7 @@ MSG
           compare_entry_texts(parse_result.chart[4], expected)
         end
 
-        it 'should parse a right recursive grammar' do
+        it 'parses a right recursive grammar' do
           # Simple right recursive grammar
           # based on example in D. Grune, C. Jacobs "Parsing Techniques" book
           # pp. 224 et sq.
@@ -939,9 +938,9 @@ MSG
           grammar = builder.grammar
           tokens = build_token_sequence(%w[a a a a], grammar)
 
-          instance = GFGEarleyParser.new(grammar)
+          instance = described_class.new(grammar)
           parse_result = instance.parse(tokens)
-          expect(parse_result.success?).to eq(true)
+          expect(parse_result.success?).to be(true)
           ###################### S(0): . a a a a
           # Expectation chart[0]:
           expected = [
@@ -1016,7 +1015,7 @@ MSG
           compare_entry_texts(parse_result.chart[4], expected)
         end
 
-        it 'should support modifier(s) in start rule' do
+        it 'supports modifier(s) in start rule' do
           # An implicit EOF marker is a special terminal
           # that denotes the end of input string but doesn't
           # appear explicitly as some character or text in the input.
@@ -1030,9 +1029,9 @@ MSG
           grammar = builder.grammar
           tokens = build_token_sequence(%w[EOF], grammar)
           tokens[0].instance_variable_set(:@lexeme, '')
-          instance = GFGEarleyParser.new(grammar)
+          instance = described_class.new(grammar)
           parse_result = instance.parse(tokens)
-          expect(parse_result.success?).to eq(true)
+          expect(parse_result.success?).to be(true)
         end
       end # context
     end # describe

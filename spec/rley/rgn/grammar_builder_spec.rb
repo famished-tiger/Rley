@@ -8,113 +8,115 @@ require_relative '../../../lib/rley/rgn/grammar_builder'
 module Rley # Open this namespace to avoid module qualifier prefixes
   module RGN # Open this namespace to avoid module qualifier prefixes
     describe GrammarBuilder do
+      subject(:a_builder) { described_class.new }
+
       context 'Initialization without argument:' do
-        it 'could be created without argument' do
-          expect { GrammarBuilder.new }.not_to raise_error
+        it 'is created without argument' do
+          expect { described_class.new }.not_to raise_error
         end
 
-        it 'should have no grammar symbols at start' do
-            expect(subject.symbols).to be_empty
+        it 'has no grammar symbols at start' do
+            expect(a_builder.symbols).to be_empty
         end
 
-        it 'should have no productions at start' do
-            expect(subject.productions).to be_empty
+        it 'has no productions at start' do
+            expect(a_builder.productions).to be_empty
         end
       end # context
 
       context 'Initialization with argument:' do
-        it 'could be created with a block argument' do
+        it 'is created with a block argument' do
           expect do
-            GrammarBuilder.new { nil }
+            described_class.new { nil }
           end.not_to raise_error
         end
 
         it 'could have grammar symbols from block argument' do
-          instance = GrammarBuilder.new do
+          instance = described_class.new do
             add_terminals('a', 'b', 'c')
           end
           expect(instance.symbols.size).to eq(3)
         end
 
-        it 'should have no productions at start' do
-            expect(subject.productions).to be_empty
+        it 'has no productions at start' do
+            expect(a_builder.productions).to be_empty
         end
       end # context
 
       context 'Adding symbols:' do
-        it 'should build terminals from their names' do
-          subject.add_terminals('a', 'b', 'c')
-          expect(subject.symbols.size).to eq(3)
-          expect(subject.symbols['a']).to be_kind_of(Syntax::Terminal)
-          expect(subject.symbols['a'].name).to eq('a')
-          expect(subject.symbols['b']).to be_kind_of(Syntax::Terminal)
-          expect(subject.symbols['b'].name).to eq('b')
-          expect(subject.symbols['c']).to be_kind_of(Syntax::Terminal)
-          expect(subject.symbols['c'].name).to eq('c')
+        it 'builds terminals from their names' do
+          a_builder.add_terminals('a', 'b', 'c')
+          expect(a_builder.symbols.size).to eq(3)
+          expect(a_builder.symbols['a']).to be_a(Syntax::Terminal)
+          expect(a_builder.symbols['a'].name).to eq('a')
+          expect(a_builder.symbols['b']).to be_a(Syntax::Terminal)
+          expect(a_builder.symbols['b'].name).to eq('b')
+          expect(a_builder.symbols['c']).to be_a(Syntax::Terminal)
+          expect(a_builder.symbols['c'].name).to eq('c')
         end
 
-        it 'should accept already built terminals' do
+        it 'accepts already built terminals' do
           a = Syntax::Terminal.new('a')
           b = Syntax::Terminal.new('b')
           c = Syntax::Terminal.new('c')
 
-          subject.add_terminals(a, b, c)
-          expect(subject.symbols.size).to eq(3)
-          expect(subject.symbols['a']).to eq(a)
-          expect(subject.symbols['b']).to eq(b)
-          expect(subject.symbols['c']).to eq(c)
+          a_builder.add_terminals(a, b, c)
+          expect(a_builder.symbols.size).to eq(3)
+          expect(a_builder.symbols['a']).to eq(a)
+          expect(a_builder.symbols['b']).to eq(b)
+          expect(a_builder.symbols['c']).to eq(c)
         end
       end # context
 
       context 'Adding productions:' do
-        subject do
-          instance = GrammarBuilder.new
+        subject(:a_builder) do
+          instance = described_class.new
           instance.add_terminals('a', 'b', 'c')
           instance
         end
 
-        it 'should add a valid production' do
+        it 'adds a valid production' do
           # Case of a rhs representation that consists of one name only
-          expect { subject.add_production('S' => 'A') }.not_to raise_error
-          expect(subject.productions.size).to eq(1)
-          new_prod = subject.productions[0]
-          expect(new_prod.lhs).to eq(subject['S'])
+          expect { a_builder.add_production('S' => 'A') }.not_to raise_error
+          expect(a_builder.productions.size).to eq(1)
+          new_prod = a_builder.productions[0]
+          expect(new_prod.lhs).to eq(a_builder['S'])
           expect(new_prod.rhs[0]).not_to be_nil
-          expect(new_prod.rhs[0]).to eq(subject['A'])
+          expect(new_prod.rhs[0]).to eq(a_builder['A'])
 
           # Case of rhs with multiple symbols
-          subject.add_production('A' => 'a A c')
-          expect(subject.productions.size).to eq(2)
-          new_prod = subject.productions.last
-          expect(new_prod.lhs).to eq(subject['A'])
-          expect_rhs = [subject['a'], subject['A'], subject['c']]
+          a_builder.add_production('A' => 'a A c')
+          expect(a_builder.productions.size).to eq(2)
+          new_prod = a_builder.productions.last
+          expect(new_prod.lhs).to eq(a_builder['A'])
+          expect_rhs = [a_builder['a'], a_builder['A'], a_builder['c']]
           expect(new_prod.rhs.members).to eq(expect_rhs)
 
           # GrammarBuilder#rule is an alias of add_production
-          subject.rule('A' => 'b')
-          expect(subject.productions.size).to eq(3)
-          new_prod = subject.productions.last
-          expect(new_prod.lhs).to eq(subject['A'])
-          expect(new_prod.rhs[0]).to eq(subject['b'])
+          a_builder.rule('A' => 'b')
+          expect(a_builder.productions.size).to eq(3)
+          new_prod = a_builder.productions.last
+          expect(new_prod.lhs).to eq(a_builder['A'])
+          expect(new_prod.rhs[0]).to eq(a_builder['b'])
         end
 
-        it 'should accept annotated terminals' do
-          subject.rule('A' => "a b {match_closest: 'IF' } c")
-          expect(subject.productions.size).to eq(1)
-          new_prod = subject.productions.last
-          expect(new_prod.lhs).to eq(subject['A'])
+        it 'accepts annotated terminals' do
+          a_builder.rule('A' => "a b {match_closest: 'IF' } c")
+          expect(a_builder.productions.size).to eq(1)
+          new_prod = a_builder.productions.last
+          expect(new_prod.lhs).to eq(a_builder['A'])
           expect(new_prod.rhs[0].name).to eq('a')
-          expect(new_prod.rhs[0]).to eq(subject['a'])
+          expect(new_prod.rhs[0]).to eq(a_builder['a'])
           expect(new_prod.rhs[1].name).to eq('b')
           expect(new_prod.rhs[2].name).to eq('c')
           expect(new_prod.constraints.size).to eq(1)
-          expect(new_prod.constraints[0]).to be_kind_of(Syntax::MatchClosest)
+          expect(new_prod.constraints[0]).to be_a(Syntax::MatchClosest)
           expect(new_prod.constraints[0].idx_symbol).to eq(1) # b is on position 1
           expect(new_prod.constraints[0].closest_symb).to eq('IF')
         end
 
-        it 'should support optional symbol' do
-          instance = GrammarBuilder.new
+        it 'supports optional symbol' do
+          instance = described_class.new
           instance.add_terminals('LPAREN', 'RPAREN')
 
           instance.rule 'argument_list' => 'LPAREN arguments? RPAREN'
@@ -131,8 +133,8 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           expect(instance.productions.last.rhs.members).to be_empty
         end
 
-        it "should support Kleene's star" do
-          instance = GrammarBuilder.new
+        it "supports Kleene's star" do
+          instance = described_class.new
           instance.add_terminals('EOF')
 
           instance.rule 'program' => 'declaration* EOF'
@@ -148,8 +150,8 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           expect(first_prod.rhs.members[0].name).to eq('rep_declaration_star')
         end
 
-        it "should support symbols decorated with Kleene's plus" do
-          instance = GrammarBuilder.new
+        it "supports symbols decorated with Kleene's plus" do
+          instance = described_class.new
           instance.add_terminals('plus', 'minus', 'digit')
 
           instance.rule 'integer' => 'value'
@@ -171,8 +173,8 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           expect(val_prod.rhs.members[0].name).to eq('rep_digit_plus')
         end
 
-        it 'should support optional grouping' do
-          instance = GrammarBuilder.new
+        it 'supports optional grouping' do
+          instance = described_class.new
           instance.add_terminals('EQUAL', 'IDENTIFIER', 'VAR')
 
           instance.rule 'var_decl' => 'VAR IDENTIFIER (EQUAL expression)?'
@@ -202,8 +204,8 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           expect(p2.name).to eq('_qmark_none')
         end
 
-        it 'should support grouping with star modifier' do
-          instance = GrammarBuilder.new
+        it 'supports grouping with star modifier' do
+          instance = described_class.new
           instance.add_terminals('OR')
 
           instance.rule 'logic_or' => 'logic_and (OR logic_and)*'
@@ -233,8 +235,8 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           expect(p2.name).to eq('_star_none')
         end
 
-        it 'should support grouping with plus modifier' do
-          instance = GrammarBuilder.new
+        it 'supports grouping with plus modifier' do
+          instance = described_class.new
           instance.add_terminals('POINT TO SEMI_COLON')
 
           instance.rule 'path' => 'POINT (TO POINT)+ SEMI_COLON'
@@ -264,8 +266,8 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           expect(p2.name).to eq('_plus_one')
         end
 
-        it 'should support grouping with nested annotation' do
-          instance = GrammarBuilder.new
+        it 'supports grouping with nested annotation' do
+          instance = described_class.new
           instance.add_terminals('IF ELSE LPAREN RPAREN')
           st = "IF LPAREN expr RPAREN stmt (ELSE { match_closest: 'IF' } stmt)?"
           instance.rule('if_stmt' => st)
@@ -282,7 +284,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           # expect(p0.rhs[1].name).to eq('stmt')
           # expect(p0.name).to eq('return_children')
           # expect(p0.constraints.size).to eq(1)
-          # expect(p0.constraints[0]).to be_kind_of(Syntax::MatchClosest)
+          # expect(p0.constraints[0]).to be_a(Syntax::MatchClosest)
           # expect(p0.constraints[0].idx_symbol).to eq(0) # ELSE is on position 0
           # expect(p0.constraints[0].closest_symb).to eq('IF')
 
@@ -291,7 +293,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
           expect(p1.rhs[1].name).to eq('stmt')
           expect(p1.name).to eq('return_children')
           expect(p1.constraints.size).to eq(1)
-          expect(p1.constraints[0]).to be_kind_of(Syntax::MatchClosest)
+          expect(p1.constraints[0]).to be_a(Syntax::MatchClosest)
           expect(p1.constraints[0].closest_symb).to eq('IF')
 
           expect(p2.lhs.name).to eq('rep_seq_ELSE_stmt_qmark')

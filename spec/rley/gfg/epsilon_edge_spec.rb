@@ -10,14 +10,15 @@ require_relative '../../../lib/rley/gfg/epsilon_edge'
 
 module Rley # Open this namespace to avoid module qualifier prefixes
   module GFG # Open this namespace to avoid module qualifier prefixes
-    describe Edge do
+    describe EpsilonEdge do
+      subject { described_class.new(vertex1, vertex2) }
+
       let(:vertex1) { StartVertex.new('from') }
       let(:vertex2) { StartVertex.new('to') }
-      subject { EpsilonEdge.new(vertex1, vertex2) }
 
       context 'Initialization:' do
-        it 'should be created with two vertice arguments' do
-          expect { EpsilonEdge.new(vertex1, vertex2) }.not_to raise_error
+        it 'is created with two vertice arguments' do
+          expect { described_class.new(vertex1, vertex2) }.not_to raise_error
         end
       end # context
     end # describe

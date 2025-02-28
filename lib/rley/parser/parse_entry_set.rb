@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require 'forwardable' # For the Delegation pattern
-require 'set'
 
 require_relative '../syntax/terminal'
 require_relative '../syntax/non_terminal'

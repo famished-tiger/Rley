@@ -21,7 +21,7 @@ module Rley # Open this namespace to avoid module qualifier prefixes
       end
 
       context 'Builder pattern behaviour' do
-        it 'should create dotted items for a grammar' do
+        it 'creates dotted items for a grammar' do
           # Next line calls method from mixin module under test
           items = build_dotted_items(grammar_abc)
           expect(items.size).to eq(8)

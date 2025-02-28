@@ -41,7 +41,7 @@ module Rley
         '?' => 'QUESTION_MARK',
         '*' => 'STAR',
         '..' => 'ELLIPSIS'
-      }
+      }.freeze
 
       # Here are all the implemented Rley notation keywords
       @@keywords = %w[

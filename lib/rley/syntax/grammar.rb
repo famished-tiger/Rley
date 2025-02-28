@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require 'set'
 require_relative '../rley_error'
 
 module Rley # This module is used as a namespace

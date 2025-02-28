@@ -7,7 +7,6 @@ require_relative '../../../lib/rley/lexical/token'
 # Load the class under test
 require_relative '../../../lib/rley/rgn/symbol_node'
 
-
 module Rley # Open this namespace to avoid module qualifier prefixes
   module RGN # Open this namespace to avoid module qualifier prefixes
     describe SymbolNode do
@@ -16,14 +15,14 @@ module Rley # Open this namespace to avoid module qualifier prefixes
 
       context 'Initialization:' do
         # Default instantiation rule
-        subject { SymbolNode.new(a_pos, a_name) }
+        subject(:a_node) { described_class.new(a_pos, a_name) }
 
-        it 'should be created with a name and position' do
-          expect { SymbolNode.new(a_pos, a_name) }.not_to raise_error
+        it 'is created with a name and position' do
+          expect { described_class.new(a_pos, a_name) }.not_to raise_error
         end
 
-        it 'should know its name' do
-          expect(subject.name).to eq(a_name)
+        it 'knows its name' do
+          expect(a_node.name).to eq(a_name)
         end
       end # context
     end # describe
