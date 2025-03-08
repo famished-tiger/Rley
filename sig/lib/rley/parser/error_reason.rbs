@@ -1,0 +1,69 @@
+module Rley
+  module Parser
+    # Abstract class. An instance represents an explanation describing
+    # the likely cause of a parse error
+    # detected by Rley.
+    class ErrorReason
+      @rank: Integer
+
+      # @!attribute [r] rank
+      #   @return [Integer] The rank number of the offending input token
+      attr_reader rank: Integer
+
+      # Constructor
+      # @param aRank [Integer] The sequence number of the offending input token.
+      def initialize: (Integer aRank) -> void
+
+      # @return [String] the result of invoking reason.to_s
+      def message: () -> String
+
+      # @return [String] Return this reason's class name and message
+      def inspect: () -> ::String
+    end
+
+    # This parse error occurs when no input for parsing was provided
+    # while the grammar requires some non-empty input.
+    class NoInput < ErrorReason
+      def initialize: () -> void
+
+      # Returns the reason's message.
+      def to_s: () -> String
+    end
+
+    # Abstract class and subclass of ErrorReason.
+    # This specialization represents errors in which the input
+    # didn't match one of the expected token.
+    class ExpectationNotMet < ErrorReason
+      @last_token: Lexical::Token
+
+      @expected_terminals: Array[Syntax::Terminal]
+
+      # The last input token read when error was detected
+      attr_reader last_token: Lexical::Token
+
+      # The terminal symbols expected when error was occurred
+      attr_reader expected_terminals: Array[Syntax::Terminal]
+
+      def initialize: (Integer aRank, Lexical::T lastToken, Array[Syntax::Terminal] expectedTerminals) -> void
+
+      def position: () -> Integer
+
+      # Emit a text explaining the expected terminal symbols
+      def expectations: () -> String
+    end
+
+    # This parse error occurs when the current token from the input
+    # is unexpected according to the grammar rules.
+    class UnexpectedToken < ExpectationNotMet
+      # Returns the reason's message.
+      def to_s: () -> String
+    end
+
+    # This parse error occurs when all input tokens were consumed
+    # but the parser still expected one or more tokens from the input.
+    class PrematureInputEnd < ExpectationNotMet
+      # Returns the reason's message.
+      def to_s: () -> String
+    end
+  end
+end

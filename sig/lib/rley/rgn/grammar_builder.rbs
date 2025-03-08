@@ -1,0 +1,167 @@
+module Rley
+  # Namespace for classes that define RGN (Rley Grammar Notation)
+  module RGN
+    # Structure used by Rley to generate implicdit production rules.
+    RawRule: Struct
+
+    # Builder GoF pattern. Builder builds a complex object
+    #   (say, a grammar) from simpler objects (terminals and productions)
+    #   and using a step by step approach.
+    class GrammarBuilder
+      @symbols: Hash[String, Syntax::GrmSymbol]
+
+      @productions: Array[Syntax::Production]
+
+      @parser: Parser
+
+      @visitor2rhs: Hash[ASTVisitor, Array]
+
+      @synthetized: Hash[String, String]
+
+      @grammar: Syntax::Grammar
+
+      # @return [Hash{String, GrmSymbol}] The mapping of grammar symbol names
+      #   to the matching grammar symbol object.
+      attr_reader symbols: Hash[String, Syntax::GrmSymbol]
+
+      # @return [RGN::Parser] Parser for the right-side of productions
+      attr_reader parser: Parser
+
+      # @return [Hash{ASTVisitor, Array}]
+      attr_reader visitor2rhs: Hash[ASTVisitor, Array]
+
+      # @return [Array<Production>] The list of production rules for
+      #   the grammar to build.
+      attr_reader productions: Array[Syntax::Production]
+
+      # @return [Hash{String, String}] The synthesized raw productions
+      attr_reader synthetized: Hash[String, String]
+
+      # Creates a new RGN grammar builder.
+      # @param aBlock [Proc] code block used to build the grammar.
+      def initialize: () ?{ (?) -> untyped } -> void
+
+      # Retrieve a grammar symbol from its name.
+      # Raise an exception if not found.
+      # @param aSymbolName [String] the name of a grammar symbol.
+      # @return [GrmSymbol] the retrieved symbol object.
+      def []: (String aSymbolName) -> Syntax::GrmSymbol
+
+      # Add the given terminal symbols to the grammar of the language
+      # @param terminalSymbols [String or Terminal] 1..* terminal symbols.
+      # @return [void]
+      def add_terminals: (*Syntax::Terminal terminalSymbols) -> Hash[String, Syntax::GrmSymbol]
+
+      # Add the given marker symbol to the grammar of the language
+      # @param aMarkerSymbol [String] A marker symbol
+      # @return [void]
+      def add_marker: (String aMarkerSymbol) -> Syntax::Marker
+
+      # Add a production rule in the grammar given one
+      # key-value pair of the form: String => String.
+      #   Where the key is the name of the non-terminal appearing in the
+      #   left side of the rule.
+      #   The value is a sequence of grammar symbol names (optionally quantified).
+      # The rule is created and inserted in the grammar.
+      # @example Equivalent call syntax
+      #   builder.add_production('A' => 'a  A c)
+      #   builder.rule('A' => 'a A  c]) # 'rule' is a synonym
+      # @param aProductionRepr [Hash{String, String}]
+      #   A Hash-based representation of a production.
+      # @return [Production] The created Production instance
+      def add_production: (Hash[String, String] aProductionRepr) -> Syntax::Production
+
+      # Given the grammar symbols and productions added to the builder,
+      # build the resulting grammar (if not yet done).
+      # @return [Grammar] the created grammar object.
+      def grammar: () -> Syntax::Grammar
+
+      alias rule add_production
+
+      # When a symbol, say symb, in a rhs is followed by a '*' modifier,
+      # then a rule will be generated with a lhs named symb * suffix_plus
+      # implicitly called: rule('declaration_star' => 'declaration_star declaration').tag suffix_star_more
+      # implicitly called: rule('declaration_star' => '').tag suffix_star_last
+      def suffix_qmark: () -> String
+
+      def suffix_qmark_one: () -> String
+
+      def suffix_qmark_none: () -> String
+
+      # When a symbol, say symb, in a rhs is followed by a '*' modifier,
+      # then a rule will be generated with a lhs named symb * suffix_plus
+      # implicitly called: rule('declaration_star' => 'declaration_star declaration').tag suffix_star_more
+      # implicitly called: rule('declaration_star' => '').tag suffix_star_last
+      def suffix_star: () -> String
+
+      def suffix_star_more: () -> String
+
+      def suffix_star_none: () -> String
+
+      # When a symbol, say symb, in a rhs is followed by a '+' modifier,
+      # then a rule will be generated with a lhs named symb + suffix_plus
+      # implicitly called: rule('digit_plus' => 'digit_plus digit').tag suffix_plus_more
+      # implicitly called: rule('digit_plus' => 'digit').tag suffix_plus_last
+      def suffix_plus: () -> String
+
+      def suffix_plus_more: () -> String
+
+      def suffix_plus_one: () -> String
+
+      def repetition2suffix: (Symbol aRepetition) -> () -> String
+
+      def modifier2suffix: (String aModifier) -> () -> String
+
+      # ################################
+      # RGN's AST visit notification events
+      # ################################
+      def after_symbol_node: (SymbolNode aSymbolNode, untyped aVisitor) -> void
+
+      def after_sequence_node: (SequenceNode aSequenceNode, untyped _visitor) -> void
+
+      def after_repetition_node: (RepetitionNode aRepNode, untyped aVisitor) -> void
+
+      # A notification to the builder object that the programmer
+      # has completed the entry of terminals and production rules
+      def grammar_complete!: () -> void
+
+      private
+
+      def add_nonterminal: (String aName) -> Syntax::NonTerminal
+
+      def simple_rule: (Hash[String, String] aProductionRepr) -> Syntax::Production
+
+      # Add the given grammar symbols.
+      # @param aClass [Class] The class of grammar symbols to instantiate.
+      # @param theSymbols [Array] array of elements are treated as follows:
+      #   if the element is already a grammar symbol, then it added as is,
+      #   otherwise it is considered as the name of a grammar symbol
+      # of the specified class to build.
+      def build_symbols: (Class aClass, Array[Syntax::GrmSymbol] theSymbols) -> Hash[String, Syntax::GrmSymbol]
+
+      # If the argument is already a grammar symbol object then it is
+      # returned as is. Otherwise, the argument is treated as a name
+      # for a new instance of the given class.
+      # @param aClass [Class] The class of grammar symbols to instantiate
+      # @param aSymbolArg [GrmSymbol-like or String]
+      # @return [Array] list of grammar symbols
+      def build_symbol: (Class aClass, (Syntax::GrmSymbol | String) aSymbolArg) -> Syntax::GrmSymbol
+
+      # Retrieve the non-terminal symbol with given name.
+      # If it doesn't exist yet, then it is created on the fly.
+      # @param aSymbolName [String] the name of the grammar symbol to retrieve
+      # @return [NonTerminal]
+      def get_grm_symbol: (String aSymbolName) -> Syntax::GrmSymbol
+
+      def add_constraints: (CompositeNode aCompositeNode) -> Array[Syntax::MatchClosest]
+
+      def node_base_name: (ASTNode aNode) -> String
+
+      def node_decorated_name: (ASTNode aNode) -> ::String
+
+      def add_raw_rule: (String aSymbol, String aRHS, String aTag, ?bool simplified, Array[MatchClosest] constraints) -> RawRule
+
+      def process_raw_rules: () -> void
+    end
+  end
+end

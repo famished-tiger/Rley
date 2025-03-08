@@ -1,0 +1,6 @@
+module Rley
+  # @abstract
+  # Base class for any exception explicitly raised by Rley code.
+  class RleyError < StandardError
+  end
+end

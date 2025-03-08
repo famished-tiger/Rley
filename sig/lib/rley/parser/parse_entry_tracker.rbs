@@ -1,0 +1,42 @@
+module Rley
+  module Parser
+    # Helper class that keeps track of the parse entries used
+    # while a Parsing instance is constructing a parse forest.
+    class ParseEntryTracker
+      @entry_set_index: Integer
+
+      @processed_entries: Hash[ParseEntry, true]
+
+      @parse_entry: ParseEntry
+
+      # The index of the current entry set
+      attr_reader entry_set_index: Integer
+
+      # The current parse entry
+      attr_reader parse_entry: ParseEntry
+
+      # The already processed entries from current entry set
+      attr_reader processed_entries: Hash[ParseEntry, true]
+
+      # Constructor.
+      def initialize: (Integer aEntrySetIndex) -> void
+
+      # Write accessor. Sets the value of the entry set index
+      def entry_set_index=: (Integer anIndex) -> Integer
+
+      # Write accessor. Set the given parse entry as the current one.
+      def parse_entry=: (ParseEntry aParseEntry) -> ParseEntry
+
+      # Take the first provided entry that wasn't processed yet.
+      def select_entry: (Enumerable[ParseEntry] theEntrys) -> ParseEntry
+
+      # The dotted item for the current parse entry.
+      def curr_dotted_item: () -> Base::DottedItem
+
+      def symbol_on_left: () -> Syntax::NonTerminal
+
+      # Notification that one begins with the previous entry set
+      def to_prev_entry_set: () -> Integer
+    end
+  end
+end

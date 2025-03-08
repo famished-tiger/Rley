@@ -1,0 +1,26 @@
+module Rley
+  module Syntax
+    # Abstract class for grammar symbols.
+    # A grammar symbol is an element that appears in grammar rules.
+    class GrmSymbol
+      @name: String
+
+      # @return [String] The name of the grammar symbol
+      attr_reader name: String
+
+      # Constructor.
+      # aName [String] The name of the grammar symbol.
+      def initialize: (String aName) -> void
+
+      # The String representation of the grammar symbol
+      # @return [String]
+      def to_s: () -> String
+
+      # @return [Boolean] true iff the symbol is a terminal
+      def terminal?: () -> false
+
+      # @return [Boolean] true iff the symbol is generative.
+      def generative?: () -> bool
+    end
+  end
+end

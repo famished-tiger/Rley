@@ -1,0 +1,22 @@
+module Rley
+  module GFG
+    # Specialization of an edge in a grammar flow graph
+    # that has a item vertex as its head (predecessor).
+    # and a start vertex (.X) as its tail (successor).
+    # Responsibilities:
+    # - To know the successor vertex (tail)
+    class CallEdge < Edge
+      @key: String
+
+      attr_reader key: String
+
+      # Pre-condition: thePredecessor is an ItemVertex
+      # Pre-condition: theSuccessor is an StartVertex
+      def initialize: (ItemVertex thePredecessor, StartVertex theSuccessor) -> void
+
+      private
+
+      def do_set_key: (ItemVertex thePredecessor, StartVertex _theSuccessor) -> String
+    end
+  end
+end

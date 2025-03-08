@@ -1,0 +1,69 @@
+module Rley
+  # Namespace dedicated to parse tree formatters.
+  module Formatter
+    # A formatter class that renders a parse tree in JSON format
+    class Json < BaseFormatter
+      @indentation: Integer
+
+      @sibling_flags: Array[bool]
+
+      # Current indentation level
+      attr_reader indentation: Integer
+
+      # Array of booleans (one per indentation level).
+      # Set to true after first child was visited.
+      attr_reader sibling_flags: Array[bool]
+
+      # Constructor.
+      # @param anIO [IO] The output stream to which the rendered grammar
+      # is written.
+      def initialize: (IO anIO) -> void
+
+      # Method called by a ParseTreeVisitor to which the formatter subscribed.
+      # Notification of a visit event: the visitor is about to visit the given
+      # parse tree
+      # @param _ptree [ParseTree]
+      def before_ptree: (PTree::ParseTree _ptree) -> Integer
+
+      # Method called by a ParseTreeVisitor to which the formatter subscribed.
+      # Notification of a visit event: the visitor is about to visit
+      # a non-terminal node
+      # @param nonterm_node [NonTerminalNode]
+      def before_non_terminal: (PTree::NonTerminalNode nonterm_node) -> true
+
+      # Method called by a ParseTreeVisitor to which the formatter subscribed.
+      # Notification of a visit event: the visitor is about to visit
+      # the children of a non-terminal node
+      # @param _parent [NonTerminalNode]
+      # @param _subnodes [Array] array of children nodes
+      def before_subnodes: (PTree::NonTerminalNode _parent, Array[PTree::ParseTreeNode] _subnodes) -> Array[bool]
+
+      # Method called by a ParseTreeVisitor to which the formatter subscribed.
+      # Notification of a visit event: the visitor is about to visit
+      # a terminal node
+      # @param term_node [TerminalNode]
+      def before_terminal: (PTree::TerminalNode term_node) -> true
+
+      # Method called by a ParseTreeVisitor to which the formatter subscribed.
+      # Notification of a visit event: the visitor completed the visit of
+      # the children of a non-terminal node.
+      # @param _parent [NonTerminalNode]
+      # @param _subnodes [Array] array of children nodes
+      def after_subnodes: (PTree::NonTerminalNode _parent, Array[PTree::ParseTreeNode] _subnodes) -> ?bool
+
+      # Method called by a ParseTreeVisitor to which the formatter subscribed.
+      # Notification of a visit event: the visitor completed the visit
+      # of the given parse tree
+      # @param _ptree [ParseTree]
+      def after_ptree: (PTree::ParseTree _ptree) -> ?bool
+
+      private
+
+      def indent: () -> Integer
+
+      def dedent: () -> Integer
+
+      def print_text: (String aSeparator, String aText) -> ?bool
+    end
+  end
+end

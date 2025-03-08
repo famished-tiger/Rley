@@ -1,0 +1,46 @@
+# Simplistic tokenizer used mostly for testing purposes
+class BaseTokenizer
+  @scanner: StringScanner
+
+  @lineno: Integer
+
+  @line_start: Integer
+
+  # @return [StringScanner]
+  attr_reader scanner: StringScanner
+
+  # @return [Integer] current line number
+  attr_reader lineno: Integer
+
+  # @return [Integer] position of start of current line in source text
+  attr_reader line_start: Integer
+
+  class ScanError < StandardError
+  end
+
+  # Constructor. Initialize a tokenizer.
+  # @param source [String] Skeem text to tokenize.
+  def initialize: (String source) -> void
+
+  # @param source [String] input text to tokenize.
+  def restart: (String source) -> Integer
+
+  # @return [Array<Rley::Lexical::Token>] | Returns a sequence of tokens
+  def tokens: () -> Array[Rley::Lexical::Token]
+
+  # Patterns:
+  # Unambiguous single character
+  # Conditional single character:
+  #  (e.g. '+' operator, '+' prefix for positive numbers)
+  def _next_token: () -> (nil | Rley::Lexical::Token)
+
+  def recognize_token: () -> untyped
+
+  def build_token: (String aSymbolName, String aLexeme, ?::Symbol aFormat) -> Rley::Lexical::Token
+
+  def convert_to: (String aLexeme, String _symbol_name, Symbol _format) -> String
+
+  def skip_whitespaces: () -> (nil | untyped)
+
+  def next_line: () -> Integer
+end

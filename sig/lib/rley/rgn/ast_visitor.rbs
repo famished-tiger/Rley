@@ -1,0 +1,69 @@
+module Rley
+  module RGN
+    class ASTVisitor
+      @top: ASTNode
+
+      @subscribers: Array
+
+      # Link to the top node to visit
+      attr_reader top: ASTNode
+
+      # List of objects that subscribed to the visit event notification.
+      attr_reader subscribers: Array
+
+      # Build a visitor for the given top.
+      # @param aTop [RGN::ASTNode] the parse tree to visit.
+      def initialize: (ASTNode aTop) -> void
+
+      # Add a subscriber for the visit event notifications.
+      # @param aSubscriber [Object]
+      def subscribe: (untyped aSubscriber) -> Array
+
+      # Remove the given object from the subscription list.
+      # The object won't be notified of visit events.
+      # @param aSubscriber [Object]
+      def unsubscribe: (untyped aSubscriber) -> Array
+
+      # The signal to begin the visit of the top.
+      def start: () -> untyped
+
+      # Visit event. The visitor is about to visit the ptree.
+      # @param aParseTree [Rley::PTree::ParseTree] the ptree to visit.
+      def start_visit_ptree: (PTree::ParseTree aParseTree) -> untyped
+
+      # Visit event. The visitor has completed the visit of the ptree.
+      # @param aParseTree [Rley::PTree::ParseTree] the visited ptree.
+      def end_visit_ptree: (PTree::ParseTree aParseTree) -> untyped
+
+      # Visit event. The visitor is about to visit a symbol node.
+      # @param aSymbolNode [RGN::SymbolNode] the symbol node to visit
+      def visit_symbol_node: (SymbolNode aSymbolNode) -> untyped
+
+      # Visit event. The visitor is about to visit a sequence node.
+      # @param aSequenceNode [RGN::SequenceNode] the sequence node to visit
+      def visit_sequence_node: (SequenceNode aSequenceNode) -> untyped
+
+      # Visit event. The visitor is about to visit a repetition node.
+      # @param aRepetitionNode [RGN::RepetitionNode] the repetition node to visit
+      def visit_repetition_node: (RepetitionNode aRepetitionNode) -> untyped
+
+      private
+
+      # Visit event. The visitor is about to visit the subnodes of a non
+      # terminal node.
+      # @param aParentNode [Ast::LocCompoundExpr] the parent node.
+      def traverse_subnodes: (CompositeNode aParentNode) -> untyped
+
+      # Visit event. The visitor is about to visit one given subnode of a non
+      # terminal node.
+      # @param aParentNode [Ast::LocCompoundExpr] the parent node.
+      # @param index [integer] index of child subnode
+      def traverse_given_subnode: (CompositeNode aParentNode, Integer index) -> untyped
+
+      # Send a notification to all subscribers.
+      # @param msg [Symbol] event to notify
+      # @param args [Array] arguments of the notification.
+      def broadcast: (Symbol msg, *Array args) -> untyped
+    end
+  end
+end

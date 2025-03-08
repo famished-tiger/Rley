@@ -1,0 +1,86 @@
+module Rley
+  module Parser
+    # Responsibilities:
+    # - To know whether the vertex is a start, end or item vertex
+    # - To know the next symbol to expect
+    class ParseEntry
+      @vertex: GFG::Vertex
+
+      @origin: Integer
+
+      @antecedents: Array[ParseEntry]
+
+      @hash: String
+
+      # @return [GFG::Vertex] Link to a vertex of the GFG
+      attr_reader vertex: GFG::Vertex
+
+      # @return [Array<ParseEntry>] Links to preceding parse entries
+      attr_reader antecedents: Array[ParseEntry]
+
+      # the position in the input that matches the beginning of the rhs
+      # of the production.
+      # @return [Integer]
+      attr_reader origin: Integer
+
+      # @param aVertex [GFG::Vertex]
+      # @param theOrigin [Integer]
+      def initialize: (GFG::Vertex aVertex, Integer theOrigin) -> void
+
+      # Returns a string containing a human-readable representation of the
+      # production.
+      # @return [String]
+      def inspect: () -> String
+
+      # Add a link to an antecedent parse entry
+      # @param anAntecedent[ParseEntry]
+      def add_antecedent: (ParseEntry anAntecedent) -> (Array[ParseEntry] | nil)
+
+      # Equality comparison. A parse entry behaves as a value object.
+      def ==: (ParseEntry other) -> bool
+
+      def hash: () -> String
+
+      # Returns true iff the vertex is a start vertex (i.e. of the form: .X)
+      def start_entry?: () -> bool
+
+      # Returns true iff the vertex is at the start of rhs
+      # (i.e. of the form: X => .Y
+      def entry_entry?: () -> bool
+
+      # Returns true iff the vertex corresponds to a dotted item
+      # X => Y
+      def dotted_entry?: () -> bool
+
+      # Returns true iff the vertex is at end of rhs (i.e. of the form: X => Y.)
+      def exit_entry?: () -> bool
+
+      # Returns true iff the vertex is an end vertex (i.e. of the form: X.)
+      def end_entry?: () -> bool
+
+      # Return the symbol before the dot (if any)
+      def prev_symbol: () -> (Syntax::GrmSymbol | nil)
+
+      # Return the symbol after the dot (if any)
+      def next_symbol: () -> (Syntax::GrmSymbol | nil)
+
+      # Return true if the entry has no antecedent entry
+      def orphan?: () -> bool
+
+      # Give a String representation of itself.
+      # The format of the text representation is
+      # "format of dotted rule" + " | " + origin
+      # @return [String]
+      def to_s: () -> String
+
+      # Returns a human-readable and partial representation of itself.
+      # @return [String]
+      def selfie: () -> String
+
+      private
+
+      # Return the validated GFG vertex
+      def valid_vertex: (GFG::Vertex aVertex) -> GFG::Vertex
+    end
+  end
+end

@@ -1,0 +1,70 @@
+module Rley
+  # A visitor class dedicated in the visit of a parse tree.
+  # It combines the Visitor and Observer patterns.
+  class ParseTreeVisitor
+    @ptree: PTree::ParseTree
+
+    @subscribers: Array
+
+    @traversal: Symbol
+
+    # Link to the parse tree to visit
+    attr_reader ptree: PTree::ParseTree
+
+    # List of objects that subscribed to the visit event notification.
+    attr_reader subscribers: Array
+
+    # Indicates the kind of tree traversal to perform: :post_order, :pre-order
+    attr_reader traversal: Symbol
+
+    # Build a visitor for the given ptree.
+    # @param aParseTree [ParseTree] the parse tree to visit.
+    def initialize: (PTree::ParseTree aParseTree, ?::Symbol aTraversalStrategy) -> void
+
+    # Add a subscriber for the visit event notifications.
+    # @param aSubscriber [Object]
+    def subscribe: (untyped aSubscriber) -> Array
+
+    # Remove the given object from the subscription list.
+    # The object won't be notified of visit events.
+    # @param aSubscriber [Object]
+    def unsubscribe: (untyped aSubscriber) -> Array
+
+    # The signal to begin the visit of the parse tree.
+    def start: () -> untyped
+
+    # Visit event. The visitor is about to visit the ptree.
+    # @param aParseTree [ParseTree] the ptree to visit.
+    def start_visit_ptree: (PTree::ParseTree aParseTree) -> untyped
+
+    # Visit event. The visitor is about to visit the given non terminal node.
+    # @param aNonTerminalNode [NonTerminalNode] the node to visit.
+    def visit_nonterminal: (PTree::NonTerminalNode aNonTerminalNode) -> untyped
+
+    # Visit event. The visitor is visiting the
+    # given terminal node.
+    # @param aTerminalNode [TerminalNode] the terminal to visit.
+    def visit_terminal: (PTree::TerminalNode aTerminalNode) -> untyped
+
+    # Visit event. The visitor has completed its visit of the given
+    # non-terminal node.
+    # @param aNonTerminalNode [NonTerminalNode] the node to visit.
+    def end_visit_nonterminal: (PTree::NonTerminalNode aNonTerminalNode) -> untyped
+
+    # Visit event. The visitor has completed the visit of the ptree.
+    # @param aParseTree [ParseTree] the ptree to visit.
+    def end_visit_ptree: (PTree::ParseTree aParseTree) -> untyped
+
+    private
+
+    # Visit event. The visitor is about to visit the subnodes of a non
+    # terminal node.
+    # @param aParentNode [NonTerminalNode] the (non-terminal) parent node.
+    def traverse_subnodes: (PTree::NonTerminalNode aParentNode) -> untyped
+
+    # Send a notification to all subscribers.
+    # @param msg [Symbol] event to notify
+    # @param args [Array] arguments of the notification.
+    def broadcast: (untyped msg, *untyped args) -> untyped
+  end
+end

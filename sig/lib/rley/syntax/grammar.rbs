@@ -1,0 +1,102 @@
+module Rley
+  module Syntax
+    # A grammar specifies the syntax of a language.
+    #   Formally, a grammar has:
+    #   * One start symbol,
+    #   * One or more other production rules,
+    #   * Each production has a rhs that is a sequence of grammar symbols.
+    #   * Grammar symbols are categorized into:
+    #     -terminal symbols
+    #     -non-terminal symbols
+    class Grammar
+      @rules: Array[Production]
+
+      @symbols: Array[GrmSymbol]
+
+      @name2symbol: Hash[String, GrmSymbol]
+
+      # TODO: use topological sorting
+      @start_symbol: NonTerminal
+
+      @non_terminals: Array[NonTerminal]
+
+      # A non-terminal symbol that represents all the possible strings
+      # in the language.
+      # @return [NonTerminal] Start symbol of the grammar.
+      attr_reader start_symbol: NonTerminal
+
+      # The list of production rules for the language.
+      # @return [Array<Production>] Array of productions for the grammar.
+      attr_reader rules: Array[Production]
+
+      # The list of grammar symbols in the language.
+      # @return [Array<GrmSymbol>] The terminal and non-terminal symbols.
+      attr_reader symbols: Array[GrmSymbol]
+
+      # A Hash that maps symbol names to their grammar symbols
+      # @return [Hash{String => GrmSymbol}]
+      attr_reader name2symbol: Hash[String, GrmSymbol]
+
+      # @param theProductions [Array<Production>] productions of the grammar.
+      def initialize: (Array[Production] theProductions) -> void
+
+      # @return [Array] The list of non-terminals in the grammar.
+      def non_terminals: () -> Array[NonTerminal]
+
+      # @return [Production] The start production of the grammar (i.e.
+      #   the rule that specifies the syntax for the start symbol.
+      def start_production: () -> Production
+
+      private
+
+      # Validation method. Return the validated list of productions
+      def validate_productions: (Array[Production] theProductions) -> Array[Production]
+
+      def add_production: (Production aProduction) -> Production
+
+      # If the production is anonymous, then assign it
+      # a default name
+      def name_production: (Production aProduction) -> (true | String)
+
+      # Perform some check of the grammar.
+      def diagnose: () -> void
+
+      # Check that each non-terminal appears at least once in lhs.
+      # If it is not the case, then mark it as undefined
+      def mark_undefined: () -> void
+
+      # Mark all non-terminals and production rules as
+      # generative or not.
+      # A production is generative when it can derive a string of terminals.
+      # A production is therefore generative when all its rhs members are
+      # themselves generatives.
+      # A non-terminal is generative if at least one of its defining production
+      # is itself generative.
+      def mark_generative: () -> void
+
+      # Given a production rule with given non-terminal
+      # Check whether that non-terminal should be marked
+      # as generative or not.
+      # A non-terminal may be marked as generative if at
+      # least one of its defining production is generative.
+      def could_mark_nterm_generative: (Production aRule) -> (nil | bool)
+
+      # For each non-terminal determine whether it is nullable or not.
+      # A nullable nonterminal is a nonterminal that can match an empty string.
+      def compute_nullable: () -> void
+
+      # Return the set of nonterminals which have one of their
+      # production rules empty
+      def direct_nullable: () -> void
+
+      # For each production determine whether it is nullable or not.
+      # A nullable production is a production that can match an empty string.
+      def mark_nullable: () -> void
+
+      def add_symbol: (GrmSymbol aSymbol) -> (nil | GrmSymbol)
+
+      # Retrieve all the production rules that share the same symbol in lhs
+      def rules_for: (NonTerminal aNonTerm) -> Array[Production]
+    end
+  end
+end

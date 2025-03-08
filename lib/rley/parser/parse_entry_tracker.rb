@@ -21,16 +21,16 @@ module Rley # This module is used as a namespace
 
       # Write accessor. Sets the value of the entry set index
       def entry_set_index=(anIndex)
-        @entry_set_index = anIndex
         @processed_entries = {}
+        @entry_set_index = anIndex
       end
 
       # Write accessor. Set the given parse entry as the current one.
       def parse_entry=(aParseEntry)
         raise StandardError, 'Nil parse entry' if aParseEntry.nil?
 
-        @parse_entry = aParseEntry
         processed_entries[parse_entry] = true
+        @parse_entry = aParseEntry
       end
 
       # Take the first provided entry that wasn't processed yet.

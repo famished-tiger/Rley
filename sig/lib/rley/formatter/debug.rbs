@@ -1,0 +1,34 @@
+module Rley
+  # Namespace dedicated to parse tree formatters.
+  module Formatter
+    # A formatter class that renders the visit notification events
+    # from a parse tree visitor
+    class Debug < BaseFormatter
+      @indentation: Integer
+
+      # Current indentation level
+      attr_reader indentation: Integer
+
+      # Constructor.
+      # @param anIO [IO] The output stream to which the rendered grammar
+      # is written.
+      def initialize: (IO anIO) -> void
+
+      # Indicates that this formatter accepts all visit events
+      # provided their names start with 'before_' or 'after_'
+      # @return [Boolean]
+      def accept_all: () -> true
+
+      # Ghost method pattern.
+      def method_missing: (Symbol mth, *untyped args) -> untyped
+
+      private
+
+      def indent: () -> Integer
+
+      def dedent: () -> Integer
+
+      def output_event: (untyped anEvent, untyped indentationLevel) -> nil
+    end
+  end
+end

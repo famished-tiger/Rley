@@ -1,0 +1,125 @@
+module Rley
+  module ParseRep
+    # Structure used internally by ParseTreeBuilder class.
+    CSTRawNode: Struct
+
+    # The purpose of a ParseTreeBuilder is to build piece by piece
+    # a parse tree from a sequence of input tokens and
+    # visit events produced by walking over a GFGParsing object.
+    # Uses the Builder GoF pattern.
+    # The Builder pattern creates a complex object
+    # (say, a parse tree) from simpler objects (terminal and non-terminal
+    # nodes) and using a step by step approach.
+    class ParseTreeBuilder
+      @tokens: Array[Lexical::Token]
+
+      @stack: Array
+
+      @dummy_node: Object
+
+      @last_visitee: untyped
+
+      @result: untyped
+
+      # @return [Array<Token>] The sequence of input tokens
+      attr_reader tokens: untyped
+
+      # Link to Parse tree object (being) built.
+      attr_reader result: untyped
+
+      # Create a new builder instance.
+      # @param theTokens [Array<Token>] The sequence of input tokens.
+      def initialize: (Array[Lexical::Token] theTokens) -> void
+
+      # Notify the builder that the parse tree construction is complete.
+      def done!: () -> untyped
+
+      # Receive events resulting from a visit of GFGParsing object.
+      # These events are produced by a specialized Enumerator created
+      # with a ParseWalkerFactory instance.
+      # @param anEvent [Syntax::Symbol] Kind of visit event. Should be: :visit
+      # @param anEntry [ParseEntry] The entry being visited
+      # @param anIndex [anIndex] The token index associated with anEntry
+      def receive_event: (Symbol anEvent, Parser::ParseEntry anEntry, Integer anIndex) -> Parser::ParseEntry
+
+      # Return the stack
+      attr_reader stack: Array
+
+      # Overriding method.
+      # Create a parse tree object with given
+      # node as root node.
+      def create_tree: (untyped aRootNode) -> PTree::ParseTree
+
+      private
+
+      # Return the top of stack element.
+      def tos: () -> untyped
+
+      # Handler for visit events for ParseEntry matching N. pattern
+      # @param anEvent [Symbol] Kind of visit event. Should be: :visit
+      # @param anEntry [ParseEntry] The entry being visited
+      # @param anIndex [anIndex] The token index at end of anEntry
+      def process_end_entry: (Symbol anEvent, Parser::ParseEntry anEntry, Integer anIndex) -> untyped
+
+      # Handler for visit events for ParseEntry matching .N pattern
+      # @param anEvent [Symbol] Kind of visit event. Should be: :visit
+      # @param _entry [ParseEntry] The entry being visited
+      # @param _index [Integer] The token index at end of anEntry
+      def process_start_entry: (Symbol anEvent, Parser::ParseEntry _entry, Integer _index) -> (untyped | nil)
+
+      # Handler for visit events for ParseEntry matching N => alpha* . beta*
+      # @param anEvent [Symbol] Kind of visit event. Should be: :visit
+      # @param anEntry [ParseEntry] The entry being visited
+      # @param anIndex [anIndex] The token index at end of anEntry
+      def process_item_entry: (Symbol anEvent, Parser::ParseEntry anEntry, Integer anIndex) -> untyped
+
+      # @param anEntry [ParseEntry] Entry matching (pattern: N => alpha* .)
+      # @param anIndex [anIndex] The token index at end of anEntry
+      def process_exit_entry: (Parser::ParseEntry anEntry, Integer anIndex) -> untyped
+
+      # @param anEntry [ParseEntry] Entry matching pattern: N => alpha+ . beta+
+      # @param anIndex [anIndex] The token index at end of anEntry
+      def process_middle_entry: (Parser::ParseEntry anEntry, Integer anIndex) -> (untyped | nil)
+
+      # @param anEntry [ParseEntry] Entry matching (pattern: N => . alpha)
+      # @param _index [Integer] The token index at end of anEntry
+      def process_entry_entry: (Parser::ParseEntry anEntry, Integer _index) -> untyped
+
+      # Create a raw node with given range
+      # and push it on top of stack.
+      def push_raw_node: (Lexical::TokenRange aRange, Syntax::GrmSymbol aSymbol) -> CSTRawNode
+
+      # Initialize children array of TOS with nil placeholders.
+      # The number of elements equals the number of symbols at rhs.
+      def init_TOS_children: (Integer aCount) -> Array
+
+      # Does the position on the left side of the dot correspond
+      # a terminal symbol?
+      # @param anEntry [ParseEntry] The entry being visited
+      def terminal_before_dot?: (Parser::ParseEntry anEntry) -> bool
+
+      # A terminal symbol was detected at left of dot.
+      # Build a raw node for that terminal and make it
+      # a child of TOS.
+      # @param anEntry [ParseEntry] The entry being visited
+      # @param anIndex [anIndex] The token index at end of anEntry
+      def build_terminal: (untyped anEntry, untyped anIndex) -> untyped
+
+      # Place the given node object as one of the children of the TOS
+      # (TOS = Top Of Stack).
+      # Each child has a position that is dictated by the position of the
+      # related grammar symbol in the right-handed side (RHS) of the grammar
+      # rule.
+      # @param aNode [TerminalNode, NonTerminalNode] Node object to be placed
+      # @param aRHSPos [Integer, NilClass] Position in RHS of rule.
+      # If the position is provided, then the node will placed in the children
+      # array at that position.
+      # If the position is nil, then the node will be placed at the position of
+      # the rightmost nil element in children array.
+      def place_TOS_child: (TerminalNode | NonTerminalNode aNode, ?Integer aRHSPos) -> TerminalNode | NonTerminalNode
+
+      # Retrieve non-terminal symbol of given parse entry
+      def entry2nonterm: (ParseEntry anEntry) -> Syntax::NonTerminal
+    end
+  end
+end

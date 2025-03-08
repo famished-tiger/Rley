@@ -1,0 +1,91 @@
+module Rley
+  module Base
+    # A dotted item is a parse state for a given production/grammar rule
+    # It partitions the rhs of the rule in two parts.
+    # The left part consists of the symbols in the rules that are matched
+    # by the input tokens.
+    # The right part consists of symbols that are predicted to match the
+    # input tokens.
+    # The terminology stems from the traditional way to visualize the partition
+    # by using a fat dot character as a separator between the left and right
+    # parts
+    # An item with the dot at the beginning (i.e. before any rhs symbol)
+    #  is called a predicted item.
+    # An item with the dot at the end (i.e. after all rhs symbols)
+    #  is called a reduce item.
+    # An item with a dot in front of a terminal is called a shift item.
+    class DottedItem
+      @production: Syntax::Production
+
+      @position: Integer
+
+      @k_prev_position: Array[Integer]
+
+      # Production rule
+      # @return [Syntax::Production]
+      attr_reader production: Syntax::Production
+
+      # Index of the next symbol (from the rhs) after the 'dot'.
+      # If the dot is at the end of the rhs (i.e.) there is no next
+      # symbol, then the position takes the value -1.
+      # It the rhs is empty, then the position is -2
+      # @return [Integer]
+      attr_reader position: Integer
+
+      # A possible constraint between symbol on left of dot and
+      # the closest preceding given terminal
+      # @return [NilClass, Syntax::MatchClosest]
+      attr_accessor constraint: (Syntax::MatchClosest | nil)
+
+      # @param aProduction [Syntax::Production]
+      # @param aPosition [Integer] Position of the dot in rhs of production.
+      def initialize: (Syntax::Production aProduction, Integer aPosition) -> void
+
+      # Return a String representation of the dotted item.
+      # @return [String]
+      def to_s: () -> String
+
+      # Return true if the dot position is at the start of the rhs.
+      # @return [Boolean]
+      def at_start?: () -> bool
+
+      # An item with the dot at the beginning is called
+      # predicted item
+      alias predicted_item? at_start?
+
+      # A dotted item is called a reduce item if the dot is at the end.
+      # @return [Boolean]
+      def reduce_item?: () -> bool
+
+      # The non-terminal symbol that is on the left-side of the production
+      # @return [Syntax::NonTerminal]
+      def lhs: () -> Syntax::NonTerminal
+
+      # Return the symbol before the dot.
+      # nil is returned if the dot is at the start of the rhs
+      # @return [Syntax::GrmSymbol, NilClass]
+      def prev_symbol: () -> (Syntax::GrmSymbol | nil)
+
+      # Return the symbol after the dot.
+      # nil is returned if the dot is at the end
+      # @return [Syntax::GrmSymbol, NilClass]
+      def next_symbol: () -> (Syntax::GrmSymbol | nil)
+
+      # Calculate the position of the dot if were moved by
+      # one step on the left.
+      # @return [Integer]
+      def prev_position: () -> Integer
+
+      # Return true if this dotted item has a dot one place
+      # to the right compared to the dotted item argument.
+      # @param another [DottedItem]
+      # @return [Boolean]
+      def successor_of?: (DottedItem another) -> bool
+
+      private
+
+      # Return the given position after its validation.
+      def valid_position: (Integer aPosition) -> Integer
+    end
+  end
+end

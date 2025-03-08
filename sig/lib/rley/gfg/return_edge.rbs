@@ -1,0 +1,19 @@
+module Rley
+  module GFG
+    # Responsibilities:
+    # - To know the successor vertex (tail)
+    class ReturnEdge < Edge
+      @key: untyped
+
+      attr_reader key: untyped
+
+      # Pre-condition: thePredecessor is an EndVertex
+      # Pre-condition: theSuccessor is an ItemVertex
+      def initialize: (EndVertex thePredecessor, ItemVertex theSuccessor) -> void
+
+      private
+
+      def do_set_key: (EndVertex _thePredecessor, ItemVertex theSuccessor) -> String
+    end
+  end
+end

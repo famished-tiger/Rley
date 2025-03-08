@@ -1,0 +1,23 @@
+module Rley
+  # Namespace dedicated to parse tree formatters.
+  module Formatter
+    # Superclass for parse tree formatters.
+    class BaseFormatter
+      @output: IO
+
+      # The IO output stream in which the formatter's result will be sent.
+      # @return [IO] The output stream for the formatter.
+      attr_reader output: IO
+
+      # Constructor.
+      # @param anIO [IO] an output IO where the formatter's result will
+      # be placed.
+      def initialize: (IO anIO) -> void
+
+      # Given a parse tree visitor, perform the visit
+      # and render the visit events in the output stream.
+      # @param aVisitor [ParseTreeVisitor]
+      def render: (ParseTreeVisitor aVisitor) -> untyped
+    end
+  end
+end

@@ -1,0 +1,36 @@
+module Rley
+  module SPPF
+    # A node in a parse forest that matches exactly one
+    # non-terminal symbol.
+    class NonTerminalNode < CompositeNode
+      @symbol: Syntax::NonTerminal
+
+      @refinement: Symbol
+
+      # @return [Syntax::NonTerminal] Link to the non-terminal symbol
+      attr_reader symbol: Syntax::NonTerminal
+
+      # Indication on how the sub-nodes contribute to the 'success'
+      # of parent node. Possible values: :and, :or
+      attr_accessor refinement: Symbol
+
+      # Constructor
+      # @param aNonTerminal [Syntax::NonTerminal]
+      # @param aRange [Lexical::TokenRange]
+      def initialize: (Syntax::NonTerminal aNonTerminal, Lexical::TokenRange aRange) -> void
+
+      # Add a sub-node (child) to this one.
+      # @param aSubnode [SPPFNode]
+      def add_subnode: (SPPFNode aSubnode) -> Array[SPPFNode]
+
+      # Emit a (formatted) string representation of the node.
+      # Mainly used for diagnosis/debugging purposes.
+      # @return [String] a text representation of the node.
+      def to_string: (Integer indentation) -> String
+
+      # Part of the 'visitee' role in Visitor design pattern.
+      # @param aVisitor[ParseForestVisitor] the visitor
+      def accept: (ParseForestVisitor aVisitor) -> untyped
+    end
+  end
+end

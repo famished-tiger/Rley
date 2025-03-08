@@ -1,3 +1,10 @@
+### 0.9.00 / 2025-03-08
+Version bumped.
+* [NEW] Added `sig` folder with `.rbs` signature files.
+- [FIX] Broken Cucumber test. Replaced reference to `GrammarBuilder` by `BaseGrammarBuilder`.
+- [FIX] File `rley.gemspec` now returns a GemSpecification as expected by Bundler.
+- [CHANGE] File `Gemfile` refers to gemspec
+
 ### 0.8.15 / 2025-02-28
 - [FIX] Re-styled spec files
 

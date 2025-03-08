@@ -1,0 +1,81 @@
+module Rley
+  # Configuration of an Rley::Engine instance.
+  EngineConfig: Struct
+
+  # Implementation of the GoF Facade design pattern.
+  # An Engine object provides a higher-level interface that shields
+  # Rley client code from the lower-level classes.
+  class Engine
+    @configuration: EngineConfig
+
+    @grammar: Syntax::Grammar
+
+    # @!attribute [r] configuration
+    # @return [EngineConfig] the engine's configuration
+    attr_reader configuration: EngineConfig
+
+    # @!attribute [r] grammar
+    # @return [Rley::Syntax::Grammar] the grammar of the language to parse
+    attr_reader grammar: Syntax::Grammar
+
+    # Constructor.
+    # @example Produce a parse forest
+    #   Engine.new do |config|
+    #     config.parse_repr = :parse_forest
+    #   end
+    def initialize: () ?{ (EngineConfig) -> untyped } -> void
+
+    # Factory method.
+    # @param aBlock [Proc, Lambda] Code block for creating the grammar.
+    # @return [Rley::Syntax::Grammar] the grammar of the language to parse.
+    # @example Grammar for array of integers
+    #   instance = Engine.new
+    #   instance.build_grammar do
+    #     add_terminals('LBRACKET', 'RBRACKET', 'COMMA', 'INTEGER')
+    #     add_production('start' => 'array')
+    #     add_production('array' => 'LBRACKET elements RBRACKET')
+    #     add_production('array' => 'LBRACKET RBRACKET')
+    #     add_production('elements' => 'elements COMMA INTEGER')
+    #     add_production('elements' => 'INTEGER')
+    #   end
+    def build_grammar: () { (?) -> untyped } -> Syntax::Grammar
+
+    # Use the given grammar.
+    # @param aGrammar [Rley::Syntax::Grammar]
+    # @return [Rley::Syntax::Grammar] the grammar of the language to parse.
+    def use_grammar: (Syntax::Grammar aGrammar) -> Syntax::Grammar
+
+    # Parse the sequence of tokens produced by the given tokenizer object.
+    # @param aTokenizer [#each]
+    # @return [Parser::GFGParsing]
+    def parse: (untyped aTokenizer) -> Parser::GFGParsing
+
+    # Convert raw parse result into a more convenient representation
+    # (parse tree or parse forest) as specified by the configuration.
+    # @param aRawParse [Parser::GFGParsing]
+    # @return [Rley::PTree::ParseTree, Rley::SPPF::ParseForest]
+    def convert: (Parser::GFGParsing aRawParse) -> (PTree::ParseTree | SPPF::ParseForest)
+
+    # Convert raw parse result into a parse tree representation
+    # @param aRawParse [Parser::GFGParsing]
+    # @return [Rley::PTree::ParseTree]
+    def to_ptree: (Parser::GFGParsing aRawParse) -> PTree::ParseTree
+
+    # Convert raw parse result into a parse forest representation
+    # @param aRawParse [Parser::GFGParsing]
+    # @return [Rley::SPPF::ParseForest]
+    def to_pforest: (Parser::GFGParsing aRawParse) -> SPPF::ParseForest
+
+    # Build a visitor for the given parse tree
+    # @param aPTree [PTree::ParseTree]
+    # @return [ParseTreeVisitor]
+    def ptree_visitor: (PTree::ParseTree aPTree) -> ParseTreeVisitor
+
+    # Build a visitor for the given parse forest
+    # @param aPForest [SPPF::ParseForest]
+    # @return [ParseForestVisitor]
+    def pforest_visitor: (SPPF::ParseForest aPForest) -> ParseForestVisitor
+
+    def build_parser: (Syntax::Grammar aGrammar) -> Parser::GFGEarleyParser
+  end
+end

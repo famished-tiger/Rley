@@ -1,0 +1,6 @@
+module Rley
+  module RGN
+    # And now build the Rley Grammar Notation (RGN) grammar...
+    RGNGrammar: Syntax::Grammar
+  end
+end

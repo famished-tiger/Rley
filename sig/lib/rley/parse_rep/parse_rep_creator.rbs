@@ -1,0 +1,33 @@
+module Rley
+  module ParseRep
+    # Utility class that helps to create a representation of a parse from
+    # a given Parsing object.
+    class ParseRepCreator
+      @parsing: Parser::GFGParsing
+
+      # @return [Rley::Parser::GFGParsing]
+      #  Link to Parsing object (= results of recognizer)
+      attr_reader parsing: Parser::GFGParsing
+
+      # Constructor. Creates and initialize a ParseRepCreator instance.
+      # @return [ParseRepCreator]
+      def initialize: (Parser::GFGParsing aParsingResult) -> void
+
+      # Factory method that produces the representation of the parse.
+      # @return [Rley::PTree::ParseTree, Rley::SPPF::ParseForest]
+      #   The parse representation.
+      def create: (?untyped? aBuilder) -> PTree::ParseTree | SPPF::ParseForest
+
+      private
+
+      # Create a Parsing walker, that is, an object
+      # that will iterate over the relevant nodes (= parsing entries)
+      # of a GFGParsing
+      def walker: (Parser::GFGParsing aParseResult) -> Enumerator
+
+      # By default, when a end vertex is re-visited don't jump
+      # its corresponding start vertex.
+      def jump_to_start: () -> false
+    end
+  end
+end

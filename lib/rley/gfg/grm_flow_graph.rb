@@ -40,7 +40,7 @@ module Rley # This module is used as a namespace
       attr_reader :vertices
 
       # The vertex marked as start node of the graph
-      # @return [StartVertex>]
+      # @return [StartVertex]
       attr_reader :start_vertex
 
       # A Hash with pairs of the form: non-terminal symbol => start node

@@ -1,0 +1,77 @@
+module Rley
+  # Namespace dedicated to parse tree formatters.
+  module Formatter
+    # A formatter class that draws parse trees by using characters
+    class Asciitree < BaseFormatter
+      @curr_path: Array[PTree::ParseTreeNode]
+
+      @ranks: Array[String]
+
+      @nesting_prefix: String
+
+      @blank_indent: String
+
+      @continuation_indent: String
+
+      # TODO
+      attr_reader curr_path: Array[PTree::ParseTreeNode]
+
+      # For each node in curr_path, there is a corresponding string value.
+      # Allowed string values are: 'first', 'last', 'first_and_last', 'other'
+      attr_reader ranks: Array[String]
+
+      # @return [String] The character pattern used for rendering
+      # a parent - child nesting
+      attr_reader nesting_prefix: String
+
+      # @return [String] The character pattern used for a blank indentation
+      attr_reader blank_indent: String
+
+      # @return [String] The character pattern for indentation and nesting
+      # continuation.
+      attr_reader continuation_indent: String
+
+      # Constructor.
+      # @param anIO [IO] The output stream to which the parse tree
+      # is written.
+      def initialize: (IO anIO) -> void
+
+      # Method called by a ParseTreeVisitor to which the formatter subscribed.
+      # Notification of a visit event: the visitor is about to visit
+      # the children of a non-terminal node
+      # @param parent [NonTerminalNode]
+      # @param _children [Array<ParseTreeNode>] array of children nodes
+      def before_subnodes: (PTree::NonTerminalNode parent, Array[PTree::ParseTreeNode] _children) -> Array[PTree::ParseTreeNode]
+
+      # Method called by a ParseTreeVisitor to which the formatter subscribed.
+      # Notification of a visit event: the visitor is about to visit
+      # a non-terminal node
+      # @param aNonTerm [NonTerminalNode]
+      def before_non_terminal: (PTree::NonTerminalNode aNonTerm) -> nil
+
+      # Method called by a ParseTreeVisitor to which the formatter subscribed.
+      # Notification of a visit event: the visitor is about to visit
+      # a terminal node
+      # @param aTerm [TerminalNode]
+      def before_terminal: (PTree::TerminalNode aTerm) -> nil
+
+      # Method called by a ParseTreeVisitor to which the formatter subscribed.
+      # Notification of a visit event: the visitor completed the visit of
+      # the children of a non-terminal node.
+      # @param _parent [NonTerminalNode]
+      # @param _children [Array] array of children nodes
+      def after_subnodes: ((PTree::NonTerminalNode _parent, Array[PTree::ParseTreeNode] _children) -> String
+
+      private
+
+      # Parent node is last node in current path
+      # or current path is empty (then aChild is root node)
+      def rank_of: (PTree::ParseTreeNode aChild) -> Array[PTree::ParseTreeNode]
+
+      # 'root', 'first', 'first_and_last', 'last', 'other'
+      def path_prefix: () -> String
+
+      def emit: (PTree::ParseTreeNode aNode, ?String aSuffix) -> nil
+    end
+  end
+end

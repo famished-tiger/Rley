@@ -1,0 +1,53 @@
+module Rley
+  module Lexical
+    # A token range (also called an extent) represents an interval
+    # of token positions that is matched by a given grammar symbol.
+    # For instance consider the expression E: 3 + 11,
+    # let's assume that the integer literal '3' is the fifth input token and
+    # that the '+' and '11' tokens are respectively at position 6 and 7;
+    # then the token range associated with E is [5, 7]
+    # While the parse tree/forest is being constructed the boundaries of the
+    # token range can be temporarily undefined (= set to nil)
+    class TokenRange
+      @low: Integer
+
+      @high: Integer
+
+      # The index of the lower bound of token range
+      # @return [Integer]
+      attr_reader low: Integer
+
+      # The index of the upper bound of token range
+      # @return [Integer]
+      attr_reader high: Integer
+
+      # Constructor
+      # @param aRangeRep [Hash] A hash with keys :low and :high
+      def initialize: (Hash[Symbol, Integer] aRangeRep) -> void
+
+      # Test for equality of ranges.
+      # @param other [TokenRange, Range, Hash, Array<Integer>]
+      # @return [Boolean]
+      def ==: (TokenRange | Range | Hash | Array[Integer] other) -> bool
+
+      # true when both bounds aren't nil.
+      def bounded?: () -> bool
+
+      # Conditional assign
+      def assign: (Range aRange) -> (nil | untyped)
+
+      # Tell whether the given index value lies outside the range
+      def out_of_range?: (Integer index) -> bool
+
+      # Emit a (formatted) string representation of the range.
+      # Mainly used for diagnosis/debugging purposes.
+      def to_string: (untyped _indentation) -> ::String
+
+      private
+
+      def assign_low: (Integer aRange) -> Integer
+
+      def assign_high: (Integer aRange) -> Integer
+    end
+  end
+end

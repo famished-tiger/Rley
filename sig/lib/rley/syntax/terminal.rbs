@@ -1,0 +1,26 @@
+module Rley
+  module Syntax
+    # A terminal symbol represents a class of words in the language
+    # defined the grammar.
+    class Terminal < GrmSymbol
+      # An indicator that tells whether the grammar symbol can generate a
+      # non-empty string of terminals.
+      # @return [TrueClass]
+      def generative?: () -> true
+
+      # Return true iff the symbol is a terminal
+      # @return [TrueClass]
+      def terminal?: () -> true
+
+      # @return [false] Return true if the symbol derives
+      # the empty string. As terminal symbol corresponds to a input token
+      # it is by definition non-nullable.
+      # @return [FalseClass]
+      def nullable?: () -> false
+
+      # Return a readable text representation of the instance
+      # @return [String] The symbol name
+      def to_s: () -> String
+    end
+  end
+end

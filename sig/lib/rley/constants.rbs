@@ -1,0 +1,10 @@
+module Rley
+  # The version number of the gem.
+  Version: String
+
+  # Brief description of the gem.
+  Description: String
+
+  # The start folder of Rley.
+  RootDir: String
+end

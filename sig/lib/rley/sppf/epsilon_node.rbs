@@ -1,0 +1,19 @@
+module Rley
+  module SPPF
+    # A leaf node in a parse forest that matches an empty
+    # string from the input
+    class EpsilonNode < LeafNode
+      # aPosition [Integer] is the position of the token in the input stream.
+      def initialize: (Integer aPosition) -> void
+
+      # Emit a (formatted) string representation of the node.
+      # Mainly used for diagnosis/debugging purposes.
+      # @return [String]
+      def to_string: (String indentation) -> ::String
+
+      # Part of the 'visitee' role in Visitor design pattern.
+      # @param aVisitor[ParseForestVisitor] the visitor
+      def accept: (ParseForestVisitor aVisitor) -> untyped
+    end
+  end
+end

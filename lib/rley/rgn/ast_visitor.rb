@@ -75,7 +75,7 @@ module Rley
 
       # Visit event. The visitor is about to visit the subnodes of a non
       # terminal node.
-      # @param aParentNode [Ast::LocCompoundExpr] the parent node.
+      # @param aParentNode [CompositeNode] the parent node.
       def traverse_subnodes(aParentNode)
         subnodes = aParentNode.subnodes
         broadcast(:before_subnodes, aParentNode, subnodes)
@@ -88,7 +88,7 @@ module Rley
 
       # Visit event. The visitor is about to visit one given subnode of a non
       # terminal node.
-      # @param aParentNode [Ast::LocCompoundExpr] the parent node.
+      # @param aParentNode [CompositeNode] the parent node.
       # @param index [integer] index of child subnode
       def traverse_given_subnode(aParentNode, index)
         subnode = aParentNode.subnodes[index]

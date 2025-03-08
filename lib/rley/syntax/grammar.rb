@@ -73,6 +73,7 @@ module Rley # This module is used as a namespace
         add_symbol(the_lhs)
 
         aProduction.rhs.each { |symb| add_symbol(symb) }
+        aProduction
       end
 
       # If the production is anonymous, then assign it

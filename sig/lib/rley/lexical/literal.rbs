@@ -1,0 +1,23 @@
+module Rley
+  module Lexical
+    # A literal (value) is a token that represents a data value in the parsed
+    # language. For instance, in Ruby data values such as strings, numbers,
+    # regular expression,... can appear directly in the source code. These are
+    # examples of literal values. One responsibility of a tokenizer/lexer is
+    # to convert the text representation into a corresponding value in a
+    # convenient format for the interpreter/compiler.
+    class Literal < Token
+      @value: untyped
+
+      # @return [Object] The value expressed in one of the target datatype.
+      attr_reader value: untyped
+
+      # Constructor.
+      # @param aValue [Object] value of the token in internal representation
+      # @param theLexeme [String] the lexeme (= piece of text from input)
+      # @param aTerminal [Syntax::Terminal, String]
+      # @param aPosition [Rley::Lexical::Position] line, column position pf token
+      def initialize: (untyped aValue, String theLexeme, (Rley::Syntax::Terminal | String) aTerminal, Rley::Lexical::Position aPosition) -> void
+    end
+  end
+end

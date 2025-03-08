@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-# require 'pry'
 require 'prime'
 
 module Rley # This module is used as a namespace
@@ -179,7 +178,6 @@ module Rley # This module is used as a namespace
         legs << [aCompositeNode, anEdgeSignature]
       else
         path_signature = legs.last[-1]
-        # binding.pry if anEdgeSignature == 37 && path_signature != 230
         if (path_signature % anEdgeSignature).zero?
           legs << [aCompositeNode, path_signature]
         else

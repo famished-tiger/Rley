@@ -1,0 +1,58 @@
+module Rley
+  module GFG
+    # Abstract class. Represents a vertex in a grammar flow graph
+    # Responsibilities:
+    # - To know its outgoing edges
+    # - To know its label
+    class Vertex
+      @edges: untyped
+
+      @oid_str: untyped
+
+      # The edges linking the successor vertices to this one.
+      # @return [Array<Edge>] The edge(s) linking this vertex to successor(s)
+      attr_reader edges: Array[Edge]
+
+      # Return the object id in string format
+      # @return [String]
+      attr_reader oid_str: String
+
+      # Constructor to extend in subclasses.
+      def initialize: () -> void
+
+      # Determine if the vertex corresponds to an dotted item that has
+      # its dot at the end of a production (i.e. is a reduced item).
+      # @return [Boolean] true iff vertex corresponds to reduced item.
+      def complete?: () -> false
+
+      # Returns a string containing a human-readable representation of the
+      # vertex.
+      # @return [String]
+      def inspect: () -> String
+
+      # Returns a string containing a human-readable representation of the
+      # vertex without the edges.
+      # @return [String]
+      def selfie: () -> String
+
+      # Retrieve the grammar symbol before the dot.
+      # @return [GrmSymbol, NilClass] The symbol or otherwise nil.
+      def prev_symbol: () -> (Syntax::GrmSymbol | nil)
+
+      # Retrieve the grammar symbol after the dot.
+      # @return [GrmSymbol, NilClass] The symbol or otherwise nil.
+      def next_symbol: () -> (Syntax::GrmSymbol | nil)
+
+      # Add an graph edge to this vertex.
+      # @param anEdge [Edge] the edge to be added.
+      def add_edge: (Edge anEdge) -> Array[Edge]
+
+      # Validation method for adding an outgoing edge to the vertex.
+      # Vertices will accept an in-degree and out-degree of at most one
+      # unless this method is overridden in subclasses
+      def check_add_edge: (Edge anEdge) -> Edge
+
+      def specific_inspect: () -> ""
+    end
+  end
+end

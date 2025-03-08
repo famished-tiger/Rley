@@ -1,0 +1,29 @@
+module Rley
+  module RGN
+    # A syntax node for a grammar symbol occurring in rhs of a rule.
+    # symbol nodes are leaf nodes of RRN parse trees.
+    class SymbolNode < ASTNode
+      @position: Lexical::Position
+
+      @name: String
+
+      # @return [Rley::Lexical::Position] Position of the entry in the input stream.
+      attr_reader position: Lexical::Position
+
+      # @return [String] name of grammar symbol
+      attr_reader name: String
+
+      # @param aPosition [Rley::Lexical::Position] Position of the entry in the input stream.
+      # @param aName [String] name of grammar symbol
+      def initialize: (Lexical::Position aPosition, String aName) -> void
+
+      # @return [String] name of grammar symbol
+      def to_text: () -> ::String
+
+      # Abstract method (must be overriden in subclasses).
+      # Part of the 'visitee' role in Visitor design pattern.
+      # @param visitor [RGN::ASTVisitor] the visitor
+      def accept: (ASTVisitor visitor) -> void
+    end
+  end
+end

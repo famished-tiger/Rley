@@ -1,0 +1,14 @@
+module Rley
+  module RGN
+    # A syntax node for a sequence of AST nodes
+    class SequenceNode < CompositeNode
+      def name: () -> ::String
+
+      def to_text: () -> String
+
+      # Part of the 'visitee' role in Visitor design pattern.
+      # @param visitor [RGN::ASTVisitor] the visitor
+      def accept: (ASTVisitor visitor) -> void
+    end
+  end
+end

@@ -1,0 +1,22 @@
+module Rley
+  module RGN
+    # Abstract class for a syntax node that is the parent
+    # of one or more subnodes.
+    class CompositeNode < ASTNode
+      @subnodes: Array[ASTNode]
+
+      @constraints: untyped
+
+      # @return [Array<ASTNode>]
+      attr_reader subnodes: Array[ASTNode]
+
+      # @return [Hash]
+      attr_accessor constraints: Hash
+
+      # @param children [Array<ASTNode>] sequence of children nodes
+      def initialize: (Array[ASTNode] children) -> void
+
+      def size: () -> Integer
+    end
+  end
+end

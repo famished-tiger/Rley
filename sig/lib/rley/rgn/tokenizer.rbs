@@ -1,0 +1,72 @@
+module Rley
+  module RGN
+    # A tokenizer for the Rley notation language.
+    # Responsibility: break input into a sequence of token objects.
+    # The tokenizer should recognize:
+    # Identifiers,
+    # Number literals including single digit
+    # String literals (quote delimited)
+    # Delimiters: e.g. parentheses '(',  ')'
+    # Separators: e.g. comma
+    class Tokenizer
+      # Here are all the implemented Rley notation keywords
+      @@keywords: untyped
+
+      @scanner: untyped
+
+      @lineno: Integer
+
+      @line_start: Integer
+
+      PATT_KEY: ::Regexp
+
+      PATT_INTEGER: ::Regexp
+
+      PATT_NEWLINE: ::Regexp
+
+      PATT_STRING_START: ::Regexp
+
+      PATT_SYMBOL: ::Regexp
+
+      PATT_WHITESPACE: ::Regexp
+
+      # @return [StringScanner] Low-level input scanner
+      attr_reader scanner: StringScanner
+
+      # @return [Integer] The current line number
+      attr_reader lineno: Integer
+
+      # @return [Integer] Position of last start of line in the input
+      attr_reader line_start: Integer
+
+      # One or two special character tokens.
+      Lexeme2name: Hash[String, String]
+
+      # Constructor. Initialize a tokenizer for RGN input.
+      # @param source [String] RGN text to tokenize.
+      def initialize: (?String? source) -> void
+
+      # Reset the tokenizer and make the given text, the current input.
+      # @param source [String] RGN text to tokenize.
+      def start_with: (String source) -> String
+
+      # Scan the source and return an array of tokens.
+      # @return [Array<Rley::Lexical::Token>] | Returns a sequence of tokens
+      def tokens: () -> Array[Lexical::Token]
+
+      private
+
+      def reset: () -> Integer
+
+      def _next_token: () -> Lexical::Token?
+
+      def build_token: (String aSymbolName, String aLexeme) -> Lexical::Token
+
+      # precondition: current position at leading quote
+      def build_string_token: () -> Lexical::Token
+
+      # Event: next line detected.
+      def next_line_scanned: () -> Integer
+    end
+  end
+end

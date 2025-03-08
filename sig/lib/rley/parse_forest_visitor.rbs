@@ -1,0 +1,111 @@
+module Rley
+  module SPPF
+    # Monkey-patching
+    class CompositeNode
+      @signatures: Array[Integer]
+
+      attr_reader signatures: Array[Integer]
+
+      # Associate for each edge between this node and each subnode
+      # an unique prime number (called a signature).
+      def add_edge_signatures: (Enumerator prime_enumerator) -> Array[Integer]
+
+      def signature_exist?: () -> bool
+    end
+  end
+
+  # A visitor class dedicated in the visit of a parse forest.
+  # It combines the Visitor and Observer patterns.
+  class ParseForestVisitor
+    @pforest: SPPF::ParseForest
+
+    @subscribers: Array[untyped]
+
+    @prime_enum: Enumerator
+
+    @legs: Array[Array[SPPF::CompositeNode|Integer]]
+
+    @node_accesses: Hash[SPPF::CompositeNode, Array[Integer]]
+
+    # @return [SPPF::ParseForest] Link to the parse forest to visit
+    attr_reader pforest: SPPF::ParseForest
+
+    # @return [Array<Object>]
+    #   List of objects that subscribed to the visit event notification.
+    attr_reader subscribers: Array[untyped]
+
+    # @return [Enumerator]
+    # Enumerator that generates a sequence of prime numbers
+    attr_reader prime_enum: Enumerator
+
+    # @return [Array<SPPF::CompositeNode, Integer>]
+    #   Stack of [node, path signature]
+    # path signature: an integer value that represents the set of edges used
+    # in traversal
+    attr_reader legs: Array[Array[SPPF::CompositeNode|Integer]]
+
+    # @return [Hash{SPPF::CompositeNode, Array<Integer>}]
+    #   Keep trace from which path(s) a given node was accessed
+    attr_reader node_accesses: Hash[SPPF::CompositeNode, Array[Integer]]
+
+    # Build a visitor for the given pforest.
+    # @param aParseForest [SPPF::ParseForest] the parse tree to visit.
+    def initialize: (SPPF::ParseForest aParseForest) -> void
+
+    # Add a subscriber for the visit event notifications.
+    # @param aSubscriber [Object]
+    def subscribe: (untyped aSubscriber) -> Array[untyped]
+
+    # Remove the given object from the subscription list.
+    # The object won't be notified of visit events.
+    # @param aSubscriber [Object]
+    def unsubscribe: (untyped aSubscriber) -> Array[untyped]
+
+    # The signal to begin the visit of the parse forest.
+    def start: () -> untyped
+
+    # Visit event. The visitor is about to visit the pforest.
+    # @param aParseForest [ParseForest] the pforest to visit.
+    def start_visit_pforest: (SPPF::ParseForest aParseForest) -> untyped
+
+    # Visit event. The visitor is about to visit the given non terminal node.
+    # @param nonTerminalNd [NonTerminalNode] the node to visit.
+    def visit_nonterminal: (SPPF::NonTerminalNode nonTerminalNd) -> untyped
+
+    # TODO: control the logic of this method.
+    # Visit event. The visitor is visiting the
+    # given alternative node.
+    # @param alternativeNd [AlternativeNode] the alternative node to visit.
+    def visit_alternative: (SPPF::AlternativeNode alternativeNd) -> untyped
+
+    # Visit event. The visitor is visiting the
+    # given terminal node.
+    # @param aTerminalNode [TerminalNode] the terminal to visit.
+    def visit_terminal: (SPPF::TokenNode aTerminalNode) -> untyped
+
+    # Visit event. The visitor is visiting the
+    # given epsilon node.
+    # @param anEpsilonNode [EpsilonNode] the terminal to visit.
+    def visit_epsilon: (SPPF::EpsilonNode anEpsilonNode) -> untyped
+
+    # Visit event. The visitor has completed the visit of the pforest.
+    # @param aParseForest [ParseForest] the pforest to visit.
+    def end_visit_pforest: (SPPF::ParseForest aParseForest) -> untyped
+
+    private
+
+    # Visit event. The visitor is about to visit the children of a non
+    # terminal node.
+    # @param aParentNode [NonTeminalNode] the (non-terminal) parent node.
+    def traverse_children: (SPPF::NonTerminalNode aParentNode) -> untyped
+
+    # Send a notification to all subscribers.
+    # @param msg [Symbol] event to notify
+    # @param args [Array] arguments of the notification.
+    def broadcast: (Symbol msg, *untyped args) -> untyped
+
+    def push_node: (SPPF::CompositeNode aCompositeNode, Integer anEdgeSignature) -> untyped
+
+    def pop_node: () -> (nil | untyped)
+  end
+end

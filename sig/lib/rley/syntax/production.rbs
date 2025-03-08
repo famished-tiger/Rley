@@ -1,0 +1,80 @@
+module Rley
+  module Syntax
+    # In a context-free grammar, a production is a rule in which
+    # its left-hand side (LHS) consists solely of a non-terminal symbol
+    # and the right-hand side (RHS) consists of a sequence of symbols.
+    # The symbols in RHS can be either terminal or non-terminal symbols.
+    # The rule stipulates that the LHS is equivalent to the RHS,
+    # in other words every occurrence of the LHS can be substituted to
+    # corresponding RHS.
+    class Production
+      @lhs: NonTerminal
+
+      @rhs: SymbolSeq
+
+      @constraints: Array
+
+      @name: String
+
+      # @return [SymbolSeq] The right-hand side (rhs).
+      attr_reader rhs: SymbolSeq
+
+      # @return [NonTerminal] The left-hand side of the rule.
+      attr_reader lhs: NonTerminal
+
+      # @return [String]
+      #   The name of the production rule. It must be unique in a grammar.
+      attr_accessor name: String
+
+      # @return [Boolean] A production is generative when all of its
+      # rhs members are generative (that is, they can each generate/derive
+      # a non-empty string of terminals).
+      attr_writer generative: bool
+
+      # @return [Boolean] A production is nullable when all of its
+      #   rhs members are nullable.
+      attr_writer nullable: bool
+
+      # @return [Array<Syntax::MatchClosest>] A list of constraints between rhs members
+      attr_accessor constraints: Array
+
+      alias body rhs
+
+      alias head lhs
+
+      # Create a Production instance.
+      # @param aNonTerminal [NonTerminal] The left-hand side of the rule.
+      # @param theSymbols [list<Terminal | NonTerminal>] symbols of rhs.
+      def initialize: (NonTerminal aNonTerminal, Array[GrmSymbol] theSymbols) -> void
+
+      # Is the rhs empty?
+      # @return [Boolean] true if the rhs has no members.
+      def empty?: () -> bool
+
+      # Return true iff the production is generative
+      def generative?: () -> bool
+
+      # @return [Boolen] true iff the production is nullable
+      def nullable?: () -> bool
+
+      # Returns a string containing a human-readable representation of the
+      # production.
+      # @return [String]
+      def inspect: () -> String
+
+      # A setter for the production name
+      # @param aName [String] the name of the production
+      def as: (String aName) -> String
+
+      alias tag as
+
+      private
+
+      # Validation method. Return the validated input argument or
+      # raise an exception.
+      def valid_lhs: (NonTerminal aNonTerminal) -> NonTerminal
+
+      def valid_rhs: (Array[GrmSymbol] theSymbols) -> SymbolSeq
+    end
+  end
+end

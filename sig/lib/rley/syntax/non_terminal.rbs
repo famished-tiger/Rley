@@ -1,0 +1,37 @@
+module Rley
+  module Syntax
+    # A non-terminal symbol (sometimes called a syntactic variable) represents
+    # a composition of terminal or non-terminal symbols
+    class NonTerminal < GrmSymbol
+      # An indicator that tells whether the grammar symbol can generate a
+      # non-empty string of terminals.
+      attr_writer generative: bool
+
+      # A non-terminal symbol is nullable if it can match an empty string.
+      attr_writer nullable: bool
+
+      # A non-terminal symbol is undefined if no production rule in the grammar
+      # has that non-terminal symbol in its left-hand side.
+      attr_writer undefined: bool
+
+      # A non-terminal symbol is unreachable if it cannot be reached (derived)
+      # from the start symbol.
+      attr_writer unreachable: bool
+
+      # @return [false/true] Return true if the symbol derives
+      # the empty string. As non-terminal symbol is nullable when it can
+      # can match to zero input token.
+      # The "nullability" of a non-terminal can practically be determined once
+      # all the production rules of the grammar are specified.
+      def nullable?: () -> bool
+
+      # @return [false/true] Return true if the symbol doesn't appear
+      # on the left-hand side of any production rule.
+      def undefined?: () -> bool
+
+      # @return [false/true] Return true if the symbol cannot be derived
+      # from the start symbol.
+      def unreachable?: () -> bool
+    end
+  end
+end

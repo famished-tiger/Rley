@@ -1,0 +1,36 @@
+module Rley
+  module RGN
+    # A RGN syntax node representing an expression quantified by a ?, * or +.
+    class RepetitionNode < CompositeNode
+      @repetition: Symbol
+
+      # @return [Symbol] one of: :zero_or_one, :zero_or_more, :one_or_more
+      attr_accessor repetition: Sytmbol
+
+      Repetition2suffix: Hash[Symbol, String]
+
+      # @param child [Array<ASTNode>] sequence of AST nodes
+      # @param theRepetition [Symbol] how many times the child node can be repeated
+      def initialize: (Array[ASTNode] child, Symbol theRepetition) -> void
+
+      # @return [RGN::ASTNode]
+      def child: () -> ASTNode
+
+      # @return [String]
+      def name: () -> ::String
+
+      # @return [String]
+      def to_text: () -> ::String
+
+      # Part of the 'visitee' role in Visitor design pattern.
+      # @param visitor [RGN::ASTVisitor] the visitor
+      def accept: (ASTVisitor visitor) -> void
+
+      def suffix_qmark: () -> String
+
+      def suffix_star: () -> String
+
+      def suffix_plus: () -> String
+    end
+  end
+end

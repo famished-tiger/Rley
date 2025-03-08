@@ -1,0 +1,153 @@
+module Rley
+  module Parser
+    class GFGParsing
+      @gf_graph: GFG::GrmFlowGraph
+
+      @tokens: Array[Lexical::Token]
+
+      @chart: GFGChart
+
+      @antecedence: Hash[ParseEntry, Array[ParseEntry]]
+
+      @failure_reason: untyped
+
+      # The link to the grammar flow graph
+      # @return [GFG::GrmFlowGraph] The GFG that drives the parsing
+      attr_reader gf_graph: GFG::GrmFlowGraph
+
+      # The link to the chart object
+      # @return [Parser::GFGChart]
+      attr_reader chart: GFGChart
+
+      # The sequence of input token to parse
+      # @return [Array<Lexical::Token>]
+      attr_reader tokens: Array[Lexical::Token]
+
+      # A Hash with pairs of the form:
+      # parse entry => [ antecedent parse entries ]
+      # It associates to a every parse entry its antecedent(s), that is,
+      # the parse entry/ies that causes the key parse entry to be created
+      # with one the gfg rules
+      # @return [Hash{ParseEntry => Array<ParseEntry>}]
+      attr_reader antecedence: Hash[ParseEntry, Array[ParseEntry]]
+
+      # @return [ErrorReason] The reason of a parse failure
+      attr_reader failure_reason: ErrorReason
+
+      # Constructor
+      # @param theGFG [GFG::GrmFlowGraph] the Grammar Flow Graph
+      def initialize: (GFG::GrmFlowGraph theGFG) -> void
+
+      # Let the current sigma set be the ith parse entry set.
+      # This method is invoked when an entry is added to the parse entry set
+      # and is of the form [A => alpha . B beta, k].
+      # Then the entry [.B, i] is added to the current sigma set.
+      # Gist: when an entry expects the non-terminal symbol B, then
+      # add an entry with start vertex .B
+      def call_rule: (ParseEntry anEntry, Integer aPosition) -> untyped
+
+      # Let the current sigma set be the ith parse entry set.
+      # This method is invoked when a dotted entry is added
+      # to the parse entry set of the from [A => alpha . B beta, k]
+      # and B is nullable
+      # Then the following entries are added to the current sigma set:
+      # [.B, i]
+      # [B => ., i] TODO: what if indirectly nullable?
+      # [B., i]
+      # [A => alpha B . beta, k]
+      def nullable_rule: (ParseEntry anEntry, Integer aPosition) -> untyped
+
+      # Let the current sigma set be the ith parse entry set.
+      # This method is invoked when an entry is added to a parse entry set
+      # and the entry is of the form [.B, i].
+      # then for every rule B => γ in the grammar an entry [B => . γ, i]
+      # is added to the current sigma set.
+      # Gist: for an entry corresponding to a start vertex, add an entry
+      # for each entry edge in the graph.
+      def start_rule: (ParseEntry anEntry, Integer aPosition) -> (nil | untyped)
+
+      # This method must be invoked when an entry is added to a parse entry set
+      # and is of the form [B => γ ., k] (the dot is at the end of the
+      # production. Then entry [B., k] is added to the current entry set.
+      # Gist: for an entry corresponding to a reduced production, add an entry
+      # for each exit edge in the graph.
+      def exit_rule: (ParseEntry anEntry, Integer aPosition) -> untyped
+
+      # This method is invoked when an entry of the form [B., k]
+      # is added to a parse entry set with index j.
+      # then for every entry of the form [A => α . B γ, i] in the kth sigma set
+      #   the entry [A => α B . γ, i] is added to the jth sigma set.
+      def end_rule: (ParseEntry anEntry, Integer aPosition) -> untyped
+
+      # Given that the terminal t is at the specified position,
+      #   Locate all entries in the current sigma set that expect t:
+      #     [A => α . t γ, i]
+      #     and allow them to cross the edge, adding the node on the back side
+      #     of the edge as an entry to the next sigma set:
+      #       add an entry to the next sigma set [A => α t . γ, i + 1]
+      # returns true if next token matches the expectations, false otherwise.
+      def scan_rule: (untyped aPosition, untyped aToken) -> (false | true)
+
+      # Return true if the parse was successful (= input tokens
+      # followed the syntax specified by the grammar)
+      def success?: () -> bool
+
+      # Return true if there are more than one complete state
+      # for the same lhs and same origin in any state set.
+      def ambiguous?: () -> bool
+
+      # Retrieve the very first parse entry added to the chart.
+      # This entry corresponds to the start vertex of the GF graph
+      # with origin equal to zero.
+      def initial_entry: () -> ParseEntry
+
+      # Retrieve the accepting parse entry that represents
+      # a complete, successful parse
+      # After a successful parse, the last chart entry set
+      # has an end parse entry that involves the start symbol
+      def accepting_entry: () -> ParseEntry
+
+      # Mark the parse as erroneous
+      def faulty: (ErrorReason aReason) -> ErrorReason
+
+      # A notification that the parsing reached an end
+      def done: () -> void
+
+      # Clean and normalize the object.
+      # Call this method when the parsing is complete.
+      def tidy_up!: () -> void
+
+      def count_states: () -> Integer
+
+      def count_entries: () -> Integer
+
+      def count_edges: () -> Integer
+
+      # @return [String] A human readable representation of itself.
+      def to_s: () -> String
+
+      private
+
+      # Parse error detected: all input tokens were consumed and
+      # the parser didn't detect syntax error meanwhile but
+      # could not reach the accepting state.
+      def premature_end: () -> ErrorReason
+
+      # Parse error detected: input token doesn't match
+      # the expectations set by grammar rules
+      def unexpected_token: (Integer aPosition) -> ErrorReason
+
+      def apply_rule: (untyped antecedentEntry, GFG::Vertex aVertex, Integer anOrigin, Integer aPosition, Symbol aRuleId) -> untyped
+
+      # Push a parse entry (vertex + origin) to the
+      # chart entry with given index if it isn't yet in the chart entry.
+      def push_entry: (GFG::Vertex aVertex, Integer anOrigin, Integer aChartIndex, Symbol aReason) -> void
+
+      # Factory method. Initializes a ParseForestBuilder object
+      def forest_builder: (untyped anIndex) -> ParseForestBuilder
+
+      # Factory method. Creates and initializes a ParseEntryTracker instance.
+      def new_entry_tracker: () -> ParseEntryTracker
+    end
+  end
+end

@@ -1,0 +1,31 @@
+module Rley
+  module PTree
+    class ParseTreeNode
+      @symbol: Syntax::GrmSymbol
+
+      @range: Lexical::TokenRange
+
+      # Link to the grammar symbol
+      attr_reader symbol: Syntax::GrmSymbol
+
+      # A range of indices for tokens corresponding to the node.
+      attr_reader range: Lexical::TokenRange
+
+      def initialize: (Syntax::GrmSymbol aSymbol, Lexical::TokenRange aRange) -> void
+
+      # Notify the builder that the construction is over
+      def done!: () -> nil
+
+      # Assign a value from given range to each  undefined range bound
+      def range=: (Lexical::TokenRange aRange) -> Lexical::TokenRange
+
+      # Emit a (formatted) string representation of the node.
+      # Mainly used for diagnosis/debugging purposes.
+      def to_string: (String indentation) -> ::String
+
+      # Emit a short string representation of the node.
+      # Mainly used for diagnosis/debugging purposes.
+      def to_s: () -> ::String
+    end
+  end
+end

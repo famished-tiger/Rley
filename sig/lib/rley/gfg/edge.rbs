@@ -1,0 +1,26 @@
+module Rley
+  module GFG
+    # Abstract class. Represents an edge in a grammar flow graph.
+    # Responsibilities:
+    # - To know the successor vertex
+    class Edge
+      @successor: untyped
+
+      # @return [Vertex] The destination vertex of the edge .
+      attr_reader successor: Vertex
+
+      # Construct a directed edge between two given vertices
+      # @param thePredecessor [Vertex]
+      # @param theSuccessor [Vertex]
+      def initialize: (Vertex thePredecessor, Vertex theSuccessor) -> void
+
+      # @return [String]
+      def to_s: () -> ::String
+
+      # Returns a string containing a human-readable representation of the
+      # production.
+      # @return [String]
+      def inspect: () -> String
+    end
+  end
+end

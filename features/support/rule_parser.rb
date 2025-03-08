@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require 'strscan'
-require_relative '../../lib/rley/syntax/grammar_builder'
+require_relative '../../lib/rley/syntax/base_grammar_builder'
 require_relative '../../spec/rley/support/grammar_helper'
 
 module Rley4Cuke # Use the module as a namespace
@@ -25,7 +25,7 @@ module Rley4Cuke # Use the module as a namespace
     def build_grammar(tokenizedRules)
       terminals = extract_terminals(tokenizedRules)
       formatted_rules = format_rules(tokenizedRules)
-      builder = Rley::Syntax::GrammarBuilder.new
+      builder = Rley::Syntax::BaseGrammarBuilder.new
       builder.add_terminals(*terminals)
       formatted_rules.each do |(lhs, rhs_args)|
          builder.add_production(lhs => rhs_args)

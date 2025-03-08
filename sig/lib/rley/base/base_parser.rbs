@@ -1,0 +1,23 @@
+module Rley
+  module Base
+    # Abstract class for Earley parser.
+    class BaseParser
+      @grammar: Syntax::Grammar
+
+      @dotted_items: Array[DottedItem]
+
+      include GrmItemsBuilder
+
+      # The grammar of the language.
+      # @return [Syntax::Grammar]
+      attr_reader grammar: Syntax::Grammar
+
+      # The dotted items/rules for the productions of the grammar
+      attr_reader dotted_items: Array[DottedItem]
+
+      # Constructor.
+      # @param aGrammar [Syntax::Grammar] The grammar of the language.
+      def initialize: (Syntax::Grammar aGrammar) -> void
+    end
+  end
+end

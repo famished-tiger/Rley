@@ -5,7 +5,7 @@ module Rley # This module is used as a namespace
   # as return values from a tokenizer / lexer.
   module Lexical
     # A Position is the location of a lexeme within a source file.
-    Position = Struct.new(:line, :column) do
+    Position = Data.define(:line, :column) do
       def to_s
         "line #{line}, column #{column}"
       end

@@ -1,0 +1,28 @@
+module Rley
+  module SPPF
+    # A SPPF node that matches exactly one
+    # token from the input.
+    class TokenNode < LeafNode
+      @token: Lexical::Token
+
+      # @return [Lexical::Token]
+      # The input token that is represented by this parse node.
+      attr_reader token: Lexical::Token
+
+      # Constructor
+      # @param aToken [Lexical::Token] input token represented by this node.
+      # @param aPosition [Integer] index of the token in the input stream.
+      def initialize: (Lexical::Token aToken, Integer aPosition) -> void
+
+      # Emit a (formatted) string representation of the node.
+      # Mainly used for diagnosis/debugging purposes.
+      # @param indentation [Integer]
+      # @return [String]
+      def to_string: (Integer indentation) -> ::String
+
+      # Part of the 'visitee' role in Visitor design pattern.
+      # @param aVisitor[ParseForestVisitor] the visitor
+      def accept: (ParseForestVisitor aVisitor) -> untyped
+    end
+  end
+end

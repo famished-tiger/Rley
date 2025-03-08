@@ -1,0 +1,13 @@
+module Rley
+  module GFG
+    # TODO: change definition.
+    # Represents a specialized vertex in a grammar flow graph
+    # that is associated to a given non-terminal symbol.
+    # Responsibilities (in addition to inherited ones):
+    # - Know its related non-terminal symbol
+    class StartVertex < NonTerminalVertex
+      # @return [String]
+      def label: () -> ::String
+    end
+  end
+end

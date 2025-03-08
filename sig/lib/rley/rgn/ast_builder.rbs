@@ -1,0 +1,72 @@
+module Rley
+  module RGN
+    # The purpose of ASTBuilder is to build piece by piece an AST
+    # (Abstract Syntax Tree) from a sequence of input tokens and
+    # visit events produced by walking over a GFGParsing object.
+    class ASTBuilder < Rley::ParseRep::ASTBaseBuilder
+      # Mapping Token name => operator | separator | delimiter characters
+      # @return [Hash{String => String}]
+      Name2special: Hash[String, String]
+
+      def terminal2node: () -> untyped
+
+      # Method override
+      def new_leaf_node: (untyped _production, untyped _terminal, untyped aTokenPosition, untyped aToken) -> untyped
+
+      # Factory method for creating a parent node object.
+      # @param aProduction [Production] Production rule
+      # @param aRange [Range] Range of tokens matched by the rule
+      # @param theTokens [Array] The input tokens
+      # @param theChildren [Array] Children nodes (one per rhs symbol)
+      def new_parent_node: (untyped aProduction, untyped aRange, untyped theTokens, untyped theChildren) -> untyped
+
+      # Return the AST node corresponding to the second symbol in the rhs
+      def reduce_to_2nd_symbol: (untyped _production, untyped _range, untyped _tokens, untyped theChildren) -> untyped
+
+      # rule('rhs' => 'member_seq').tag 'sequence'
+      def reduce_sequence: (untyped _production, untyped _range, untyped _tokens, untyped theChildren) -> untyped
+
+      # rule('member_seq' => 'member_seq member').tag 'more_members'
+      def reduce_more_members: (untyped _production, untyped _range, untyped _tokens, untyped theChildren) -> untyped
+
+      # rule('member_seq' => 'member')
+      def reduce_one_member: (untyped _production, untyped _range, untyped _tokens, untyped theChildren) -> ::Array[untyped]
+
+      # rule('strait_member' => 'base_member annotation')
+      def reduce_annotated_member: (untyped _production, untyped _range, untyped _tokens, untyped theChildren) -> untyped
+
+      # rule('base_member' => 'SYMBOL')
+      def reduce_symbol: (untyped _production, untyped _range, untyped _tokens, untyped theChildren) -> untyped
+
+      # rule('base_member' => 'LEFT_PAREN member_seq RIGHT_PAREN')
+      def reduce_grouping: (untyped _production, untyped _range, untyped _tokens, untyped theChildren) -> untyped
+
+      # rule('quantified_member' => 'base_member quantifier')
+      def reduce_quantified_member: (untyped _production, untyped _range, untyped _tokens, untyped theChildren) -> untyped
+
+      # rule('quantifier' => 'QUESTION_MARK')
+      def reduce_question_mark: (untyped _production, untyped _range, untyped _tokens, untyped _theChildren) -> :zero_or_one
+
+      # rule('quantifier' => 'STAR')
+      def reduce_star: (untyped _production, untyped _range, untyped _tokens, untyped _theChildren) -> :zero_or_more
+
+      # rule('quantifier' => 'PLUS')
+      def reduce_plus: (untyped _production, untyped _range, untyped _tokens, untyped _theChildren) -> :one_or_more
+
+      # rule('annotation' => 'LEFT_BRACE mapping RIGHT_BRACE').tag ''
+      def reduce_annotation: (untyped _production, untyped _range, untyped _tokens, untyped theChildren) -> untyped
+
+      # rule('mapping' => 'mapping COMMA key_value')
+      def reduce_more_pairs: (untyped _production, untyped _range, untyped _tokens, untyped theChildren) -> untyped
+
+      # rule('mapping' => 'key_value').tag 'one_pair'
+      def reduce_one_pair: (untyped _production, untyped _range, untyped _tokens, untyped theChildren) -> ::Hash[untyped, untyped]
+
+      # rule('key_value' => 'KEY value')
+      def reduce_raw_pair: (untyped _production, untyped _range, untyped _tokens, untyped theChildren) -> ::Array[untyped]
+
+      # rule('range' => 'INT_LIT ELLIPSIS INT_LIT')
+      def reduce_bound_range: (untyped _production, untyped _range, untyped _tokens, untyped theChildren) -> untyped
+    end
+  end
+end

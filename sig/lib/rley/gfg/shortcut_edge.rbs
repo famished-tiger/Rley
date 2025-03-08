@@ -1,0 +1,17 @@
+module Rley
+  module GFG
+    # Abstract class. Represents an edge in a grammar flow graph
+    # Responsibilities:
+    # - To know the successor vertex
+    class ShortcutEdge < Edge
+      @nonterminal: Syntax::NonTerminal
+
+      # The terminal symbol expected from the input stream
+      attr_reader nonterminal: Syntax::NonTerminal
+
+      def initialize: (Vertex thePredecessor, Vertex theSuccessor) -> void
+
+      def to_s: () -> ::String
+    end
+  end
+end

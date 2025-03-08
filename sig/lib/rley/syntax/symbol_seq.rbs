@@ -1,0 +1,28 @@
+module Rley
+  module Syntax
+    # A symbol sequence is a suite of grammar symbols
+    class SymbolSeq
+      @members: Array[Symbol]
+
+      extend Forwardable
+
+      # @return [Array<GrmSymbol>] The sequence of symbols
+      attr_reader members: Array[Symbol]
+
+      # Create a sequence of grammar symbols (as in right-hand side of
+      # a production rule).
+      # @param theSymbols [Array<GrmSymbol>] An array of symbols.
+      def initialize: (Array[Symbol] theSymbols) -> void
+
+      # Equality operator.
+      # @param other [SymbolSeq|Array]
+      # @return [Boolean]
+      def ==: (SymbolSeq | Array other) -> bool
+
+      # Returns a string containing a human-readable representation of the
+      # sequence of symbols.
+      # @return [String]
+      def inspect: () -> String
+    end
+  end
+end

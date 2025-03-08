@@ -1,0 +1,26 @@
+module Rley
+  module PTree
+    class TerminalNode < ParseTreeNode
+      @token: Lexical::Token
+
+      # @return [Lexical::Token] the input token
+      attr_reader token: Lexical::Token
+
+      # @param aToken [Lexical::Token] Input Token object
+      # @param aPos [Integer] position of the token in the input stream.
+      def initialize: (Lexical::Token aToken, Integer aPos) -> void
+
+      # Emit a (formatted) string representation of the node.
+      # Mainly used for diagnosis/debugging purposes.
+      def to_string: (String indentation) -> String
+
+      # Emit a short string representation of the node.
+      # Mainly used for diagnosis/debugging purposes.
+      def to_s: () -> String
+
+      # Part of the 'visitee' role in Visitor design pattern.
+      # @param aVisitor[ParseTreeVisitor] the visitor
+      def accept: (untyped aVisitor) -> untyped
+    end
+  end
+end

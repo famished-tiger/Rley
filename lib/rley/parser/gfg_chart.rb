@@ -198,8 +198,8 @@ module Rley # This module is used as a namespace
       private
 
       def add_entry_set
-         @sets << ParseEntrySet.new
          @constraints << []
+         @sets << ParseEntrySet.new
       end
 
       def update_match_closest(aConstraint, anIndex)

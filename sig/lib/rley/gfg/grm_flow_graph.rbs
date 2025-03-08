@@ -1,0 +1,146 @@
+module Rley
+  module GFG
+    # A Grammar Flow Graph (GFG) represents the parsing states of productions
+    # rules from a context-free grammar. This representation is based on a
+    # directed graph structure. The parsing process can then be re-formulated
+    # as a path problem in the graph. The theory behind GFGs can be found in
+    # papers. The first article on GFG can be found here:
+    # https://apps.cs.utexas.edu/tech_reports/reports/tr/TR-2102.pdf
+    # There are three types of vertex in a GFG:
+    # start vertex, end vertex and item vertex.
+    # For each non-terminal symbol N of the grammar, there is:
+    # a start vertex with label '.N'
+    # an end vertex with label 'N.'
+    # For each production rule of the grammar:
+    # N => s1 s2 s3 (...) sk
+    # I.e. a rule with k grammar symbols in its right-handed side.
+    # For such a rule there will be k + 1 item vertices. By convention,
+    # the first item vertex is labelled as 'N => . s1 s2 s3 (...) sk'
+    # the second item vertex is labelled as 'N => s1 . s2 s3 (...) sk'
+    # the third item vertex is labelled as 'N => s1 s2 . s3 (...) sk'
+    # and so on. In other words, the labels are obtained by moving a dot
+    # in successive positions in the rhs. The dot represents the
+    # parse progress for the production rule. Symbols on the left of the
+    # dot represent the symbols that were successfully matched in the input.
+    # A GFG has three types of directed edges linking the vertices.
+    # call edge, return edge and scan edge.
+    class GrmFlowGraph
+      @vertices: Array[Vertex]
+
+      @start_vertex_for: Hash[Syntax::NonTerminal, StartVertex]
+
+      @end_vertex_for: Hash[Syntax::NonTerminal, EndVertex]
+
+      # TODO: make setting of start vertex more robust
+      @start_vertex: StartVertex
+
+      # @return [Array<Vertex>] The set of all vertices in the graph
+      attr_reader vertices: Array[Vertex]
+
+      # The vertex marked as start node of the graph
+      # @return [StartVertex]
+      attr_reader start_vertex: StartVertex
+
+      # A Hash with pairs of the form: non-terminal symbol => start node
+      attr_reader start_vertex_for: Hash[Syntax::NonTerminal, StartVertex]
+
+      # A Hash with pairs of the form: non-terminal symbol => end node
+      attr_reader end_vertex_for: Hash[Syntax::NonTerminal, EndVertex]
+
+      # Constructor.
+      # @param theDottedItems [Array<DottedItem>] an array of the dotted items
+      # of the grammar.
+      def initialize: (Array[Base::DottedItem] theDottedItems) -> void
+
+      # Returns a string containing a human-readable representation of the
+      # production.
+      # @return [String]
+      def inspect: () -> String
+
+      # Retrieve the vertex with given vertex label.
+      # @param aVertexLabel [String] the label of a vertex from the graph
+      # @return [Vertex] the vertex with the given label, otherwise nil.
+      def find_vertex: (String aVertexLabel) -> Vertex
+
+      # Perform a diagnosis of the grammar elements (symbols and rules)
+      # in order to detect:
+      # If one wants to remove useless rules, then do first:
+      # elimination of non-generating symbols
+      # then elimination of unreachable symbols
+      def diagnose: () -> void
+
+      Branching: Struct
+
+      # Walk over all the vertices of the graph that are reachable from a given
+      # start vertex. This is a depth-first graph traversal.
+      # @param aStartVertex [StartVertex] the depth-first traversal begins
+      #   from here
+      # @param _visitAction [Proc] block called when a new graph vertex is found
+      # rubocop: disable Lint/Loop
+      def traverse_df: (StartVertex aStartVertex) { (Vertex) -> untyped } -> untyped
+
+      private
+
+      def add_vertex: (Vertex aVertex) -> Array[Vertex]
+
+      # For debugging purposes
+      def print_vertex: (String aText, Vertex aVertex) -> void
+
+      def build_graph: (Array[Base::DottedItem] theDottedItems) -> void
+
+      # For each non-terminal from the grammar, say N
+      # Add the .N and N. vertices to the graph
+      def build_all_starts_ends: (Array[Base::DottedItem] theDottedItems) -> void
+
+      # if there is not yet a start vertex labelled .N in the GFG:
+      #   add a start vertex labelled .N
+      #   add an end vertex labelled N.
+      def build_start_end_for: (Syntax::NonTerminal aNonTerminal) -> (Array[Vertex] | nil)
+
+      def add_single_item: (Base::DottedItem aDottedItem) -> EpsilonEdge
+
+      # Add vertices and edges for dotted items derived from same production
+      # production of the form: N => α[1] ... α[n] (non-empty rhs):
+      # # Rule 3
+      # create n+1 nodes labelled:
+      #   N => . α[1] ... α[n], N => α[1] . ... α[n], ..., N => α[1] ... α[n] .
+      # add an epsilon entry edge: .N -> N => . α[1] ... α[n]
+      # add an epsilon exit edge: N => α[1] ... α[n] . -> N.
+      # For each symbol in rhs:
+      #   if it is a terminal, say a:
+      #     Rule 4
+      #     add a scan edge: N => α[1] .a  α[n] -> N => α[1] a. α[n]
+      #   else # non-terminal symbol A in rhs:
+      #     Rule 5
+      #     add a call edge: N => α[1] .A  α[n] -> .A
+      #     add a return edge: A. -> N => α[1] A.  α[n]
+      #     add a shortcut edge:
+      # ( N => α[1] .A  α[n] ) -> ( N => α[1] A.  α[n] )
+      def augment_graph: (Array[Base::DottedItem] theDottedItems, Integer firstItemPos) -> void
+
+      # Create an entry edge for the given vertex
+      def build_entry_edge: (Vertex theVertex) -> EpsilonEdge
+
+      # Create an exit edge for the given vertex
+      def build_exit_edge: (Vertex theVertex) -> EpsilonEdge
+
+      # Create a scan edge between two vertices.
+      # These two vertices are assumed to correspond to two
+      # consecutive dot positions separated by a terminal symbol
+      def build_scan_edge: (Vertex fromVertex, Vertex toVertex) -> ScanEdge
+
+      def build_call_return_edges: (Vertex calling_vertex, Vertex return_vertex) -> CallEdge
+
+      def build_shortcut_edge: (Vertex fromVertex, Vertex toVertex) -> ShortcutEdge
+
+      # Retrieve the return edge that matches the given
+      # call edge.
+      def get_matching_return: (CallEdge aCallEdge) -> ReturnEdge
+
+      # Mark non-terminal symbols that cannot be derived from the start symbol.
+      # In a GFG, a non-terminal symbol N is unreachable if there is no path
+      # from the start symbol to the start node .N
+      def mark_unreachable_symbols: () -> void
+    end
+  end
+end

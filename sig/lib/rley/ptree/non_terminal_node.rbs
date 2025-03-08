@@ -1,0 +1,25 @@
+module Rley
+  module PTree
+    class NonTerminalNode < ParseTreeNode
+      @subnodes: Array[ParseTreeNode]
+
+      # Array of sub-nodes.
+      attr_reader subnodes: Array[ParseTreeNode]
+
+      def initialize: (Syntax::NonTerminal aSymbol, untyped aRange) -> void
+
+      # Pre-pend the given subnode in front of the list of subnodes
+      # @param aSubnode [ParseTreeNode-like] a child node.
+      def add_subnode: (ParseTreeNode aSubnode) -> Array[ParseTreeNode]
+
+      # Emit a (formatted) string representation of the node.
+      # Mainly used for diagnosis/debugging purposes.
+      # rubocop: disable Style/StringConcatenation
+      def to_string: (String indentation) -> String
+
+      # Part of the 'visitee' role in Visitor design pattern.
+      # @param aVisitor[ParseTreeVisitor] the visitor
+      def accept: (untyped aVisitor) -> untyped
+    end
+  end
+end

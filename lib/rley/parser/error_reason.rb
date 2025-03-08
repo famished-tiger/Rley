@@ -7,11 +7,11 @@ module Rley # Module used as a namespace
     # detected by Rley.
     class ErrorReason
       # @!attribute [r] rank
-      #   @return [Fixnum] The rank number of the offending input token
+      #   @return [Integer] The rank number of the offending input token
       attr_reader(:rank)
 
       # Constructor
-      # @param aRank [Fixnum] The sequence number of the offending input token.
+      # @param aRank [Integer] The sequence number of the offending input token.
       def initialize(aRank)
         @rank = aRank
       end

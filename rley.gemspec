@@ -62,16 +62,11 @@ RLEY_GEMSPEC = Gem::Specification.new do |pkg|
   pkg.add_runtime_dependency('prime', '~> 0.1.2')
 
   # Here we have the development external dependencies
-  pkg.add_development_dependency 'rake', '~> 13.1.0', '>= 13.1.0'
-  pkg.add_development_dependency 'rspec', '~> 3.12.0', '>= 3.12.0'
-  pkg.add_development_dependency 'yard', '~> 0.9.34', '>= 0.9.34'
+  pkg.add_development_dependency 'rake', '~> 13'
+  pkg.add_development_dependency 'rspec', '~> 3.12'
+  pkg.add_development_dependency 'yard', '~> 0.9.34'
   pkg.license = 'MIT'
   pkg.required_ruby_version = '>= 3.2.0'
-end
-
-if $PROGRAM_NAME == __FILE__
-  require 'rubygems/package'
-  Gem::Package.build(RLEY_GEMSPEC)
 end
 
 # End of file

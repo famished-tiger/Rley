@@ -1,0 +1,83 @@
+module Rley
+  module ParseRep
+    # Builder GoF pattern. Builder pattern builds a complex object
+    # (say, a parse forest) from simpler objects (terminal and non-terminal
+    # nodes) and using a step by step approach.
+    class ParseForestBuilder
+      @tokens: Array[Lexical::Token]
+
+      @curr_path: Array[SPPF::SPPFNode]
+
+      @entry2node: Hash[Parser::ParseEntry, SPPF::SPPFNode]
+
+      @entry2path_to_alt: Hash[Parser::ParseEntry, Array[SPPF::SPPFNode]]
+
+      @last_visitee: Parser::ParseEntry
+
+      @result: SPPF::ParseForest
+
+      # The sequence of input tokens
+      attr_reader tokens: Array[Lexical::Token]
+
+      # Link to forest object (being) built
+      attr_reader result: SPPF::ParseForest
+
+      # Link to current path
+      attr_reader curr_path: Array[SPPF::SPPFNode]
+
+      # The last parse entry visited
+      attr_reader last_visitee: Parser::ParseEntry
+
+      # A hash with pairs of the form: visited parse entry => forest node
+      attr_reader entry2node: Hash[Parser::ParseEntry, SPPF::SPPFNode]
+
+      # A hash with pairs of the form:
+      # parent end entry => path to alternative node
+      # This is needed for synchronizing backtracking
+      attr_reader entry2path_to_alt: Hash[Parser::ParseEntry, Array[SPPF::SPPFNode]]
+
+      def initialize: (Array[Lexical::Token] theTokens) -> void
+
+      # Notify the builder that the construction is over
+      def done!: () -> untyped
+
+      def receive_event: (Symbol anEvent, Parser::ParseEntry anEntry, Integer anIndex) -> untyped
+
+      # Return the current_parent node
+      def curr_parent: () -> SPPF::CompositeNode
+
+      private
+
+      def process_start_entry: (Symbol _anEvent, Parser::ParseEntry _anEntry, Integer _anIndex) -> untyped
+
+      def process_end_entry: (Symbol anEvent, Parser::ParseEntry anEntry, Integer anIndex) -> untyped
+
+      def process_item_entry: (Symbol anEvent, Parser::ParseEntry anEntry, Integer anIndex) -> untyped
+
+      # Create an empty parse forest
+      def create_forest: (SPPF::SPPFNode aRootNode) -> SPPF::ParseForest
+
+      # Factory method. Build and return an SPPF non-terminal node.
+      def create_non_terminal_node: (Parser::ParseEntry anEntry, Lexical::TokenRange aRange, ?Syntax::NonTerminal nonTSymb) -> SPPF::NonTerminalNode
+
+      # Add an alternative node to the forest
+      def create_alternative_node: (Parser::ParseEntry anEntry) -> SPPF::AlternativeNode
+
+      # create a token node,
+      #   with same origin as token,
+      #   with same right extent = origin + 1
+      # add the new node as first child of current_parent
+      def create_token_node: (Parser::ParseEntry anEntry, Integer anIndex) -> SPPF::TokenNode
+
+      def create_epsilon_node: (Parser::ParseEntry anEntry, Integer anIndex) -> SPPF::EpsilonNode
+
+      # Add the given node if not yet present in parse forest
+      def add_node_to_forest: (SPPF::SPPFNode aNode) -> SPPF::SPPFNode
+
+      # Add the given node as sub-node of current parent node
+      # Optionally add the node to the current path
+      # rubocop: disable Style/OptionalBooleanParameter
+      def add_subnode: (SPPF::SPPFNode aNode, ?bool addToPath) -> untyped
+    end
+  end
+end

@@ -54,16 +54,6 @@ at_exit do
   # Do something
 end
 
-########################################
-# AfterConfiguration.
-# A pre-defined Cucumber hook that will run after Cucumber has read its configuration. The block you provide will be passed the cucumber configuration
-# (an instance of Cucumber::Cli::Configuration).  This hook will run only once; after support has been loaded but before features are loaded.
-# Good to know: the next line returns an Array containing the active profile name (e.g. ["default"]).
-# aConfig.options.send(:profiles)
-AfterConfiguration do |config|
-  # Do something
-end
-
 # For testing purpose we override the default Cucumber behaviour
 # making our world object an instance of the TracingWorld class
 World { Rley4Cuke::RleyWorld.new }

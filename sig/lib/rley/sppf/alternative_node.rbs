@@ -1,0 +1,33 @@
+module Rley
+  module SPPF
+    # A node in a parse forest that is a child
+    # of a parent node with :or refinement
+    class AlternativeNode < CompositeNode
+      @label: String
+
+      @symbol: Syntax::NonTerminal
+
+      # @return [String] GFG vertex label
+      attr_reader label: String
+
+      # @return [Syntax::NonTerminal] Link to lhs symbol
+      attr_reader symbol: Syntax::NonTerminal
+
+      # @param aVertex [GFG::ItemVertex]
+      #   A GFG vertex that corresponds to a dotted item
+      #   with the dot at the end) for the alternative under consideration.
+      # @param aRange [Lexical::TokenRange]
+      #   A range of token indices corresponding to this node.
+      def initialize: (GFG::ItemVertex aVertex, Lexical::TokenRange aRange) -> void
+
+      # Emit a (formatted) string representation of the node.
+      # Mainly used for diagnosis/debugging purposes.
+      # @return [String]
+      def to_string: (Integer indentation) -> ::String
+
+      # Part of the 'visitee' role in Visitor design pattern.
+      # @param aVisitor[ParseForestVisitor] the visitor
+      def accept: (ParseForestVisitor aVisitor) -> untyped
+    end
+  end
+end

@@ -1,0 +1,61 @@
+module Rley
+  module Parser
+    # Responsibilities:
+    # - To know all the parse entries in the set
+    class ParseEntrySet
+      @entries: Array[ParseEntry]
+
+      @membership: Hash[String, ParseEntry]
+
+      @entries4term: Hash[Syntax::Terminal, Array[ParseEntry]]
+
+      @entries4n_term: Hash[Syntax::NonTerminal, Array[ParseEntry]]
+
+      extend Forwardable
+
+      # @return [Array<ParseEntry>] The array of parse entries
+      attr_reader entries: Array[ParseEntry]
+
+      # @return [Hash] A Hash with pairs { hash of ParseEntry => ParseEntry }
+      attr_reader membership: Hash[String, ParseEntry]
+
+      # Constructor.
+      def initialize: () -> void
+
+      # Returns a string containing a human-readable representation of the
+      # set of parse entries.
+      # @return [String]
+      def inspect: () -> String
+
+      # Access the entry at given position
+      def []: (Integer index) -> ParseEntry
+
+      # Returns a Hash with pairs of the form:
+      #   terminal symbol => [ parse entry expecting the terminal ]
+      def entries4term: (Syntax::Terminal aTerminal) -> Hash[Syntax::Terminal, Array[ParseEntry]]
+
+      # Returns a Hash with pairs of the form:
+      #   non terminal symbol => [ parse entry expecting the non-terminal ]
+      def entries4n_term: (Syntax::NonTerminal aNonTerminal) -> Hash[Syntax::NonTerminal, Array[ParseEntry]]
+
+      # Append the given entry (if it isn't yet in the set)
+      # to the list of parse entries
+      # @param anEntry [ParseEntry] the parse entry to push.
+      # @return [ParseEntry] the passed parse entry if it pushes it
+      def push_entry: (ParseEntry anEntry) -> ParseEntry
+
+      # Return an Array of Arrays of ambiguous parse entries.
+      def ambiguities: () -> ::Array[Array[ParseEntry]]
+
+      # The list of distinct expected terminal symbols. An expected symbol
+      # is on the left of a dot in a parse state of the parse set.
+      def expected_terminals: () -> Array[Syntax::Terminal]
+
+      def count_edges: () -> Integer
+
+      private
+
+      def add_lookup4symbol: (ParseEntry anEntry) -> Array[ParseEntry]
+    end
+  end
+end

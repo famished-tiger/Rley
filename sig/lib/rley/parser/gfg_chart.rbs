@@ -1,0 +1,68 @@
+module Rley
+  module Parser
+    # Also called a parse table.
+    # It is a Grammar Flow Graph implementation.
+    # Assuming that n == number of input tokens,
+    # the chart is an array with n + 1 entry sets.
+    class GFGChart
+      @sets: Array[ParseEntrySet]
+
+      @constraints: Array[Array[Syntax::MatchClosest]]
+
+      # @return [Array<ParseEntrySet>] entry sets (one per input token + 1)
+      attr_reader sets: Array[ParseEntrySet]
+
+      # @return [Array<Array<Syntax::MatchClosest>>]
+      attr_reader constraints: Array[Array[Syntax::MatchClosest]]
+
+      # @param aGFGraph [GFG::GrmFlowGraph] The GFG for the grammar in use.
+      def initialize: (GFG::GrmFlowGraph aGFGraph) -> void
+
+      # @return [Syntax::NonTerminal] the start symbol of the grammar.
+      def start_symbol: () -> Syntax::NonTerminal
+
+      # @param index [Integer]
+      # @return [ParseEntrySet] Access the entry set at given position.
+      def []: (Integer index) -> ParseEntrySet
+
+      # Return the index value of the last non-empty entry set.
+      # @return [Integer]
+      def last_index: () -> Integer
+
+      # Push a parse entry for the chart entry with given index
+      # @param anIndex [Integer] The rank of the token in the input stream.
+      # @return [ParseEntry] the passed parse entry if it is pushed
+      def push_entry: (GFG::Vertex aVertex, Integer anOrigin, Integer anIndex, Symbol reason) -> (nil | untyped)
+
+      # Retrieve the first parse entry added to this chart
+      # @return [ParseEntry]
+      def initial_entry: () -> ParseEntry
+
+      # Retrieve the entry that corresponds to a complete and successful parse
+      # @return [ParseEntry]
+      def accepting_entry: () -> ParseEntry
+
+      # @return [Integer] The number of states.
+      def count_states: () -> Integer
+
+      # @return [Integer] The total number of entries.
+      def count_entries: () -> Integer
+
+      # @return [Integer] The total number of edges.
+      def count_edges: () -> Integer
+
+      # Retrieve all entries that have a given terminal before the dot.
+      # @param criteria [Hash{Symbol => String}]
+      def search_entries: (Integer atIndex, Hash[Symbol, String] criteria) -> Array[ParseEntry]
+
+      # @ return [String] A human-readable representation of the chart.
+      def to_s: () -> String
+
+      private
+
+      def add_entry_set: () -> Array[ParseEntrySet]
+
+      def update_match_closest: (Syntax::MatchClosest aConstraint, Integer anIndex) -> void
+    end
+  end
+end

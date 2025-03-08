@@ -1,0 +1,54 @@
+module Rley
+  module GFG
+    # Specialization of Vertex class. Represents a
+    # vertex in a grammar flow graph associated to a given dotted item.
+    # Responsibilities (in addition to inherited ones):
+    # - Know its related non-terminal symbol
+    class ItemVertex < Vertex
+      @dotted_item: Base::DottedItem
+
+      @shortcut: ShortcutEdge
+
+      @next_symbol: untyped
+
+      # Link to the dotted item object
+      # @return [Base::DottedItem] The corresponding dotted item
+      attr_reader dotted_item: Base::DottedItem
+
+      # Optional link to a "shortcut" edge.
+      # Applicable only if the dotted expects a non-terminal symbol.
+      # @return [ShortcutEdge] Optional "shortcut" edge
+      attr_reader shortcut: ShortcutEdge
+
+      # Constructor.
+      # @param aDottedItem [DottedItem] the corresponding dotted item.
+      def initialize: (Base::DottedItem aDottedItem) -> void
+
+      # Set the "shortcut" edge.
+      # @param aShortcut [ShortcutEdge] the "shortcut" edge.
+      def shortcut=: (ShortcutEdge aShortcut) -> ShortcutEdge
+
+      # The label of this vertex.
+      # It is the same as the label of the corresponding dotted item.
+      # @return [String] Label for this vertex
+      def label: () -> String
+
+      # Returns true if the dotted item has a dot at the end of the production.
+      # @return [Boolean]
+      def complete?: () -> bool
+
+      # Return the symbol before the dot.
+      # @return [Syntax::GrmSymbol, NilClass] Previous symbol otherwise nil.
+      def prev_symbol: () -> (Syntax::GrmSymbol | nil)
+
+      # Return the symbol after the dot.
+      # @return [Syntax::GrmSymbol, NilClass] Next grammar symbol otherwise nil.
+      def next_symbol: () -> (Syntax::GrmSymbol | nil)
+
+      # Return the non-terminal symbol at the left-hand side of the production
+      # @return [Syntax::NonTerminal]
+      #   The non-terminal symbol at left side of production.
+      def lhs: () -> Syntax::NonTerminal
+    end
+  end
+end

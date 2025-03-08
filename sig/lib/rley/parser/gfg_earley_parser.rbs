@@ -1,0 +1,68 @@
+module Rley
+  module Parser
+    # Implementation of a parser that uses the Earley parsing algorithm.
+    class GFGEarleyParser < Base::BaseParser
+      @gf_graph: GFG::GrmFlowGraph
+
+      # The Grammar Flow graph generated from the provided grammar.
+      # @return [GFG::GrmFlowGraph] The GFG that drives the parsing
+      attr_reader gf_graph: GFG::GrmFlowGraph
+
+      # Constructor.
+      # @param aGrammar [Syntax::Grammar] The grammar of the language to parse.
+      def initialize: (Syntax::Grammar aGrammar) -> void
+
+      # Parse a sequence of input tokens.
+      # @param aTokenSequence [Array] Array of Tokens objects returned by a
+      # tokenizer/scanner/lexer.
+      # @return [GFGParsing] an object that embeds the parse results.
+      def parse: (Array[Lexical::Token] aTokenSequence) -> GFGParsing
+
+      private
+
+      def parse_for_token: (GFGParsing result, Integer index) -> untyped
+
+      # Let the current sigma set be the ith parse entry set.
+      # This method is invoked when an entry is added to the parse entry set
+      # and is of the form [A => alpha . B beta, k].
+      # Then the entry [.B, i] is added to the current sigma set.
+      # Gist: when an entry expects the non-terminal symbol B, then
+      # add an entry with start vertex .B
+      def call_rule: (GFGParsing aParsing, ParseEntry anEntry, Integer aPosition) -> untyped
+
+      # Let the current sigma set be the ith parse entry set.
+      # This method is invoked when an entry is added to a parse entry set
+      # and the entry is of the form [.B, i].
+      # then for every rule B => γ in the grammar an entry [B => . γ, i]
+      # is added to the current sigma set.
+      # Gist: for an entry corresponding to a start vertex, add an entry
+      # for each entry edge in the graph.
+      def start_rule: (GFGParsing aParsing, ParseEntry anEntry, Integer aPosition) -> untyped
+
+      # This method must be invoked when an entry is added to a parse entry set
+      # and is of the form [B => γ ., k] (the dot is at the end of the
+      # production. Then entry [B., k] is added to the current entry set.
+      # Gist: for an entry corresponding to a reduced production, add an entry
+      # for each exit edge in the graph.
+      def exit_rule: (GFGParsing aParsing, ParseEntry anEntry, Integer aPosition) -> untyped
+
+      # This method is invoked when an entry of the form [B., k]
+      # is added to a parse entry set with index j.
+      # then for every entry of the form [A => α . B γ, i] in the kth sigma set
+      #   the entry [A => α B . γ, i] is added to the jth sigma set.
+      def end_rule: (GFGParsing aParsing, ParseEntry anEntry, Integer aPosition) -> untyped
+
+      # Given that the terminal t is at the specified position,
+      #   Locate all entries in the current sigma set that expect t:
+      #     [A => α . t γ, i]
+      #     and allow them to cross the edge, adding the node on the back side
+      #     of the edge as an entry to the next sigma set:
+      #       add an entry to the next sigma set [A => α t . γ, i + 1]
+      def scan_rule: (GFGParsing aParsing, Integer aPosition, Lexical::Token aToken) -> untyped
+
+      # Parse error detected: no input tokens provided while the grammar
+      # forbids this this.
+      def unexpected_empty_input: (GFGParsing aParsing) -> GFGParsing
+    end
+  end
+end

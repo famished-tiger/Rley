@@ -1,0 +1,33 @@
+module Rley
+  module ParseRep
+    # The purpose of a CSTBuilder is to build piece by piece a CST
+    # (Concrete Syntax Tree) from a sequence of input tokens and
+    # visit events produced by walking over a GFGParsing object.
+    # Uses the Builder GoF pattern.
+    # The Builder pattern creates a complex object
+    # (say, a parse tree) from simpler objects (terminal and non-terminal
+    # nodes) and using a step by step approach.
+    class CSTBuilder < ParseTreeBuilder
+      # Method to override
+      # Create a parse tree object with given
+      # node as root node.
+      def create_tree: (PTree::ParseTreeNode aRootNode) -> PTree::ParseTree
+
+      # Method to override
+      # Factory method for creating a node object for the given
+      # input token.
+      # @param _terminal [Terminal] Terminal symbol associated with the token
+      # @param aTokenPosition [Integer] Position of token in the input stream
+      # @param aToken [Token] The input token
+      def new_leaf_node: (Syntax::Production _production, Syntax::Terminal _terminal, Integer aTokenPosition, Lexical::Token aToken) -> PTree::TerminalNode
+
+      # Method to override.
+      # Factory method for creating a parent node object.
+      # @param aProduction [Production] Production rule
+      # @param aRange [Range] Range of tokens matched by the rule
+      # @param _tokens [Array] The input tokens
+      # @param theChildren [Array] Children nodes (one per rhs symbol)
+      def new_parent_node: (Syntax::Production aProduction, Lexical::TokenRange aRange, Array[Lexical::Token] _tokens, Array[PTree::ParseTreeNode] theChildren) -> PTree::NonTerminalNode
+    end
+  end
+end

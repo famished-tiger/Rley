@@ -1,0 +1,18 @@
+module Rley
+  module GFG
+    # Specialization of an edge in a grammar flow graph
+    # that is taken as a consequence of a scan rule.
+    # Responsibilities:
+    # - To know the successor vertex
+    class ScanEdge < Edge
+      @terminal: Syntax::Terminal
+
+      # The terminal symbol expected from the input stream
+      attr_reader terminal: Syntax::Terminal
+
+      def initialize: (Vertex thePredecessor, Vertex theSuccessor, Syntax::Terminal aTerminal) -> void
+
+      def to_s: () -> ::String
+    end
+  end
+end

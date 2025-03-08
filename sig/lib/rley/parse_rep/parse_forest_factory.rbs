@@ -1,0 +1,16 @@
+module Rley
+  module ParseRep
+    # Utility class that helps to create a ParseForest from
+    # a given Parsing object.
+    class ParseForestFactory < ParseRepCreator
+      # Create a Builder, that is, an object
+      # that will create piece by piece the forest
+      def builder: (Parser::GFGParsing aParseResult, ?ParseForestBuilder _builder) -> ParseForestBuilder
+
+      # When an end vertex is re-visited then jump
+      # its corresponding start vertex. This behaviour
+      # makes sense for sharing nodes.
+      def jump_to_start: () -> true
+    end
+  end
+end

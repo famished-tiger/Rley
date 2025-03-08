@@ -1,0 +1,11 @@
+module Rley
+  module ParseRep
+    # Utility class that helps to create a ParseTree from
+    # a given Parsing object.
+    class ParseTreeFactory < ParseRepCreator
+      # Create a Builder, that is, an object
+      # that will create piece by piece the forest
+      def builder: (Parser::GFGParsing aParseResult, ?ParseTreeBuilder aBuilder) -> ParseTreeBuilder
+    end
+  end
+end
