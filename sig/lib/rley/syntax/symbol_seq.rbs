@@ -2,27 +2,43 @@ module Rley
   module Syntax
     # A symbol sequence is a suite of grammar symbols
     class SymbolSeq
-      @members: Array[Symbol]
+      @members: Array[GrmSymbol]
 
       extend Forwardable
 
       # @return [Array<GrmSymbol>] The sequence of symbols
-      attr_reader members: Array[Symbol]
+      attr_reader members: Array[GrmSymbol]
 
       # Create a sequence of grammar symbols (as in right-hand side of
       # a production rule).
       # @param theSymbols [Array<GrmSymbol>] An array of symbols.
-      def initialize: (Array[Symbol] theSymbols) -> void
+      def initialize: (Array[GrmSymbol] theSymbols) -> void
 
       # Equality operator.
       # @param other [SymbolSeq|Array]
       # @return [Boolean]
-      def ==: (SymbolSeq | Array other) -> bool
+      def ==: (SymbolSeq | Array[GrmSymbol] other) -> bool
 
       # Returns a string containing a human-readable representation of the
       # sequence of symbols.
       # @return [String]
       def inspect: () -> String
+
+      # DELEGATED METHODS NOT INFERRED BY RBS
+      def empty?: () -> bool
+
+      def size: () -> Integer
+
+      def []: (Integer) -> GrmSymbol
+
+      def each: () -> ::Enumerator[GrmSymbol, self]
+        | () { (GrmSymbol item) -> void } -> self
+
+      def find: (?Proc ifnone) { (GrmSymbol) -> boolish } -> GrmSymbol?
+        | (?Proc ifnone) -> ::Enumerator[GrmSymbol, GrmSymbol?]
+
+      def map: [U] () { (GrmSymbol item) -> U } -> ::Array[U]
+        | () -> ::Enumerator[GrmSymbol, ::Array[untyped]]
     end
   end
 end

@@ -16,14 +16,14 @@ module Rley
       # Factory method that produces the representation of the parse.
       # @return [Rley::PTree::ParseTree, Rley::SPPF::ParseForest]
       #   The parse representation.
-      def create: (?untyped? aBuilder) -> PTree::ParseTree | SPPF::ParseForest
+      def create: (?untyped? aBuilder) -> (PTree::ParseTree | SPPF::ParseForest)
 
       private
 
       # Create a Parsing walker, that is, an object
       # that will iterate over the relevant nodes (= parsing entries)
       # of a GFGParsing
-      def walker: (Parser::GFGParsing aParseResult) -> Enumerator
+      def walker: (Parser::GFGParsing aParseResult) -> Enumerator[Parser::ParseEntry]
 
       # By default, when a end vertex is re-visited don't jump
       # its corresponding start vertex.

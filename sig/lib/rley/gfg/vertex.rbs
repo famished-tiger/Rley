@@ -53,6 +53,10 @@ module Rley
       def check_add_edge: (Edge anEdge) -> Edge
 
       def specific_inspect: () -> ""
+
+      def label: () -> String
+
+      def dotted_item: () -> Base::DottedItem
     end
   end
 end

@@ -29,23 +29,26 @@ module Rley # This module is used as a namespace
       def parse_entry=(aParseEntry)
         raise StandardError, 'Nil parse entry' if aParseEntry.nil?
 
+        # @type var parse_entry : Rley::Parser::ParseEntry
         processed_entries[parse_entry] = true
         @parse_entry = aParseEntry
       end
 
       # Take the first provided entry that wasn't processed yet.
-      def select_entry(theEntrys)
-        a_entry = theEntrys.find { |st| !processed_entries.include?(st) }
-        self.parse_entry = a_entry
+      def select_entry(entries)
+        a_entry = entries.find { |st| !processed_entries.include?(st) }
+        self.parse_entry = a_entry # steep:ignore
       end
 
       # The dotted item for the current parse entry.
+      # @return [Rley::Base::DottedItem, nil]
       def curr_dotted_item
-        parse_entry.dotted_rule
+        parse_entry&.vertex.dotted_item # steep:ignore
       end
 
+      # @return [Syntax::GrmSymbol, nil] Return the symbol before the dot
       def symbol_on_left
-        curr_dotted_item.prev_symbol
+        curr_dotted_item&.prev_symbol
       end
 
       # Notification that one begins with the previous entry set

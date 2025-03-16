@@ -82,9 +82,10 @@ module Rley # This module is used as a namespace
       def rank_of(aChild)
         if curr_path.empty?
           rank = 'root'
-        elsif curr_path[-1].subnodes.size == 1
+        elsif curr_path[-1].subnodes.size == 1 # steep:ignore
           rank = 'first_and_last'
         else
+          # @type var parent : Rley::PTree::NonTerminalNode
           parent = curr_path[-1]
           siblings = parent.subnodes
           siblings_last_index = siblings.size - 1
@@ -96,6 +97,8 @@ module Rley # This module is used as a namespace
                  end
         end
         ranks << rank
+
+        rank
       end
 
       # 'root', 'first', 'first_and_last', 'last', 'other'

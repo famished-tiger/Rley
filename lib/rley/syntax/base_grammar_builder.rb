@@ -53,14 +53,6 @@ module Rley # This module is used as a namespace
         symbols.merge!(new_symbs)
       end
 
-      # Add the given marker symbol to the grammar of the language
-      # @param aMarkerSymbol [Syntax::Marker] A mazker symbol
-      # @return [void]
-      def add_marker(aMarkerSymbol)
-        new_symb = build_symbol(Marker, aMarkerSymbol)
-        symbols[aMarkerSymbol.name] = new_symb
-      end
-
       # Add a production rule in the grammar given one
       # key-value pair of the form: String => Array.
       #   Where the key is the name of the non-terminal appearing in the
@@ -106,12 +98,12 @@ module Rley # This module is used as a namespace
 
           # Check that each terminal appears at least in a rhs of a production
           all_terminals = symbols.values.select do |a_symb|
-            a_symb.kind_of?(Terminal)
+            a_symb.is_a?(Terminal)
           end
           in_use = Set.new
           productions.each do |prod|
             prod.rhs.members.each do |symb|
-              in_use << symb if symb.kind_of?(Syntax::Terminal)
+              in_use << symb if symb.is_a?(Syntax::Terminal)
             end
           end
 
@@ -168,7 +160,7 @@ module Rley # This module is used as a namespace
       # @param aSymbolArg [GrmSymbol-like or String]
       # @return [Array] list of grammar symbols
       def build_symbol(aClass, aSymbolArg)
-        if aSymbolArg.kind_of?(GrmSymbol)
+        if aSymbolArg.is_a?(GrmSymbol)
           aSymbolArg
         else
           aClass.new(aSymbolArg)

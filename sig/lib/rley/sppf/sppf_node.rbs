@@ -11,12 +11,18 @@ module Rley
 
       # Constructor
       # @param aRange [Lexical::TokenRange]
-      def initialize: (Lexical::TokenRange aRange) -> void
+      def initialize: (Hash[Symbol, Integer] | Lexical::TokenRange aRange) -> void
 
       # Return the origin, that is, the index of the
       # first token matched by this node.
       # @return [Integer]
       def origin: () -> Integer
+
+      def to_string: (Integer indentation) -> String
+
+      def accept: (ParseForestVisitor aVisitor) -> void
+
+      def key: () -> String
     end
   end
 end

@@ -1,6 +1,10 @@
 module Rley
   # Configuration of an Rley::Engine instance.
-  EngineConfig: Struct
+  class EngineConfig # It's a Struct !!!
+    attr_accessor parse_repr: Symbol
+    attr_accessor repr_builder: untyped
+    attr_accessor diagnose: bool
+  end
 
   # Implementation of the GoF Facade design pattern.
   # An Engine object provides a higher-level interface that shields

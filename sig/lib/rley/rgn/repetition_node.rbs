@@ -5,13 +5,13 @@ module Rley
       @repetition: Symbol
 
       # @return [Symbol] one of: :zero_or_one, :zero_or_more, :one_or_more
-      attr_accessor repetition: Sytmbol
+      attr_accessor repetition: Symbol
 
       Repetition2suffix: Hash[Symbol, String]
 
       # @param child [Array<ASTNode>] sequence of AST nodes
       # @param theRepetition [Symbol] how many times the child node can be repeated
-      def initialize: (Array[ASTNode] child, Symbol theRepetition) -> void
+      def initialize: (ASTNode child, Symbol theRepetition) -> void
 
       # @return [RGN::ASTNode]
       def child: () -> ASTNode

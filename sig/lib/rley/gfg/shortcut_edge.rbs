@@ -9,7 +9,7 @@ module Rley
       # The terminal symbol expected from the input stream
       attr_reader nonterminal: Syntax::NonTerminal
 
-      def initialize: (Vertex thePredecessor, Vertex theSuccessor) -> void
+      def initialize: (ItemVertex thePredecessor, (StartVertex | ItemVertex) theSuccessor) -> void
 
       def to_s: () -> ::String
     end

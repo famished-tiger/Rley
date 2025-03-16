@@ -15,7 +15,7 @@ module Rley
       #   Returned hash contains pairs of the form:
       #   terminal name => Class implementing the terminal tokens
       #   terminal name => Hash with pairs: production name => Class
-      def terminal2node: () -> Hash[String, Class | Hash[String => Class]]
+      def terminal2node: () -> Hash[String, (Class | Hash[String, Class])]
 
       # Method to override in subclass.
       # Default class for representing terminal nodes.
@@ -75,7 +75,7 @@ module Rley
       # @param aRange [Range] Range of tokens matched by the rule
       # @param theTokens [Array] The input tokens
       # @param theChildren [Array] Children nodes (one per rhs symbol)
-      def new_parent_node: (Syntax::Production aProduction, Lexical::TokenRange aRange, Array[Lexical::Token] theTokens, Array[PTree::ParseTreeNode] theChildren) -> Array[PTree::ParseTreeNode]
+      def new_parent_node: (Syntax::Production aProduction, Lexical::TokenRange aRange, Array[Lexical::Token] theTokens, Array[PTree::ParseTreeNode] theChildren) -> PTree::ParseTreeNode
 
       # Implicit rule generated for * modifier
       # rule('X') => 'X item'.as '_star_more'

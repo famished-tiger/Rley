@@ -44,7 +44,7 @@ module Rley
       # The terminal symbols expected when error was occurred
       attr_reader expected_terminals: Array[Syntax::Terminal]
 
-      def initialize: (Integer aRank, Lexical::T lastToken, Array[Syntax::Terminal] expectedTerminals) -> void
+      def initialize: (Integer aRank, Lexical::Token, Array[Syntax::Terminal] expectedTerminals) -> void
 
       def position: () -> Integer
 

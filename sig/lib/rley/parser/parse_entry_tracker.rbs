@@ -5,18 +5,18 @@ module Rley
     class ParseEntryTracker
       @entry_set_index: Integer
 
-      @processed_entries: Hash[ParseEntry, true]
+      @processed_entries: Hash[(ParseEntry | nil), true]
 
-      @parse_entry: ParseEntry
+      @parse_entry: ParseEntry | nil
 
       # The index of the current entry set
       attr_reader entry_set_index: Integer
 
       # The current parse entry
-      attr_reader parse_entry: ParseEntry
+      attr_reader parse_entry: ParseEntry | nil
 
       # The already processed entries from current entry set
-      attr_reader processed_entries: Hash[ParseEntry, true]
+      attr_reader processed_entries: Hash[(ParseEntry | nil), true]
 
       # Constructor.
       def initialize: (Integer aEntrySetIndex) -> void
@@ -28,12 +28,12 @@ module Rley
       def parse_entry=: (ParseEntry aParseEntry) -> ParseEntry
 
       # Take the first provided entry that wasn't processed yet.
-      def select_entry: (Enumerable[ParseEntry] theEntrys) -> ParseEntry
+      def select_entry: (Enumerable[ParseEntry] entries) -> (ParseEntry | nil)
 
       # The dotted item for the current parse entry.
-      def curr_dotted_item: () -> Base::DottedItem
+      def curr_dotted_item: () -> (Base::DottedItem | nil)
 
-      def symbol_on_left: () -> Syntax::NonTerminal
+      def symbol_on_left: () -> (Syntax::GrmSymbol | nil)
 
       # Notification that one begins with the previous entry set
       def to_prev_entry_set: () -> Integer

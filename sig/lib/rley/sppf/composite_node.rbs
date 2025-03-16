@@ -25,6 +25,10 @@ module Rley
 
       # @return [String]
       def key: () -> String
+
+      # Part of the 'visitee' role in Visitor design pattern.
+      # @param aVisitor[ParseForestVisitor] the visitor
+      def accept: (ParseForestVisitor aVisitor) -> untyped
     end
   end
 end

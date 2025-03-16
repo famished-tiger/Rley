@@ -12,9 +12,9 @@ module Rley
 
       @rhs: SymbolSeq
 
-      @constraints: Array
+      @constraints: Array[MatchClosest]
 
-      @name: String
+      @name: String?
 
       # @return [SymbolSeq] The right-hand side (rhs).
       attr_reader rhs: SymbolSeq
@@ -24,7 +24,7 @@ module Rley
 
       # @return [String]
       #   The name of the production rule. It must be unique in a grammar.
-      attr_accessor name: String
+      attr_accessor name: String?
 
       # @return [Boolean] A production is generative when all of its
       # rhs members are generative (that is, they can each generate/derive
@@ -36,7 +36,7 @@ module Rley
       attr_writer nullable: bool
 
       # @return [Array<Syntax::MatchClosest>] A list of constraints between rhs members
-      attr_accessor constraints: Array
+      attr_accessor constraints: Array[MatchClosest]
 
       alias body rhs
 

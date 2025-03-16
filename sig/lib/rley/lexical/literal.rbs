@@ -17,7 +17,7 @@ module Rley
       # @param theLexeme [String] the lexeme (= piece of text from input)
       # @param aTerminal [Syntax::Terminal, String]
       # @param aPosition [Rley::Lexical::Position] line, column position pf token
-      def initialize: (untyped aValue, String theLexeme, (Rley::Syntax::Terminal | String) aTerminal, Rley::Lexical::Position aPosition) -> void
+      def initialize: (untyped aValue, String theLexeme, Syntax::Terminal aTerminal, Position aPosition) -> void
     end
   end
 end

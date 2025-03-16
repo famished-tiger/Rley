@@ -22,7 +22,7 @@ module Rley
       def annotation_to_text
         map_arr = []
         @annotation.each_pair do |key, val|
-          literal = val.kind_of?(String) ? "'#{val}'" : val
+          literal = val.is_a?(String) ? "'#{val}'" : val
           map_arr << "#{key}: #{literal}"
         end
 
@@ -32,6 +32,16 @@ module Rley
       # Notification that the parsing has successfully completed
       def done!
         # Default: do nothing ...
+      end
+
+      # @nodoc
+      def name
+        raise NotImplementedError
+      end
+
+      # @nodoc
+      def to_text
+        raise NotImplementedError
       end
 
       # Abstract method (must be overriden in subclasses).

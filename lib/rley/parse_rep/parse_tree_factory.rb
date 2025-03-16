@@ -15,7 +15,7 @@ module Rley # This module is used as a namespace
       # that will create piece by piece the forest
       def builder(aParseResult, aBuilder = nil)
         if aBuilder
-          aBuilder.new(aParseResult.tokens)
+          aBuilder.new(aParseResult.tokens) # steep:ignore UnexpectedPositionalArgument
         else
           CSTBuilder.new(aParseResult.tokens)
         end

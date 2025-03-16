@@ -188,7 +188,7 @@ module Rley # This module is used as a namespace
       # For debugging purposes
       def print_vertex(aText, aVertex)
         print "#{aText} "
-        if aVertex.kind_of?(NonTerminalVertex)
+        if aVertex.is_a?(NonTerminalVertex)
           puts "#{aVertex.class} #{aVertex.non_terminal.name}"
         else
           p(aVertex.label)
@@ -222,7 +222,7 @@ module Rley # This module is used as a namespace
         productions.each do |prod|
           all_nterms << prod.lhs
           nterms_of_rhs = prod.rhs.members.select do |symb|
-            symb.kind_of?(Syntax::NonTerminal)
+            symb.is_a?(Syntax::NonTerminal)
           end
           all_nterms.merge(nterms_of_rhs)
         end
@@ -285,7 +285,7 @@ module Rley # This module is used as a namespace
             # At least one symbol before the dot
             # Retrieve the symbol before the dot...
             prev_symbol = current_item.prev_symbol
-            if prev_symbol.kind_of?(Syntax::Terminal)
+            if prev_symbol.is_a?(Syntax::Terminal)
               build_scan_edge(vertices[-2], new_vertex)
             else
               # ...non-terminal
@@ -294,7 +294,7 @@ module Rley # This module is used as a namespace
           end
 
           prev_symbol = current_item.prev_symbol
-          if prev_symbol&.kind_of?(Syntax::NonTerminal)
+          if prev_symbol&.is_a?(Syntax::NonTerminal)
             build_shortcut_edge(prev_vertex, new_vertex)
           end
           prev_vertex = new_vertex
@@ -355,8 +355,7 @@ module Rley # This module is used as a namespace
         end_vertex = end_vertex_for[aCallEdge.successor.non_terminal]
 
         # Retrieve the return edge with specified key
-        return_edge = end_vertex.edges.find { |edge| edge.key == ret_key }
-        return return_edge
+        end_vertex.edges.find { |edge| edge.key == ret_key }
       end
 
       # Mark non-terminal symbols that cannot be derived from the start symbol.
@@ -372,7 +371,7 @@ module Rley # This module is used as a namespace
         # and mark all visited non-terminals as reachable
         traverse_df(start_vertex) do |a_vertex|
           # print_vertex('  Visiting', a_vertex)
-          if a_vertex.kind_of?(StartVertex)
+          if a_vertex.is_a?(StartVertex)
             a_vertex.non_terminal.unreachable = false
           end
         end

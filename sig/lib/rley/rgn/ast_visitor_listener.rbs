@@ -1,0 +1,18 @@
+module Rley
+  module RGN
+    interface _ASTVisitorListener
+      def before_ptree: (PTree::ParseTree aParseTree) -> void
+      def after_ptree: (PTree::ParseTree aParseTree) -> void
+      def before_symbol_node: (SymbolNode aSymbolNode, ASTVisitor visitor) -> void
+      def after_symbol_node: (SymbolNode aSymbolNode, ASTVisitor visitor) -> void
+      def before_sequence_node: (SequenceNode aSequenceNode, ASTVisitor visitor) -> void
+      def after_sequence_node: (SequenceNode aSequenceNode, ASTVisitor visitor) -> void
+      def before_repetition_node: (RepetitionNode aRepetitionNode, ASTVisitor visitor) -> void
+      def after_repetition_node: (RepetitionNode aRepetitionNode, ASTVisitor visitor) -> void
+      def before_subnodes: (CompositeNode aParentNode, Array[ASTNode] subnodes)  -> void
+      def after_subnodes:(CompositeNode aParentNode, Array[ASTNode] subnodes)  -> void
+      def before_given_subnode: (CompositeNode aParentNode, ASTNode) -> void
+      def after_given_subnode: (CompositeNode aParentNode, ASTNode) -> void
+    end
+  end
+end

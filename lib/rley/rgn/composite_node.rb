@@ -10,7 +10,7 @@ module Rley
       # @return [Array<ASTNode>]
       attr_reader :subnodes
 
-      # @return [Hash]
+      # @return [Array<Syntax::MatchClosest>]
       attr_accessor :constraints
 
       # @param children [Array<ASTNode>] sequence of children nodes

@@ -2,7 +2,8 @@ module Rley
   # Namespace for classes that define RGN (Rley Grammar Notation)
   module RGN
     # Structure used by Rley to generate implicdit production rules.
-    RawRule: Struct
+    class RawRule # In reality, a Struct
+    end
 
     # Builder GoF pattern. Builder builds a complex object
     #   (say, a grammar) from simpler objects (terminals and productions)
@@ -14,7 +15,7 @@ module Rley
 
       @parser: Parser
 
-      @visitor2rhs: Hash[ASTVisitor, Array]
+      @visitor2rhs: Hash[ASTVisitor, Array[Syntax::GrmSymbol]]
 
       @synthetized: Hash[String, String]
 
@@ -28,7 +29,7 @@ module Rley
       attr_reader parser: Parser
 
       # @return [Hash{ASTVisitor, Array}]
-      attr_reader visitor2rhs: Hash[ASTVisitor, Array]
+      attr_reader visitor2rhs: Hash[ASTVisitor, Array[Syntax::GrmSymbol]]
 
       # @return [Array<Production>] The list of production rules for
       #   the grammar to build.
@@ -55,7 +56,7 @@ module Rley
       # Add the given marker symbol to the grammar of the language
       # @param aMarkerSymbol [String] A marker symbol
       # @return [void]
-      def add_marker: (String aMarkerSymbol) -> Syntax::Marker
+      # def add_marker: (String aMarkerSymbol) -> Syntax::Marker
 
       # Add a production rule in the grammar given one
       # key-value pair of the form: String => String.
@@ -108,9 +109,9 @@ module Rley
 
       def suffix_plus_one: () -> String
 
-      def repetition2suffix: (Symbol aRepetition) -> () -> String
+      def repetition2suffix: (Symbol aRepetition) -> String
 
-      def modifier2suffix: (String aModifier) -> () -> String
+      def modifier2suffix: (String aModifier) -> String
 
       # ################################
       # RGN's AST visit notification events
@@ -159,7 +160,7 @@ module Rley
 
       def node_decorated_name: (ASTNode aNode) -> ::String
 
-      def add_raw_rule: (String aSymbol, String aRHS, String aTag, ?bool simplified, Array[MatchClosest] constraints) -> RawRule
+      def add_raw_rule: (String aSymbol, String aRHS, String aTag, ?bool simplified, Array[Syntax::MatchClosest] constraints) -> RawRule
 
       def process_raw_rules: () -> void
     end

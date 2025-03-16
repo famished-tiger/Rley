@@ -144,9 +144,10 @@ module Rley # This module is used as a namespace
       # Let's proceed with the visit of children
       children.each_with_index do |a_node, i|
         edge_sign = aParentNode.signatures[i]
-        if a_node.kind_of?(SPPF::CompositeNode)
+        if a_node.is_a?(SPPF::CompositeNode)
           push_node(a_node, edge_sign)
           access_paths = node_accesses[a_node]
+          # @type var last_path : Integer
           last_path = legs.last[-1]
           path_reused = access_paths.include?(last_path)
           unless path_reused
@@ -177,6 +178,7 @@ module Rley # This module is used as a namespace
       if legs.empty?
         legs << [aCompositeNode, anEdgeSignature]
       else
+        # @type var path_signature : Integer
         path_signature = legs.last[-1]
         if (path_signature % anEdgeSignature).zero?
           legs << [aCompositeNode, path_signature]

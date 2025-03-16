@@ -118,8 +118,9 @@ module Rley # This module is used as a namespace
       # rubocop: disable Lint/DuplicateBranch
       def visit_entry(anEntry, aContext)
         index = aContext.entry_set_index
-        aContext.nterm2start[[anEntry, index]] if anEntry.start_entry?
+        aContext.nterm2start[[anEntry, index]] if anEntry.start_entry? # steep:ignore
 
+        # @type var event : [Symbol, ParseEntry, Integer]
         if aContext.visitees.include?(anEntry) # Already visited?...
           case anEntry.vertex
             when GFG::EndVertex
@@ -155,8 +156,8 @@ module Rley # This module is used as a namespace
       end
       # rubocop: enable Lint/DuplicateBranch
 
-      def detect_scan_edge(_ctx)
-        nil unless aContext.curr_entry.dotted_entry?
+      def detect_scan_edge(ctx)
+        nil unless ctx.curr_entry.dotted_entry?
       end
 
       # Given the current entry from context object
@@ -178,22 +179,22 @@ module Rley # This module is used as a namespace
         new_entry = aContext.curr_entry.antecedents.first
         events = [new_entry]
         traversed_edge = new_entry.vertex.edges.first
-        if new_entry.vertex.kind_of?(GFG::EndVertex)
+        if new_entry.vertex.is_a?(GFG::EndVertex)
           # Return edge encountered
           # Push current entry onto stack
           # puts "Push on return stack #{aContext.curr_entry}"
           aContext.return_stack << aContext.curr_entry
-        elsif traversed_edge.kind_of?(GFG::CallEdge)
+        elsif traversed_edge.is_a?(GFG::CallEdge)
           # Pop top of stack
           err_msg = 'Return stack empty!'
           raise ScriptError, err_msg if aContext.return_stack.empty?
 
           aContext.return_stack.pop
           # puts "Pop from return stack matching entry #{new_entry}"
-        elsif traversed_edge.kind_of?(GFG::ScanEdge)
+        elsif traversed_edge.is_a?(GFG::ScanEdge)
           # Scan edge encountered, decrease sigma set index
           aContext.entry_set_index -= 1
-        elsif traversed_edge.kind_of?(GFG::EpsilonEdge)
+        elsif traversed_edge.is_a?(GFG::EpsilonEdge)
           # Do nothing
         else
           raise NotImplementedError, "edge is a #{traversed_edge.class}"
@@ -269,6 +270,7 @@ module Rley # This module is used as a namespace
         raise ScriptError, 'Empty return stack' if aContext.return_stack.empty?
 
         # Retrieve top of stack
+        # @type var tos : Rley::Parser::ParseEntry
         tos = aContext.return_stack.pop
         tos_dotted_item = tos.vertex.dotted_item
 

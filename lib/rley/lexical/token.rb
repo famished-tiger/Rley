@@ -5,12 +5,19 @@ module Rley # This module is used as a namespace
   # as return values from a tokenizer / lexer.
   module Lexical
     # A Position is the location of a lexeme within a source file.
-    Position = Data.define(:line, :column) do
+    class Position
+      attr_reader :line
+      attr_reader :column
+
+      def initialize(aLine, aCol)
+        @line = aLine
+        @column = aCol
+      end
+
       def to_s
         "line #{line}, column #{column}"
       end
     end
-
 
     # In Rley, a (lexical) token is an object created by a lexer (tokenizer)
     # and passed to the parser. Such token an object is created when a lexer
@@ -27,7 +34,7 @@ module Rley # This module is used as a namespace
       # @return [String] Input substring that is an instance of the terminal.
       attr_reader(:lexeme)
 
-      # @return [String] The name of terminal symbol matching the lexeme.
+      # @return [Syntax::Terminal] The name of terminal symbol matching the lexeme.
       attr_reader(:terminal)
 
       # @return [Position] The position -in "editor" coordinates- of the lexeme in the source file.

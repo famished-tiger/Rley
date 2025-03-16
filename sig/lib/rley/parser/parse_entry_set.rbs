@@ -5,7 +5,7 @@ module Rley
     class ParseEntrySet
       @entries: Array[ParseEntry]
 
-      @membership: Hash[String, ParseEntry]
+      @membership: Hash[Integer, ParseEntry]
 
       @entries4term: Hash[Syntax::Terminal, Array[ParseEntry]]
 
@@ -17,7 +17,7 @@ module Rley
       attr_reader entries: Array[ParseEntry]
 
       # @return [Hash] A Hash with pairs { hash of ParseEntry => ParseEntry }
-      attr_reader membership: Hash[String, ParseEntry]
+      attr_reader membership: Hash[Integer, ParseEntry]
 
       # Constructor.
       def initialize: () -> void

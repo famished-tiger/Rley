@@ -37,7 +37,7 @@ module Rley
 
       # Parse the given RGN snippet into a parse tree.
       # @param source [String] Snippet to parse
-      # @return [Rley::ParseTree] A parse tree equivalent to the RGN input.
+      # @return [Rley::PTree::ParseTree] A parse tree equivalent to the RGN input.
       def parse(source)
         lexer = Tokenizer.new(source)
         result = engine.parse(lexer.tokens)
@@ -49,7 +49,7 @@ module Rley
           raise SyntaxError, line1 + line2
         end
 
-        return engine.convert(result) # engine.to_ptree(result)
+        engine.convert(result) # engine.to_ptree(result)
       end
     end # class
   end # module

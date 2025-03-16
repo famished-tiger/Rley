@@ -14,7 +14,7 @@ module Rley # This module is used as a namespace
         # (major, minor) =
 
         # Use '1.class' trick to support both Integer and Fixnum classes
-        range = aPos.kind_of?(1.class) ? { low: aPos, high: aPos + 1 } : aPos
+        range = aPos.is_a?(1.class) ? { low: aPos, high: aPos + 1 } : aPos
         super(aToken.terminal, range)
         @token = aToken
       end

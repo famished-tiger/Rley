@@ -1,0 +1,17 @@
+module Rley
+  interface _PTreeVisitorSubscriber
+    def ==:(_PTreeVisitorSubscriber other) -> bool
+    def respond_to?: (Symbol) -> bool
+    def send: (Symbol, *untyped) -> untyped
+
+    # Visit events
+    def before_ptree: (PTree::ParseTree) -> void
+    def before_subnodes: (PTree::NonTerminalNode, Array[PTree::ParseTreeNode]) -> void
+    def before_non_terminal: (PTree::NonTerminalNode) -> void
+    def after_non_terminal: (PTree::NonTerminalNode) -> void
+    def before_terminal: (PTree::TerminalNode) -> void
+    def after_terminal: (PTree::TerminalNode) -> void
+    def after_subnodes: (PTree::NonTerminalNode, Array[PTree::ParseTreeNode]) -> void
+    def after_ptree: (PTree::ParseTree) -> void
+  end
+end

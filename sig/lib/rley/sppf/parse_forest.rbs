@@ -10,7 +10,7 @@ module Rley
     class ParseForest
       @root: SPPFNode
 
-      @key2node: Hash[String, SPPFNode]
+      @key2node: Hash[SPPFNode | String, SPPFNode]
 
       @is_ambiguous: bool
 
@@ -18,7 +18,7 @@ module Rley
       attr_reader root: SPPFNode
 
       # A Hash with pairs of the kind node key => node
-      attr_reader key2node: Hash[String, SPPFNode]
+      attr_reader key2node: Hash[SPPFNode, SPPFNode]
 
       # A setter that tells that the parse is ambiguous.
       attr_writer is_ambiguous: bool
@@ -40,7 +40,7 @@ module Rley
       # parse trees. That enumerator will generate a parse tree when
       # called with `next` method.
       # @return [Enumerator]
-      def to_ptree_enum: () -> Enumeratore
+      # def to_ptree_enum: () -> Enumerator
 
       # Part of the 'visitee' role in the Visitor design pattern.
       #   A visitee is expected to accept the visit from a visitor object

@@ -19,6 +19,7 @@ module Rley # This module is used as a namespace
       # @param aSymbol [Syntax::Symbol] A symbol from grammar.
       def initialize(aRange, aSymbol)
         super
+        # @type self:CSTRawNode
         self.range = aRange
         self.symbol = aSymbol
         self.children = nil
@@ -77,7 +78,7 @@ module Rley # This module is used as a namespace
 
       protected
 
-      # Return the stack
+      # Return the stack of CSTRawNode
       attr_reader(:stack)
 
       # Overriding method.
@@ -180,6 +181,7 @@ module Rley # This module is used as a namespace
         # For debugging purposes
         raise StandardError if previous_tos.symbol != non_terminal
 
+        # @type var previous_tos : CSTRawNode
         new_node = new_parent_node(rule, previous_tos.range,
                                    tokens, previous_tos.children)
         if stack.empty?
@@ -207,7 +209,9 @@ module Rley # This module is used as a namespace
       # @param anEntry [ParseEntry] The entry being visited
       def terminal_before_dot?(anEntry)
         prev_symbol = anEntry.prev_symbol
-        prev_symbol&.terminal?
+
+        # @type var prev_symbol : Syntax::GrmSymbol
+        prev_symbol.terminal?
       end
 
       # A terminal symbol was detected at left of dot.
@@ -261,6 +265,14 @@ module Rley # This module is used as a namespace
         end
 
         non_terminal
+      end
+
+      def new_leaf_node(_aProduction, _aTerminal, _aTokenPosition, _aToken)
+        raise NotImplementedError
+      end
+
+      def new_parent_node(_aProduction, _aRange, _theTokens, _theChildren)
+        raise NotImplementedError
       end
     end # class
   end # module

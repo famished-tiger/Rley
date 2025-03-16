@@ -9,45 +9,46 @@ module Rley
     # While the parse tree/forest is being constructed the boundaries of the
     # token range can be temporarily undefined (= set to nil)
     class TokenRange
-      @low: Integer
+      @low: Integer | nil
 
-      @high: Integer
+      @high: Integer | nil
 
       # The index of the lower bound of token range
       # @return [Integer]
-      attr_reader low: Integer
+      attr_reader low: Integer | nil
 
       # The index of the upper bound of token range
       # @return [Integer]
-      attr_reader high: Integer
+      attr_reader high: Integer | nil
 
       # Constructor
       # @param aRangeRep [Hash] A hash with keys :low and :high
-      def initialize: (Hash[Symbol, Integer] aRangeRep) -> void
+      def initialize: (Hash[Symbol, Integer] | TokenRange aRangeRep) -> void
 
       # Test for equality of ranges.
       # @param other [TokenRange, Range, Hash, Array<Integer>]
       # @return [Boolean]
-      def ==: (TokenRange | Range | Hash | Array[Integer] other) -> bool
+      def ==: (TokenRange | Range[Integer] | Hash[Symbol, Integer] | Array[Integer] other) -> bool
 
       # true when both bounds aren't nil.
       def bounded?: () -> bool
 
       # Conditional assign
-      def assign: (Range aRange) -> (nil | untyped)
+      def assign: (Hash[Symbol, Integer] aRange) -> void
+        | (TokenRange aRange) -> void
 
       # Tell whether the given index value lies outside the range
       def out_of_range?: (Integer index) -> bool
 
       # Emit a (formatted) string representation of the range.
       # Mainly used for diagnosis/debugging purposes.
-      def to_string: (untyped _indentation) -> ::String
+      def to_string: (Integer _indentation) -> ::String
 
       private
 
-      def assign_low: (Integer aRange) -> Integer
+      def assign_low: (Hash[Symbol, Integer] | TokenRange aRange) -> (Integer | nil)
 
-      def assign_high: (Integer aRange) -> Integer
+      def assign_high: (Hash[Symbol, Integer] | TokenRange aRange) -> (Integer | nil)
     end
   end
 end

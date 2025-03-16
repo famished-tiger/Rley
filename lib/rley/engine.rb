@@ -19,6 +19,7 @@ module Rley # This module is used as a namespace
       # Constructor with default initialization.
       def initialize
         super()
+        # @type self: EngineConfig
         self.parse_repr = :parse_tree
         self.repr_builder = :default
         self.diagnose = false
@@ -80,9 +81,11 @@ module Rley # This module is used as a namespace
       aTokenizer.each do |a_token|
         next unless a_token
 
-        term_name = a_token.terminal
-        term_symb = grammar.name2symbol[term_name]
-        a_token.instance_variable_set(:@terminal, term_symb)
+        if a_token.terminal.is_a?(String)
+          term_name = a_token.terminal
+          term_symb = grammar.name2symbol[term_name]
+          a_token.instance_variable_set(:@terminal, term_symb)
+        end
         tokens << a_token
       end
       parser = build_parser(grammar)
@@ -131,6 +134,7 @@ module Rley # This module is used as a namespace
         result = factory.create(configuration.repr_builder)
       end
 
+      # @type var result : Rley::SPPF::ParseForest
       result
     end
 

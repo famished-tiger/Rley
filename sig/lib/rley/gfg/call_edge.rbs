@@ -12,11 +12,11 @@ module Rley
 
       # Pre-condition: thePredecessor is an ItemVertex
       # Pre-condition: theSuccessor is an StartVertex
-      def initialize: (ItemVertex thePredecessor, StartVertex theSuccessor) -> void
+      def initialize: (ItemVertex thePredecessor, NonTerminalVertex theSuccessor) -> void
 
       private
 
-      def do_set_key: (ItemVertex thePredecessor, StartVertex _theSuccessor) -> String
+      def do_set_key: (ItemVertex thePredecessor, NonTerminalVertex _theSuccessor) -> String
     end
   end
 end

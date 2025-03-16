@@ -92,7 +92,7 @@ module Rley # This module is used as a namespace
       # Validation method. Return the validated input argument or
       # raise an exception.
       def valid_lhs(aNonTerminal)
-        unless aNonTerminal.kind_of?(NonTerminal)
+        unless aNonTerminal.is_a?(NonTerminal)
           msg_prefix = 'Left side of production must be a non-terminal symbol'
           msg_suffix = ", found a #{aNonTerminal.class} instead."
           raise StandardError, msg_prefix + msg_suffix

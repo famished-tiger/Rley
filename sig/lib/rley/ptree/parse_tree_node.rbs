@@ -21,11 +21,15 @@ module Rley
 
       # Emit a (formatted) string representation of the node.
       # Mainly used for diagnosis/debugging purposes.
-      def to_string: (String indentation) -> ::String
+      def to_string: (Integer indentation) -> ::String
 
       # Emit a short string representation of the node.
       # Mainly used for diagnosis/debugging purposes.
       def to_s: () -> ::String
+
+      # Part of the 'visitee' role in Visitor design pattern.
+      # @param aVisitor[ParseTreeVisitor] the visitor
+      def accept: (untyped aVisitor) -> untyped
     end
   end
 end

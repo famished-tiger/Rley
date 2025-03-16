@@ -10,7 +10,7 @@ module Rley
       # The terminal symbol expected from the input stream
       attr_reader terminal: Syntax::Terminal
 
-      def initialize: (Vertex thePredecessor, Vertex theSuccessor, Syntax::Terminal aTerminal) -> void
+      def initialize: (ItemVertex thePredecessor, Vertex theSuccessor, Syntax::Terminal aTerminal) -> void
 
       def to_s: () -> ::String
     end

@@ -30,7 +30,7 @@ module Rley # This module is used as a namespace
       # Set the "shortcut" edge.
       # @param aShortcut [ShortcutEdge] the "shortcut" edge.
       def shortcut=(aShortcut)
-        unless aShortcut.kind_of?(ShortcutEdge)
+        unless aShortcut.is_a?(ShortcutEdge)
           raise StandardError, 'Invalid shortcut argument'
         end
 

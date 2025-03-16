@@ -20,6 +20,10 @@ module Rley
       # Notification that the parsing has successfully completed
       def done!: () -> nil
 
+      def name: () -> String
+
+      def to_text: () -> String
+
       # Abstract method (must be overriden in subclasses).
       # Part of the 'visitee' role in Visitor design pattern.
       # @param _visitor [ASTVisitor] the visitor

@@ -94,9 +94,10 @@ module Rley # This module is used as a namespace
         klass = terminal2node.fetch(aTerminal.name, terminalnode_class)
         if klass.is_a?(Hash)
           # Lexical ambiguity...
-          klass = klass.fetch(aProduction.name)
+          klass = klass.fetch(aProduction.name) # steep:ignore ArgumentTypeMismatch
         end
-        klass.new(aToken, aTokenPosition)
+
+        klass.new(aToken, aTokenPosition) # steep:ignore
       end
 
       # Method to override.
@@ -106,7 +107,7 @@ module Rley # This module is used as a namespace
       # @param theTokens [Array] The input tokens
       # @param theChildren [Array] Children nodes (one per rhs symbol)
       def new_parent_node(aProduction, aRange, theTokens, theChildren)
-        mth_name = method_name(aProduction.name)
+        mth_name = method_name(aProduction.name) # steep:ignore ArgumentTypeMismatch
         if respond_to?(mth_name, true)
           node = send(mth_name, aProduction, aRange, theTokens, theChildren)
         else
@@ -139,7 +140,7 @@ module Rley # This module is used as a namespace
       # Implicit rule generated for * modifier
       # rule('X') => 'X item'.as '_star_more'
       def reduce__star_more(_production, _range, _tokens, theChildren)
-        theChildren[0] << theChildren[1]
+        theChildren[0] << theChildren[1] # steep:ignore NoMethod
         theChildren[0]
       end
 
@@ -152,7 +153,7 @@ module Rley # This module is used as a namespace
       # Implicit rule generated for + modifier
       # rule('X') => 'X item'.as '_plus_more'
       def reduce__plus_more(_production, _range, _tokens, theChildren)
-        theChildren[0] << theChildren[1]
+        theChildren[0] << theChildren[1] # steep:ignore NoMethod
         theChildren[0]
       end
 

@@ -7,7 +7,7 @@ require_relative '../syntax/match_closest'
 module Rley # This module is used as a namespace
   # Namespace for classes that define RGN (Rley Grammar Notation)
   module RGN # This module is used as a namespace
-    # Structure used by Rley to generate implicdit production rules.
+    # Structure used by Rley to generate implicit production rules.
     RawRule = Struct.new(:lhs, :rhs, :tag, :simple, :constraints)
 
     # Builder GoF pattern. Builder builds a complex object
@@ -65,10 +65,10 @@ module Rley # This module is used as a namespace
       # Add the given marker symbol to the grammar of the language
       # @param aMarkerSymbol [String] A marker symbol
       # @return [void]
-      def add_marker(aMarkerSymbol)
-        new_symb = build_symbol(Syntax::Marker, aMarkerSymbol)
-        symbols[new_symb.name] = new_symb
-      end
+      # def add_marker(aMarkerSymbol)
+      #   new_symb = build_symbol(Syntax::Marker, aMarkerSymbol)
+      #   symbols[new_symb.name] = new_symb
+      # end
 
       # Add a production rule in the grammar given one
       # key-value pair of the form: String => String.
@@ -85,7 +85,7 @@ module Rley # This module is used as a namespace
       def add_production(aProductionRepr)
         aProductionRepr.each_pair do |(lhs_name, rhs_repr)|
           lhs = get_grm_symbol(lhs_name)
-          rhs = rhs_repr.kind_of?(Array) && rhs_repr.empty? ? '' : rhs_repr.strip
+          rhs = rhs_repr.is_a?(Array) && rhs_repr.empty? ? '' : rhs_repr.strip
           constraints = []
           if rhs.empty?
             rhs_members = []
@@ -96,7 +96,7 @@ module Rley # This module is used as a namespace
             visitor.subscribe(self)
             visitor.start
             root_node = ast.root
-            constraints = root_node.constraints unless root_node.kind_of?(SymbolNode)
+            constraints = root_node.constraints unless root_node.is_a?(SymbolNode)
 
             rhs_members = visitor2rhs.delete(visitor)
           end
@@ -120,12 +120,12 @@ module Rley # This module is used as a namespace
 
           # Check that each terminal appears at least in a rhs of a production
           all_terminals = symbols.values.select do |a_symb|
-            a_symb.kind_of?(Syntax::Terminal)
+            a_symb.is_a?(Syntax::Terminal)
           end
           in_use = Set.new
           productions.each do |prod|
             prod.rhs.members.each do |symb|
-              in_use << symb if symb.kind_of?(Syntax::Terminal)
+              in_use << symb if symb.is_a?(Syntax::Terminal)
             end
           end
 
@@ -293,7 +293,7 @@ module Rley # This module is used as a namespace
         aProductionRepr.each_pair do |(lhs_name, rhs_repr)|
           lhs = get_grm_symbol(lhs_name)
 
-          if rhs_repr.kind_of?(String)
+          if rhs_repr.is_a?(String)
             rhs = rhs_repr.strip.scan(/\S+/)
           else
             rhs = rhs_repr
@@ -338,7 +338,7 @@ module Rley # This module is used as a namespace
       # @param aSymbolArg [GrmSymbol-like or String]
       # @return [Array] list of grammar symbols
       def build_symbol(aClass, aSymbolArg)
-        if aSymbolArg.kind_of?(Syntax::GrmSymbol)
+        if aSymbolArg.is_a?(Syntax::GrmSymbol)
           aSymbolArg
         else
           aClass.new(aSymbolArg)
@@ -385,7 +385,7 @@ module Rley # This module is used as a namespace
       end
 
       def node_base_name(aNode)
-        if aNode.kind_of?(SymbolNode)
+        if aNode.is_a?(SymbolNode)
           aNode.name
         else
           sequence_name(aNode)

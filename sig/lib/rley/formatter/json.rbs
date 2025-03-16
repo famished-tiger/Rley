@@ -29,7 +29,7 @@ module Rley
       # Notification of a visit event: the visitor is about to visit
       # a non-terminal node
       # @param nonterm_node [NonTerminalNode]
-      def before_non_terminal: (PTree::NonTerminalNode nonterm_node) -> true
+      def before_non_terminal: (PTree::NonTerminalNode nonterm_node) -> bool
 
       # Method called by a ParseTreeVisitor to which the formatter subscribed.
       # Notification of a visit event: the visitor is about to visit
@@ -42,20 +42,20 @@ module Rley
       # Notification of a visit event: the visitor is about to visit
       # a terminal node
       # @param term_node [TerminalNode]
-      def before_terminal: (PTree::TerminalNode term_node) -> true
+      def before_terminal: (PTree::TerminalNode term_node) -> bool
 
       # Method called by a ParseTreeVisitor to which the formatter subscribed.
       # Notification of a visit event: the visitor completed the visit of
       # the children of a non-terminal node.
       # @param _parent [NonTerminalNode]
       # @param _subnodes [Array] array of children nodes
-      def after_subnodes: (PTree::NonTerminalNode _parent, Array[PTree::ParseTreeNode] _subnodes) -> ?bool
+      def after_subnodes: (PTree::NonTerminalNode _parent, Array[PTree::ParseTreeNode] _subnodes) -> (bool | nil)
 
       # Method called by a ParseTreeVisitor to which the formatter subscribed.
       # Notification of a visit event: the visitor completed the visit
       # of the given parse tree
       # @param _ptree [ParseTree]
-      def after_ptree: (PTree::ParseTree _ptree) -> ?bool
+      def after_ptree: (PTree::ParseTree _ptree) -> (bool | nil)
 
       private
 
@@ -63,7 +63,7 @@ module Rley
 
       def dedent: () -> Integer
 
-      def print_text: (String aSeparator, String aText) -> ?bool
+      def print_text: (String aSeparator, String | nil aText) -> (bool | nil)
     end
   end
 end

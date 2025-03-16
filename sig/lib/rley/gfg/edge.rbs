@@ -4,15 +4,15 @@ module Rley
     # Responsibilities:
     # - To know the successor vertex
     class Edge
-      @successor: untyped
+      @successor: (StartVertex | ItemVertex)
 
       # @return [Vertex] The destination vertex of the edge .
-      attr_reader successor: Vertex
+      attr_reader successor: (StartVertex | ItemVertex)
 
       # Construct a directed edge between two given vertices
       # @param thePredecessor [Vertex]
       # @param theSuccessor [Vertex]
-      def initialize: (Vertex thePredecessor, Vertex theSuccessor) -> void
+      def initialize: ((Vertex | nil) thePredecessor, Vertex theSuccessor) -> void
 
       # @return [String]
       def to_s: () -> ::String

@@ -1,7 +1,13 @@
 module Rley
   module ParseRep
     # Structure used internally by ParseTreeBuilder class.
-    CSTRawNode: Struct
+    class CSTRawNode # In reality, it is a Struct
+      attr_accessor range: Lexical::TokenRange
+      attr_accessor symbol: Syntax::GrmSymbol
+      attr_accessor children: Array[CSTRawNode] | nil
+
+      def initialize: (Lexical::TokenRange, Syntax::GrmSymbol) -> void
+    end
 
     # The purpose of a ParseTreeBuilder is to build piece by piece
     # a parse tree from a sequence of input tokens and
@@ -13,9 +19,9 @@ module Rley
     class ParseTreeBuilder
       @tokens: Array[Lexical::Token]
 
-      @stack: Array
+      @stack: Array[CSTRawNode]
 
-      @dummy_node: Object
+      @dummy_node: untyped
 
       @last_visitee: untyped
 
@@ -43,7 +49,7 @@ module Rley
       def receive_event: (Symbol anEvent, Parser::ParseEntry anEntry, Integer anIndex) -> Parser::ParseEntry
 
       # Return the stack
-      attr_reader stack: Array
+      attr_reader stack: Array[CSTRawNode]
 
       # Overriding method.
       # Create a parse tree object with given
@@ -87,11 +93,11 @@ module Rley
 
       # Create a raw node with given range
       # and push it on top of stack.
-      def push_raw_node: (Lexical::TokenRange aRange, Syntax::GrmSymbol aSymbol) -> CSTRawNode
+      def push_raw_node: (Lexical::TokenRange aRange, Syntax::GrmSymbol aSymbol) -> void
 
       # Initialize children array of TOS with nil placeholders.
       # The number of elements equals the number of symbols at rhs.
-      def init_TOS_children: (Integer aCount) -> Array
+      def init_TOS_children: (Integer aCount) -> Array[Object]
 
       # Does the position on the left side of the dot correspond
       # a terminal symbol?
@@ -116,10 +122,15 @@ module Rley
       # array at that position.
       # If the position is nil, then the node will be placed at the position of
       # the rightmost nil element in children array.
-      def place_TOS_child: (TerminalNode | NonTerminalNode aNode, ?Integer aRHSPos) -> TerminalNode | NonTerminalNode
+      def place_TOS_child: (PTree::TerminalNode aNode, Integer? aRHSPos) -> PTree::TerminalNode
+        | (PTree::NonTerminalNode aNode, Integer? aRHSPos) -> PTree::NonTerminalNode
 
       # Retrieve non-terminal symbol of given parse entry
-      def entry2nonterm: (ParseEntry anEntry) -> Syntax::NonTerminal
+      def entry2nonterm: (Parser::ParseEntry anEntry) -> Syntax::NonTerminal
+
+      def new_leaf_node: (Syntax::Production aProduction, Syntax::Terminal aTerminal, Integer aTokenPosition, Lexical::Token aToken) -> untyped
+
+      def new_parent_node: (Syntax::Production aProduction, Lexical::TokenRange aRange, Array[Lexical::Token] theTokens, Array[PTree::ParseTreeNode] theChildren) -> PTree::ParseTreeNode
     end
   end
 end

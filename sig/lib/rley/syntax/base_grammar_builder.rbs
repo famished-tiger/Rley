@@ -42,11 +42,6 @@ module Rley
       # @return [void]
       def add_terminals: (*(String | Terminal) terminalSymbols) -> Hash[String, GrmSymbol]
 
-      # Add the given marker symbol to the grammar of the language
-      # @param aMarkerSymbol [Syntax::Marker] A marker symbol
-      # @return [void]
-      def add_marker: (Marker aMarkerSymbol) -> void
-
       # Add a production rule in the grammar given one
       # key-value pair of the form: String => Array.
       #   Where the key is the name of the non-terminal appearing in the

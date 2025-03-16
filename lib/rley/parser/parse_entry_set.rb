@@ -62,6 +62,7 @@ module Rley # This module is used as a namespace
       # @return [ParseEntry] the passed parse entry if it pushes it
       def push_entry(anEntry)
         entry_key = anEntry.hash
+        # @type var result : ParseEntry | false
         result = membership.fetch(entry_key, false)
         unless result
           @entries << anEntry
@@ -71,6 +72,7 @@ module Rley # This module is used as a namespace
           result = anEntry
         end
 
+        # @type var result : ParseEntry
         result
       end
 
@@ -111,9 +113,10 @@ module Rley # This module is used as a namespace
 
       def add_lookup4symbol(anEntry)
         symb = anEntry.next_symbol
-        if symb.kind_of?(Syntax::Terminal)
+        if symb.is_a?(Syntax::Terminal)
           @entries4term[symb] << anEntry
         else
+          # @type var symb : Syntax::NonTerminal
           @entries4n_term[symb] << anEntry
         end
       end

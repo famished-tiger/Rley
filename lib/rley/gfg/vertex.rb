@@ -69,6 +69,17 @@ module Rley # This module is used as a namespace
         edges << arrow
       end
 
+      # The label of this vertex.
+      # It is the same as the label of the corresponding dotted item.
+      # @return [String] Label for this vertex
+      def label
+        raise NotImplementedError
+      end
+
+      def dotted_item
+        raise NotImplementedError
+      end
+
       protected
 
       # Validation method for adding an outgoing edge to the vertex.

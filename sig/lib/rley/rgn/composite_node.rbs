@@ -10,8 +10,8 @@ module Rley
       # @return [Array<ASTNode>]
       attr_reader subnodes: Array[ASTNode]
 
-      # @return [Hash]
-      attr_accessor constraints: Hash
+      # @return [Array<Syntax::MatchClosest>]
+      attr_accessor constraints: Array[Syntax::MatchClosest]
 
       # @param children [Array<ASTNode>] sequence of children nodes
       def initialize: (Array[ASTNode] children) -> void

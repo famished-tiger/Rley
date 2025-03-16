@@ -338,7 +338,7 @@ module Rley # This module is used as a namespace
         full_range = { low: 0, high: anIndex }
         start_production = chart.start_dotted_rule.production
 
-        ParseForestBuilder.new(start_production, full_range)
+        ParseRep::ParseForestBuilder.new(start_production, full_range)
       end
 
       # Factory method. Creates and initializes a ParseEntryTracker instance.

@@ -1,3 +1,7 @@
+### 0.9.01 / 2025-03-16
+Version bumped.
+* [CHANGED] Updated `.rbs` signature files.
+
 ### 0.9.00 / 2025-03-08
 Version bumped.
 * [NEW] Added `sig` folder with `.rbs` signature files.

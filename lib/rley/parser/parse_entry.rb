@@ -62,13 +62,13 @@ module Rley # This module is used as a namespace
 
       # Returns true iff the vertex is a start vertex (i.e. of the form: .X)
       def start_entry?
-        vertex.kind_of?(GFG::StartVertex)
+        vertex.is_a?(GFG::StartVertex)
       end
 
       # Returns true iff the vertex is at the start of rhs
       # (i.e. of the form: X => .Y
       def entry_entry?
-        return false unless vertex.kind_of?(GFG::ItemVertex)
+        return false unless vertex.is_a?(GFG::ItemVertex)
 
         vertex.dotted_item.at_start?
       end
@@ -76,7 +76,7 @@ module Rley # This module is used as a namespace
       # Returns true iff the vertex corresponds to a dotted item
       # X => Y
       def dotted_entry?
-        vertex.kind_of?(GFG::ItemVertex)
+        vertex.is_a?(GFG::ItemVertex)
       end
 
       # Returns true iff the vertex is at end of rhs (i.e. of the form: X => Y.)
@@ -86,7 +86,7 @@ module Rley # This module is used as a namespace
 
       # Returns true iff the vertex is an end vertex (i.e. of the form: X.)
       def end_entry?
-        vertex.kind_of?(GFG::EndVertex)
+        vertex.is_a?(GFG::EndVertex)
       end
 
       # Return the symbol before the dot (if any)

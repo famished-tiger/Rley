@@ -144,7 +144,7 @@ module Rley
       def push_entry: (GFG::Vertex aVertex, Integer anOrigin, Integer aChartIndex, Symbol aReason) -> void
 
       # Factory method. Initializes a ParseForestBuilder object
-      def forest_builder: (untyped anIndex) -> ParseForestBuilder
+      def forest_builder: (Integer anIndex) -> ParseRep::ParseForestBuilder
 
       # Factory method. Creates and initializes a ParseEntryTracker instance.
       def new_entry_tracker: () -> ParseEntryTracker

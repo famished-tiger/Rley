@@ -15,7 +15,7 @@ module Rley
       # Emit a (formatted) string representation of the node.
       # Mainly used for diagnosis/debugging purposes.
       # rubocop: disable Style/StringConcatenation
-      def to_string: (String indentation) -> String
+      def to_string: (Integer indentation) -> String
 
       # Part of the 'visitee' role in Visitor design pattern.
       # @param aVisitor[ParseTreeVisitor] the visitor

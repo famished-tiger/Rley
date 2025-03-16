@@ -5,10 +5,10 @@
 
 module Rley # Module used as a namespace
   # The version number of the gem.
-  Version = '0.9.00'
+  Version = '0.9.01'
 
   # Brief description of the gem.
-  Description = "Ruby implementation of the Earley's parsing algorithm"
+  Description = "A parsing library based on the Earley's parsing algorithm."
 
   # Constant Rley::RootDir contains the absolute path of Rley's
   # start directory. Note: it also ends with a slash character.

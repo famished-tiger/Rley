@@ -20,8 +20,22 @@ module Rley # This module is used as a namespace
       # Return the origin, that is, the index of the
       # first token matched by this node.
       # @return [Integer]
-      def origin
+      def origin # steep:ignore MethodBodyTypeMismatch
         range.low
+      end
+
+      # Emit a (formatted) string representation of the node.
+      # Mainly used for diagnosis/debugging purposes.
+      # @param indentation [Integer]
+      # @return [String]
+      def to_string(indentation)
+        raise NotImplementedError
+      end
+
+      # Part of the 'visitee' role in Visitor design pattern.
+      # @param aVisitor[ParseForestVisitor] the visitor
+      def accept(aVisitor)
+        raise NotImplementedError
       end
     end # class
   end # module

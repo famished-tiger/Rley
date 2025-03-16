@@ -56,7 +56,7 @@ module Rley
 
       # If the production is anonymous, then assign it
       # a default name
-      def name_production: (Production aProduction) -> (true | String)
+      def name_production: (Production aProduction) -> (String | nil)
 
       # Perform some check of the grammar.
       def diagnose: () -> void
@@ -87,7 +87,7 @@ module Rley
 
       # Return the set of nonterminals which have one of their
       # production rules empty
-      def direct_nullable: () -> void
+      def direct_nullable: () -> Set[NonTerminal]
 
       # For each production determine whether it is nullable or not.
       # A nullable production is a production that can match an empty string.

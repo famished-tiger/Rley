@@ -48,7 +48,7 @@ module Rley # This module is used as a namespace
 
       # @return [Array] The list of non-terminals in the grammar.
       def non_terminals
-        @non_terminals ||= symbols.select { |s| s.kind_of?(NonTerminal) }
+        @non_terminals ||= symbols.select { |s| s.is_a?(NonTerminal) }
       end
 
       # @return [Production] The start production of the grammar (i.e.
@@ -82,12 +82,15 @@ module Rley # This module is used as a namespace
         return unless aProduction.name.nil?
 
         index = rules.find_index(aProduction)
+        # @type var index : Integer
+
         prefix = aProduction.lhs.name.dup
         previous = index.zero? ? nil : rules[index - 1]
         if previous.nil? || previous.lhs != aProduction.lhs
           suffix = '_0'
         else
-          prev_serial = previous.name.match(/_(\d+)$/)
+          # @type var previous : Production
+          prev_serial = previous.name&.match(/_(\d+)$/)
           if prev_serial
             suffix = "_#{prev_serial[1].to_i + 1}"
           else
@@ -145,6 +148,8 @@ module Rley # This module is used as a namespace
             end
 
             last_considered = nil
+            # @type var last_considered : Rley::Syntax::GrmSymbol
+
             a_rule.rhs.members.each do |symbol|
               last_considered = symbol
               break unless symbol.generative?
@@ -200,7 +205,7 @@ module Rley # This module is used as a namespace
         # Drop productions with one terminal in rhs or with a nullable lhs
         filtered_rules = rules.reject do |prod|
           prod.lhs.nullable? || prod.rhs.find do |symb|
-            symb.kind_of?(Terminal)
+            symb.is_a?(Terminal)
           end
         end
 

@@ -3,6 +3,8 @@ module Rley
   module Formatter
     # Superclass for parse tree formatters.
     class BaseFormatter
+      include _PTreeVisitorSubscriber
+
       @output: IO
 
       # The IO output stream in which the formatter's result will be sent.

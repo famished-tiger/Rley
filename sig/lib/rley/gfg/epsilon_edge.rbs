@@ -5,8 +5,6 @@ module Rley
     # Responsibilities:
     # - To know the successor vertex
     class EpsilonEdge < Edge
-      # The destination vertex of the edge.
-      attr_reader successor: Vertex
     end
   end
 end

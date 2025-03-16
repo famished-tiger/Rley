@@ -1,0 +1,84 @@
+module Rley
+  module Parser
+    # Utility class used internally by the Enumerator created
+    # with a ParseWalkerContext object. It holds the state of
+    # the walk over a GFGParsing object.
+    class ParseWalkerContext # A Struct in reality
+      attr_accessor curr_entry:  ParseEntry
+      attr_accessor entry_set_index: Integer
+      attr_accessor visitees: Set[ParseEntry]
+      attr_accessor nterm2start: Hash[Syntax::GrmSymbol, Hash[Integer, ParseEntry]]
+      attr_accessor return_stack: Array[ParseEntry]
+      attr_accessor backtrack_points: untyped
+      attr_accessor lazy_walk: bool
+    end
+
+    class WalkerBacktrackpoint # A Struct in reality
+      attr_accessor entry_set_index: Integer # Sigma set index of current parse entry
+      attr_accessor return_stack: Array[ParseEntry] # A stack of parse entries
+      attr_accessor visitee: ParseEntry # The parse entry being visited
+      attr_accessor antecedent_index: Integer
+    end
+
+    # A factory that creates an Enumerator object
+    # that itself walks through a GFGParsing object.
+    # The walker (= Enumerator) yields visit events.
+    # This class implements an external iterator
+    # for a given GFGParsing object.
+    # This is different from the internal iterators, usually implemented
+    # in Ruby with an :each method.
+    # Allows to perform a backwards traversal over the relevant parse entries.
+    # backwards traversal means that the traversal starts from the
+    # accepting (final) parse entries and goes to the initial parse entry.
+    # Relevant parse entries are parse entries that "count" in the parse
+    # (i.e. they belong to a path that leads to the accepting parse entry)
+    class ParseWalkerFactory
+      # Build an Enumerator that will yield the parse entries as it
+      # walks backwards on the parse graph.
+      # @param acceptingEntry [ParseEntry] the final ParseEntry of a
+      #    successful parse.
+      # @param maxIndex [Integer] the index of the last input token.
+      # @param lazyWalk [Boolean] if true then take some shortcut in re-visits.
+      # @return [Enumerator] yields visit events when walking over the
+      #   parse result
+      # rubocop: disable Style/OptionalBooleanParameter
+      def build_walker: (ParseEntry acceptingEntry, Integer maxIndex, bool lazyWalk) -> Enumerator[[[Symbol, ParseEntry, ParseWalkerContext]]]
+
+      private
+
+      # Context factory method
+      def init_context: (ParseEntry acceptingEntry, Integer maxIndex, bool lazyWalk) -> ParseWalkerContext
+
+      # Initialize the non-terminal to start entry mapping
+      def init_nterm2start: () -> Hash[Syntax::NonTerminal, Hash[Integer, ParseEntry]]
+
+      # [event, entry, index, vertex]
+      # rubocop: disable Lint/DuplicateBranch
+      def visit_entry: (ParseEntry anEntry, ParseWalkerContext aContext) -> [Symbol, ParseEntry, Integer]
+
+      def detect_scan_edge: (ParseWalkerContext _ctx) -> nil
+
+      # Given the current entry from context object
+      # Go to the parse entry that is one of its antecedent
+      # The context object is updated
+      def jump_to_antecedent: (ParseWalkerContext aContext) -> Array[ParseEntry]
+
+      # Handle the case of an entry having one antecedent only
+      def antecedent_of: (ParseWalkerContext aContext) -> Array[ParseEntry]
+
+      # Handle the case of an entry having multiple antecedents
+      def select_antecedent: (ParseWalkerContext aContext) -> ::Array[ParseEntry]
+
+      def add_backtrack_point: (ParseWalkerContext aContext) -> WalkerBacktrackpoint
+
+      def use_backtrack_point: (ParseWalkerContext aContext) -> Array[[Symbol, ParseEntry, Integer]]
+
+      # From the antecedent of the current parse entry
+      # Retrieve the one that corresponds to the parse entry on
+      # top of return stack
+      # Observation: calling parse entry is an parse entry linked
+      # to a item vertex
+      def select_calling_entry: (ParseWalkerContext aContext) -> ParseEntry
+    end
+  end
+end

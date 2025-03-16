@@ -5,7 +5,7 @@ module Rley
     class ParseTreeFactory < ParseRepCreator
       # Create a Builder, that is, an object
       # that will create piece by piece the forest
-      def builder: (Parser::GFGParsing aParseResult, ?ParseTreeBuilder aBuilder) -> ParseTreeBuilder
+      def builder: (Parser::GFGParsing aParseResult, ?Class aBuilder) -> ParseTreeBuilder
     end
   end
 end

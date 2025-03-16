@@ -32,7 +32,7 @@ module Rley # This module is used as a namespace
 
         aTokenSequence.each_with_index do |token, i|
           parse_for_token(result, i)
-          if token.terminal.kind_of?(String)
+          if token.terminal.is_a?(String)
             symb = grammar.name2symbol[token.terminal]
             token.instance_variable_set(:@terminal, symb)
           end
@@ -51,7 +51,7 @@ module Rley # This module is used as a namespace
         result.chart[index].each do |entry|
           # Is entry of the form? [A => alpha . B beta, k]...
           next_symbol = entry.next_symbol
-          if next_symbol.kind_of?(Syntax::NonTerminal)
+          if next_symbol.is_a?(Syntax::NonTerminal)
             # ...apply the Call rule
             call_rule(result, entry, index)
           end

@@ -98,7 +98,7 @@ module Rley # This module is used as a namespace
         new_entry = ParseEntry.new(aVertex, anOrigin)
         result = self[anIndex].push_entry(new_entry)
 
-        if aVertex.kind_of?(GFG::ItemVertex) && aVertex.dotted_item.constraint
+        if aVertex.is_a?(GFG::ItemVertex) && aVertex.dotted_item.constraint
           ct = aVertex.dotted_item.constraint
 
           case ct

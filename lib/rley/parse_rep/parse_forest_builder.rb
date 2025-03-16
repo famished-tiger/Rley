@@ -148,7 +148,7 @@ module Rley # This module is used as a namespace
                   # ... without changing current path
                   create_epsilon_node(anEntry, anIndex)
                 end
-                curr_path.pop if curr_parent.kind_of?(SPPF::AlternativeNode)
+                curr_path.pop if curr_parent.is_a?(SPPF::AlternativeNode)
             end
 
           when :backtrack
@@ -172,7 +172,7 @@ module Rley # This module is used as a namespace
                   # ... without changing current path
                   create_epsilon_node(anEntry, anIndex)
                 end
-                curr_path.pop if curr_parent.kind_of?(SPPF::AlternativeNode)
+                curr_path.pop if curr_parent.is_a?(SPPF::AlternativeNode)
             end
         end
       end
@@ -221,6 +221,8 @@ module Rley # This module is used as a namespace
 
       def create_epsilon_node(anEntry, anIndex)
         new_node = SPPF::EpsilonNode.new(anIndex)
+
+        # @type var candidate : SPPF::EpsilonNode
         candidate = add_node_to_forest(new_node)
         entry2node[anEntry] = candidate
 

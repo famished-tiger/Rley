@@ -37,6 +37,12 @@ module Rley # This module is used as a namespace
       def to_s
         "#{symbol.name}#{range.to_string(0)}"
       end
+
+      # Part of the 'visitee' role in Visitor design pattern.
+      # @param aVisitor[ParseTreeVisitor] the visitor
+      def accept(aVisitor)
+        raise NotImplementedError
+      end
     end # class
   end # module
 end # module

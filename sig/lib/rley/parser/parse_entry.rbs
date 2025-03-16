@@ -4,7 +4,7 @@ module Rley
     # - To know whether the vertex is a start, end or item vertex
     # - To know the next symbol to expect
     class ParseEntry
-      @vertex: GFG::Vertex
+      @vertex: GFG::ItemVertex
 
       @origin: Integer
 
@@ -13,7 +13,7 @@ module Rley
       @hash: String
 
       # @return [GFG::Vertex] Link to a vertex of the GFG
-      attr_reader vertex: GFG::Vertex
+      attr_reader vertex: GFG::ItemVertex
 
       # @return [Array<ParseEntry>] Links to preceding parse entries
       attr_reader antecedents: Array[ParseEntry]
@@ -25,7 +25,7 @@ module Rley
 
       # @param aVertex [GFG::Vertex]
       # @param theOrigin [Integer]
-      def initialize: (GFG::Vertex aVertex, Integer theOrigin) -> void
+      def initialize: (GFG::ItemVertex aVertex, Integer theOrigin) -> void
 
       # Returns a string containing a human-readable representation of the
       # production.
@@ -39,7 +39,7 @@ module Rley
       # Equality comparison. A parse entry behaves as a value object.
       def ==: (ParseEntry other) -> bool
 
-      def hash: () -> String
+      def hash: () -> Integer
 
       # Returns true iff the vertex is a start vertex (i.e. of the form: .X)
       def start_entry?: () -> bool

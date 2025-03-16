@@ -8,52 +8,54 @@ require 'rubygems'
 # The next line generates an error with Bundler
 require_relative './lib/rley/constants'
 
-def pkg_description(aPackage)
-  aPackage.name = 'rley'
-  aPackage.version = Rley::Version
-  aPackage.author = 'Dimitri Geshef'
-  aPackage.email = 'famished.tiger@yahoo.com'
-  aPackage.homepage = 'https://github.com/famished-tiger/Rley'
-  aPackage.platform = Gem::Platform::RUBY
-  aPackage.summary = Rley::Description
-  aPackage.description = 'A general parser using the Earley algorithm.'
-  aPackage.post_install_message = <<EOSTRING
+module PkgMixin
+  def pkg_description(aPackage)
+    aPackage.name = 'rley'
+    aPackage.version = Rley::Version
+    aPackage.author = 'Dimitri Geshef'
+    aPackage.email = 'famished.tiger@yahoo.com'
+    aPackage.homepage = 'https://github.com/famished-tiger/Rley'
+    aPackage.platform = Gem::Platform::RUBY
+    aPackage.summary = Rley::Description
+    aPackage.description = 'A general parser using the Earley algorithm.'
+    aPackage.post_install_message = <<EOSTRING
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Thank you for installing Rley...
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 EOSTRING
-end
+  end
 
-def pkg_files(aPackage)
-  file_list = Dir[
-    '.rubocop.yml',
-    '.rspec',
-    '.ruby-gemset',
-    '.ruby-version',
-    '.yardopts',
-    'appveyor.yml',
-    'Gemfile',
-    'Rakefile',
-    'CHANGELOG.md',
-    'LICENSE.txt',
-    'README.md',
-    'examples/**/*.*',
-    'lib/*.*',
-    'lib/**/*.rb',
-    'spec/**/*.rb'
-  ]
-  aPackage.files = file_list
-  aPackage.test_files = Dir['spec/**/*_spec.rb']
-  aPackage.require_path = 'lib'
-end
+  def pkg_files(aPackage)
+    file_list = Dir[
+      '.rubocop.yml',
+      '.rspec',
+      '.ruby-gemset',
+      '.ruby-version',
+      '.yardopts',
+      'appveyor.yml',
+      'Gemfile',
+      'Rakefile',
+      'CHANGELOG.md',
+      'LICENSE.txt',
+      'README.md',
+      'examples/**/*.*',
+      'lib/*.*',
+      'lib/**/*.rb',
+      'spec/**/*.rb'
+    ]
+    aPackage.files = file_list
+    aPackage.test_files = Dir['spec/**/*_spec.rb']
+    aPackage.require_path = 'lib'
+  end
 
-def pkg_documentation(aPackage)
-  aPackage.rdoc_options << '--charset=UTF-8 --exclude="examples|features|spec"'
-  aPackage.extra_rdoc_files = ['README.md']
-end
-
+  def pkg_documentation(aPackage)
+    aPackage.rdoc_options << '--charset=UTF-8 --exclude="examples|features|spec"'
+    aPackage.extra_rdoc_files = ['README.md']
+  end
+end # module
 
 RLEY_GEMSPEC = Gem::Specification.new do |pkg|
+  extend(PkgMixin)
   pkg_description(pkg)
   pkg_files(pkg)
   pkg_documentation(pkg)

@@ -29,7 +29,7 @@ module Rley
       protected
 
       def terminal2node
-        Terminal2NodeClass
+        Terminal2NodeClass # steep:ignore UnknownConstant
       end
 
       # Method override
@@ -166,7 +166,7 @@ module Rley
       # rule('key_value' => 'KEY value')
       def reduce_raw_pair(_production, _range, _tokens, theChildren)
         key = theChildren[0].token.lexeme
-        value = if theChildren[1].kind_of?(Rley::PTree::TerminalNode)
+        value = if theChildren[1].is_a?(Rley::PTree::TerminalNode)
                   theChildren[1].token.lexeme
                 else
                   theChildren[1]

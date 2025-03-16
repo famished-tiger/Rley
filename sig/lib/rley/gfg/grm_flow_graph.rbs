@@ -69,7 +69,8 @@ module Rley
       # then elimination of unreachable symbols
       def diagnose: () -> void
 
-      Branching: Struct
+      class Branching # In reality a Struct
+      end
 
       # Walk over all the vertices of the graph that are reachable from a given
       # start vertex. This is a depth-first graph traversal.
@@ -119,19 +120,19 @@ module Rley
       def augment_graph: (Array[Base::DottedItem] theDottedItems, Integer firstItemPos) -> void
 
       # Create an entry edge for the given vertex
-      def build_entry_edge: (Vertex theVertex) -> EpsilonEdge
+      def build_entry_edge: (ItemVertex theVertex) -> EpsilonEdge
 
       # Create an exit edge for the given vertex
-      def build_exit_edge: (Vertex theVertex) -> EpsilonEdge
+      def build_exit_edge: (ItemVertex theVertex) -> EpsilonEdge
 
       # Create a scan edge between two vertices.
       # These two vertices are assumed to correspond to two
       # consecutive dot positions separated by a terminal symbol
       def build_scan_edge: (Vertex fromVertex, Vertex toVertex) -> ScanEdge
 
-      def build_call_return_edges: (Vertex calling_vertex, Vertex return_vertex) -> CallEdge
+      def build_call_return_edges: (ItemVertex calling_vertex, ItemVertex return_vertex) -> CallEdge
 
-      def build_shortcut_edge: (Vertex fromVertex, Vertex toVertex) -> ShortcutEdge
+      def build_shortcut_edge: ((StartVertex | ItemVertex) fromVertex, Vertex toVertex) -> ShortcutEdge
 
       # Retrieve the return edge that matches the given
       # call edge.

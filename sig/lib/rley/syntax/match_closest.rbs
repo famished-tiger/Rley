@@ -14,7 +14,7 @@ module Rley
       attr_reader closest_symb: String
 
       # @return [NilClass, Array<Parser::ParseEntry>] set of entries with closest symbol
-      attr_accessor entries: ?Array[Parser::ParseEntry]
+      attr_accessor entries: (Array[Parser::ParseEntry] | nil)
 
       # @param aSymbolSeq [Rley::Syntax::SymbolSeq] a sequence of grammar symbols
       # @param idxSymbol [Integer] index of symbol

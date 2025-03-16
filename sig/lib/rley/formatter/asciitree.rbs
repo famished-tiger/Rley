@@ -60,13 +60,13 @@ module Rley
       # the children of a non-terminal node.
       # @param _parent [NonTerminalNode]
       # @param _children [Array] array of children nodes
-      def after_subnodes: ((PTree::NonTerminalNode _parent, Array[PTree::ParseTreeNode] _children) -> String
+      def after_subnodes: (PTree::NonTerminalNode _parent, Array[PTree::ParseTreeNode] _children) -> void
 
       private
 
       # Parent node is last node in current path
       # or current path is empty (then aChild is root node)
-      def rank_of: (PTree::ParseTreeNode aChild) -> Array[PTree::ParseTreeNode]
+      def rank_of: (PTree::ParseTreeNode aChild) -> String
 
       # 'root', 'first', 'first_and_last', 'last', 'other'
       def path_prefix: () -> String
