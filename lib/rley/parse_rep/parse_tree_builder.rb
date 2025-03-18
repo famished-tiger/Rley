@@ -211,7 +211,7 @@ module Rley # This module is used as a namespace
         prev_symbol = anEntry.prev_symbol
 
         # @type var prev_symbol : Syntax::GrmSymbol
-        prev_symbol.terminal?
+        prev_symbol.nil? ? false : prev_symbol.terminal?
       end
 
       # A terminal symbol was detected at left of dot.

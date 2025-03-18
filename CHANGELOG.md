@@ -1,3 +1,9 @@
+### 0.9.02 / 2025-03-18
+Version bumped.
+* [FIX] Change in previous version in method `ParseTreeBuilder#terminal_before_dot?` was code breaking.
+* [CHANGE] File `rley.gemspec`: made the external dependencies more lenient...
+
+
 ### 0.9.01 / 2025-03-16
 Version bumped.
 * [CHANGED] Updated `.rbs` signature files.
